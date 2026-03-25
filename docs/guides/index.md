@@ -14,6 +14,7 @@ experience managing VICIdial systems.
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Pause Codes and Agent Accountability Systems](vicidial-pause-codes-accountability.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
+- [VICIdial Quality Assurance Scoring with Call Recordings](vicidial-qa-scoring.md)
 - [VICIdial Real-Time Agent Dashboard Customization Guide](vicidial-realtime-agent-dashboard.md)
 - [VICIdial Support: Free Help for Your Call Center](vicidial-support.md)
 - [VICIdial vs CallTools: Detailed Comparison for Call Centers](vicidial-vs-calltools.md)
