@@ -36,6 +36,7 @@ experience managing VICIdial systems.
 - [Vicidial Security Hardening](vicidial-security-hardening.md)
 - [Vicidial Setup Guide](vicidial-setup-guide.md)
 - [Vicidial Sip Trunk Failover](vicidial-sip-trunk-failover.md)
+- [VICIdial for Solar Lead Generation: The Complete Guide](vicidial-solar-lead-generation.md)
 - [Vicidial Support](vicidial-support.md)
 - [Vicidial Vs Calltools](vicidial-vs-calltools.md)
 
