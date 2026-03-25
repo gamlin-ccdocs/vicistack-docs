@@ -11,6 +11,7 @@ experience managing VICIdial systems.
 - [VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time](vicidial-amd-guide.md)
 - [VICIdial Asterisk Configuration: SIP, Codecs & NAT](vicidial-asterisk-configuration.md)
 - [VICIdial Auto-Dial Level Tuning by Campaign Type](vicidial-auto-dial-level-tuning.md)
+- [VICIdial Call Recording: Storage, Compliance & Archival](vicidial-call-recording.md)
 - [VICIdial Carrier Selection: SIP Trunks, Rates & Quality](vicidial-carrier-selection.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Pause Codes and Agent Accountability Systems](vicidial-pause-codes-accountability.md)
