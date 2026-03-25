@@ -18,6 +18,7 @@ experience managing VICIdial systems.
 - [Vicidial Carrier Selection](vicidial-carrier-selection.md)
 - [Vicidial Cnam Lookup Inbound](vicidial-cnam-lookup-inbound.md)
 - [Vicidial Custom Mysql Reports](vicidial-custom-mysql-reports.md)
+- [VICIdial Database Partitioning for High-Volume Call Centers](vicidial-database-partitioning.md)
 - [Vicidial Did Management](vicidial-did-management.md)
 - [Vicidial Hosted Migration Checklist](vicidial-hosted-migration-checklist.md)
 - [Vicidial Inbound Setup](vicidial-inbound-setup.md)
