@@ -11,6 +11,7 @@ experience managing VICIdial systems.
 - [VICIdial Auto-Dial Level Tuning by Campaign Type](vicidial-auto-dial-level-tuning.md)
 - [VICIdial Carrier Selection: SIP Trunks, Rates & Quality](vicidial-carrier-selection.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
+- [VICIdial Real-Time Agent Dashboard Customization Guide](vicidial-realtime-agent-dashboard.md)
 
 ## More Resources
 
