@@ -12,6 +12,7 @@ experience managing VICIdial systems.
 - [VICIdial Asterisk Configuration: SIP, Codecs & NAT](vicidial-asterisk-configuration.md)
 - [VICIdial Auto-Dial Level Tuning by Campaign Type](vicidial-auto-dial-level-tuning.md)
 - [VICIdial Call Recording: Storage, Compliance & Archival](vicidial-call-recording.md)
+- [VICIdial Callback Automation: Setup & Best Practices](vicidial-callback-automation.md)
 - [VICIdial Carrier Selection: SIP Trunks, Rates & Quality](vicidial-carrier-selection.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Pause Codes and Agent Accountability Systems](vicidial-pause-codes-accountability.md)
