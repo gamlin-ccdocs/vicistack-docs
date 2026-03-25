@@ -44,6 +44,7 @@ experience managing VICIdial systems.
 - [Vicidial Support](vicidial-support.md)
 - [VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance](vicidial-timezone-dialing-tcpa.md)
 - [VICIdial Training Guide: From Beginner to Expert](vicidial-training-guide.md)
+- [VICIdial Voicemail Drop Configuration and Compliance Guide](vicidial-voicemail-drop.md)
 - [Vicidial Vs Calltools](vicidial-vs-calltools.md)
 
 ## More Resources
