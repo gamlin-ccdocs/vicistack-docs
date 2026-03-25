@@ -16,6 +16,7 @@ experience managing VICIdial systems.
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
 - [Open Source Call Center Software](open-source-call-center-software.md)
+- [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
 - [Vicidial Agent Coaching](vicidial-agent-coaching.md)
 - [Vicidial Agent Efficiency Metrics](vicidial-agent-efficiency-metrics.md)
 - [How to Reduce VICIdial AMD False Positives from 20% to Under 5%](vicidial-amd-false-positive-reduction.md)
