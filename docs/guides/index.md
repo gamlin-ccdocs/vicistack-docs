@@ -45,6 +45,7 @@ experience managing VICIdial systems.
 - [VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration](vicidial-remote-agent-setup.md)
 - [Vicidial Security Hardening](vicidial-security-hardening.md)
 - [Vicidial Setup Guide](vicidial-setup-guide.md)
+- [VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures](vicidial-sip-troubleshooting.md)
 - [Vicidial Sip Trunk Failover](vicidial-sip-trunk-failover.md)
 - [VICIdial for Solar Lead Generation: The Complete Guide](vicidial-solar-lead-generation.md)
 - [Vicidial Support](vicidial-support.md)
