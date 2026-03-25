@@ -21,6 +21,7 @@ experience managing VICIdial systems.
 - [Vicidial Carrier Selection](vicidial-carrier-selection.md)
 - [VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]](vicidial-cluster-guide.md)
 - [Vicidial Cnam Lookup Inbound](vicidial-cnam-lookup-inbound.md)
+- [VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom](vicidial-crm-integration.md)
 - [Vicidial Custom Mysql Reports](vicidial-custom-mysql-reports.md)
 - [VICIdial Database Partitioning for High-Volume Call Centers](vicidial-database-partitioning.md)
 - [Vicidial Did Management](vicidial-did-management.md)
