@@ -22,6 +22,7 @@ experience managing VICIdial systems.
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
 - [VICIdial Quality Assurance Scoring with Call Recordings](vicidial-qa-scoring.md)
 - [VICIdial Real-Time Agent Dashboard Customization Guide](vicidial-realtime-agent-dashboard.md)
+- [VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide](vicidial-sip-trunk-failover.md)
 - [Vicidial Support](vicidial-support.md)
 - [VICIdial vs CallTools: Detailed Comparison for Call Centers](vicidial-vs-calltools.md)
 
