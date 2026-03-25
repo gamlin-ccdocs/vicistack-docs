@@ -5,6 +5,7 @@ experience managing VICIdial systems.
 
 ## Available Guides
 
+- [Best Predictive Dialer 2026: The Definitive Comparison](best-predictive-dialer.md)
 - [Call Center Abandonment Rate](call-center-abandonment-rate.md)
 - [Call Center ROI Formula: How to Calculate and Improve](call-center-roi-formula.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
