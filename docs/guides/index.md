@@ -17,6 +17,7 @@ experience managing VICIdial systems.
 - [VICIdial Carrier Selection: SIP Trunks, Rates & Quality](vicidial-carrier-selection.md)
 - [VICIdial CNAM Lookup Integration for Inbound Routing](vicidial-cnam-lookup-inbound.md)
 - [VICIdial Custom Report Building with MySQL Views and Queries](vicidial-custom-mysql-reports.md)
+- [VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam](vicidial-did-management.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Lead Recycling Strategies That Actually Work](vicidial-lead-recycling.md)
 - [VICIdial for Outbound Sales: The Complete Playbook](vicidial-outbound-sales.md)
