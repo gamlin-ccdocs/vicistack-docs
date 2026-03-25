@@ -25,6 +25,7 @@ experience managing VICIdial systems.
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Lead Recycling Strategies That Actually Work](vicidial-lead-recycling.md)
 - [VICIdial List Management Best Practices: Stop Burning Your Best Leads](vicidial-list-management.md)
+- [VICIdial Multi-Tenant Setup for BPOs](vicidial-multi-tenant.md)
 - [VICIdial for Outbound Sales: The Complete Playbook](vicidial-outbound-sales.md)
 - [VICIdial Pause Codes and Agent Accountability Systems](vicidial-pause-codes-accountability.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
