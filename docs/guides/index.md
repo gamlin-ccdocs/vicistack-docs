@@ -12,6 +12,7 @@ experience managing VICIdial systems.
 - [Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?](call-center-cost-per-lead-benchmarks.md)
 - [Call Center ROI Formula: How to Calculate and Improve](call-center-roi-formula.md)
 - [Call Center Software Comparison: Buyer's Guide [2026]](call-center-software-comparison.md)
+- [Contact Center KPIs: The Complete Guide to Metrics That Matter](contact-center-kpis.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
 - [Open Source Call Center Software](open-source-call-center-software.md)
