@@ -7,6 +7,7 @@ experience managing VICIdial systems.
 
 - [Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It](call-center-abandonment-rate.md)
 - [Migrating from GoAutoDial to VICIdial: Step-by-Step](goautodial-to-vicidial-migration.md)
+- [Open Source Call Center Software](open-source-call-center-software.md)
 - [VICIdial Real-Time Agent Coaching Setup Guide](vicidial-agent-coaching.md)
 - [VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working](vicidial-agent-efficiency-metrics.md)
 - [VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time](vicidial-amd-guide.md)
@@ -23,17 +24,17 @@ experience managing VICIdial systems.
 - [VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant](vicidial-ivr-setup.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Lead Recycling Strategies That Actually Work](vicidial-lead-recycling.md)
+- [VICIdial List Management Best Practices: Stop Burning Your Best Leads](vicidial-list-management.md)
 - [VICIdial for Outbound Sales: The Complete Playbook](vicidial-outbound-sales.md)
 - [VICIdial Pause Codes and Agent Accountability Systems](vicidial-pause-codes-accountability.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
 - [VICIdial Quality Assurance Scoring with Call Recordings](vicidial-qa-scoring.md)
 - [VICIdial Real-Time Agent Dashboard Customization Guide](vicidial-realtime-agent-dashboard.md)
+- [Vicidial Security Hardening](vicidial-security-hardening.md)
+- [Vicidial Setup Guide](vicidial-setup-guide.md)
 - [VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide](vicidial-sip-trunk-failover.md)
 - [Vicidial Support](vicidial-support.md)
 - [VICIdial vs CallTools: Detailed Comparison for Call Centers](vicidial-vs-calltools.md)
-- [The Complete VICIdial Setup Guide (2026)](vicidial-setup-guide.md)
-- [VICIdial Security Hardening: CVEs, Firewalls & Access Control](vicidial-security-hardening.md)
-- [Open Source Call Center Software: The Complete Guide](open-source-call-center-software.md)
 
 ## More Resources
 
