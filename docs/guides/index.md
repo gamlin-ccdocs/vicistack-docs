@@ -14,6 +14,7 @@ experience managing VICIdial systems.
 - [Open Source Call Center Software](open-source-call-center-software.md)
 - [Vicidial Agent Coaching](vicidial-agent-coaching.md)
 - [Vicidial Agent Efficiency Metrics](vicidial-agent-efficiency-metrics.md)
+- [How to Reduce VICIdial AMD False Positives from 20% to Under 5%](vicidial-amd-false-positive-reduction.md)
 - [Vicidial Amd Guide](vicidial-amd-guide.md)
 - [VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?](vicidial-amd-vs-ai-amd.md)
 - [VICIdial API Integration: Custom Workflows & Automation](vicidial-api-integration.md)
