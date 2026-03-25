@@ -1,0 +1,3658 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://vicistack-docs.readthedocs.io/guides/vicidial-multi-tenant/">
+      
+      
+        <link rel="prev" href="../vicidial-list-management/">
+      
+      
+        <link rel="next" href="../vicidial-outbound-sales/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Multi-Tenant Setup for BPOs - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-multi-tenant-setup-for-bpos" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Multi-Tenant Setup for BPOs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial List Management Best Practices: Stop Burning Your Best Leads
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Multi-Tenant Setup for BPOs
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Multi-Tenant Setup for BPOs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vicidials-multi-tenancy-model-what-you-are-working-with" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Multi-Tenancy Model: What You Are Working With
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial&#39;s Multi-Tenancy Model: What You Are Working With">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-multi-tenancy-means-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Multi-Tenancy Means in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-multi-tenancy-does-not-mean-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Multi-Tenancy Does NOT Mean in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-group-configuration-the-foundation-of-multi-tenancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Group Configuration: The Foundation of Multi-Tenancy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Group Configuration: The Foundation of Multi-Tenancy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-client-user-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Client User Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-group-permission-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Group Permission Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Group Permission Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin-screen-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Screen Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allowed Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#report-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-access-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Access Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Isolation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Isolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Naming Convention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Organization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preventing-cross-tenant-data-leakage-in-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventing Cross-Tenant Data Leakage in Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-routing-per-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Routing Per Tenant
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID Routing Per Tenant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-client-specific-inbound-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Client-Specific Inbound Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-client-ivrcall-menus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Client IVR/Call Menus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#did-cost-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Cost Tracking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sip-trunk-allocation-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Trunk Allocation Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SIP Trunk Allocation Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#strategy-1-shared-trunk-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy 1: Shared Trunk Pool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-2-dedicated-trunks-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy 2: Dedicated Trunks Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-3-hybrid-dedicated-primary-shared-overflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy 3: Hybrid (Dedicated Primary + Shared Overflow)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#our-recommendation-for-bpos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Our Recommendation for BPOs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-tenant-billing-and-usage-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Tenant Billing and Usage Tracking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Per-Tenant Billing and Usage Tracking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-hours-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Hours Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-minutes-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Minutes Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inbound-minutes-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inbound Minutes Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Storage Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-billing-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Billing Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-allocation-and-capacity-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Allocation and Capacity Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource Allocation and Capacity Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-sizing-for-multi-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Sizing for Multi-Tenant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trunk-capacity-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trunk Capacity Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preventing-noisy-neighbor-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventing "Noisy Neighbor" Problems
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations-of-vicidial-multi-tenancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations of VICIdial Multi-Tenancy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Limitations of VICIdial Multi-Tenancy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#no-database-level-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Database-Level Isolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-per-tenant-resource-guarantees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Per-Tenant Resource Guarantees
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shared-system-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared System Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin-user-visibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin User Visibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-split-separate-instances-vs-shared-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Split: Separate Instances vs. Shared Infrastructure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When to Split: Separate Instances vs. Shared Infrastructure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signals-that-you-need-separate-instances" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signals That You Need Separate Instances
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-cost-trade-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Cost Trade-Off
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-hybrid-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hybrid Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-complete-multi-tenant-configuration-for-a-3-client-bpo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Complete Multi-Tenant Configuration for a 3-Client BPO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: Complete Multi-Tenant Configuration for a 3-Client BPO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#user-group-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Group Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#can-a-single-agent-work-across-multiple-clients-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can a single agent work across multiple clients' campaigns?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-dnc-lists-for-multiple-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle DNC lists for multiple clients?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-give-clients-direct-admin-access-to-manage-their-own-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I give clients direct admin access to manage their own campaigns?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-prevent-one-client-from-using-too-many-sip-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I prevent one client from using too many SIP trunks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-there-a-way-to-brand-the-agent-interface-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is there a way to brand the agent interface per client?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-different-vicidial-versions-for-different-clients-on-the-same-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run different VICIdial versions for different clients on the same server?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-client-onboarding-and-offboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle client onboarding and offboarding?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-multi-tenant-vicidial-in-the-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about multi-tenant VICIdial in the cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vicidials-multi-tenancy-model-what-you-are-working-with" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Multi-Tenancy Model: What You Are Working With
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial&#39;s Multi-Tenancy Model: What You Are Working With">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-multi-tenancy-means-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Multi-Tenancy Means in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-multi-tenancy-does-not-mean-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Multi-Tenancy Does NOT Mean in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-group-configuration-the-foundation-of-multi-tenancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Group Configuration: The Foundation of Multi-Tenancy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Group Configuration: The Foundation of Multi-Tenancy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-client-user-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Client User Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-group-permission-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Group Permission Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Group Permission Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin-screen-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Screen Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allowed Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#report-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-access-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Access Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Isolation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Isolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Naming Convention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Organization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preventing-cross-tenant-data-leakage-in-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventing Cross-Tenant Data Leakage in Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-routing-per-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Routing Per Tenant
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID Routing Per Tenant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-client-specific-inbound-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Client-Specific Inbound Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-client-ivrcall-menus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Client IVR/Call Menus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#did-cost-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Cost Tracking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sip-trunk-allocation-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Trunk Allocation Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SIP Trunk Allocation Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#strategy-1-shared-trunk-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy 1: Shared Trunk Pool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-2-dedicated-trunks-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy 2: Dedicated Trunks Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-3-hybrid-dedicated-primary-shared-overflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy 3: Hybrid (Dedicated Primary + Shared Overflow)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#our-recommendation-for-bpos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Our Recommendation for BPOs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-tenant-billing-and-usage-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Tenant Billing and Usage Tracking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Per-Tenant Billing and Usage Tracking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-hours-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Hours Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-minutes-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Minutes Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inbound-minutes-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inbound Minutes Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Storage Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-billing-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Billing Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-allocation-and-capacity-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Allocation and Capacity Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource Allocation and Capacity Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-sizing-for-multi-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Sizing for Multi-Tenant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trunk-capacity-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trunk Capacity Per Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preventing-noisy-neighbor-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventing "Noisy Neighbor" Problems
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations-of-vicidial-multi-tenancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations of VICIdial Multi-Tenancy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Limitations of VICIdial Multi-Tenancy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#no-database-level-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Database-Level Isolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-per-tenant-resource-guarantees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Per-Tenant Resource Guarantees
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shared-system-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared System Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin-user-visibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin User Visibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-split-separate-instances-vs-shared-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Split: Separate Instances vs. Shared Infrastructure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When to Split: Separate Instances vs. Shared Infrastructure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signals-that-you-need-separate-instances" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signals That You Need Separate Instances
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-cost-trade-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Cost Trade-Off
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-hybrid-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hybrid Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-complete-multi-tenant-configuration-for-a-3-client-bpo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Complete Multi-Tenant Configuration for a 3-Client BPO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: Complete Multi-Tenant Configuration for a 3-Client BPO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#user-group-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Group Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#can-a-single-agent-work-across-multiple-clients-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can a single agent work across multiple clients' campaigns?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-dnc-lists-for-multiple-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle DNC lists for multiple clients?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-give-clients-direct-admin-access-to-manage-their-own-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I give clients direct admin access to manage their own campaigns?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-prevent-one-client-from-using-too-many-sip-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I prevent one client from using too many SIP trunks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-there-a-way-to-brand-the-agent-interface-per-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is there a way to brand the agent interface per client?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-different-vicidial-versions-for-different-clients-on-the-same-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run different VICIdial versions for different clients on the same server?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-client-onboarding-and-offboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle client onboarding and offboarding?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-multi-tenant-vicidial-in-the-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about multi-tenant VICIdial in the cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-multi-tenant-setup-for-bpos">VICIdial Multi-Tenant Setup for BPOs<a class="headerlink" href="#vicidial-multi-tenant-setup-for-bpos" title="Permanent link">&para;</a></h1>
+<p><strong>Last updated: March 2026 | Reading time: ~18 minutes</strong></p>
+<p>You run a BPO. You have three clients. Client A needs 30 agents running insurance leads. Client B needs 15 agents doing appointment setting. Client C needs 50 agents on a political survey campaign. All three clients expect total isolation --- their leads are confidential, their recordings are privileged, their performance data is proprietary. And you need to run all of this on the same VICIdial infrastructure because running three separate VICIdial installations would triple your server costs and your management overhead.</p>
+<p>This is the multi-tenant problem, and VICIdial solves it. Not perfectly --- the multi-tenancy is administrative rather than database-level --- but well enough that thousands of BPO operations worldwide run multiple clients on shared VICIdial instances. The key is understanding what VICIdial's tenancy model can and cannot do, and configuring it correctly so that Client A never sees Client B's data, Client C cannot hear Client A's recordings, and your billing system accurately tracks per-tenant usage.</p>
+<p>This guide covers the complete multi-tenant VICIdial configuration: <a href="/glossary/user-group/">user group</a> setup for access control, campaign isolation, recording restrictions, <a href="/glossary/did/">DID</a> routing per tenant, <a href="/glossary/trunk/">SIP trunk</a> allocation strategies, per-tenant billing via CDR analysis, the architectural limitations you need to understand, and the scaling decision of shared infrastructure versus dedicated servers per client.</p>
+<p><strong>ViciStack builds multi-tenant VICIdial deployments for BPOs</strong> with proper isolation, per-client reporting, and scalable infrastructure. <a href="/pricing/">Talk to us about your BPO setup.</a></p>
+<hr />
+<h2 id="vicidials-multi-tenancy-model-what-you-are-working-with">VICIdial's Multi-Tenancy Model: What You Are Working With<a class="headerlink" href="#vicidials-multi-tenancy-model-what-you-are-working-with" title="Permanent link">&para;</a></h2>
+<p>Before we get into configuration, understand the architecture. VICIdial was not designed from the ground up as a multi-tenant platform. It was designed as a single-organization dialer that gained multi-tenancy capabilities through its permission system. This distinction matters because it defines the boundaries of what is possible.</p>
+<h3 id="what-multi-tenancy-means-in-vicidial">What Multi-Tenancy Means in VICIdial<a class="headerlink" href="#what-multi-tenancy-means-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>VICIdial's multi-tenancy is built on three pillars:</p>
+<ol>
+<li><strong><a href="/glossary/user-group/">User Groups</a></strong> --- Every user (agent, manager, admin) belongs to a user group. User groups control which admin screens, reports, campaigns, and recordings each user can access.</li>
+<li><strong>Campaign Assignment</strong> --- Campaigns are associated with user groups via the <code>allowed_campaigns</code> mechanism. A user can only see and operate within campaigns their user group is allowed to access.</li>
+<li><strong>Permission Granularity</strong> --- Each user group has fine-grained permissions covering dozens of admin screens, report types, and operational capabilities.</li>
+</ol>
+<h3 id="what-multi-tenancy-does-not-mean-in-vicidial">What Multi-Tenancy Does NOT Mean in VICIdial<a class="headerlink" href="#what-multi-tenancy-does-not-mean-in-vicidial" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>There is no database-level isolation.</strong> All tenants share the same MySQL <code>asterisk</code> database. Client A's leads sit in the same <code>vicidial_list</code> table as Client B's leads. They are differentiated by <code>list_id</code> and <code>campaign_id</code>, not by separate databases or schemas.</li>
+<li><strong>There is no <a href="/glossary/asterisk/">Asterisk</a>-level isolation.</strong> All tenants share the same Asterisk instance(s). SIP channels, conference bridges, and recording resources are shared.</li>
+<li><strong>There is no OS-level isolation.</strong> No containers, no VMs, no process separation between tenants.</li>
+</ul>
+<p>This means VICIdial's multi-tenancy is enforced at the <strong>application layer</strong> through the admin interface and reporting system. A user with direct MySQL access or SSH access to the server can see all tenants' data. The isolation is administrative, not technical.</p>
+<p>For most BPO operations, this is perfectly adequate. Your clients do not have direct database access. They see VICIdial through the admin interface, the agent screen, and the reports you provide. As long as the user group permissions are configured correctly, each client sees only their own data.</p>
+<p>For operations with contractual requirements for database-level isolation (common in healthcare, government, or high-security financial services), you may need separate VICIdial instances per client. We cover that decision in the scaling section below.</p>
+<hr />
+<h2 id="user-group-configuration-the-foundation-of-multi-tenancy">User Group Configuration: The Foundation of Multi-Tenancy<a class="headerlink" href="#user-group-configuration-the-foundation-of-multi-tenancy" title="Permanent link">&para;</a></h2>
+<p>User groups are the primary mechanism for tenant isolation. Every BPO client gets their own user group, and that group's permissions determine exactly what the client's users can see and do.</p>
+<h3 id="creating-client-user-groups">Creating Client User Groups<a class="headerlink" href="#creating-client-user-groups" title="Permanent link">&para;</a></h3>
+<p>Navigate to <strong>Admin &gt; User Groups</strong> and create a group for each client. Here is the naming convention we recommend:</p>
+<table>
+<thead>
+<tr>
+<th>User Group ID</th>
+<th>Description</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLIENT_A_ADMIN</td>
+<td>Client A - Manager</td>
+<td>Client A managers who run reports and configure campaigns</td>
+</tr>
+<tr>
+<td>CLIENT_A_AGENT</td>
+<td>Client A - Agent</td>
+<td>Client A agents who dial</td>
+</tr>
+<tr>
+<td>CLIENT_B_ADMIN</td>
+<td>Client B - Manager</td>
+<td>Client B managers</td>
+</tr>
+<tr>
+<td>CLIENT_B_AGENT</td>
+<td>Client B - Agent</td>
+<td>Client B agents</td>
+</tr>
+<tr>
+<td>BPO_ADMIN</td>
+<td>BPO Admin (Internal)</td>
+<td>Your internal admin team with full access</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why separate ADMIN and AGENT groups per client?</strong> Because managers and agents need different permission levels. Agents need to log in, take calls, and disposition. Managers need to view reports, monitor agents, and possibly adjust campaign settings. Having separate groups lets you give managers report access without giving agents the same visibility.</p>
+<h3 id="user-group-permission-configuration">User Group Permission Configuration<a class="headerlink" href="#user-group-permission-configuration" title="Permanent link">&para;</a></h3>
+<p>Navigate to <strong>Admin &gt; User Groups &gt; [Group] &gt; Modify</strong>. Here is the complete permission configuration for a client manager group:</p>
+<h4 id="admin-screen-permissions">Admin Screen Permissions<a class="headerlink" href="#admin-screen-permissions" title="Permanent link">&para;</a></h4>
+<p>These control which admin screens the user can access. For a client manager:</p>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Recommended Setting</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin Access</td>
+<td>7 or 8</td>
+<td>7 = manager, 8 = senior manager. Never 9 (superadmin) for clients</td>
+</tr>
+<tr>
+<td>Campaigns</td>
+<td>View only (or Modify for trusted clients)</td>
+<td>Restricts what they can change</td>
+</tr>
+<tr>
+<td>Lists</td>
+<td>View and Modify</td>
+<td>Clients need to upload their own leads</td>
+</tr>
+<tr>
+<td>Users</td>
+<td>View</td>
+<td>Clients can see their agents but not modify them</td>
+</tr>
+<tr>
+<td>Scripts</td>
+<td>View</td>
+<td>Let them see scripts but not change them</td>
+</tr>
+<tr>
+<td>Carriers</td>
+<td>NONE</td>
+<td>Clients should never see trunk configuration</td>
+</tr>
+<tr>
+<td>DIDs</td>
+<td>View only</td>
+<td>Clients can see their assigned DIDs</td>
+</tr>
+<tr>
+<td>Servers</td>
+<td>NONE</td>
+<td>No infrastructure visibility</td>
+</tr>
+<tr>
+<td>System Settings</td>
+<td>NONE</td>
+<td>Absolutely no system-level access</td>
+</tr>
+<tr>
+<td>User Groups</td>
+<td>NONE</td>
+<td>Clients should not see or modify group permissions</td>
+</tr>
+</tbody>
+</table>
+<h4 id="allowed-campaigns">Allowed Campaigns<a class="headerlink" href="#allowed-campaigns" title="Permanent link">&para;</a></h4>
+<p>This is the most critical setting for tenant isolation. In the user group configuration, the <code>Allowed Campaigns</code> field lists which campaigns users in this group can access.</p>
+<div class="codehilite"><pre><span></span><code>Allowed Campaigns: CLIENT_A_SALES CLIENT_A_SURVEY CLIENT_A_INBOUND
+</code></pre></div>
+
+<p>Users in this group will only see these campaigns in the admin interface, agent login, and reports. All other campaigns are invisible to them.</p>
+<p><strong>Important:</strong> The <code>Allowed Campaigns</code> list must be manually updated whenever you create a new campaign for a client. Forgetting to add a new campaign to the allowed list means the client cannot see it. Forgetting to remove a campaign when it is reassigned means the client can see data they should not have access to.</p>
+<h4 id="report-permissions">Report Permissions<a class="headerlink" href="#report-permissions" title="Permanent link">&para;</a></h4>
+<p>Control which reports each user group can access:</p>
+<table>
+<thead>
+<tr>
+<th>Report</th>
+<th>Client Manager</th>
+<th>Client Agent</th>
+<th>BPO Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent Performance</td>
+<td>Yes (own campaigns only)</td>
+<td>No</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td>Campaign Summary</td>
+<td>Yes (own campaigns only)</td>
+<td>No</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td><a href="/glossary/dial-status/">Outbound Calling Report</a></td>
+<td>Yes (own campaigns only)</td>
+<td>No</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td>Inbound Report</td>
+<td>Yes (own campaigns only)</td>
+<td>No</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td>Recording Lookup</td>
+<td>Yes (own campaigns only)</td>
+<td>Own recordings</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td>Real-Time Report</td>
+<td>Yes (own campaigns only)</td>
+<td>No</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td>Agent Status Detail</td>
+<td>Yes (own user group)</td>
+<td>No</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td>DNC List</td>
+<td>Yes (own campaigns)</td>
+<td>No</td>
+<td>Yes (all)</td>
+</tr>
+<tr>
+<td>System Status</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Server Stats</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>The critical behavior: when a client manager runs a report, VICIdial automatically filters the results to show only data from campaigns in their <code>Allowed Campaigns</code> list. They do not see other clients' data even if they could theoretically construct a URL that references another campaign --- VICIdial enforces the filter server-side.</p>
+<h4 id="recording-access-permissions">Recording Access Permissions<a class="headerlink" href="#recording-access-permissions" title="Permanent link">&para;</a></h4>
+<p>Control who can listen to <a href="/blog/vicidial-call-recording/">call recordings</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Recording Access</code></td>
+<td>ALL, OWN, or NONE --- controls whether the user can listen to recordings</td>
+</tr>
+<tr>
+<td><code>Allowed Recording Campaigns</code></td>
+<td>Which campaigns' recordings this group can access</td>
+</tr>
+</tbody>
+</table>
+<p>For client managers, set <code>Recording Access = ALL</code> and <code>Allowed Recording Campaigns</code> to only their campaigns. This lets them listen to any recording from their campaigns but prevents access to other clients' recordings.</p>
+<p>For client agents, set <code>Recording Access = OWN</code> so they can only hear their own calls (useful for self-improvement) or <code>NONE</code> if you do not want agents accessing recordings at all.</p>
+<blockquote>
+<p><strong>Multi-Tenant Done Right, from Day One.</strong>
+ViciStack configures user groups, campaign isolation, and recording restrictions as part of every BPO deployment. <a href="/pricing/">Get Your Multi-Tenant Setup.</a></p>
+</blockquote>
+<hr />
+<h2 id="campaign-isolation">Campaign Isolation<a class="headerlink" href="#campaign-isolation" title="Permanent link">&para;</a></h2>
+<p>User groups control who can see what. Campaign architecture controls how data is actually organized. Here is how to structure campaigns for clean multi-tenancy.</p>
+<h3 id="naming-convention">Naming Convention<a class="headerlink" href="#naming-convention" title="Permanent link">&para;</a></h3>
+<p>Use a consistent naming convention for campaigns that includes the client identifier:</p>
+<div class="codehilite"><pre><span></span><code>CLIENT_A_SALES_OB     (Client A outbound sales)
+CLIENT_A_INBOUND      (Client A inbound)
+CLIENT_B_APPT_SET     (Client B appointment setting)
+CLIENT_C_SURVEY_Q1    (Client C Q1 survey)
+</code></pre></div>
+
+<p>This makes administration easier, prevents confusion, and makes per-client billing queries straightforward.</p>
+<h3 id="list-organization">List Organization<a class="headerlink" href="#list-organization" title="Permanent link">&para;</a></h3>
+<p>Each client's leads should be in lists that are assigned only to that client's campaigns. Never share lists across clients.</p>
+<p>Recommended list ID ranges per client to avoid collisions:</p>
+<table>
+<thead>
+<tr>
+<th>Client</th>
+<th>List ID Range</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client A</td>
+<td>1000-1999</td>
+<td>1001 = Client A Fresh Insurance Leads</td>
+</tr>
+<tr>
+<td>Client B</td>
+<td>2000-2999</td>
+<td>2001 = Client B Appointment Leads March</td>
+</tr>
+<tr>
+<td>Client C</td>
+<td>3000-3999</td>
+<td>3001 = Client C Voter File Q1</td>
+</tr>
+<tr>
+<td>Internal/Test</td>
+<td>9000-9999</td>
+<td>9001 = Internal Test List</td>
+</tr>
+</tbody>
+</table>
+<p>This convention is not enforced by VICIdial --- it is an organizational practice. But it makes it visually obvious which lists belong to which client and simplifies auditing.</p>
+<h3 id="preventing-cross-tenant-data-leakage-in-reports">Preventing Cross-Tenant Data Leakage in Reports<a class="headerlink" href="#preventing-cross-tenant-data-leakage-in-reports" title="Permanent link">&para;</a></h3>
+<p>The primary risk in multi-tenant VICIdial is a misconfigured user group that lets one client see another client's data. Here are the common leakage vectors and how to prevent them:</p>
+<p><strong>Vector 1: Campaigns in wrong user group.</strong> Always double-check <code>Allowed Campaigns</code> when adding or removing campaigns. A quarterly audit of user group configurations is worth the 30 minutes it takes.</p>
+<p><strong>Vector 2: Lists assigned to wrong campaigns.</strong> If Client A's list is accidentally assigned to Client B's campaign, Client B's agents will dial Client A's leads. VICIdial does not prevent this at the list level --- it is a campaign configuration issue. Audit list-to-campaign assignments monthly.</p>
+<p><strong>Vector 3: Shared lead table queries.</strong> If a client has any direct database access (rare, but some BPOs provide it for custom reporting), they could query the <code>vicidial_list</code> table and see all leads, not just their own. Mitigate this with MySQL views:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Create a view that only shows Client A&#39;s leads</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">VIEW</span><span class="w"> </span><span class="n">client_a_leads</span><span class="w"> </span><span class="k">AS</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">1999</span><span class="p">;</span>
+
+<span class="c1">-- Grant the client&#39;s MySQL user access only to the view</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">asterisk</span><span class="p">.</span><span class="n">client_a_leads</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;client_a_report&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Vector 4: Real-time report showing all agents.</strong> The VICIdial real-time report, by default, can show all agents across all campaigns. User group restrictions limit this to allowed campaigns only --- but verify this by logging in as a client user and confirming they only see their own agents on the real-time screen.</p>
+<hr />
+<h2 id="did-routing-per-tenant">DID Routing Per Tenant<a class="headerlink" href="#did-routing-per-tenant" title="Permanent link">&para;</a></h2>
+<p>Most BPO clients have their own inbound phone numbers (<a href="/glossary/did/">DIDs</a>) that need to route to their specific campaigns and <a href="/glossary/inbound-group/">inbound groups</a>.</p>
+<h3 id="setting-up-client-specific-inbound-groups">Setting Up Client-Specific Inbound Groups<a class="headerlink" href="#setting-up-client-specific-inbound-groups" title="Permanent link">&para;</a></h3>
+<p>For each client that has inbound traffic:</p>
+<ol>
+<li>Navigate to <strong>Admin &gt; Inbound Groups</strong> and create a group:</li>
+<li>Group ID: <code>CLIENT_A_INBOUND</code></li>
+<li>Group Name: "Client A - Main Inbound"</li>
+<li>
+<p>Campaign: <code>CLIENT_A_SALES_OB</code> (if blended) or standalone inbound campaign</p>
+</li>
+<li>
+<p>Navigate to <strong>Admin &gt; DIDs</strong> and create DID entries for the client's phone numbers:</p>
+</li>
+<li>DID Pattern: <code>18005551234</code></li>
+<li>DID Route: <code>IN_GROUP</code></li>
+<li>
+<p>In-Group: <code>CLIENT_A_INBOUND</code></p>
+</li>
+<li>
+<p>In the inbound group configuration, set:</p>
+</li>
+<li><strong>Call Time</strong>: The client's desired hours of operation</li>
+<li><strong><a href="/settings/queue-priority/">Queue Priority</a></strong>: If clients share agents (not recommended but sometimes necessary)</li>
+<li><strong>After Hours Route</strong>: Voicemail, overflow group, or different IVR</li>
+</ol>
+<h3 id="per-client-ivrcall-menus">Per-Client IVR/Call Menus<a class="headerlink" href="#per-client-ivrcall-menus" title="Permanent link">&para;</a></h3>
+<p>Each client likely wants their own <a href="/glossary/ivr/">IVR</a> greeting and menu structure. Create separate <a href="/glossary/call-menu/">call menus</a> per client:</p>
+<ol>
+<li><strong>Admin &gt; Call Menus</strong> &gt; Create new menu</li>
+<li>Upload the client's custom greeting audio</li>
+<li>Configure menu options (press 1 for sales, press 2 for support, etc.)</li>
+<li>Route each option to the appropriate client-specific inbound group</li>
+</ol>
+<h3 id="did-cost-tracking">DID Cost Tracking<a class="headerlink" href="#did-cost-tracking" title="Permanent link">&para;</a></h3>
+<p>Track which DIDs belong to which client for accurate billing:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- DID inventory by assumed client (based on DID route)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">vd</span><span class="p">.</span><span class="n">did_pattern</span><span class="p">,</span><span class="w"> </span><span class="n">vd</span><span class="p">.</span><span class="n">did_description</span><span class="p">,</span><span class="w"> </span><span class="n">vd</span><span class="p">.</span><span class="n">did_route</span><span class="p">,</span>
+<span class="w">       </span><span class="n">vig</span><span class="p">.</span><span class="n">group_id</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">inbound_group</span><span class="p">,</span><span class="w"> </span><span class="n">vig</span><span class="p">.</span><span class="n">group_name</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_inbound_dids</span><span class="w"> </span><span class="n">vd</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_inbound_groups</span><span class="w"> </span><span class="n">vig</span>
+<span class="w">    </span><span class="k">ON</span><span class="w"> </span><span class="n">vd</span><span class="p">.</span><span class="n">group_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vig</span><span class="p">.</span><span class="n">group_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vd</span><span class="p">.</span><span class="n">did_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vig</span><span class="p">.</span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="n">vd</span><span class="p">.</span><span class="n">did_pattern</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="sip-trunk-allocation-strategies">SIP Trunk Allocation Strategies<a class="headerlink" href="#sip-trunk-allocation-strategies" title="Permanent link">&para;</a></h2>
+<p>How you allocate <a href="/glossary/trunk/">SIP trunks</a> across tenants is one of the most impactful decisions in multi-tenant VICIdial. There are three strategies, each with trade-offs.</p>
+<h3 id="strategy-1-shared-trunk-pool">Strategy 1: Shared Trunk Pool<a class="headerlink" href="#strategy-1-shared-trunk-pool" title="Permanent link">&para;</a></h3>
+<p>All clients share the same SIP trunks. The carrier does not know (or care) which client a call belongs to.</p>
+<p><strong>Advantages:</strong>
+- Simplest to configure --- one carrier, one set of trunks
+- Highest trunk utilization --- idle capacity from one client is automatically available to another
+- Lowest cost --- bulk trunk pricing, no per-client minimums</p>
+<p><strong>Disadvantages:</strong>
+- No per-client trunk isolation --- a Client A spike can starve Client B
+- <a href="/glossary/cid/">Caller ID</a> management is more complex --- all clients' outbound CID must be registered on the same carrier
+- If the carrier goes down, all clients are affected simultaneously
+- Harder to attribute per-client carrier costs</p>
+<p><strong>Configuration:</strong> Use a single carrier entry in <strong>Admin &gt; Carriers</strong>. Assign it to all outbound campaigns. Set per-campaign <a href="/settings/dial-prefix/">dial prefixes</a> if clients need different routing.</p>
+<h3 id="strategy-2-dedicated-trunks-per-client">Strategy 2: Dedicated Trunks Per Client<a class="headerlink" href="#strategy-2-dedicated-trunks-per-client" title="Permanent link">&para;</a></h3>
+<p>Each client gets their own SIP carrier entry (possibly the same upstream carrier but different credentials/accounts).</p>
+<p><strong>Advantages:</strong>
+- Complete trunk isolation --- Client A's traffic cannot affect Client B's capacity
+- Separate <a href="/glossary/cid/">caller ID</a> management per client
+- Clean per-client carrier cost allocation
+- If one client's trunk goes down, others are unaffected</p>
+<p><strong>Disadvantages:</strong>
+- Higher cost --- each client must pay for their trunk capacity even during idle periods
+- More complex configuration --- multiple carrier entries, per-campaign carrier assignments
+- You may exceed your server's concurrent call capacity if all clients spike simultaneously</p>
+<p><strong>Configuration:</strong> Create separate carrier entries per client in <strong>Admin &gt; Carriers</strong>. In each client's campaign settings, set the carrier to their dedicated carrier entry. VICIdial supports per-campaign carrier assignment in <strong>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail &gt; Account Code</strong> and carrier configuration.</p>
+<h3 id="strategy-3-hybrid-dedicated-primary-shared-overflow">Strategy 3: Hybrid (Dedicated Primary + Shared Overflow)<a class="headerlink" href="#strategy-3-hybrid-dedicated-primary-shared-overflow" title="Permanent link">&para;</a></h3>
+<p>Each client has a dedicated primary trunk, with a shared overflow trunk pool for peak traffic.</p>
+<p><strong>Advantages:</strong>
+- Guaranteed capacity for each client
+- Overflow prevents busy signals during spikes
+- Cost-effective balance between isolation and utilization</p>
+<p><strong>Disadvantages:</strong>
+- Most complex to configure and monitor
+- Overflow calls may use different caller IDs</p>
+<p><strong>Configuration:</strong> In <strong>Admin &gt; Carriers</strong>, create per-client carriers plus a shared overflow carrier. In each campaign, configure the primary carrier first, with the overflow carrier as a fallback. VICIdial's carrier weight and priority system handles the failover automatically.</p>
+<h3 id="our-recommendation-for-bpos">Our Recommendation for BPOs<a class="headerlink" href="#our-recommendation-for-bpos" title="Permanent link">&para;</a></h3>
+<p>For most BPOs with 3-10 clients:</p>
+<ul>
+<li><strong>Small clients (&lt;10 agents):</strong> Shared trunk pool. The cost savings outweigh the isolation benefits.</li>
+<li><strong>Medium clients (10-50 agents):</strong> Dedicated trunks. These clients generate enough volume to justify their own trunk allocation, and they typically have caller ID and compliance requirements that demand isolation.</li>
+<li><strong>Large clients (50+ agents):</strong> Dedicated trunks, possibly on a separate <a href="/glossary/carrier/">carrier</a> entirely. Consider whether this client should have their own VICIdial instance.</li>
+</ul>
+<hr />
+<h2 id="per-tenant-billing-and-usage-tracking">Per-Tenant Billing and Usage Tracking<a class="headerlink" href="#per-tenant-billing-and-usage-tracking" title="Permanent link">&para;</a></h2>
+<p>Most BPOs bill clients based on agent hours, call minutes, or a combination. VICIdial provides the raw data to calculate any billing model.</p>
+<h3 id="agent-hours-per-client">Agent Hours Per Client<a class="headerlink" href="#agent-hours-per-client" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Agent hours by user group (proxy for client) for the current month</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">vu</span><span class="p">.</span><span class="n">user_group</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">va</span><span class="p">.</span><span class="k">user</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">agents</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">va</span><span class="p">.</span><span class="n">pause_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">va</span><span class="p">.</span><span class="n">wait_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">va</span><span class="p">.</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">va</span><span class="p">.</span><span class="n">dispo_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">va</span><span class="p">.</span><span class="n">dead_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_hours</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">va</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_users</span><span class="w"> </span><span class="n">vu</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">va</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vu</span><span class="p">.</span><span class="k">user</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">va</span><span class="p">.</span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="s1">&#39;%Y-%m-01&#39;</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vu</span><span class="p">.</span><span class="n">user_group</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">total_hours</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="call-minutes-per-client">Call Minutes Per Client<a class="headerlink" href="#call-minutes-per-client" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Outbound call minutes by campaign for billing period</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">,</span><span class="s1">&#39;CALLBK&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">connected_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_minutes</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">billed_minutes</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s1">&#39;2026-04-01&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="inbound-minutes-per-client">Inbound Minutes Per Client<a class="headerlink" href="#inbound-minutes-per-client" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Inbound call minutes by inbound group</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">inbound_group</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_minutes</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">queue_seconds</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_queue_time</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s1">&#39;2026-04-01&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="recording-storage-per-client">Recording Storage Per Client<a class="headerlink" href="#recording-storage-per-client" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Recording storage consumption by campaign (proxy for client)</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="n">recording_id</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">recording_count</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_hours</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">-- Estimate storage: ~1 MB/min for WAV, ~0.12 MB/min for MP3</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">est_storage_mb_wav</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">est_storage_mb_mp3</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">rl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">vicidial_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">start_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">total_hours</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="automated-billing-reports">Automated Billing Reports<a class="headerlink" href="#automated-billing-reports" title="Permanent link">&para;</a></h3>
+<p>Create a monthly billing script that runs on the 1st of each month:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># monthly_billing.sh - Generate per-client billing reports</span>
+<span class="nv">MONTH</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;last month&quot;</span><span class="w"> </span>+%Y-%m<span class="k">)</span>
+<span class="nv">REPORT_DIR</span><span class="o">=</span><span class="s2">&quot;/reports/billing/</span><span class="si">${</span><span class="nv">MONTH</span><span class="si">}</span><span class="s2">&quot;</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="si">${</span><span class="nv">REPORT_DIR</span><span class="si">}</span>
+
+<span class="c1"># Define clients and their campaigns</span>
+<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span>CLIENTS
+CLIENTS<span class="o">[</span>CLIENT_A<span class="o">]=</span><span class="s2">&quot;CLIENT_A_SALES_OB,CLIENT_A_INBOUND&quot;</span>
+CLIENTS<span class="o">[</span>CLIENT_B<span class="o">]=</span><span class="s2">&quot;CLIENT_B_APPT_SET&quot;</span>
+CLIENTS<span class="o">[</span>CLIENT_C<span class="o">]=</span><span class="s2">&quot;CLIENT_C_SURVEY_Q1&quot;</span>
+
+<span class="k">for</span><span class="w"> </span>CLIENT<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="p">!CLIENTS[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">CAMPAIGNS</span><span class="o">=</span><span class="si">${</span><span class="nv">CLIENTS</span><span class="p">[</span><span class="nv">$CLIENT</span><span class="p">]</span><span class="si">}</span>
+<span class="w">    </span><span class="nv">CAMPAIGN_LIST</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="si">${</span><span class="nv">CAMPAIGNS</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s2">&quot;s/,/&#39;,&#39;/g&quot;</span><span class="k">)</span>
+
+<span class="w">    </span>mysql<span class="w"> </span>-u<span class="w"> </span>cron<span class="w"> </span>-p<span class="s1">&#39;password&#39;</span><span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    SELECT</span>
+<span class="s2">        &#39;</span><span class="si">${</span><span class="nv">CLIENT</span><span class="si">}</span><span class="s2">&#39; as client,</span>
+<span class="s2">        campaign_id,</span>
+<span class="s2">        COUNT(*) as total_calls,</span>
+<span class="s2">        SUM(CASE WHEN length_in_sec &gt; 0 THEN 1 ELSE 0 END) as connected,</span>
+<span class="s2">        ROUND(SUM(length_in_sec)/60, 2) as minutes,</span>
+<span class="s2">        ROUND(SUM(length_in_sec)/3600, 2) as hours</span>
+<span class="s2">    FROM vicidial_log</span>
+<span class="s2">    WHERE call_date &gt;= &#39;</span><span class="si">${</span><span class="nv">MONTH</span><span class="si">}</span><span class="s2">-01&#39;</span>
+<span class="s2">      AND call_date &lt; DATE_ADD(&#39;</span><span class="si">${</span><span class="nv">MONTH</span><span class="si">}</span><span class="s2">-01&#39;, INTERVAL 1 MONTH)</span>
+<span class="s2">      AND campaign_id IN (&#39;</span><span class="si">${</span><span class="nv">CAMPAIGN_LIST</span><span class="si">}</span><span class="s2">&#39;)</span>
+<span class="s2">    GROUP BY campaign_id;</span>
+<span class="s2">    &quot;</span><span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">REPORT_DIR</span><span class="si">}</span>/<span class="si">${</span><span class="nv">CLIENT</span><span class="si">}</span>_billing.tsv
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Generated billing report for </span><span class="si">${</span><span class="nv">CLIENT</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>Per-Client Billing, Automated.</strong>
+ViciStack BPO deployments include billing infrastructure with per-tenant usage tracking and automated monthly reports. <a href="/pricing/">Learn More.</a></p>
+</blockquote>
+<hr />
+<h2 id="resource-allocation-and-capacity-planning">Resource Allocation and Capacity Planning<a class="headerlink" href="#resource-allocation-and-capacity-planning" title="Permanent link">&para;</a></h2>
+<p>Running multiple clients on shared infrastructure requires careful capacity planning to ensure one client's traffic does not degrade another client's experience.</p>
+<h3 id="server-sizing-for-multi-tenant">Server Sizing for Multi-Tenant<a class="headerlink" href="#server-sizing-for-multi-tenant" title="Permanent link">&para;</a></h3>
+<p>Use the single-tenant sizing guidelines from the <a href="/blog/vicidial-setup-guide/">setup guide</a> as a starting point, then add a 20-30% buffer for multi-tenant overhead:</p>
+<table>
+<thead>
+<tr>
+<th>Total Agents (All Clients)</th>
+<th>Server Configuration</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Under 25</td>
+<td>Single server, 8 cores, 16 GB RAM</td>
+<td>All roles on one box</td>
+</tr>
+<tr>
+<td>25-75</td>
+<td>Web + DB server, separate telephony</td>
+<td>Standard <a href="/blog/vicidial-cluster-guide/">cluster split</a></td>
+</tr>
+<tr>
+<td>75-150</td>
+<td>Web, DB, 2-3 telephony servers</td>
+<td>Multiple dialers for capacity</td>
+</tr>
+<tr>
+<td>150-300</td>
+<td>Full cluster with redundancy</td>
+<td>Consider per-client server isolation</td>
+</tr>
+<tr>
+<td>300+</td>
+<td>Strongly consider separate instances</td>
+<td>Shared infrastructure becomes a risk</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trunk-capacity-per-client">Trunk Capacity Per Client<a class="headerlink" href="#trunk-capacity-per-client" title="Permanent link">&para;</a></h3>
+<p>A critical capacity planning metric for multi-tenant VICIdial is concurrent call capacity. Each outbound agent with <a href="/glossary/predictive-dialing/">predictive dialing</a> at a 3:1 <a href="/settings/auto-dial-level/">dial ratio</a> generates 3 concurrent SIP channels. Add inbound calls and you need:</p>
+<div class="codehilite"><pre><span></span><code>Total concurrent channels = (Outbound agents x Dial ratio) + Inbound calls
+</code></pre></div>
+
+<p>Example for three clients:
+- Client A: 30 agents x 3 ratio = 90 channels + 10 inbound = 100
+- Client B: 15 agents x 2 ratio = 30 channels + 5 inbound = 35
+- Client C: 50 agents x 4 ratio = 200 channels + 0 inbound = 200
+- <strong>Total: 335 concurrent channels</strong></p>
+<p>Each Asterisk server on modern hardware (8+ cores, 16 GB RAM) handles approximately 250-350 concurrent channels with <a href="/glossary/recording/">recording</a> active. This three-client scenario needs at least 2 telephony servers.</p>
+<h3 id="preventing-noisy-neighbor-problems">Preventing "Noisy Neighbor" Problems<a class="headerlink" href="#preventing-noisy-neighbor-problems" title="Permanent link">&para;</a></h3>
+<p>When one client's traffic spike degrades other clients' performance:</p>
+<p><strong>CPU contention:</strong> One client running aggressive <a href="/glossary/amd/">AMD</a> processing can consume CPU that other clients need for real-time audio. Monitor per-campaign CPU usage via Asterisk:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check active channels per campaign</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show channels&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;campaign_id&quot;</span>
+</code></pre></div>
+
+<p><strong>Hopper contention:</strong> The <a href="/glossary/hopper/">hopper</a> fill process runs per campaign, but it shares MySQL resources. A client with 500,000 active leads fills the hopper slower than a client with 10,000 leads, and during the fill process, other campaigns' hopper fills may be delayed. Mitigate this by staggering <a href="/settings/hopper-level/">hopper level</a> settings --- high-volume campaigns get higher hopper levels to reduce fill frequency.</p>
+<p><strong>Recording I/O:</strong> <a href="/blog/vicidial-call-recording/">Recording</a> 200 concurrent calls writes roughly 200 MB/minute to disk. If multiple clients spike simultaneously, disk I/O becomes the bottleneck. Use separate disks or partitions for recordings versus the database.</p>
+<hr />
+<h2 id="limitations-of-vicidial-multi-tenancy">Limitations of VICIdial Multi-Tenancy<a class="headerlink" href="#limitations-of-vicidial-multi-tenancy" title="Permanent link">&para;</a></h2>
+<p>Be honest with your clients about what VICIdial's multi-tenancy cannot do. Setting expectations correctly prevents contractual disputes.</p>
+<h3 id="no-database-level-isolation">No Database-Level Isolation<a class="headerlink" href="#no-database-level-isolation" title="Permanent link">&para;</a></h3>
+<p>All tenants share the same MySQL instance and the same tables. A user with <code>SELECT</code> access to <code>vicidial_list</code> can see all leads from all clients. Application-level permissions prevent this through the admin interface, but the data is not physically separated.</p>
+<p><strong>Implication:</strong> If a client requires SOC 2, HIPAA BAA, or contractual language guaranteeing data isolation at the database level, shared VICIdial cannot meet that requirement. You need separate instances.</p>
+<h3 id="no-per-tenant-resource-guarantees">No Per-Tenant Resource Guarantees<a class="headerlink" href="#no-per-tenant-resource-guarantees" title="Permanent link">&para;</a></h3>
+<p>You cannot guarantee Client A gets 50% of the server's CPU or 100 dedicated SIP channels. VICIdial does not have resource quotas or QoS (Quality of Service) at the tenant level. Resource allocation is first-come-first-served.</p>
+<p><strong>Implication:</strong> During peak hours, one client's traffic can impact another's <a href="/glossary/contact-rate/">contact rate</a> and <a href="/glossary/agent-utilization/">agent utilization</a>. Overprovisioning (running at 60-70% capacity instead of 90%) is the practical mitigation.</p>
+<h3 id="shared-system-settings">Shared System Settings<a class="headerlink" href="#shared-system-settings" title="Permanent link">&para;</a></h3>
+<p>VICIdial's System Settings (Admin &gt; System Settings) apply globally. This includes:</p>
+<ul>
+<li>Maximum <a href="/glossary/hopper/">hopper</a> size</li>
+<li>Recording format (WAV/MP3)</li>
+<li>Session timeout values</li>
+<li>API access controls</li>
+<li>Time zone settings</li>
+</ul>
+<p>You cannot have Client A on WAV recordings and Client B on MP3. You cannot have Client A with 30-minute session timeouts and Client B with 2-hour timeouts. These are system-wide settings.</p>
+<h3 id="admin-user-visibility">Admin User Visibility<a class="headerlink" href="#admin-user-visibility" title="Permanent link">&para;</a></h3>
+<p>VICIdial admin users at level 9 (the highest) can see all campaigns, all users, all data regardless of user group assignments. Your internal admin team necessarily has full cross-tenant visibility. This is operationally required but may concern clients who want absolute data isolation.</p>
+<p><strong>Mitigation:</strong> Limit level 9 access to a small number of trusted administrators. Use level 7-8 for day-to-day administration. Log admin access activities.</p>
+<hr />
+<h2 id="when-to-split-separate-instances-vs-shared-infrastructure">When to Split: Separate Instances vs. Shared Infrastructure<a class="headerlink" href="#when-to-split-separate-instances-vs-shared-infrastructure" title="Permanent link">&para;</a></h2>
+<p>The shared multi-tenant model works well up to a point. Beyond that point, the risks and limitations outweigh the cost savings.</p>
+<h3 id="signals-that-you-need-separate-instances">Signals That You Need Separate Instances<a class="headerlink" href="#signals-that-you-need-separate-instances" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Client requires database-level isolation</strong> (contractual, regulatory, or compliance-driven)</li>
+<li><strong>Client has 100+ agents</strong> and their traffic can impact other tenants</li>
+<li><strong>Client needs custom VICIdial modifications</strong> (custom PHP code, agent screen changes) that would affect other tenants</li>
+<li><strong>Client needs a different Asterisk version</strong> or custom Asterisk modules</li>
+<li><strong>Client is in a heavily regulated industry</strong> (healthcare, financial services, government) with strict data handling requirements</li>
+<li><strong>Client demands dedicated infrastructure</strong> as a contractual term</li>
+</ul>
+<h3 id="the-cost-trade-off">The Cost Trade-Off<a class="headerlink" href="#the-cost-trade-off" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Server Cost (50 agents)</th>
+<th>Admin Overhead</th>
+<th>Client Isolation</th>
+<th>Flexibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shared VICIdial (3 clients on 1 instance)</td>
+<td>$200-500/month total</td>
+<td>Low</td>
+<td>Administrative only</td>
+<td>Limited</td>
+</tr>
+<tr>
+<td>Dedicated VICIdial per client</td>
+<td>$200-500/month <strong>per client</strong></td>
+<td>High (3x management)</td>
+<td>Database + OS level</td>
+<td>Full</td>
+</tr>
+<tr>
+<td>Hybrid (large clients dedicated, small shared)</td>
+<td>Varies</td>
+<td>Medium</td>
+<td>Best of both</td>
+<td>Good</td>
+</tr>
+</tbody>
+</table>
+<p>The <a href="/blog/vicidial-cost-2026/">true cost of running VICIdial</a> includes not just server hardware but also administration time. Each separate VICIdial instance needs its own patching, monitoring, backup, and maintenance. Three instances means three times the admin work --- or a managed service provider like ViciStack handling it for you.</p>
+<h3 id="the-hybrid-approach">The Hybrid Approach<a class="headerlink" href="#the-hybrid-approach" title="Permanent link">&para;</a></h3>
+<p>The most common BPO architecture we see:</p>
+<ul>
+<li><strong>Large anchor clients (50+ agents):</strong> Dedicated VICIdial instance on dedicated hardware</li>
+<li><strong>Medium clients (15-50 agents):</strong> Shared VICIdial instance with proper user group isolation, grouped with 2-3 similar-sized clients</li>
+<li><strong>Small clients (&lt;15 agents):</strong> Shared multi-tenant instance with 5-10 other small clients</li>
+</ul>
+<p>This balances cost, isolation, and administrative overhead. It also lets you move clients between tiers as they grow --- a small client that scales to 50 agents graduates to a dedicated instance.</p>
+<hr />
+<h2 id="example-complete-multi-tenant-configuration-for-a-3-client-bpo">Example: Complete Multi-Tenant Configuration for a 3-Client BPO<a class="headerlink" href="#example-complete-multi-tenant-configuration-for-a-3-client-bpo" title="Permanent link">&para;</a></h2>
+<p>Let us walk through a concrete example. You are a BPO with three clients:</p>
+<ul>
+<li><strong>Apex Insurance</strong> --- 25 outbound agents, 5 inbound agents</li>
+<li><strong>GreenSolar</strong> --- 15 outbound agents, appointment setting</li>
+<li><strong>VoteReach</strong> --- 40 outbound agents, survey campaign (seasonal)</li>
+</ul>
+<h3 id="user-group-setup">User Group Setup<a class="headerlink" href="#user-group-setup" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Group ID</th>
+<th>Users</th>
+<th>Admin Level</th>
+<th>Allowed Campaigns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BPO_SUPER</td>
+<td>2 super admins</td>
+<td>9</td>
+<td>All</td>
+</tr>
+<tr>
+<td>BPO_MANAGER</td>
+<td>4 managers</td>
+<td>8</td>
+<td>All</td>
+</tr>
+<tr>
+<td>APEX_MANAGER</td>
+<td>2 Apex managers</td>
+<td>7</td>
+<td>APEX_OB_SALES, APEX_INBOUND</td>
+</tr>
+<tr>
+<td>APEX_AGENT</td>
+<td>30 Apex agents</td>
+<td>1</td>
+<td>APEX_OB_SALES, APEX_INBOUND</td>
+</tr>
+<tr>
+<td>GREEN_MANAGER</td>
+<td>1 GreenSolar manager</td>
+<td>7</td>
+<td>GREEN_APPTSET</td>
+</tr>
+<tr>
+<td>GREEN_AGENT</td>
+<td>15 GreenSolar agents</td>
+<td>1</td>
+<td>GREEN_APPTSET</td>
+</tr>
+<tr>
+<td>VOTE_MANAGER</td>
+<td>2 VoteReach managers</td>
+<td>7</td>
+<td>VOTE_SURVEY_Q1</td>
+</tr>
+<tr>
+<td>VOTE_AGENT</td>
+<td>40 VoteReach agents</td>
+<td>1</td>
+<td>VOTE_SURVEY_Q1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="campaign-configuration">Campaign Configuration<a class="headerlink" href="#campaign-configuration" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Campaign ID</th>
+<th>Client</th>
+<th>Type</th>
+<th>Lists</th>
+<th>Carrier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APEX_OB_SALES</td>
+<td>Apex Insurance</td>
+<td>Outbound</td>
+<td>1001-1050</td>
+<td>APEX_SIP (dedicated)</td>
+</tr>
+<tr>
+<td>APEX_INBOUND</td>
+<td>Apex Insurance</td>
+<td>Inbound</td>
+<td>N/A</td>
+<td>APEX_SIP</td>
+</tr>
+<tr>
+<td>GREEN_APPTSET</td>
+<td>GreenSolar</td>
+<td>Outbound</td>
+<td>2001-2020</td>
+<td>SHARED_POOL</td>
+</tr>
+<tr>
+<td>VOTE_SURVEY_Q1</td>
+<td>VoteReach</td>
+<td>Outbound</td>
+<td>3001-3100</td>
+<td>SHARED_POOL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="recording-permissions">Recording Permissions<a class="headerlink" href="#recording-permissions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Recording Access</th>
+<th>Allowed Recording Campaigns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APEX_MANAGER</td>
+<td>ALL</td>
+<td>APEX_OB_SALES, APEX_INBOUND</td>
+</tr>
+<tr>
+<td>APEX_AGENT</td>
+<td>OWN</td>
+<td>APEX_OB_SALES, APEX_INBOUND</td>
+</tr>
+<tr>
+<td>GREEN_MANAGER</td>
+<td>ALL</td>
+<td>GREEN_APPTSET</td>
+</tr>
+<tr>
+<td>GREEN_AGENT</td>
+<td>NONE</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>VOTE_MANAGER</td>
+<td>ALL</td>
+<td>VOTE_SURVEY_Q1</td>
+</tr>
+<tr>
+<td>VOTE_AGENT</td>
+<td>NONE</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="infrastructure">Infrastructure<a class="headerlink" href="#infrastructure" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Specification</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server 1</td>
+<td>8-core, 32 GB RAM, 2 TB SSD</td>
+<td>DB + Web</td>
+</tr>
+<tr>
+<td>Server 2</td>
+<td>8-core, 16 GB RAM, 1 TB SSD</td>
+<td>Telephony (Apex + GreenSolar)</td>
+</tr>
+<tr>
+<td>Server 3</td>
+<td>8-core, 16 GB RAM, 1 TB SSD</td>
+<td>Telephony (VoteReach, seasonal)</td>
+</tr>
+</tbody>
+</table>
+<p>Server 3 can be decommissioned when VoteReach's seasonal campaign ends, reducing costs during off-peak months.</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="can-a-single-agent-work-across-multiple-clients-campaigns">Can a single agent work across multiple clients' campaigns?<a class="headerlink" href="#can-a-single-agent-work-across-multiple-clients-campaigns" title="Permanent link">&para;</a></h3>
+<p>Yes, but this creates a data isolation concern. If an agent is in a user group that has access to both Client A and Client B campaigns, they could theoretically see data from both clients (in reports or callback lists). If you need agents to float between clients, create a separate user group with access to multiple campaigns and understand that those agents are not isolated to a single tenant.</p>
+<h3 id="how-do-i-handle-dnc-lists-for-multiple-clients">How do I handle DNC lists for multiple clients?<a class="headerlink" href="#how-do-i-handle-dnc-lists-for-multiple-clients" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports both a system-wide <a href="/glossary/dnc/">DNC</a> list and per-campaign DNC lists. For multi-tenant operations, use per-campaign DNC lists (Admin &gt; Campaigns &gt; [Campaign] &gt; DNC settings). This way, if a number is DNC for Client A, it is not automatically DNC for Client B unless it is also on Client B's list. The system-wide DNC list applies to all campaigns --- use it for numbers that should be blocked globally (e.g., your own company numbers, known litigators).</p>
+<h3 id="can-i-give-clients-direct-admin-access-to-manage-their-own-campaigns">Can I give clients direct admin access to manage their own campaigns?<a class="headerlink" href="#can-i-give-clients-direct-admin-access-to-manage-their-own-campaigns" title="Permanent link">&para;</a></h3>
+<p>Yes, with careful user group configuration. Set the client's manager user group to admin level 7-8 with campaign modification permissions limited to their allowed campaigns. They can then adjust <a href="/settings/auto-dial-level/">dial levels</a>, <a href="/settings/lead-recycling/">lead recycling</a>, dispositions, and other campaign settings without seeing or affecting other clients. We recommend starting with read-only access and upgrading to modify access as the client demonstrates competence.</p>
+<h3 id="how-do-i-prevent-one-client-from-using-too-many-sip-trunks">How do I prevent one client from using too many SIP trunks?<a class="headerlink" href="#how-do-i-prevent-one-client-from-using-too-many-sip-trunks" title="Permanent link">&para;</a></h3>
+<p>VICIdial does not have per-campaign trunk limits built in. The practical solution is to limit the <a href="/settings/adaptive-dl-level/">max dial level</a> on a client's campaign, which indirectly limits their concurrent trunk usage. If a campaign's dial level is capped at 3.0 with 20 agents, the maximum concurrent outbound channels is 60. For dedicated trunk strategies, configure separate carriers with limited channel counts at the carrier level.</p>
+<h3 id="is-there-a-way-to-brand-the-agent-interface-per-client">Is there a way to brand the agent interface per client?<a class="headerlink" href="#is-there-a-way-to-brand-the-agent-interface-per-client" title="Permanent link">&para;</a></h3>
+<p>Not natively. VICIdial's agent screen is the same for all user groups. However, you can use campaign-level scripts (Admin &gt; Campaigns &gt; Script) to display client-specific branding, logos, and content within the script panel of the agent screen. For fully separate branded interfaces, you would need to build custom agent screens using VICIdial's agent API.</p>
+<h3 id="can-i-run-different-vicidial-versions-for-different-clients-on-the-same-server">Can I run different VICIdial versions for different clients on the same server?<a class="headerlink" href="#can-i-run-different-vicidial-versions-for-different-clients-on-the-same-server" title="Permanent link">&para;</a></h3>
+<p>No. A VICIdial installation is a single codebase. All campaigns run on the same VICIdial revision and PHP version. If different clients need different VICIdial versions (e.g., one client needs a feature only available in the latest SVN, while another needs to stay on an older version for compatibility), you need separate VICIdial instances.</p>
+<h3 id="how-do-i-handle-client-onboarding-and-offboarding">How do I handle client onboarding and offboarding?<a class="headerlink" href="#how-do-i-handle-client-onboarding-and-offboarding" title="Permanent link">&para;</a></h3>
+<p><strong>Onboarding:</strong> Create user groups, campaigns, lists, carrier entries (if dedicated), and DID routing. Assign list ID ranges. Create manager and agent user accounts. Test with a small pilot list before going live.</p>
+<p><strong>Offboarding:</strong> Export the client's data (leads, CDR, recordings) and provide it to them. Deactivate their campaigns, users, and user groups (do not delete --- you may need the data for billing disputes or compliance). Archive their recordings to long-term storage. Release their DID numbers after a reasonable holding period (30-90 days in case the client returns).</p>
+<h3 id="what-about-multi-tenant-vicidial-in-the-cloud">What about multi-tenant VICIdial in the cloud?<a class="headerlink" href="#what-about-multi-tenant-vicidial-in-the-cloud" title="Permanent link">&para;</a></h3>
+<p>All of the multi-tenancy principles in this guide apply equally to <a href="/blog/vicidial-cloud-deployment/">cloud-deployed VICIdial</a>. Cloud adds the option of easily spinning up dedicated instances per client when needed, since provisioning a new server takes minutes instead of days. For BPOs, the hybrid cloud approach works well: shared infrastructure for small clients, dedicated cloud instances for large clients, all managed centrally.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-multi-tenant">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

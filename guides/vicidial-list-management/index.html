@@ -1,0 +1,3688 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://vicistack-docs.readthedocs.io/guides/vicidial-list-management/">
+      
+      
+        <link rel="prev" href="../vicidial-lead-recycling/">
+      
+      
+        <link rel="next" href="../vicidial-multi-tenant/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial List Management Best Practices: Stop Burning Your Best Leads - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-list-management-best-practices-stop-burning-your-best-leads" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial List Management Best Practices: Stop Burning Your Best Leads
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial List Management Best Practices: Stop Burning Your Best Leads
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial List Management Best Practices: Stop Burning Your Best Leads
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-list-management-is-the-hidden-performance-lever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why List Management Is the Hidden Performance Lever
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-list-architecture-lists-campaigns-and-lead-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial List Architecture: Lists, Campaigns, and Lead Tables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial List Architecture: Lists, Campaigns, and Lead Tables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-vicidial_list-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The vicidial_list Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lists-and-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lists and Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-level-list-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign-Level List Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-upload-best-practices-format-deduplication-and-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Upload Best Practices: Format, Deduplication, and Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Upload Best Practices: Format, Deduplication, and Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-format-and-field-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Format and Field Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-upload-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Upload Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplication-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplication Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-upload-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Upload Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-segmentation-how-to-build-lists-that-perform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Segmentation: How to Build Lists That Perform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Segmentation: How to Build Lists That Perform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-segmentation-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Segmentation Matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segmentation-dimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Segmentation Dimensions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recycling-logic-how-to-set-up-intelligent-re-dial-sequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recycling Logic: How to Set Up Intelligent Re-dial Sequences
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recycling Logic: How to Set Up Intelligent Re-dial Sequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-lead-recycling-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Lead Recycling Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-recycling-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Recycling Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-day-re-dial-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Day Re-dial Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-7-day-re-dial-cadence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 7-Day Re-dial Cadence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disposition-management-which-statuses-to-create-and-why" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disposition Management: Which Statuses to Create and Why
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Disposition Management: Which Statuses to Create and Why">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-system-default-statuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial System Default Statuses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-statuses-you-should-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Statuses You Should Create
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status Categories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disposition-code-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disposition Code Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-zone-filtering-the-legal-and-performance-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Zone Filtering: The Legal and Performance Implications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time Zone Filtering: The Legal and Performance Implications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-handles-time-zones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Handles Time Zones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Implications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-level-restrictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Level Restrictions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-daily-lead-flow-hopper-configuration-and-refill-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Daily Lead Flow: Hopper Configuration and Refill Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Daily Lead Flow: Hopper Configuration and Refill Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-the-hopper-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Hopper Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-hopper-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Hopper Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hopper-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hopper Priority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daily-hopper-management-routine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daily Hopper Management Routine
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-aging-when-to-retire-suppress-or-reactivate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Aging: When to Retire, Suppress, or Reactivate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Aging: When to Retire, Suppress, or Reactivate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-aging-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Aging Framework
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#moving-leads-between-tiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving Leads Between Tiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-reactivate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Reactivate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppression-vs-deletion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suppression vs. Deletion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-retention-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Retention Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistacks-list-management-module-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack's List Management Module Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How ViciStack&#39;s List Management Module Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-list-segmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated List Segmentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intelligent-recycling-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intelligent Recycling Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lead-lifecycle-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Lifecycle Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnc-and-compliance-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNC and Compliance Automation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-integrates-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Integrates with VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-list-performance-the-kpis-that-actually-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring List Performance: The KPIs That Actually Matter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring List Performance: The KPIs That Actually Matter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-core-list-kpis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Core List KPIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-list-performance-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a List Performance Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#putting-it-all-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Putting It All Together
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Multi-Tenant Setup for BPOs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-list-management-is-the-hidden-performance-lever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why List Management Is the Hidden Performance Lever
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-list-architecture-lists-campaigns-and-lead-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial List Architecture: Lists, Campaigns, and Lead Tables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial List Architecture: Lists, Campaigns, and Lead Tables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-vicidial_list-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The vicidial_list Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lists-and-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lists and Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-level-list-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign-Level List Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-upload-best-practices-format-deduplication-and-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Upload Best Practices: Format, Deduplication, and Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Upload Best Practices: Format, Deduplication, and Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-format-and-field-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Format and Field Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-upload-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Upload Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplication-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplication Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-upload-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Upload Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-segmentation-how-to-build-lists-that-perform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Segmentation: How to Build Lists That Perform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Segmentation: How to Build Lists That Perform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-segmentation-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Segmentation Matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segmentation-dimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Segmentation Dimensions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recycling-logic-how-to-set-up-intelligent-re-dial-sequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recycling Logic: How to Set Up Intelligent Re-dial Sequences
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recycling Logic: How to Set Up Intelligent Re-dial Sequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-lead-recycling-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Lead Recycling Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-recycling-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Recycling Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-day-re-dial-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Day Re-dial Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-7-day-re-dial-cadence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 7-Day Re-dial Cadence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disposition-management-which-statuses-to-create-and-why" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disposition Management: Which Statuses to Create and Why
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Disposition Management: Which Statuses to Create and Why">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-system-default-statuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial System Default Statuses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-statuses-you-should-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Statuses You Should Create
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status Categories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disposition-code-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disposition Code Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-zone-filtering-the-legal-and-performance-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Zone Filtering: The Legal and Performance Implications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time Zone Filtering: The Legal and Performance Implications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-handles-time-zones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Handles Time Zones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Implications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-level-restrictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Level Restrictions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-daily-lead-flow-hopper-configuration-and-refill-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Daily Lead Flow: Hopper Configuration and Refill Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Daily Lead Flow: Hopper Configuration and Refill Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-the-hopper-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Hopper Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-hopper-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Hopper Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hopper-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hopper Priority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daily-hopper-management-routine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daily Hopper Management Routine
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-aging-when-to-retire-suppress-or-reactivate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Aging: When to Retire, Suppress, or Reactivate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Aging: When to Retire, Suppress, or Reactivate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-aging-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Aging Framework
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#moving-leads-between-tiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving Leads Between Tiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-reactivate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Reactivate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppression-vs-deletion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suppression vs. Deletion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-retention-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Retention Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistacks-list-management-module-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack's List Management Module Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How ViciStack&#39;s List Management Module Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-list-segmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated List Segmentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intelligent-recycling-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intelligent Recycling Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lead-lifecycle-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Lifecycle Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnc-and-compliance-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNC and Compliance Automation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-integrates-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Integrates with VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-list-performance-the-kpis-that-actually-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring List Performance: The KPIs That Actually Matter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring List Performance: The KPIs That Actually Matter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-core-list-kpis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Core List KPIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-list-performance-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a List Performance Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#putting-it-all-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Putting It All Together
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-list-management-best-practices-stop-burning-your-best-leads">VICIdial List Management Best Practices: Stop Burning Your Best Leads<a class="headerlink" href="#vicidial-list-management-best-practices-stop-burning-your-best-leads" title="Permanent link">&para;</a></h1>
+<h2 id="why-list-management-is-the-hidden-performance-lever">Why List Management Is the Hidden Performance Lever<a class="headerlink" href="#why-list-management-is-the-hidden-performance-lever" title="Permanent link">&para;</a></h2>
+<p>Most VICIdial operators obsess over <a href="/settings/auto-dial-level/">dial levels</a> and <a href="/blog/vicidial-predictive-dialer-settings/">trunk capacity</a> while ignoring the single factor that determines whether any of that infrastructure actually produces revenue: the quality and organization of their lead data.</p>
+<p>Here is the uncomfortable truth. Two call centers running the exact same VICIdial build, with the same number of agents, the same carrier, and the same product offer, will produce wildly different results based entirely on how they manage their lists. One center carefully segments leads by age, source, and prior contact history. The other dumps everything into a single list and lets the dialer chew through it. The first center consistently hits 12-15% contact rates and 3-4% conversion. The second hovers around 6% contact and wonders why their cost per acquisition keeps climbing.</p>
+<p>The gap is not about technology. It is about list discipline.</p>
+<p>List management in VICIdial is the practice of controlling which leads get dialed, in what order, how many times, and at what intervals. It encompasses everything from the moment a lead record enters your <code>vicidial_list</code> table to the moment it is retired from active dialing. Done well, it maximizes the revenue extracted from every lead you purchase or generate. Done poorly, it burns through your best prospects in a single afternoon and leaves your agents dialing dead numbers for the rest of the week.</p>
+<p>The stakes are real. Lead costs have increased across nearly every vertical over the past three years. If you are paying $8-25 per lead in insurance, solar, or home services, burning through a 50,000-record list in two days without proper recycling and segmentation is not just inefficient --- it is financially reckless. You are essentially paying full price for leads that never get a fair chance at contact because they were buried under a pile of disconnected numbers and wrong-timezone dials.</p>
+<p>This guide covers the complete lead management lifecycle inside VICIdial: upload formatting, deduplication, segmentation strategy, recycling logic, disposition codes, time zone compliance, hopper configuration, lead aging, and the KPIs that tell you whether your list strategy is actually working. Every recommendation is specific to VICIdial's admin interface, database schema, and operational model. If you run a different dialer, some concepts will translate, but the implementation details are VICIdial-specific.</p>
+<p>Let us fix your lists.</p>
+<h2 id="vicidial-list-architecture-lists-campaigns-and-lead-tables">VICIdial List Architecture: Lists, Campaigns, and Lead Tables<a class="headerlink" href="#vicidial-list-architecture-lists-campaigns-and-lead-tables" title="Permanent link">&para;</a></h2>
+<p>Before you can optimize list management, you need to understand how VICIdial actually organizes lead data at the database level. The architecture is straightforward, but the relationships between lists, campaigns, and the lead table create both flexibility and potential confusion.</p>
+<h3 id="the-vicidial_list-table">The vicidial_list Table<a class="headerlink" href="#the-vicidial_list-table" title="Permanent link">&para;</a></h3>
+<p>Every lead in VICIdial lives in a single MySQL table: <code>vicidial_list</code>. This is the master lead repository. Whether you have 10,000 leads or 10 million, they all sit in this one table, differentiated by the <code>list_id</code> column. The key columns you need to understand are:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lead_id</code></td>
+<td>Auto-increment primary key, unique per lead</td>
+</tr>
+<tr>
+<td><code>list_id</code></td>
+<td>Associates the lead with a specific list</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>Current disposition (NEW, NA, B, A, SALE, DNC, etc.)</td>
+</tr>
+<tr>
+<td><code>phone_number</code></td>
+<td>Primary dial number (minimum 8 digits)</td>
+</tr>
+<tr>
+<td><code>phone_code</code></td>
+<td>Country code (1 for US/Canada)</td>
+</tr>
+<tr>
+<td><code>vendor_lead_code</code></td>
+<td>Your internal lead ID from upstream sources</td>
+</tr>
+<tr>
+<td><code>called_count</code></td>
+<td>Total number of dial attempts on this lead</td>
+</tr>
+<tr>
+<td><code>called_since_last_reset</code></td>
+<td>Y/N flag --- controls whether the hopper picks it up</td>
+</tr>
+<tr>
+<td><code>gmt_offset_now</code></td>
+<td>Time zone offset, used for time zone filtering</td>
+</tr>
+<tr>
+<td><code>rank</code></td>
+<td>Numeric priority value for lead ordering</td>
+</tr>
+<tr>
+<td><code>owner</code></td>
+<td>Can be used for agent-specific or team-specific routing</td>
+</tr>
+<tr>
+<td><code>entry_date</code></td>
+<td>When the lead was loaded into the system</td>
+</tr>
+<tr>
+<td><code>modify_date</code></td>
+<td>Last time the lead record was updated</td>
+</tr>
+</tbody>
+</table>
+<p>Understanding these columns is critical because every list management operation --- filtering, recycling, segmentation, reporting --- ultimately operates on these fields.</p>
+<h3 id="lists-and-campaigns">Lists and Campaigns<a class="headerlink" href="#lists-and-campaigns" title="Permanent link">&para;</a></h3>
+<p>A <strong>list</strong> in VICIdial is simply a logical grouping defined by a <code>list_id</code> value. Lists are assigned to campaigns, and a single campaign can dial from multiple lists simultaneously. This is the foundation of segmentation: you create separate lists for different lead sources, age cohorts, or quality tiers, then activate or deactivate them within a campaign as needed.</p>
+<p>To view and manage lists, navigate to <strong>Admin &gt; Lists</strong> in the VICIdial admin interface. From here you can:</p>
+<ul>
+<li>Create new lists and assign them to campaigns</li>
+<li>Set lists to Active or Inactive</li>
+<li>Reset the <code>called_since_last_reset</code> flag for all leads in a list</li>
+<li>Access the lead loader to upload new data</li>
+<li>Override campaign-level settings at the list level (caller ID, scripts, web forms)</li>
+</ul>
+<p>A critical architectural point: lists belong to campaigns, but the <code>vicidial_list</code> table is global. This means a single phone number can exist in multiple lists. VICIdial does not enforce cross-list deduplication by default --- that is your responsibility, and we will cover how to handle it in the next section.</p>
+<h3 id="campaign-level-list-controls">Campaign-Level List Controls<a class="headerlink" href="#campaign-level-list-controls" title="Permanent link">&para;</a></h3>
+<p>Within <strong>Admin &gt; Campaigns &gt; [Campaign Name]</strong>, the <strong>List Settings</strong> section controls how the campaign interacts with its assigned lists:</p>
+<ul>
+<li><strong>Dial Statuses</strong>: Which lead statuses the campaign will attempt to dial. If a status is not checked here, leads with that status will not enter the hopper regardless of which list they are in.</li>
+<li><strong>Lead Order</strong>: Controls the sequence in which leads are pulled from the <code>vicidial_list</code> table into the hopper. Options include UP (oldest first), DOWN (newest first), UP PHONE (by phone number ascending), DOWN COUNT (lowest call count first), and several rank-based orderings.</li>
+<li><strong>Lead Filter</strong>: A SQL WHERE clause that further restricts which leads are eligible for the hopper beyond the dial status check.</li>
+<li><strong>List Order Randomize</strong>: When enabled, adds randomization to the lead ordering to prevent predictable dial patterns.</li>
+</ul>
+<p>The interplay between dial statuses, lead filters, and lead ordering is where most list management strategy lives. Getting these three settings right for each campaign is worth more than any amount of trunk optimization.</p>
+<blockquote>
+<p><strong>Your list architecture determines your contact rate.</strong> If your campaigns are dialing from unstructured, unsegmented lists, you are leaving money on the table. <a href="/free-audit/">Request a free ViciStack audit</a> and we will map your current list structure against best practices.</p>
+</blockquote>
+<h2 id="lead-upload-best-practices-format-deduplication-and-validation">Lead Upload Best Practices: Format, Deduplication, and Validation<a class="headerlink" href="#lead-upload-best-practices-format-deduplication-and-validation" title="Permanent link">&para;</a></h2>
+<p>The quality of your lead data at the point of upload determines the ceiling for every downstream metric. Garbage in, garbage out is not a cliche in outbound dialing --- it is a measurable financial reality. A list with 15% invalid phone numbers will drag down your contact rate, inflate your cost per contact, and waste agent time on dead dials.</p>
+<h3 id="file-format-and-field-mapping">File Format and Field Mapping<a class="headerlink" href="#file-format-and-field-mapping" title="Permanent link">&para;</a></h3>
+<p>VICIdial's lead loader (<code>/vicidial/admin_listloader_fourth_gen.php</code>) accepts data files in several formats:</p>
+<ul>
+<li><strong>CSV</strong> (comma-separated)</li>
+<li><strong>Tab-delimited TXT</strong></li>
+<li><strong>Pipe-delimited TXT</strong></li>
+<li><strong>XLS</strong> (Excel)</li>
+<li><strong>ODS</strong> (OpenDocument)</li>
+</ul>
+<p>The standard field layout for VICIdial lead uploads follows this column order:</p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Vendor Lead Code</td>
+<td>Your upstream lead ID</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Source Code</td>
+<td>Lead source identifier</td>
+</tr>
+<tr>
+<td>3</td>
+<td>List ID</td>
+<td>Target list (overridden if set in loader)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Phone Code</td>
+<td>Country code (1 for US/Canada)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Phone Number</td>
+<td>Must be at least 8 digits</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Title</td>
+<td>Mr., Mrs., etc.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>First Name</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Middle Initial</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Last Name</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Address 1</td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Address 2</td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Address 3</td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>City</td>
+<td></td>
+</tr>
+<tr>
+<td>14</td>
+<td>State</td>
+<td>2-character abbreviation</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Province</td>
+<td></td>
+</tr>
+<tr>
+<td>16</td>
+<td>Postal Code</td>
+<td></td>
+</tr>
+<tr>
+<td>17</td>
+<td>Country</td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td>Gender</td>
+<td></td>
+</tr>
+<tr>
+<td>19</td>
+<td>Date of Birth</td>
+<td></td>
+</tr>
+<tr>
+<td>20</td>
+<td>Alt Phone</td>
+<td></td>
+</tr>
+<tr>
+<td>21</td>
+<td>Email</td>
+<td></td>
+</tr>
+<tr>
+<td>22</td>
+<td>Security Phrase</td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Comments</td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>Rank</td>
+<td>Numeric priority value</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Owner</td>
+<td>Agent or team assignment</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pro tip</strong>: Always use tab-delimited format with the "standard" column layout for the most reliable uploads. CSV files with commas embedded in address or comment fields are a common source of parsing errors that silently corrupt your data.</p>
+<h3 id="pre-upload-validation">Pre-Upload Validation<a class="headerlink" href="#pre-upload-validation" title="Permanent link">&para;</a></h3>
+<p>Before any file touches VICIdial's lead loader, run it through these validation checks:</p>
+<ol>
+<li>
+<p><strong>Phone number format</strong>: Strip all non-numeric characters. Remove leading 1 for US numbers (VICIdial adds the phone_code separately). Verify minimum 10-digit length for US numbers. Remove any numbers shorter than 8 digits --- they will fail to load.</p>
+</li>
+<li>
+<p><strong>State field</strong>: Must be exactly 2 characters. Longer values will be truncated silently, which can break time zone lookups and compliance filtering.</p>
+</li>
+<li>
+<p><strong>Empty required fields</strong>: Every row must have a phone number. Rows missing phone numbers will either fail to load or create dead records that waste hopper space.</p>
+</li>
+<li>
+<p><strong>Character encoding</strong>: Use UTF-8. Non-ASCII characters in name or address fields can cause parsing failures in certain VICIdial versions.</p>
+</li>
+<li>
+<p><strong>DNC scrubbing</strong>: Run your list against the national DNC registry and any internal DNC lists before upload, not after. Loading DNC numbers and relying on VICIdial's internal DNC check adds unnecessary records to your database and slows hopper processing.</p>
+</li>
+</ol>
+<h3 id="deduplication-strategy">Deduplication Strategy<a class="headerlink" href="#deduplication-strategy" title="Permanent link">&para;</a></h3>
+<p>VICIdial's built-in duplicate checking during upload offers several modes:</p>
+<ul>
+<li><strong>CHECK FOR DUPLICATES BY PHONE IN LIST</strong>: Checks only within the target list ID</li>
+<li><strong>CHECK FOR DUPLICATES BY PHONE IN CAMPAIGN LISTS</strong>: Checks across all lists assigned to the same campaign</li>
+<li><strong>CHECK FOR DUPLICATES BY PHONE IN SYSTEM</strong>: Checks the entire vicidial_list table</li>
+<li><strong>NO DUPLICATE CHECK</strong>: Loads everything</li>
+</ul>
+<p>For most operations, <strong>CHECK FOR DUPLICATES BY PHONE IN CAMPAIGN LISTS</strong> is the right choice. It prevents the same number from being dialed multiple times within a single campaign while still allowing the same lead to exist in lists assigned to different campaigns (which may be desirable for different product offers or follow-up sequences).</p>
+<p>For deeper deduplication, VICIdial includes a command-line script:</p>
+<div class="codehilite"><pre><span></span><code>/usr/share/astguiclient/VICIDIAL_DEDUPE_leads.pl
+</code></pre></div>
+
+<p>This script scans for duplicate phone numbers across campaigns or the entire system and moves the newer duplicates to a designated quarantine list. Run it as a scheduled cron job after batch uploads:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Run deduplication nightly at 1 AM, moving dupes to list 99999</span>
+<span class="m">0</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/share/astguiclient/VICIDIAL_DEDUPE_leads.pl<span class="w"> </span>--campaign<span class="o">=</span>SALES<span class="w"> </span>--duplicate-list<span class="o">=</span><span class="m">99999</span>
+</code></pre></div>
+
+<p>You can also find duplicates manually via MySQL:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">phone_number</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">dupe_count</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">101</span><span class="p">,</span><span class="w"> </span><span class="mi">102</span><span class="p">,</span><span class="w"> </span><span class="mi">103</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">phone_number</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">dupe_count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="post-upload-verification">Post-Upload Verification<a class="headerlink" href="#post-upload-verification" title="Permanent link">&para;</a></h3>
+<p>After every upload, verify the load was successful:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">list_id</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">lead_count</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NEW&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">new_leads</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1001</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">list_id</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Check that the lead count matches your source file row count. If the numbers do not match, check the lead loader's error log for parsing failures. A 1-2% variance is common due to duplicate removal, but anything above 5% indicates a formatting problem in your source file.</p>
+<h2 id="lead-segmentation-how-to-build-lists-that-perform">Lead Segmentation: How to Build Lists That Perform<a class="headerlink" href="#lead-segmentation-how-to-build-lists-that-perform" title="Permanent link">&para;</a></h2>
+<p>Segmentation is the practice of splitting your lead pool into distinct lists based on attributes that predict contact likelihood and conversion potential. It is the single most impactful list management technique, and most VICIdial operators either skip it entirely or implement it too simply.</p>
+<h3 id="why-segmentation-matters">Why Segmentation Matters<a class="headerlink" href="#why-segmentation-matters" title="Permanent link">&para;</a></h3>
+<p>A blended, unsegmented list forces VICIdial to treat every lead identically. A fresh, high-intent web form submission from 10 minutes ago gets the same dial priority as a 45-day-old purchased list lead that has already been called 6 times. The predictive algorithm does not know the difference --- it only sees dial statuses and called counts. Your segmentation strategy is what gives the dialer the intelligence it lacks on its own.</p>
+<h3 id="segmentation-dimensions">Segmentation Dimensions<a class="headerlink" href="#segmentation-dimensions" title="Permanent link">&para;</a></h3>
+<p>Build your lists along these dimensions, in order of impact:</p>
+<p><strong>1. Lead Age (Speed to Lead)</strong></p>
+<p>This is the highest-impact segmentation variable. Industry data consistently shows that leads contacted within 5 minutes of form submission convert at 8-10x the rate of leads contacted after 30 minutes. Create separate lists for:</p>
+<ul>
+<li><strong>Hot leads (0-1 hour old)</strong>: Highest priority, highest <a href="/settings/auto-dial-level/">auto-dial level</a></li>
+<li><strong>Warm leads (1-24 hours old)</strong>: Standard priority</li>
+<li><strong>Aging leads (1-7 days old)</strong>: Lower priority, recycling candidates</li>
+<li><strong>Cold leads (7+ days old)</strong>: Lowest priority, different script and approach</li>
+</ul>
+<p><strong>2. Lead Source</strong></p>
+<p>Not all lead sources produce equal quality. A lead from a targeted landing page with a multi-step form converts differently than a lead from a shared list broker. Create separate lists per source so you can measure performance at the source level and allocate dial time accordingly.</p>
+<p><strong>3. Geographic Region</strong></p>
+<p>Geographic segmentation serves two purposes: time zone compliance (covered in detail later) and regional performance optimization. Some products sell better in certain states. Some carriers have better completion rates in certain area codes. Separate lists let you see these patterns.</p>
+<p><strong>4. Prior Contact History</strong></p>
+<p>Leads that have been previously contacted but not converted should be in separate lists from fresh leads. A lead that answered once and said "call me back" is fundamentally different from a lead that has never been reached. These require different scripts, different dial cadences, and often different agents.</p>
+<p><strong>5. Product or Offer</strong></p>
+<p>If your operation sells multiple products, segment by which product the lead expressed interest in. Cross-selling from a blended list produces lower conversion than matching leads to the product they originally inquired about.</p>
+<h3 id="implementation-in-vicidial">Implementation in VICIdial<a class="headerlink" href="#implementation-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>To create a segmented list structure:</p>
+<ol>
+<li>Navigate to <strong>Admin &gt; Lists &gt; Add a New List</strong></li>
+<li>Assign a meaningful List ID (use a naming convention: e.g., 1001 for Source A / Hot, 1002 for Source A / Warm, etc.)</li>
+<li>Assign the list to the appropriate campaign</li>
+<li>Set the list to Active</li>
+</ol>
+<p>Then, configure your campaign to leverage segmentation:</p>
+<ul>
+<li>Use <strong>Lead Order: DOWN RANK</strong> in campaign settings, and set the <code>rank</code> field during upload to assign priority scores to different lead tiers</li>
+<li>Use <strong>Lead Filters</strong> to add SQL-based restrictions. For example, to only dial leads uploaded in the last 24 hours:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">entry_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">HOUR</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>Override campaign settings at the list level where needed. In <strong>Admin &gt; Lists &gt; [List ID] &gt; List Modification</strong>, you can set per-list overrides for Caller ID, Agent Script, and Transfer settings. This lets you show a local caller ID for geographic lists or load a different script for callback leads.</li>
+</ul>
+<blockquote>
+<p><strong>Segmentation is where amateur operations become professional ones.</strong> If you are running more than 20 agents on unsegmented lists, you are almost certainly underperforming your potential. <a href="/free-audit/">Let ViciStack audit your list structure</a> --- we have seen segmentation alone lift conversion by 20-40%.</p>
+</blockquote>
+<h2 id="recycling-logic-how-to-set-up-intelligent-re-dial-sequences">Recycling Logic: How to Set Up Intelligent Re-dial Sequences<a class="headerlink" href="#recycling-logic-how-to-set-up-intelligent-re-dial-sequences" title="Permanent link">&para;</a></h2>
+<p>Lead recycling is the mechanism by which VICIdial automatically re-dials leads that received certain dispositions (Busy, No Answer, Answering Machine) after a specified delay. Without recycling, these leads sit untouched until you manually reset the list --- and by then, the optimal contact window may have passed.</p>
+<h3 id="how-vicidial-lead-recycling-works">How VICIdial Lead Recycling Works<a class="headerlink" href="#how-vicidial-lead-recycling-works" title="Permanent link">&para;</a></h3>
+<p>Lead recycling is configured per-campaign under <strong>Admin &gt; Campaigns &gt; [Campaign Name] &gt; Lead Recycling</strong>. For each recyclable status, you define:</p>
+<ul>
+<li><strong>Status</strong>: The disposition code to recycle (e.g., B, NA, A)</li>
+<li><strong>Attempt Delay</strong>: The number of seconds before the lead becomes eligible again (minimum 120 seconds, maximum 43,199 seconds / ~12 hours)</li>
+<li><strong>Attempt Maximum</strong>: How many recycling attempts are allowed (1 to 10)</li>
+</ul>
+<p>When a lead receives a recyclable disposition, VICIdial marks it and waits the specified delay before making it eligible for the hopper again. The lead does not need a list reset --- it automatically re-enters the dialing queue.</p>
+<p><strong>Critical limitation</strong>: VICIdial's lead recycling was designed to operate within a single dialing day. The maximum delay of 43,199 seconds (just under 12 hours) means recycling does not reliably span across midnight boundaries. For multi-day re-dial sequences, you need to use list resets combined with dial statuses, not recycling alone.</p>
+<h3 id="recommended-recycling-schedule">Recommended Recycling Schedule<a class="headerlink" href="#recommended-recycling-schedule" title="Permanent link">&para;</a></h3>
+<p>Here is a recycling configuration that balances contact rate optimization with compliance and lead preservation:</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Description</th>
+<th>Attempt Delay</th>
+<th>Max Attempts</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B</td>
+<td>Busy</td>
+<td>300 seconds (5 min)</td>
+<td>5</td>
+<td>Busy signals clear quickly; rapid retry captures callbacks</td>
+</tr>
+<tr>
+<td>NA</td>
+<td>No Answer</td>
+<td>3600 seconds (1 hour)</td>
+<td>3</td>
+<td>Stagger re-attempts across different times of day</td>
+</tr>
+<tr>
+<td>A</td>
+<td>Answering Machine</td>
+<td>7200 seconds (2 hours)</td>
+<td>2</td>
+<td>If hitting VM twice, they are screening; back off</td>
+</tr>
+<tr>
+<td>ADC</td>
+<td>Auto-Dial Carrier (no answer from carrier)</td>
+<td>1800 seconds (30 min)</td>
+<td>3</td>
+<td>Network congestion clears; retry at moderate intervals</td>
+</tr>
+<tr>
+<td>AA</td>
+<td>Auto Answer (Answering Machine auto-detected)</td>
+<td>10800 seconds (3 hours)</td>
+<td>2</td>
+<td>Similar to A; longer delay to avoid VM fatigue</td>
+</tr>
+<tr>
+<td>AL</td>
+<td>Alternate Number</td>
+<td>600 seconds (10 min)</td>
+<td>3</td>
+<td>Retry alt numbers with moderate spacing</td>
+</tr>
+</tbody>
+</table>
+<h3 id="multi-day-re-dial-strategy">Multi-Day Re-dial Strategy<a class="headerlink" href="#multi-day-re-dial-strategy" title="Permanent link">&para;</a></h3>
+<p>Since recycling maxes out within a single day, your multi-day re-dial strategy must use a combination of:</p>
+<ol>
+<li>
+<p><strong>Dial Statuses</strong>: Configure your campaign to include NA, B, and A in the dial statuses list. After a list reset, these leads become eligible again.</p>
+</li>
+<li>
+<p><strong>Nightly List Reset</strong>: Schedule a list reset via cron to reset the <code>called_since_last_reset</code> flag:</p>
+</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">called_since_last_reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;N&#39;</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1001</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">called_count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+</code></pre></div>
+
+<ol>
+<li><strong>Lead Filters for Attempt Caps</strong>: Use a campaign lead filter to enforce a maximum attempt count across days:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="n">called_count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">8</span>
+</code></pre></div>
+
+<p>This combination gives you recycling within each dialing day (handled by the recycling feature) and re-dial across days (handled by nightly resets with attempt caps).</p>
+<h3 id="the-7-day-re-dial-cadence">The 7-Day Re-dial Cadence<a class="headerlink" href="#the-7-day-re-dial-cadence" title="Permanent link">&para;</a></h3>
+<p>A recommended re-dial cadence for a standard outbound campaign:</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Attempts</th>
+<th>Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Day 1</td>
+<td>3-4 attempts</td>
+<td>Intra-day recycling at 1-2 hour intervals</td>
+</tr>
+<tr>
+<td>Day 2</td>
+<td>2-3 attempts</td>
+<td>Shifted time window (if you called morning on Day 1, try afternoon on Day 2)</td>
+</tr>
+<tr>
+<td>Day 3</td>
+<td>2 attempts</td>
+<td>Different time of day again</td>
+</tr>
+<tr>
+<td>Day 4</td>
+<td>Rest day</td>
+<td>No dials --- breaks up the pattern and reduces spam risk</td>
+</tr>
+<tr>
+<td>Day 5</td>
+<td>2 attempts</td>
+<td>Resume with fresh timing</td>
+</tr>
+<tr>
+<td>Day 6</td>
+<td>1 attempt</td>
+<td>Final standard attempt</td>
+</tr>
+<tr>
+<td>Day 7</td>
+<td>1 attempt</td>
+<td>Last attempt before moving to aged/recycled list</td>
+</tr>
+</tbody>
+</table>
+<p>After Day 7, leads that have not been contacted should be moved to an aging list with a reduced dial frequency (covered in the Lead Aging section).</p>
+<blockquote>
+<p><strong>Most centers either over-dial or under-dial their recycled leads.</strong> Over-dialing burns caller ID reputation and triggers spam flags. Under-dialing leaves contactable leads sitting in limbo. <a href="/free-audit/">Get a ViciStack recycling audit</a> to find the right balance for your vertical.</p>
+</blockquote>
+<h2 id="disposition-management-which-statuses-to-create-and-why">Disposition Management: Which Statuses to Create and Why<a class="headerlink" href="#disposition-management-which-statuses-to-create-and-why" title="Permanent link">&para;</a></h2>
+<p>Disposition codes are the taxonomy of your operation. Every call outcome maps to a status, and that status determines what happens to the lead next: does it get re-dialed, retired, moved to a callback queue, or flagged for DNC? Getting your disposition structure right is foundational to every other list management practice.</p>
+<h3 id="vicidial-system-default-statuses">VICIdial System Default Statuses<a class="headerlink" href="#vicidial-system-default-statuses" title="Permanent link">&para;</a></h3>
+<p>VICIdial ships with a set of system-wide default statuses. These cannot be deleted, and they have built-in behaviors:</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Name</th>
+<th>Type</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NEW</td>
+<td>New Lead</td>
+<td>System</td>
+<td>Lead has not been dialed</td>
+</tr>
+<tr>
+<td>NA</td>
+<td>No Answer</td>
+<td>System</td>
+<td>Outbound call received no answer signal</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Busy</td>
+<td>System</td>
+<td>Agent or system detected busy signal</td>
+</tr>
+<tr>
+<td>A</td>
+<td>Answering Machine</td>
+<td>System</td>
+<td>Agent flagged as voicemail/VM</td>
+</tr>
+<tr>
+<td>AA</td>
+<td>Auto Answering Machine</td>
+<td>System</td>
+<td>AMD (answering machine detection) auto-flagged</td>
+</tr>
+<tr>
+<td>DC</td>
+<td>Disconnected</td>
+<td>System</td>
+<td>Number is not in service</td>
+</tr>
+<tr>
+<td>DNC</td>
+<td>Do Not Call</td>
+<td>System</td>
+<td>Adds lead to VICIdial internal DNC list</td>
+</tr>
+<tr>
+<td>N</td>
+<td>Not Interested</td>
+<td>System</td>
+<td>Prospect declined</td>
+</tr>
+<tr>
+<td>NI</td>
+<td>Not Interested</td>
+<td>System</td>
+<td>Alternate not-interested code</td>
+</tr>
+<tr>
+<td>SALE</td>
+<td>Sale Made</td>
+<td>System</td>
+<td>Successful conversion</td>
+</tr>
+<tr>
+<td>CALLBK</td>
+<td>Call Back</td>
+<td>System</td>
+<td>Scheduled callback</td>
+</tr>
+<tr>
+<td>DROP</td>
+<td>Dropped Call</td>
+<td>System</td>
+<td>Predictive dialer dropped the call (no agent available)</td>
+</tr>
+<tr>
+<td>XFER</td>
+<td>Transfer</td>
+<td>System</td>
+<td>Call transferred to another queue</td>
+</tr>
+</tbody>
+</table>
+<p>For a full reference of all default statuses and their behaviors, see our <a href="/statuses/">VICIdial statuses reference</a>.</p>
+<h3 id="custom-statuses-you-should-create">Custom Statuses You Should Create<a class="headerlink" href="#custom-statuses-you-should-create" title="Permanent link">&para;</a></h3>
+<p>Beyond the defaults, create campaign-specific statuses that map to your actual business outcomes. Add custom statuses via <strong>Admin &gt; Campaign &gt; Campaign Statuses</strong> or system-wide via <strong>Admin &gt; Statuses</strong>.</p>
+<p>Here is a recommended custom status framework for a typical outbound sales operation:</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Name</th>
+<th>Category</th>
+<th>Dialable</th>
+<th>Human Answer</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CBHOLD</td>
+<td>Callback Hold</td>
+<td>Followup</td>
+<td>N</td>
+<td>Y</td>
+<td>Prospect interested but needs time; do not auto-dial</td>
+</tr>
+<tr>
+<td>DNQUAL</td>
+<td>Did Not Qualify</td>
+<td>Terminal</td>
+<td>N</td>
+<td>Y</td>
+<td>Contacted but does not meet criteria</td>
+</tr>
+<tr>
+<td>LMVM</td>
+<td>Left Message on VM</td>
+<td>Recyclable</td>
+<td>Y</td>
+<td>N</td>
+<td>Agent left voicemail; recycle after delay</td>
+</tr>
+<tr>
+<td>WRNUMB</td>
+<td>Wrong Number</td>
+<td>Terminal</td>
+<td>N</td>
+<td>Y</td>
+<td>Number does not belong to intended prospect</td>
+</tr>
+<tr>
+<td>DECMKR</td>
+<td>Decision Maker Unavail</td>
+<td>Recyclable</td>
+<td>Y</td>
+<td>Y</td>
+<td>Reached household but not the decision maker</td>
+</tr>
+<tr>
+<td>APPT</td>
+<td>Appointment Set</td>
+<td>Terminal</td>
+<td>N</td>
+<td>Y</td>
+<td>Appointment booked; remove from outbound</td>
+</tr>
+<tr>
+<td>NOFUND</td>
+<td>No Funding/Budget</td>
+<td>Terminal</td>
+<td>N</td>
+<td>Y</td>
+<td>Qualified contact but cannot afford product</td>
+</tr>
+<tr>
+<td>CMPTN</td>
+<td>Went with Competitor</td>
+<td>Terminal</td>
+<td>N</td>
+<td>Y</td>
+<td>Prospect chose another provider</td>
+</tr>
+<tr>
+<td>HUAGNT</td>
+<td>Hung Up on Agent</td>
+<td>Recyclable</td>
+<td>Y</td>
+<td>Y</td>
+<td>Immediate hangup; may recycle once</td>
+</tr>
+<tr>
+<td>INVNUM</td>
+<td>Invalid Number</td>
+<td>Terminal</td>
+<td>N</td>
+<td>N</td>
+<td>Number format valid but reaches wrong party/fax/modem</td>
+</tr>
+</tbody>
+</table>
+<h3 id="status-categories">Status Categories<a class="headerlink" href="#status-categories" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports <strong>Status Categories</strong> that group individual statuses into logical buckets. Create categories like:</p>
+<ul>
+<li><strong>CONTACTED</strong>: All statuses where a human answered (SALE, N, DNQUAL, CBHOLD, DECMKR, WRNUMB, APPT, NOFUND, CMPTN)</li>
+<li><strong>UNCONTACTED</strong>: All statuses where no human answered (NA, B, A, AA, DC, DROP)</li>
+<li><strong>TERMINAL</strong>: All statuses where the lead should never be re-dialed (SALE, DNC, DC, DNQUAL, WRNUMB, APPT, INVNUM, CMPTN)</li>
+<li><strong>RECYCLABLE</strong>: All statuses that should be re-attempted (NA, B, A, LMVM, DECMKR, HUAGNT)</li>
+</ul>
+<p>Status categories simplify reporting and allow you to build campaign logic around categories rather than individual codes. If you later add a new terminal status, you just add it to the TERMINAL category --- no campaign reconfiguration required.</p>
+<h3 id="disposition-code-rules">Disposition Code Rules<a class="headerlink" href="#disposition-code-rules" title="Permanent link">&para;</a></h3>
+<p>Follow these rules when setting up your dispositions:</p>
+<ol>
+<li>
+<p><strong>Every human-answered call must get a specific disposition.</strong> Do not let agents use generic codes like NA for calls they actually answered. If an agent spoke to a person, the disposition should reflect the outcome of that conversation.</p>
+</li>
+<li>
+<p><strong>Mark non-dialable statuses correctly.</strong> Any terminal status (SALE, DNC, DC, WRNUMB, INVNUM) should have Dialable set to N so it is never included in future dial attempts.</p>
+</li>
+<li>
+<p><strong>Separate "left voicemail" from "answering machine."</strong> The system status A means the agent heard a voicemail greeting. LMVM means they actually left a message. The re-dial strategy for each should differ: A gets recycled aggressively, LMVM gets a longer delay because the prospect may call back.</p>
+</li>
+<li>
+<p><strong>Create a clear path from disposition to next action.</strong> Every status should have an obvious implication for what happens next. If you cannot explain what the dialer should do with a lead in status X, you do not need status X.</p>
+</li>
+</ol>
+<h2 id="time-zone-filtering-the-legal-and-performance-implications">Time Zone Filtering: The Legal and Performance Implications<a class="headerlink" href="#time-zone-filtering-the-legal-and-performance-implications" title="Permanent link">&para;</a></h2>
+<p>Time zone filtering is not optional. Under the TCPA and FTC Telemarketing Sales Rule, marketing calls to consumers must occur between 8:00 AM and 9:00 PM in the <strong>recipient's local time zone</strong>. Violating these windows exposes your operation to per-call statutory damages that can reach $500-$1,500 per violation. A single day of out-of-timezone dialing across a large list can generate six-figure liability.</p>
+<h3 id="how-vicidial-handles-time-zones">How VICIdial Handles Time Zones<a class="headerlink" href="#how-vicidial-handles-time-zones" title="Permanent link">&para;</a></h3>
+<p>VICIdial determines each lead's time zone based on the phone number's area code. The system uses the <code>gmt_offset_now</code> column in the <code>vicidial_list</code> table, which is populated by mapping the lead's area code to a timezone offset using the <code>vicidial_phone_codes</code> table.</p>
+<p>For this to work correctly, you must ensure:</p>
+<ol>
+<li><strong>The area code table is populated.</strong> Run the NANPA area code population script if you have not already:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>/usr/share/astguiclient/ADMIN_area_code_populate.pl
+</code></pre></div>
+
+<ol>
+<li>
+<p><strong>Campaign time zone settings are configured.</strong> In <strong>Admin &gt; Campaigns &gt; [Campaign Name]</strong>, set the <strong>Local Call Time</strong> to define the allowable dialing window. The standard setting is 8:00 AM - 9:00 PM, but some states have stricter windows (e.g., some states restrict calling after 8:00 PM).</p>
+</li>
+<li>
+<p><strong>GMT offset is calculated correctly.</strong> VICIdial recalculates <code>gmt_offset_now</code> based on the area code lookup. For leads with ported numbers (where the area code does not match the actual location), this can produce incorrect timezone assignments. There is no perfect solution for ported numbers, but using NANPA prefix-level timezone encoding (available in newer VICIdial versions) provides higher accuracy than area-code-level lookups alone.</p>
+</li>
+</ol>
+<h3 id="performance-implications">Performance Implications<a class="headerlink" href="#performance-implications" title="Permanent link">&para;</a></h3>
+<p>Beyond compliance, time zone filtering has direct performance implications:</p>
+<ul>
+<li>
+<p><strong>East Coast leads expire first.</strong> If your operation is on the West Coast and starts dialing at 8:00 AM Pacific, your East Coast leads (11:00 AM Eastern) are already past the optimal morning contact window. By 6:00 PM Pacific, your East Coast leads are locked out (9:00 PM Eastern), but you still have three hours of West Coast dialing ahead. Plan your list activation sequence accordingly.</p>
+</li>
+<li>
+<p><strong>Stagger lists by time zone.</strong> Create separate lists for Eastern, Central, Mountain, and Pacific time zones. Activate the Eastern list first each morning, add Central an hour later, and so on. This maximizes your productive dialing window across all zones.</p>
+</li>
+<li>
+<p><strong>Lunchtime and evening patterns.</strong> Contact rates peak at different times in different regions. Generally, 10:00 AM - 12:00 PM and 4:00 PM - 6:00 PM local time produce the highest contact rates for residential calls. Use lead filters or list activation timing to concentrate your dial attempts during these windows.</p>
+</li>
+</ul>
+<p>You can create a lead filter to restrict dialing to specific GMT offsets:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">gmt_offset_now</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">gmt_offset_now</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">00</span>
+</code></pre></div>
+
+<p>This filter would restrict dialing to only Eastern time zone leads. Adjust the offsets as your dialing day progresses.</p>
+<h3 id="state-level-restrictions">State-Level Restrictions<a class="headerlink" href="#state-level-restrictions" title="Permanent link">&para;</a></h3>
+<p>Some states impose calling restrictions beyond the federal 8 AM - 9 PM window. VICIdial supports per-state and per-day-of-week time restrictions through the <strong>Call Times</strong> and <strong>State Call Times</strong> settings. Configure these under <strong>Admin &gt; Call Times</strong> and reference the applicable state regulations for your campaign. States like California, Florida, and New York have specific telemarketing time restrictions that may differ from the federal standard.</p>
+<blockquote>
+<p><strong>Time zone violations are the most expensive mistake in outbound dialing.</strong> A single week of misconfigured timezone settings can generate more liability than a year of lead costs. <a href="/free-audit/">Request a ViciStack compliance audit</a> to verify your time zone filtering is bulletproof.</p>
+</blockquote>
+<h2 id="the-daily-lead-flow-hopper-configuration-and-refill-strategy">The Daily Lead Flow: Hopper Configuration and Refill Strategy<a class="headerlink" href="#the-daily-lead-flow-hopper-configuration-and-refill-strategy" title="Permanent link">&para;</a></h2>
+<p>The hopper is VICIdial's staging area for leads about to be dialed. Understanding how it works --- and how to configure it --- is essential for maintaining consistent dial velocity without wasting database resources.</p>
+<h3 id="what-the-hopper-does">What the Hopper Does<a class="headerlink" href="#what-the-hopper-does" title="Permanent link">&para;</a></h3>
+<p>The VICIdial hopper (<code>vicidial_hopper</code> table) is a small, fast-access table that the dialer pulls from when it needs the next number to call. Instead of querying the massive <code>vicidial_list</code> table every time an agent becomes available (which would be extremely slow on large databases), the hopper pre-stages a subset of eligible leads.</p>
+<p>A background process (<code>AST_VDhopper.pl</code>) runs continuously, scanning <code>vicidial_list</code> for leads that match the campaign's dial statuses, pass the lead filter, fall within the allowed time zone window, and have <code>called_since_last_reset</code> set to N. It loads these leads into the hopper in the order specified by the campaign's lead ordering settings.</p>
+<h3 id="key-hopper-settings">Key Hopper Settings<a class="headerlink" href="#key-hopper-settings" title="Permanent link">&para;</a></h3>
+<p>Configure these settings under <strong>Admin &gt; Campaigns &gt; [Campaign Name]</strong>:</p>
+<p><strong><a href="/settings/hopper-level/">Hopper Level</a></strong>: The target number of leads to maintain in the hopper at all times. Set this based on your agent count and dial rate. The formula for automatic hopper level is:</p>
+<div class="codehilite"><pre><span></span><code>Hopper Level = Agents x Auto Dial Level x (60 / Dial Timeout) x Hopper Multiplier
+</code></pre></div>
+
+<p>For example, with 20 agents, a <a href="/settings/auto-dial-level/">dial level</a> of 3, a <a href="/settings/dial-timeout/">dial timeout</a> of 26 seconds, and a multiplier of 1:</p>
+<div class="codehilite"><pre><span></span><code><span class="mf">20</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">(</span><span class="mf">60</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">26</span><span class="p">)</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">138</span><span class="w"> </span><span class="n">leads</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">hopper</span>
+</code></pre></div>
+
+<p><strong>Automatic Hopper Level</strong>: Set to <strong>Y</strong> to let VICIdial calculate the hopper level dynamically based on the formula above. This is recommended for most operations because it scales with agent count and dial level changes throughout the day.</p>
+<p><strong>Auto Hopper Multiplier</strong>: A modifier for the automatic hopper calculation. Setting this to 1.5 would increase the calculated hopper level by 50%. Increase this if you notice the hopper draining to zero during high-activity periods. Decrease it if you have a small list and want to avoid the hopper loading leads faster than you can dial them.</p>
+<p><strong>Auto Trim Hopper</strong>: Set to <strong>Y</strong> to automatically remove excess leads from the hopper when the lead count exceeds the target. This prevents the hopper from growing unbounded and ensures that leads removed from eligibility (by time zone lockout or filter changes) are purged promptly.</p>
+<p><strong>Lead Order</strong>: This setting controls how leads are sorted when loaded into the hopper:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UP</td>
+<td>Oldest leads first (by lead_id)</td>
+</tr>
+<tr>
+<td>DOWN</td>
+<td>Newest leads first</td>
+</tr>
+<tr>
+<td>UP PHONE</td>
+<td>Ascending by phone number</td>
+</tr>
+<tr>
+<td>DOWN PHONE</td>
+<td>Descending by phone number</td>
+</tr>
+<tr>
+<td>UP COUNT</td>
+<td>Lowest called_count first</td>
+</tr>
+<tr>
+<td>DOWN COUNT</td>
+<td>Highest called_count first</td>
+</tr>
+<tr>
+<td>UP RANK</td>
+<td>Ascending by rank field</td>
+</tr>
+<tr>
+<td>DOWN RANK</td>
+<td>Descending by rank field (use positive numbers for highest priority)</td>
+</tr>
+<tr>
+<td>RANDOM</td>
+<td>Random ordering</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended setting</strong>: <strong>DOWN RANK</strong> for operations that use lead scoring, or <strong>DOWN</strong> (newest first) for operations focused on speed-to-lead. Avoid <strong>UP</strong> unless you have a specific reason to dial your oldest leads first, as this typically produces the worst contact rates.</p>
+<h3 id="hopper-priority">Hopper Priority<a class="headerlink" href="#hopper-priority" title="Permanent link">&para;</a></h3>
+<p>Within the hopper, certain leads take priority over standard leads:</p>
+<ol>
+<li><strong>Scheduled Callbacks</strong> (highest priority) --- Always dialed first</li>
+<li><strong>Recycled Leads</strong> --- Leads re-entering the hopper via recycling logic</li>
+<li><strong>Auto-Alt-Dial Leads</strong> --- Alternate numbers triggered by prior disposition</li>
+<li><strong>Standard Leads</strong> --- Normal hopper entries loaded by AST_VDhopper.pl</li>
+</ol>
+<p>You can also assign explicit priority values when inserting leads via the VICIdial Non-Agent API, which is particularly useful for web-form leads that should jump the queue:</p>
+<div class="codehilite"><pre><span></span><code>/vicidial/non_agent_api.php?function=add_lead&amp;phone_number=5551234567&amp;list_id=1001&amp;phone_code=1&amp;rank=99
+</code></pre></div>
+
+<p>Leads inserted with a high rank value and a campaign using DOWN RANK ordering will be dialed before lower-ranked leads.</p>
+<h3 id="daily-hopper-management-routine">Daily Hopper Management Routine<a class="headerlink" href="#daily-hopper-management-routine" title="Permanent link">&para;</a></h3>
+<p>A healthy daily hopper routine looks like this:</p>
+<ol>
+<li><strong>Before shift start</strong>: Verify that active lists have sufficient undailed leads. Check via:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">list_id</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">available</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">1001</span><span class="p">,</span><span class="w"> </span><span class="mi">1002</span><span class="p">,</span><span class="w"> </span><span class="mi">1003</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NEW&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">called_since_last_reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;N&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">list_id</span><span class="p">;</span>
+</code></pre></div>
+
+<ol>
+<li>
+<p><strong>Shift start</strong>: Monitor the campaign's real-time report to confirm the hopper is filling. If the hopper shows 0 leads, check your dial statuses, lead filter, and time zone settings.</p>
+</li>
+<li>
+<p><strong>Mid-shift</strong>: Watch for hopper depletion patterns. If the hopper is draining faster than it refills, either increase the hopper multiplier or add more lists to the campaign.</p>
+</li>
+<li>
+<p><strong>End of shift</strong>: Review hopper counts and plan for the next day's list resets.</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>A starved hopper kills your dial rate. An overstuffed hopper wastes database queries.</strong> Getting the balance right requires understanding your specific agent count, dial level, and list size. <a href="/free-audit/">Talk to ViciStack about hopper optimization</a> for your operation.</p>
+</blockquote>
+<h2 id="lead-aging-when-to-retire-suppress-or-reactivate">Lead Aging: When to Retire, Suppress, or Reactivate<a class="headerlink" href="#lead-aging-when-to-retire-suppress-or-reactivate" title="Permanent link">&para;</a></h2>
+<p>Not every lead deserves unlimited dial attempts. At some point, continued dialing produces negative returns: wasted agent time, degraded <a href="/blog/vicidial-did-management/">caller ID reputation</a>, and increased spam complaints. Lead aging is the discipline of knowing when a lead has been worked enough and should be moved out of active rotation.</p>
+<h3 id="the-aging-framework">The Aging Framework<a class="headerlink" href="#the-aging-framework" title="Permanent link">&para;</a></h3>
+<p>Organize your leads into aging tiers based on a combination of lead age (time since upload) and call attempts:</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Age</th>
+<th>Called Count</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fresh</td>
+<td>0-7 days</td>
+<td>0-8 attempts</td>
+<td>Active dialing, full recycling</td>
+</tr>
+<tr>
+<td>Warm</td>
+<td>8-21 days</td>
+<td>9-15 attempts</td>
+<td>Reduced dial frequency, longer recycle delays</td>
+</tr>
+<tr>
+<td>Aged</td>
+<td>22-45 days</td>
+<td>16-20 attempts</td>
+<td>Minimal dialing, 1-2 attempts per week</td>
+</tr>
+<tr>
+<td>Retired</td>
+<td>46-90 days</td>
+<td>21+ attempts</td>
+<td>Removed from active dialing, held for reactivation</td>
+</tr>
+<tr>
+<td>Expired</td>
+<td>90+ days</td>
+<td>Any</td>
+<td>Archived or purged, depending on data retention policy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="moving-leads-between-tiers">Moving Leads Between Tiers<a class="headerlink" href="#moving-leads-between-tiers" title="Permanent link">&para;</a></h3>
+<p>Use MySQL queries to batch-move leads between lists as they age:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Move leads older than 21 days with 15+ attempts to the Aged list</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2003</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">2001</span><span class="p">,</span><span class="w"> </span><span class="mi">2002</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">entry_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">21</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">called_count</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">15</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;CALLBK&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;APPT&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Schedule these moves as nightly cron jobs so your active lists always contain leads in the appropriate aging tier.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Nightly lead aging script - runs at midnight</span>
+<span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>mysql<span class="w"> </span>-u<span class="w"> </span>vicidialuser<span class="w"> </span>-p<span class="s1">&#39;password&#39;</span><span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;UPDATE vicidial_list SET list_id = 2003 WHERE list_id IN (2001, 2002) AND entry_date &lt; DATE_SUB(NOW(), INTERVAL 21 DAY) AND called_count &gt;= 15 AND status NOT IN (&#39;SALE&#39;, &#39;DNC&#39;, &#39;CALLBK&#39;, &#39;APPT&#39;);&quot;</span>
+</code></pre></div>
+
+<h3 id="when-to-reactivate">When to Reactivate<a class="headerlink" href="#when-to-reactivate" title="Permanent link">&para;</a></h3>
+<p>Retired leads are not necessarily dead leads. Circumstances change: a prospect who was not interested in January may have a new need in April. Reactivation campaigns can be surprisingly productive when executed correctly.</p>
+<p>Reactivation criteria:</p>
+<ul>
+<li><strong>Minimum rest period</strong>: At least 30-60 days since last contact attempt</li>
+<li><strong>Reset status</strong>: Change status back to a dialable status (e.g., a custom REACT status) so you can track reactivated leads separately from fresh leads</li>
+<li><strong>Different approach</strong>: Use a different caller ID, script, and offer. The prospect already rejected your first approach; repeating it will produce the same result</li>
+<li><strong>Lower priority</strong>: Reactivated leads should always run behind fresh leads in hopper priority</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Reactivate leads that have been resting for 60+ days</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3001</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;REACT&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">called_since_last_reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;N&#39;</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2004</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">modify_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;INVNUM&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="suppression-vs-deletion">Suppression vs. Deletion<a class="headerlink" href="#suppression-vs-deletion" title="Permanent link">&para;</a></h3>
+<p>Never delete lead records from <code>vicidial_list</code> unless required by data retention regulations (GDPR, CCPA, etc.). Instead, suppress leads by:</p>
+<ol>
+<li>Moving them to an inactive list that is not assigned to any campaign</li>
+<li>Setting their status to a non-dialable terminal status</li>
+<li>Keeping the record for historical reporting and deduplication purposes</li>
+</ol>
+<p>Deletion creates gaps in your reporting history and removes deduplication protection. A lead you delete today can be uploaded again tomorrow as a "new" lead, wasting money on a prospect you have already exhausted.</p>
+<h3 id="data-retention-compliance">Data Retention Compliance<a class="headerlink" href="#data-retention-compliance" title="Permanent link">&para;</a></h3>
+<p>If your operation falls under GDPR, CCPA, or similar regulations, implement a data retention schedule:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Purge leads older than 2 years (adjust based on your retention policy)</span>
+<span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">entry_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">YEAR</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_lists</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;N&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Run this quarterly and log the deletion count for compliance records.</p>
+<h2 id="how-vicistacks-list-management-module-works">How ViciStack's List Management Module Works<a class="headerlink" href="#how-vicistacks-list-management-module-works" title="Permanent link">&para;</a></h2>
+<p>ViciStack's <a href="/features/list-management/">List Management module</a> was built specifically to address the gaps in VICIdial's native list management tools. While VICIdial provides the raw infrastructure --- the lead loader, the hopper, the recycling engine --- it leaves the strategic layer entirely to the operator. ViciStack fills that gap with automation, analytics, and guardrails that prevent the most common list management mistakes.</p>
+<h3 id="automated-list-segmentation">Automated List Segmentation<a class="headerlink" href="#automated-list-segmentation" title="Permanent link">&para;</a></h3>
+<p>ViciStack automatically segments uploaded leads into tiered lists based on configurable rules. When you upload a batch of leads through the ViciStack interface, the system evaluates each lead against your segmentation rules (source, geography, age, prior history) and routes it to the appropriate list. No manual sorting. No spreadsheet gymnastics. Leads land in the right list from the moment they enter the system.</p>
+<h3 id="intelligent-recycling-engine">Intelligent Recycling Engine<a class="headerlink" href="#intelligent-recycling-engine" title="Permanent link">&para;</a></h3>
+<p>ViciStack's recycling engine goes beyond VICIdial's built-in recycling by supporting multi-day cadences, time-of-day variation, and disposition-weighted retry logic. Instead of a flat delay in seconds, ViciStack lets you define recycling rules like "retry NA leads at a different time of day than the original attempt" or "reduce retry frequency after the third failed attempt." The system automatically generates the appropriate list resets and filter adjustments to implement these cadences within VICIdial's architecture.</p>
+<h3 id="lead-lifecycle-dashboard">Lead Lifecycle Dashboard<a class="headerlink" href="#lead-lifecycle-dashboard" title="Permanent link">&para;</a></h3>
+<p>The ViciStack dashboard provides real-time visibility into your lead lifecycle: how many leads are in each aging tier, which lists are approaching exhaustion, which sources are producing the highest contact and conversion rates, and where leads are getting stuck in the funnel. This replaces the manual MySQL queries that most operators rely on (or, more commonly, skip entirely).</p>
+<h3 id="dnc-and-compliance-automation">DNC and Compliance Automation<a class="headerlink" href="#dnc-and-compliance-automation" title="Permanent link">&para;</a></h3>
+<p>ViciStack integrates DNC scrubbing, time zone validation, and attempt-cap enforcement into a single compliance layer. Every lead is validated against federal and state DNC registries before entering the dial queue. Time zone assignments are verified against NANPA prefix data, not just area codes. And attempt caps are enforced automatically, preventing leads from being over-dialed even if an operator forgets to set a lead filter.</p>
+<h3 id="how-it-integrates-with-vicidial">How It Integrates with VICIdial<a class="headerlink" href="#how-it-integrates-with-vicidial" title="Permanent link">&para;</a></h3>
+<p>ViciStack operates alongside your existing VICIdial installation. It does not replace VICIdial's dialer engine or agent interface --- it manages the data layer that feeds into those systems. Lead uploads go through ViciStack's validation and segmentation pipeline, then land in your <code>vicidial_list</code> table correctly formatted, deduplicated, and assigned to the right lists. Campaign settings, recycling rules, and lead filters are configured through ViciStack's interface and pushed to VICIdial's database automatically.</p>
+<blockquote>
+<p><strong>You do not need to be a MySQL expert to run a well-organized list operation.</strong> ViciStack's List Management module automates the segmentation, recycling, and aging workflows described in this guide. <a href="/free-audit/">See it in action with a free audit</a>.</p>
+</blockquote>
+<h2 id="measuring-list-performance-the-kpis-that-actually-matter">Measuring List Performance: The KPIs That Actually Matter<a class="headerlink" href="#measuring-list-performance-the-kpis-that-actually-matter" title="Permanent link">&para;</a></h2>
+<p>You cannot improve what you do not measure. But most VICIdial operators either track the wrong metrics or track the right metrics at the wrong level of granularity. List performance must be measured per-list, per-source, and per-campaign --- not just as a blended average across your entire operation.</p>
+<h3 id="the-core-list-kpis">The Core List KPIs<a class="headerlink" href="#the-core-list-kpis" title="Permanent link">&para;</a></h3>
+<p><strong>1. Contact Rate (per list)</strong></p>
+<p>Contact rate is the percentage of dial attempts that result in a human answer. This is your primary list quality indicator.</p>
+<div class="codehilite"><pre><span></span><code>Contact Rate = (Human Answered Calls / Total Dial Attempts) x 100
+</code></pre></div>
+
+<p>Measure this per list, not per campaign. A campaign with a 12% blended contact rate might have one list at 20% and another at 4%. The blended number hides the problem --- and the opportunity.</p>
+<p><strong>Benchmarks</strong>: Fresh, opted-in web leads should produce 15-25% contact rates. Purchased aged lists typically fall in the 5-12% range. Anything below 5% suggests serious data quality issues or over-dialed leads.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="n">vcl</span><span class="p">.</span><span class="n">uniqueid</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_dials</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vcl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;CALLBK&#39;</span><span class="p">,</span><span class="s1">&#39;CBHOLD&#39;</span><span class="p">,</span><span class="s1">&#39;DNQUAL&#39;</span><span class="p">,</span><span class="s1">&#39;WRNUMB&#39;</span><span class="p">,</span><span class="s1">&#39;DECMKR&#39;</span><span class="p">,</span><span class="s1">&#39;APPT&#39;</span><span class="p">,</span><span class="s1">&#39;NOFUND&#39;</span><span class="p">,</span><span class="s1">&#39;CMPTN&#39;</span><span class="p">,</span><span class="s1">&#39;HUAGNT&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">human_answers</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vcl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;CALLBK&#39;</span><span class="p">,</span><span class="s1">&#39;CBHOLD&#39;</span><span class="p">,</span><span class="s1">&#39;DNQUAL&#39;</span><span class="p">,</span><span class="s1">&#39;WRNUMB&#39;</span><span class="p">,</span><span class="s1">&#39;DECMKR&#39;</span><span class="p">,</span><span class="s1">&#39;APPT&#39;</span><span class="p">,</span><span class="s1">&#39;NOFUND&#39;</span><span class="p">,</span><span class="s1">&#39;CMPTN&#39;</span><span class="p">,</span><span class="s1">&#39;HUAGNT&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">vcl</span><span class="p">.</span><span class="n">uniqueid</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">contact_rate</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vcl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">vl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vcl</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vcl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">contact_rate</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>2. Conversion Rate (per list)</strong></p>
+<p>Conversion rate measures the percentage of contacts (human answers) that result in your desired outcome (sale, appointment, qualified lead).</p>
+<div class="codehilite"><pre><span></span><code>Conversion Rate = (Conversions / Human Answered Calls) x 100
+</code></pre></div>
+
+<p>This tells you about the quality of the leads themselves, independent of reachability. A list with a high contact rate but low conversion rate contains reachable but unqualified leads. A list with a low contact rate but high conversion rate contains great leads that are hard to reach --- focus on optimizing dial timing and recycling for that list rather than abandoning it.</p>
+<p><strong>Benchmarks</strong>: Outbound B2B campaigns typically see 10-20% conversion on contacted leads. B2C campaigns vary widely by vertical, but 3-8% on contacted leads is common.</p>
+<p><strong>3. Cost Per Contact</strong></p>
+<div class="codehilite"><pre><span></span><code>Cost Per Contact = Total Lead Cost / Human Answered Calls
+</code></pre></div>
+
+<p>This is the metric that ties list performance to financial outcomes. If you paid $15 per lead and your contact rate is 10%, your cost per contact is $150. If a different source at $25 per lead delivers a 25% contact rate, the cost per contact is $100. The cheaper lead is actually more expensive.</p>
+<p>Track this alongside the <a href="/blog/call-center-cost-per-lead-benchmarks/">cost per lead benchmarks</a> for your vertical to understand where you stand.</p>
+<p><strong>4. Cost Per Acquisition (CPA)</strong></p>
+<div class="codehilite"><pre><span></span><code>CPA = Total Lead Cost / Conversions
+</code></pre></div>
+
+<p>The ultimate financial metric. This rolls up contact rate, conversion rate, and lead cost into a single number that tells you whether a lead source is profitable. Track CPA per list, per source, and per campaign.</p>
+<p><strong>5. Leads Per Agent Hour</strong></p>
+<div class="codehilite"><pre><span></span><code>Leads Per Agent Hour = Total Leads Dialed / Total Agent Hours
+</code></pre></div>
+
+<p>This measures operational efficiency at the list level. A list with many disconnected numbers or wrong numbers will produce a low leads-per-agent-hour despite high dial attempts, because agents are spending time on post-call disposition and wrap-up for unproductive calls.</p>
+<p><strong>6. List Exhaustion Rate</strong></p>
+<div class="codehilite"><pre><span></span><code>Exhaustion Rate = (Leads at Terminal Status / Total Leads in List) x 100
+</code></pre></div>
+
+<p>Track how quickly each list reaches exhaustion. A list that burns through in 2 days may need to be paced more slowly (lower dial level) or supplemented with fresh leads. A list that is only 30% exhausted after a week may be under-dialed.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">list_id</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_leads</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNQUAL&#39;</span><span class="p">,</span><span class="s1">&#39;WRNUMB&#39;</span><span class="p">,</span><span class="s1">&#39;INVNUM&#39;</span><span class="p">,</span><span class="s1">&#39;CMPTN&#39;</span><span class="p">,</span><span class="s1">&#39;APPT&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">terminal_leads</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNQUAL&#39;</span><span class="p">,</span><span class="s1">&#39;WRNUMB&#39;</span><span class="p">,</span><span class="s1">&#39;INVNUM&#39;</span><span class="p">,</span><span class="s1">&#39;CMPTN&#39;</span><span class="p">,</span><span class="s1">&#39;APPT&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">exhaustion_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">1001</span><span class="p">,</span><span class="w"> </span><span class="mi">1002</span><span class="p">,</span><span class="w"> </span><span class="mi">1003</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">list_id</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="building-a-list-performance-dashboard">Building a List Performance Dashboard<a class="headerlink" href="#building-a-list-performance-dashboard" title="Permanent link">&para;</a></h3>
+<p>Pull these KPIs into a daily report that your operations team reviews every morning. The report should answer three questions:</p>
+<ol>
+<li><strong>Which lists are performing?</strong> (Highest contact rate and conversion rate)</li>
+<li><strong>Which lists are exhausting?</strong> (Approaching terminal status saturation)</li>
+<li><strong>Which lists need intervention?</strong> (Low contact rate, high cost per contact, or stalled exhaustion suggesting a filter or timezone issue)</li>
+</ol>
+<p>If you are running VICIdial's built-in reporting, the <strong>Outbound Calling Report</strong> and <strong>List Status</strong> reports provide some of this data, but they do not calculate cost metrics or trend over time. Most serious operations export the data to a BI tool or use ViciStack's analytics dashboard for this level of analysis.</p>
+<blockquote>
+<p><strong>If you are not measuring list performance at the per-list and per-source level, you are flying blind.</strong> Half of the call centers we audit discover that 20-30% of their lead spend goes to sources that produce below-breakeven results. <a href="/free-audit/">Find out where your money is going</a> with a free ViciStack audit.</p>
+</blockquote>
+<h3 id="putting-it-all-together">Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Permanent link">&para;</a></h3>
+<p>List management is not a one-time setup task. It is a daily operational discipline that separates high-performing call centers from the ones that wonder why their numbers keep declining. The framework laid out in this guide --- structured uploads, intentional segmentation, calibrated recycling, precise dispositions, compliant time zone filtering, optimized hopper settings, disciplined aging, and rigorous KPI tracking --- gives you a complete system for extracting maximum value from every lead that enters your VICIdial instance.</p>
+<p>Start with the highest-impact changes: segment your lists by lead age and source, set up proper recycling logic for your top three dispositions, and build a daily per-list KPI report. These three changes alone can lift contact rates by 15-30% and reduce cost per acquisition by 20% or more.</p>
+<p>Then work your way through the rest of the framework. Fix your upload validation. Tighten your time zone filtering. Implement lead aging tiers. Each improvement compounds on the ones before it.</p>
+<p>Your leads are expensive. Your agents' time is expensive. Your <a href="/blog/vicidial-predictive-dialer-settings/">dialer infrastructure</a> is expensive. The list management layer is what makes all of those investments pay off --- or not.</p>
+<p>Stop burning your best leads.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-list-management">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
