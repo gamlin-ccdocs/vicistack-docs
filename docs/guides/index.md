@@ -31,6 +31,9 @@ experience managing VICIdial systems.
 - [VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide](vicidial-sip-trunk-failover.md)
 - [Vicidial Support](vicidial-support.md)
 - [VICIdial vs CallTools: Detailed Comparison for Call Centers](vicidial-vs-calltools.md)
+- [The Complete VICIdial Setup Guide (2026)](vicidial-setup-guide.md)
+- [VICIdial Security Hardening: CVEs, Firewalls & Access Control](vicidial-security-hardening.md)
+- [Open Source Call Center Software: The Complete Guide](open-source-call-center-software.md)
 
 ## More Resources
 
