@@ -57,6 +57,7 @@ experience managing VICIdial systems.
 - [Vicidial Realtime Agent Dashboard](vicidial-realtime-agent-dashboard.md)
 - [VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration](vicidial-remote-agent-setup.md)
 - [VICIdial Reporting & Real-Time Monitoring Guide](vicidial-reporting-monitoring.md)
+- [VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days](vicidial-roi-case-study.md)
 - [Vicidial Security Hardening](vicidial-security-hardening.md)
 - [Vicidial Setup Guide](vicidial-setup-guide.md)
 - [VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures](vicidial-sip-troubleshooting.md)
