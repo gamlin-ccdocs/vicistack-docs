@@ -5,6 +5,7 @@ experience managing VICIdial systems.
 
 ## Available Guides
 
+- [Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure](asterisk-pjsip-tls-openssl3-guide.md)
 - [Best Predictive Dialer 2026: The Definitive Comparison](best-predictive-dialer.md)
 - [Call Center Abandonment Rate](call-center-abandonment-rate.md)
 - [Call Center ROI Formula: How to Calculate and Improve](call-center-roi-formula.md)
