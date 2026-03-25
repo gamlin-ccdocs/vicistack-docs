@@ -6,6 +6,7 @@ experience managing VICIdial systems.
 ## Available Guides
 
 - [Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It](call-center-abandonment-rate.md)
+- [Migrating from GoAutoDial to VICIdial: Step-by-Step](goautodial-to-vicidial-migration.md)
 - [VICIdial Real-Time Agent Coaching Setup Guide](vicidial-agent-coaching.md)
 - [VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time](vicidial-amd-guide.md)
 - [VICIdial Asterisk Configuration: SIP, Codecs & NAT](vicidial-asterisk-configuration.md)
@@ -16,7 +17,7 @@ experience managing VICIdial systems.
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
 - [VICIdial Quality Assurance Scoring with Call Recordings](vicidial-qa-scoring.md)
 - [VICIdial Real-Time Agent Dashboard Customization Guide](vicidial-realtime-agent-dashboard.md)
-- [VICIdial Support: Free Help for Your Call Center](vicidial-support.md)
+- [Vicidial Support](vicidial-support.md)
 - [VICIdial vs CallTools: Detailed Comparison for Call Centers](vicidial-vs-calltools.md)
 
 ## More Resources
