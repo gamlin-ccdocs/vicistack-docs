@@ -66,6 +66,7 @@ experience managing VICIdial systems.
 - [VICIdial Training Guide: From Beginner to Expert](vicidial-training-guide.md)
 - [VICIdial Voicemail Drop Configuration and Compliance Guide](vicidial-voicemail-drop.md)
 - [Vicidial Vs Calltools](vicidial-vs-calltools.md)
+- [VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read](vicidial-vs-convoso.md)
 - [VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize](vicidial-vs-five9.md)
 - [VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?](vicidial-vs-xencall.md)
 - [VICIdial WebRTC Setup Guide for Remote Agents](vicidial-webrtc-setup.md)
