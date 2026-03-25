@@ -52,6 +52,7 @@ experience managing VICIdial systems.
 - [Vicidial Sip Trunk Failover](vicidial-sip-trunk-failover.md)
 - [VICIdial for Solar Lead Generation: The Complete Guide](vicidial-solar-lead-generation.md)
 - [Vicidial Support](vicidial-support.md)
+- [VICIdial TCPA Compliance Checklist [2026]](vicidial-tcpa-compliance.md)
 - [VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance](vicidial-timezone-dialing-tcpa.md)
 - [VICIdial Training Guide: From Beginner to Expert](vicidial-training-guide.md)
 - [VICIdial Voicemail Drop Configuration and Compliance Guide](vicidial-voicemail-drop.md)
