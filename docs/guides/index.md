@@ -20,6 +20,7 @@ experience managing VICIdial systems.
 - [VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam](vicidial-did-management.md)
 - [VICIdial to Hosted Migration Checklist: Step-by-Step Guide](vicidial-hosted-migration-checklist.md)
 - [VICIdial Queue & Inbound Group Configuration Guide](vicidial-inbound-setup.md)
+- [VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant](vicidial-ivr-setup.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Lead Recycling Strategies That Actually Work](vicidial-lead-recycling.md)
 - [VICIdial for Outbound Sales: The Complete Playbook](vicidial-outbound-sales.md)
