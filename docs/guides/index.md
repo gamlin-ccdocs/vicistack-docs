@@ -29,6 +29,7 @@ experience managing VICIdial systems.
 - [Vicidial Lead Recycling](vicidial-lead-recycling.md)
 - [Vicidial List Management](vicidial-list-management.md)
 - [Vicidial Multi Tenant](vicidial-multi-tenant.md)
+- [VICIdial MySQL Optimization: Queries, Indexes & Tuning](vicidial-mysql-optimization.md)
 - [Vicidial Outbound Sales](vicidial-outbound-sales.md)
 - [Vicidial Pause Codes Accountability](vicidial-pause-codes-accountability.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
