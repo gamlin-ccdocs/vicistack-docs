@@ -1,0 +1,3294 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-call-recording/">
+      
+      
+        <link rel="prev" href="../vicidial-auto-dial-level-tuning/">
+      
+      
+        <link rel="next" href="../vicidial-callback-automation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Call Recording: Storage, Compliance & Archival - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-call-recording-storage-compliance-archival" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Call Recording: Storage, Compliance & Archival
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicidial-call-recording-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Call Recording Actually Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How VICIdial Call Recording Actually Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-mixmon-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The MixMon Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-naming-and-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Naming and Location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-recording_log-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The recording_log Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-recording_access-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The recording_access Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-formats-wav-vs-mp3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Formats: WAV vs MP3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Formats: WAV vs MP3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wav-uncompressed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WAV (Uncompressed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mp3-compressed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MP3 (Compressed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-practical-recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Practical Recommendation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-lame-for-mp3-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing LAME for MP3 Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-capacity-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Capacity Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Storage Capacity Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Math
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-sizing-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Sizing Recommendations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disk-space-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disk Space Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#archival-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archival Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Archival Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-built-in-archive-flag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-In ARCHIVE Flag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsync-to-archive-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rsync to Archive Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#s3minio-for-long-term-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        S3/MinIO for Long-Term Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nfs-mounts-for-cluster-recording-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NFS Mounts for Cluster Recording Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-requirements-by-jurisdiction-and-industry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Requirements by Jurisdiction and Industry
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Requirements by Jurisdiction and Industry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#federal-vs-state-consent-laws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federal vs. State Consent Laws
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pci-dss-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCI-DSS Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-retention-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Retention Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-playback-and-search-in-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Playback and Search in VICIdial Admin
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Playback and Search in VICIdial Admin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin-recording-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Recording Search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-side-recording-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent-Side Recording Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-based-recording-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API-Based Recording Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-quality-assurance-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Quality Assurance Workflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Quality Assurance Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#random-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#targeted-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Targeted Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-external-qa-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with External QA Platforms
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-recording-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Recording Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Recording Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dual-channel-stereo-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dual-Channel (Stereo) Recording
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#on-demand-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        On-Demand Recording
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-permissions-by-user-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Permissions by User Group
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-recording-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Common Recording Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Common Recording Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recordings-not-being-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recordings Not Being Created
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recordings-are-silent-or-one-sided" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recordings Are Silent or One-Sided
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recordings-are-truncated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recordings Are Truncated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-much-disk-space-does-vicidial-call-recording-use-per-agent-per-month" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much disk space does VICIdial call recording use per agent per month?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-record-only-specific-campaigns-or-inbound-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I record only specific campaigns or inbound groups?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-move-recordings-between-vicidial-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I move recordings between VICIdial servers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-it-legal-to-record-calls-without-telling-the-other-party" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is it legal to record calls without telling the other party?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-automatically-delete-old-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I automatically delete old recordings?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-vicidial-recordings-be-used-as-evidence-in-court" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can VICIdial recordings be used as evidence in court?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-encrypt-recordings-at-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I encrypt recordings at rest?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-call-recording-affect-vicidial-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does call recording affect VICIdial performance?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicidial-call-recording-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Call Recording Actually Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How VICIdial Call Recording Actually Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-mixmon-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The MixMon Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-naming-and-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Naming and Location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-recording_log-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The recording_log Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-recording_access-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The recording_access Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-formats-wav-vs-mp3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Formats: WAV vs MP3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Formats: WAV vs MP3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wav-uncompressed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WAV (Uncompressed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mp3-compressed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MP3 (Compressed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-practical-recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Practical Recommendation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-lame-for-mp3-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing LAME for MP3 Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-capacity-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Capacity Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Storage Capacity Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Math
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-sizing-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Sizing Recommendations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disk-space-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disk Space Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#archival-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archival Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Archival Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-built-in-archive-flag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-In ARCHIVE Flag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsync-to-archive-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rsync to Archive Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#s3minio-for-long-term-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        S3/MinIO for Long-Term Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nfs-mounts-for-cluster-recording-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NFS Mounts for Cluster Recording Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-requirements-by-jurisdiction-and-industry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Requirements by Jurisdiction and Industry
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Requirements by Jurisdiction and Industry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#federal-vs-state-consent-laws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federal vs. State Consent Laws
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pci-dss-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCI-DSS Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-retention-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Retention Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-playback-and-search-in-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Playback and Search in VICIdial Admin
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Playback and Search in VICIdial Admin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin-recording-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Recording Search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-side-recording-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent-Side Recording Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-based-recording-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API-Based Recording Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-quality-assurance-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Quality Assurance Workflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Quality Assurance Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#random-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#targeted-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Targeted Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-external-qa-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with External QA Platforms
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-recording-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Recording Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Recording Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dual-channel-stereo-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dual-Channel (Stereo) Recording
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#on-demand-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        On-Demand Recording
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-permissions-by-user-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Permissions by User Group
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-recording-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Common Recording Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Common Recording Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recordings-not-being-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recordings Not Being Created
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recordings-are-silent-or-one-sided" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recordings Are Silent or One-Sided
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recordings-are-truncated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recordings Are Truncated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-much-disk-space-does-vicidial-call-recording-use-per-agent-per-month" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much disk space does VICIdial call recording use per agent per month?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-record-only-specific-campaigns-or-inbound-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I record only specific campaigns or inbound groups?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-move-recordings-between-vicidial-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I move recordings between VICIdial servers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-it-legal-to-record-calls-without-telling-the-other-party" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is it legal to record calls without telling the other party?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-automatically-delete-old-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I automatically delete old recordings?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-vicidial-recordings-be-used-as-evidence-in-court" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can VICIdial recordings be used as evidence in court?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-encrypt-recordings-at-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I encrypt recordings at rest?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-call-recording-affect-vicidial-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does call recording affect VICIdial performance?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-call-recording-storage-compliance-archival">VICIdial Call Recording: Storage, Compliance &amp; Archival<a class="headerlink" href="#vicidial-call-recording-storage-compliance-archival" title="Permanent link">&para;</a></h1>
+<p><strong>Last updated: March 2026 | Reading time: ~20 minutes</strong></p>
+<p>Call recording in VICIdial is one of those features that seems simple until it isn't. You enable <a href="/settings/campaign-recording/">campaign recording</a>, calls get recorded, files land on disk. Easy. Then six months later you are staring at a server with 2 TB of WAV files, your compliance team is asking about PCI-DSS, a client wants recordings from 14 months ago that you already deleted, and you realize you never actually planned any of this.</p>
+<p>This guide covers everything about VICIdial call recording that matters in a production environment: how the recording system works at the <a href="/glossary/asterisk/">Asterisk</a> level, storage format decisions and their real-world implications, capacity planning with actual numbers, compliance requirements by jurisdiction and industry, archival strategies that scale, and the database tables that track it all.</p>
+<p>Whether you are running 10 agents or 500, if you record calls, you need a recording strategy. Not having one is how operations end up with compliance violations, disk space emergencies at 2 AM, and the inability to produce recordings when a regulator or a lawyer asks for them.</p>
+<p><strong>ViciStack handles recording infrastructure as part of every deployment</strong> --- properly sized storage, automated archival pipelines, and compliance-ready configurations included. <a href="/pricing/">Skip the storage headaches.</a></p>
+<hr />
+<h2 id="how-vicidial-call-recording-actually-works">How VICIdial Call Recording Actually Works<a class="headerlink" href="#how-vicidial-call-recording-actually-works" title="Permanent link">&para;</a></h2>
+<p>Understanding the recording pipeline is essential before you can optimize, troubleshoot, or build compliance processes around it. Here is what happens when a call is recorded in VICIdial.</p>
+<h3 id="the-mixmon-application">The MixMon Application<a class="headerlink" href="#the-mixmon-application" title="Permanent link">&para;</a></h3>
+<p>VICIdial uses Asterisk's <code>MixMon()</code> application (or <code>Monitor()</code> on older installations) to capture call audio. When an agent connects to a call and recording is enabled, VICIdial's <code>vicidial_manager</code> process sends an Asterisk Manager Interface (<a href="/glossary/asterisk-manager-interface/">AMI</a>) command that injects <code>MixMon()</code> into the active channel.</p>
+<p>MixMon captures both sides of the conversation --- the agent's audio and the caller's audio --- and mixes them into a single file. This is called "mixed mode" recording. The alternative, "stereo" recording (agent on one channel, caller on the other), is available but rarely used in production because it doubles storage requirements and most QA workflows expect a single mixed file.</p>
+<p>The recording command looks like this internally:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Action</span><span class="o">:</span><span class="w"> </span><span class="n">Originate</span>
+<span class="n">Channel</span><span class="o">:</span><span class="w"> </span><span class="n">Local</span><span class="o">/</span><span class="mi">5555</span><span class="err">@</span><span class="k">default</span>
+<span class="n">Application</span><span class="o">:</span><span class="w"> </span><span class="n">MixMonitor</span>
+<span class="n">Data</span><span class="o">:</span><span class="w"> </span><span class="sr">/var/spool/asterisk/monitor/MIXmonitor/</span><span class="mi">20260318</span><span class="o">-</span><span class="mi">093045</span><span class="n">_1234567890_6001_campaign1</span><span class="o">.</span><span class="na">wav</span><span class="o">,</span><span class="n">b</span>
+</code></pre></div>
+
+<p>The <code>b</code> option tells MixMon to only begin recording when the call is bridged (when both parties are connected), which avoids recording ring time and IVR navigation.</p>
+<h3 id="file-naming-and-location">File Naming and Location<a class="headerlink" href="#file-naming-and-location" title="Permanent link">&para;</a></h3>
+<p>VICIdial stores recordings in a predictable directory structure:</p>
+<div class="codehilite"><pre><span></span><code><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">asterisk</span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">MIXmonitor</span><span class="o">/</span>
+<span class="err">├──</span><span class="w"> </span><span class="mi">20260318</span><span class="o">-</span><span class="mi">093045</span><span class="n">_1234567890_6001_campaign1</span><span class="o">.</span><span class="n">wav</span>
+<span class="err">├──</span><span class="w"> </span><span class="mi">20260318</span><span class="o">-</span><span class="mi">093112</span><span class="n">_5551234567_6002_campaign1</span><span class="o">.</span><span class="n">wav</span>
+<span class="err">└──</span><span class="w"> </span><span class="o">...</span>
+</code></pre></div>
+
+<p>The default filename format is:</p>
+<div class="codehilite"><pre><span></span><code>YYYYMMDD-HHMMSS_PHONENUMBER_AGENTEXTENSION_CAMPAIGNID.wav
+</code></pre></div>
+
+<p>This naming convention means files are naturally sorted chronologically and you can identify the phone number, agent, and campaign from the filename alone. VICIdial also tracks this information in the database (covered below), but the filename structure is a useful fallback for manual file browsing.</p>
+<p>The default path <code>/var/spool/asterisk/monitor/MIXmonitor/</code> is configurable. On a <a href="/blog/vicidial-cluster-guide/">cluster deployment</a>, each telephony server writes recordings locally to its own disk. The web server needs access to these files for playback, which typically means either NFS mounts or a centralized recording server that pulls files from each dialer.</p>
+<h3 id="the-recording_log-table">The recording_log Table<a class="headerlink" href="#the-recording_log-table" title="Permanent link">&para;</a></h3>
+<p>Every recording that VICIdial creates gets an entry in the <code>recording_log</code> table in the <code>asterisk</code> database. This is the authoritative index of all recordings:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>recording_id</code></td>
+<td>Auto-increment primary key</td>
+</tr>
+<tr>
+<td><code>channel</code></td>
+<td>The Asterisk channel that was recorded</td>
+</tr>
+<tr>
+<td><code>server_ip</code></td>
+<td>Which server made the recording</td>
+</tr>
+<tr>
+<td><code>extension</code></td>
+<td>Agent extension</td>
+</tr>
+<tr>
+<td><code>start_time</code></td>
+<td>When recording began</td>
+</tr>
+<tr>
+<td><code>start_epoch</code></td>
+<td>Unix timestamp of recording start</td>
+</tr>
+<tr>
+<td><code>end_time</code></td>
+<td>When recording ended</td>
+</tr>
+<tr>
+<td><code>end_epoch</code></td>
+<td>Unix timestamp of recording end</td>
+</tr>
+<tr>
+<td><code>length_in_sec</code></td>
+<td>Duration of the recording in seconds</td>
+</tr>
+<tr>
+<td><code>length_in_min</code></td>
+<td>Duration in minutes (decimal)</td>
+</tr>
+<tr>
+<td><code>filename</code></td>
+<td>Full filename of the recording file</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Full filesystem path or URL to the recording</td>
+</tr>
+<tr>
+<td><code>lead_id</code></td>
+<td>Links to the <code>vicidial_list</code> lead record</td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td>The agent's user ID</td>
+</tr>
+<tr>
+<td><code>vicidial_id</code></td>
+<td>Links to the <code>vicidial_log</code> or <code>vicidial_closer_log</code> entry</td>
+</tr>
+</tbody>
+</table>
+<p>This table is what powers recording search and playback in the VICIdial admin interface. When a manager searches for recordings by date range, phone number, or agent, VICIdial queries <code>recording_log</code> and returns links to the audio files.</p>
+<h3 id="the-recording_access-table">The recording_access Table<a class="headerlink" href="#the-recording_access-table" title="Permanent link">&para;</a></h3>
+<p>VICIdial 2.14+ includes a <code>recording_access</code> table that logs who accessed which recordings and when. This is critical for compliance --- particularly <a href="/glossary/call-recording-compliance/">HIPAA</a> and PCI-DSS --- where you need an audit trail showing which personnel listened to which recordings.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check who has accessed recordings for a specific lead</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">ra</span><span class="p">.</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">ra</span><span class="p">.</span><span class="n">access_datetime</span><span class="p">,</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">filename</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_access</span><span class="w"> </span><span class="n">ra</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">rl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">ra</span><span class="p">.</span><span class="n">recording_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">recording_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">ra</span><span class="p">.</span><span class="n">access_datetime</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="recording-formats-wav-vs-mp3">Recording Formats: WAV vs MP3<a class="headerlink" href="#recording-formats-wav-vs-mp3" title="Permanent link">&para;</a></h2>
+<p>This is one of the most impactful decisions you will make about your recording system, and it is not as straightforward as "MP3 is smaller, use MP3."</p>
+<h3 id="wav-uncompressed">WAV (Uncompressed)<a class="headerlink" href="#wav-uncompressed" title="Permanent link">&para;</a></h3>
+<p>VICIdial records in WAV format by default. Specifically, 8 kHz, 16-bit, mono PCM WAV files. This is the native format of <a href="/glossary/codec/">G.711</a> telephony audio.</p>
+<p><strong>Storage per minute:</strong> approximately 960 KB/minute (about 1 MB/minute for easy math).</p>
+<p><strong>Advantages:</strong>
+- No CPU overhead during recording --- the audio is already in PCM format from the Asterisk channel
+- Lossless quality --- you capture every bit of audio fidelity the telephone network provides
+- Universally compatible --- every audio player, transcription service, and forensic tool handles WAV natively
+- Required by some compliance frameworks that mandate "original quality" recordings</p>
+<p><strong>Disadvantages:</strong>
+- Large file sizes --- a 5-minute call is approximately 5 MB
+- Expensive to store long-term at scale</p>
+<h3 id="mp3-compressed">MP3 (Compressed)<a class="headerlink" href="#mp3-compressed" title="Permanent link">&para;</a></h3>
+<p>MP3 encoding can be enabled in VICIdial by installing the LAME encoder and configuring the recording format. MP3 at 32 kbps (which is more than adequate for speech-quality telephony audio) reduces file sizes by approximately 8-10x compared to WAV.</p>
+<p><strong>Storage per minute:</strong> approximately 120 KB/minute at 32 kbps, or 240 KB/minute at 64 kbps.</p>
+<p><strong>Advantages:</strong>
+- Dramatically smaller files --- a 5-minute call is approximately 600 KB at 32 kbps
+- Reduces storage costs by 80-90%
+- Faster to transfer, download, and archive</p>
+<p><strong>Disadvantages:</strong>
+- Requires LAME encoder installation and CPU overhead during recording
+- Lossy compression --- some audio quality is permanently lost
+- The CPU cost of real-time MP3 encoding is non-trivial: at 50 concurrent recordings, expect 5-10% additional CPU utilization on the telephony server
+- Some compliance frameworks reject lossy-compressed recordings</p>
+<h3 id="the-practical-recommendation">The Practical Recommendation<a class="headerlink" href="#the-practical-recommendation" title="Permanent link">&para;</a></h3>
+<p><strong>Record in WAV. Convert to MP3 for archival.</strong> This gives you the best of both worlds: original-quality recordings during the active period when QA, disputes, and compliance reviews happen, and compressed recordings for long-term storage.</p>
+<p>Here is the conversion script we use:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># convert_recordings.sh</span>
+<span class="c1"># Convert WAV recordings older than 30 days to MP3</span>
+<span class="c1"># Run via cron: 0 2 * * * /usr/local/bin/convert_recordings.sh</span>
+
+<span class="nv">RECORDING_DIR</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor/MIXmonitor&quot;</span>
+<span class="nv">ARCHIVE_DIR</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor/ARCHIVE&quot;</span>
+<span class="nv">DAYS_BEFORE_CONVERT</span><span class="o">=</span><span class="m">30</span>
+
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="si">${</span><span class="nv">ARCHIVE_DIR</span><span class="si">}</span>
+
+find<span class="w"> </span><span class="si">${</span><span class="nv">RECORDING_DIR</span><span class="si">}</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.wav&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+<span class="si">${</span><span class="nv">DAYS_BEFORE_CONVERT</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>wavfile<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">mp3file</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ARCHIVE_DIR</span><span class="si">}</span><span class="s2">/</span><span class="k">$(</span>basename<span class="w"> </span><span class="si">${</span><span class="nv">wavfile</span><span class="p">%.wav</span><span class="si">}</span>.mp3<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span>lame<span class="w"> </span>--quiet<span class="w"> </span>-b<span class="w"> </span><span class="m">32</span><span class="w"> </span>--resample<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">wavfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">mp3file</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">mp3file</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># Update the recording_log table with new location</span>
+<span class="w">        </span><span class="nv">filename</span><span class="o">=</span><span class="k">$(</span>basename<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">wavfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">        </span>mysql<span class="w"> </span>-u<span class="w"> </span>cron<span class="w"> </span>-p<span class="s1">&#39;your_cron_password&#39;</span><span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span><span class="s2">&quot;UPDATE recording_log SET location=&#39;</span><span class="si">${</span><span class="nv">mp3file</span><span class="si">}</span><span class="s2">&#39; WHERE filename LIKE &#39;%</span><span class="si">${</span><span class="nv">filename</span><span class="p">%.*</span><span class="si">}</span><span class="s2">%&#39;;&quot;</span>
+<span class="w">        </span>rm<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">wavfile</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Converted: </span><span class="si">${</span><span class="nv">wavfile</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">${</span><span class="nv">mp3file</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<h3 id="installing-lame-for-mp3-support">Installing LAME for MP3 Support<a class="headerlink" href="#installing-lame-for-mp3-support" title="Permanent link">&para;</a></h3>
+<p>If you want native MP3 recording (skipping WAV entirely):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># AlmaLinux 9 / Rocky Linux 9</span>
+dnf<span class="w"> </span>install<span class="w"> </span>epel-release
+dnf<span class="w"> </span>install<span class="w"> </span>lame<span class="w"> </span>lame-devel
+
+<span class="c1"># ViciBox (openSUSE)</span>
+zypper<span class="w"> </span>install<span class="w"> </span>lame<span class="w"> </span>libmp3lame0
+
+<span class="c1"># Verify LAME is available</span>
+lame<span class="w"> </span>--version
+</code></pre></div>
+
+<p>Then in VICIdial Admin, navigate to <strong>Admin &gt; System Settings &gt; Recording</strong> and set the recording format to MP3. Asterisk will use LAME to encode recordings in real-time.</p>
+<hr />
+<h2 id="storage-capacity-planning">Storage Capacity Planning<a class="headerlink" href="#storage-capacity-planning" title="Permanent link">&para;</a></h2>
+<p>This is where operations get surprised. Call recordings consume storage faster than most people expect, and running out of disk space on a production VICIdial server is a critical failure --- Asterisk will stop recording and may drop active calls.</p>
+<h3 id="the-math">The Math<a class="headerlink" href="#the-math" title="Permanent link">&para;</a></h3>
+<p>Here are the actual numbers for a 50-agent outbound operation running 8 hours/day:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agents</td>
+<td>50</td>
+</tr>
+<tr>
+<td>Shift duration</td>
+<td>8 hours</td>
+</tr>
+<tr>
+<td>Average <a href="/glossary/talk-time/">talk time</a> per hour</td>
+<td>40-48 minutes</td>
+</tr>
+<tr>
+<td>Average call duration (connected calls)</td>
+<td>2-4 minutes</td>
+</tr>
+<tr>
+<td>Calls per agent per hour</td>
+<td>12-20 (with <a href="/glossary/predictive-dialing/">predictive dialing</a>)</td>
+</tr>
+<tr>
+<td>Percentage of calls recorded</td>
+<td>100% (recommended)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>WAV storage per day:</strong>
+- 50 agents x 8 hours x 45 min avg talk time = 18,000 minutes of recordings/day
+- 18,000 minutes x 0.96 MB/min = <strong>17.3 GB/day</strong></p>
+<p><strong>WAV storage per month (22 working days):</strong>
+- 17.3 GB x 22 = <strong>380 GB/month</strong></p>
+<p><strong>MP3 storage per month (at 32 kbps):</strong>
+- 18,000 min x 22 days x 0.12 MB/min = <strong>47.5 GB/month</strong></p>
+<p><strong>Annual storage:</strong>
+- WAV: ~4.5 TB/year
+- MP3: ~570 GB/year</p>
+<p>These numbers scale linearly with agent count. A 100-agent operation generates double. A 200-agent operation generates quadruple. If you are running multi-shift or 24/7 operations, multiply accordingly.</p>
+<h3 id="storage-sizing-recommendations">Storage Sizing Recommendations<a class="headerlink" href="#storage-sizing-recommendations" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Agent Count</th>
+<th>Daily WAV</th>
+<th>Monthly WAV</th>
+<th>Recommended Local Disk</th>
+<th>Archive Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 agents</td>
+<td>3.5 GB</td>
+<td>77 GB</td>
+<td>500 GB SSD</td>
+<td>Monthly offsite</td>
+</tr>
+<tr>
+<td>25 agents</td>
+<td>8.6 GB</td>
+<td>190 GB</td>
+<td>1 TB SSD</td>
+<td>Weekly offsite</td>
+</tr>
+<tr>
+<td>50 agents</td>
+<td>17.3 GB</td>
+<td>380 GB</td>
+<td>2 TB SSD/RAID</td>
+<td>Daily offsite</td>
+</tr>
+<tr>
+<td>100 agents</td>
+<td>34.6 GB</td>
+<td>760 GB</td>
+<td>4 TB RAID</td>
+<td>Daily offsite + S3</td>
+</tr>
+<tr>
+<td>200+ agents</td>
+<td>69+ GB</td>
+<td>1.5+ TB</td>
+<td>Dedicated NAS/SAN</td>
+<td>Real-time replication</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical rule:</strong> Never let your recording partition exceed 80% utilization. Set up monitoring alerts at 70% and 80%. When you hit 80%, either archive old recordings or add storage. At 95%, Asterisk recording will start failing silently.</p>
+<h3 id="disk-space-monitoring">Disk Space Monitoring<a class="headerlink" href="#disk-space-monitoring" title="Permanent link">&para;</a></h3>
+<p>Add this to your crontab for daily disk space alerts:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># check_recording_disk.sh</span>
+<span class="nv">THRESHOLD</span><span class="o">=</span><span class="m">80</span>
+<span class="nv">PARTITION</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor&quot;</span>
+<span class="nv">USAGE</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span><span class="si">${</span><span class="nv">PARTITION</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR==2 {print $5}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;%&#39;</span><span class="k">)</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="si">${</span><span class="nv">USAGE</span><span class="si">}</span><span class="w"> </span>-gt<span class="w"> </span><span class="si">${</span><span class="nv">THRESHOLD</span><span class="si">}</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WARNING: Recording partition at </span><span class="si">${</span><span class="nv">USAGE</span><span class="si">}</span><span class="s2">% usage on </span><span class="k">$(</span>hostname<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;VICIdial Recording Disk Alert&quot;</span><span class="w"> </span>admin@yourcompany.com
+<span class="k">fi</span>
+</code></pre></div>
+
+<p>Schedule it: <code>0 */4 * * * /usr/local/bin/check_recording_disk.sh</code></p>
+<blockquote>
+<p><strong>Never Worry About Recording Storage Again.</strong>
+ViciStack deployments include automated archival pipelines, disk monitoring, and compliance-ready retention policies. <a href="/pricing/">Learn More.</a></p>
+</blockquote>
+<hr />
+<h2 id="archival-strategies">Archival Strategies<a class="headerlink" href="#archival-strategies" title="Permanent link">&para;</a></h2>
+<p>Keeping all recordings on your primary VICIdial server's local disk is not sustainable. Here are the archival approaches, from simplest to most robust.</p>
+<h3 id="vicidials-built-in-archive-flag">VICIdial's Built-In ARCHIVE Flag<a class="headerlink" href="#vicidials-built-in-archive-flag" title="Permanent link">&para;</a></h3>
+<p>VICIdial includes a built-in recording archival mechanism. In <strong>Admin &gt; System Settings</strong>, the <strong>Archive</strong> settings control an automated process that moves recordings from the active directory to an archive directory after a configurable number of days.</p>
+<p>The system works through the <code>AST_audio_archive.pl</code> script that runs via cron. It reads from <code>recording_log</code>, moves files to the archive path, and updates the <code>location</code> column in the database to reflect the new path. This is the simplest archival option and works well for single-server deployments with attached archive storage.</p>
+<h3 id="rsync-to-archive-server">rsync to Archive Server<a class="headerlink" href="#rsync-to-archive-server" title="Permanent link">&para;</a></h3>
+<p>For <a href="/blog/vicidial-cluster-guide/">multi-server clusters</a> where each telephony server generates recordings locally:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># sync_recordings.sh - Run on each telephony server</span>
+<span class="c1"># Syncs recordings to a central archive server</span>
+<span class="nv">ARCHIVE_SERVER</span><span class="o">=</span><span class="s2">&quot;10.0.2.50&quot;</span>
+<span class="nv">ARCHIVE_PATH</span><span class="o">=</span><span class="s2">&quot;/recordings/</span><span class="k">$(</span>hostname<span class="k">)</span><span class="s2">&quot;</span>
+<span class="nv">LOCAL_PATH</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor/MIXmonitor/&quot;</span>
+
+rsync<span class="w"> </span>-avz<span class="w"> </span>--remove-source-files<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--include<span class="o">=</span><span class="s2">&quot;*.wav&quot;</span><span class="w"> </span>--include<span class="o">=</span><span class="s2">&quot;*.mp3&quot;</span><span class="w"> </span>--exclude<span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="si">${</span><span class="nv">LOCAL_PATH</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">ARCHIVE_SERVER</span><span class="si">}</span>:<span class="si">${</span><span class="nv">ARCHIVE_PATH</span><span class="si">}</span>/
+</code></pre></div>
+
+<p>Schedule this hourly or daily depending on your storage headroom. The <code>--remove-source-files</code> flag frees up local disk after successful transfer. Make sure SSH key authentication is configured between servers.</p>
+<h3 id="s3minio-for-long-term-storage">S3/MinIO for Long-Term Storage<a class="headerlink" href="#s3minio-for-long-term-storage" title="Permanent link">&para;</a></h3>
+<p>For operations that need years of recording retention (common in financial services, healthcare, and insurance), object storage is the most cost-effective solution.</p>
+<p><strong>AWS S3:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># s3_archive.sh - Archive recordings older than 90 days to S3</span>
+<span class="nv">RECORDING_DIR</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor/MIXmonitor&quot;</span>
+<span class="nv">S3_BUCKET</span><span class="o">=</span><span class="s2">&quot;s3://company-vicidial-recordings&quot;</span>
+<span class="nv">DAYS_OLD</span><span class="o">=</span><span class="m">90</span>
+
+find<span class="w"> </span><span class="si">${</span><span class="nv">RECORDING_DIR</span><span class="si">}</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.wav&quot;</span><span class="w"> </span>-o<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.mp3&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+<span class="si">${</span><span class="nv">DAYS_OLD</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>file<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="c1"># Organize by year/month in S3</span>
+<span class="w">    </span><span class="nv">filedate</span><span class="o">=</span><span class="k">$(</span>stat<span class="w"> </span>-c<span class="w"> </span>%Y<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">    </span><span class="nv">year</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span>@<span class="si">${</span><span class="nv">filedate</span><span class="si">}</span><span class="w"> </span>+%Y<span class="k">)</span>
+<span class="w">    </span><span class="nv">month</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span>@<span class="si">${</span><span class="nv">filedate</span><span class="si">}</span><span class="w"> </span>+%m<span class="k">)</span>
+
+<span class="w">    </span>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">S3_BUCKET</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">year</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">month</span><span class="si">}</span><span class="s2">/</span><span class="k">$(</span>basename<span class="w"> </span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--storage-class<span class="w"> </span>STANDARD_IA
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># Update database with S3 URL</span>
+<span class="w">        </span><span class="nv">filename</span><span class="o">=</span><span class="k">$(</span>basename<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">        </span><span class="nv">s3_url</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">S3_BUCKET</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">year</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">month</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">filename</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span>mysql<span class="w"> </span>-u<span class="w"> </span>cron<span class="w"> </span>-p<span class="s1">&#39;password&#39;</span><span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span><span class="s2">&quot;UPDATE recording_log SET location=&#39;</span><span class="si">${</span><span class="nv">s3_url</span><span class="si">}</span><span class="s2">&#39; WHERE filename LIKE &#39;%</span><span class="si">${</span><span class="nv">filename</span><span class="p">%.*</span><span class="si">}</span><span class="s2">%&#39;;&quot;</span>
+<span class="w">        </span>rm<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<p><strong>S3 Storage Costs (per month, for 1 TB of recordings):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Storage Class</th>
+<th>Cost/TB/Month</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S3 Standard</td>
+<td>$23.00</td>
+<td>Active recordings (&lt;90 days)</td>
+</tr>
+<tr>
+<td>S3 Standard-IA</td>
+<td>$12.50</td>
+<td>Infrequently accessed (90-365 days)</td>
+</tr>
+<tr>
+<td>S3 Glacier Instant Retrieval</td>
+<td>$4.00</td>
+<td>Archived (1-3 years)</td>
+</tr>
+<tr>
+<td>S3 Glacier Deep Archive</td>
+<td>$0.99</td>
+<td>Long-term retention (3+ years)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MinIO for on-premises S3-compatible storage:</strong></p>
+<p>If you do not want recordings leaving your infrastructure (a valid concern for compliance-sensitive operations), MinIO provides S3-compatible object storage that runs on your own hardware. Deploy it on a separate server with large, cheap storage (spinning drives are fine for archived recordings):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install MinIO on an archive server</span>
+wget<span class="w"> </span>https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod<span class="w"> </span>+x<span class="w"> </span>minio
+./minio<span class="w"> </span>server<span class="w"> </span>/data/recordings<span class="w"> </span>--console-address<span class="w"> </span><span class="s2">&quot;:9001&quot;</span>
+</code></pre></div>
+
+<p>Then use the same <code>aws s3</code> commands with the <code>--endpoint-url</code> flag pointing to your MinIO instance.</p>
+<h3 id="nfs-mounts-for-cluster-recording-access">NFS Mounts for Cluster Recording Access<a class="headerlink" href="#nfs-mounts-for-cluster-recording-access" title="Permanent link">&para;</a></h3>
+<p>In a cluster, the web server needs to access recordings from all telephony servers for playback. The standard approach is NFS:</p>
+<p><strong>On each telephony server (NFS export):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/exports</span>
+/var/spool/asterisk/monitor<span class="w"> </span><span class="m">10</span>.0.2.0/24<span class="o">(</span>ro,sync,no_subtree_check<span class="o">)</span>
+</code></pre></div>
+
+<p><strong>On the web server (NFS mount):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/fstab</span>
+<span class="m">10</span>.0.2.10:/var/spool/asterisk/monitor<span class="w"> </span>/var/spool/asterisk/monitor/server1<span class="w"> </span>nfs<span class="w"> </span>ro,soft,timeo<span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span>
+<span class="m">10</span>.0.2.11:/var/spool/asterisk/monitor<span class="w"> </span>/var/spool/asterisk/monitor/server2<span class="w"> </span>nfs<span class="w"> </span>ro,soft,timeo<span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<p>Use <code>soft</code> and <code>timeo=5</code> mount options so that a telephony server going down does not cause the web server to hang. Read-only mounts (<code>ro</code>) on the web server prevent accidental deletion from the admin interface.</p>
+<hr />
+<h2 id="compliance-requirements-by-jurisdiction-and-industry">Compliance Requirements by Jurisdiction and Industry<a class="headerlink" href="#compliance-requirements-by-jurisdiction-and-industry" title="Permanent link">&para;</a></h2>
+<p>Recording calls is not just an operational decision --- it is a legal one. The rules about when you can record, how you must store recordings, and how long you must keep them vary dramatically by jurisdiction and industry.</p>
+<h3 id="federal-vs-state-consent-laws">Federal vs. State Consent Laws<a class="headerlink" href="#federal-vs-state-consent-laws" title="Permanent link">&para;</a></h3>
+<p><strong>Federal law (one-party consent):</strong> Under the federal Electronic Communications Privacy Act (ECPA, 18 U.S.C. 2511), you only need one party's consent to record a phone call. Since your agent is a party to the call and your company has authorized recording, federal law is satisfied in most outbound dialing scenarios.</p>
+<p><strong>But state laws can be stricter.</strong> Twelve states plus the District of Columbia require <strong>all-party consent</strong> (also called "two-party consent," though it applies to all parties on the call):</p>
+<table>
+<thead>
+<tr>
+<th>All-Party Consent States</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>California, Connecticut, Delaware, Florida, Illinois, Maryland, Massachusetts, Michigan, Montana, New Hampshire, Pennsylvania, Washington</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What this means for VICIdial operations:</strong> If you are dialing into all-party consent states, you must inform the called party that the call is being recorded and obtain their consent before the recording begins. The standard approach is a pre-recorded announcement:</p>
+<p><em>"This call may be monitored or recorded for quality assurance purposes."</em></p>
+<p>In VICIdial, you can implement this through:</p>
+<ol>
+<li><strong>Agent script with verbal disclosure</strong> --- train agents to state the recording notice at the beginning of every call</li>
+<li><strong><a href="/glossary/ivr/">IVR</a> announcement</strong> --- use a <a href="/glossary/call-menu/">call menu</a> to play a recording disclosure before connecting to the agent</li>
+<li><strong>Selective recording by state</strong> --- use VICIdial's campaign-level recording controls to disable recording for leads in all-party consent states (not recommended --- you lose QA visibility)</li>
+</ol>
+<p>The safest approach is universal disclosure on all calls regardless of the destination state. This covers you even when leads have moved or provided incorrect area codes.</p>
+<h3 id="pci-dss-compliance">PCI-DSS Compliance<a class="headerlink" href="#pci-dss-compliance" title="Permanent link">&para;</a></h3>
+<p>If your agents take credit card payments over the phone, PCI-DSS Section 3.4 requires that you do not store cardholder data (including recording of card numbers spoken aloud) unless it is encrypted with strong cryptography.</p>
+<p><strong>The practical solution: pause/resume recording.</strong></p>
+<p>VICIdial supports recording pause and resume through the agent interface. When an agent is about to collect payment information, they click the "Pause Recording" button. When the payment portion of the call is complete, they click "Resume Recording." The result is a recording file with the payment conversation redacted.</p>
+<p>Configure this in VICIdial Admin:</p>
+<ol>
+<li><strong>Admin &gt; Campaigns &gt; [Campaign] &gt; Recording</strong> --- set <code>Campaign Recording</code> to <code>ALLCALLS</code> or <code>ALLFORCE</code></li>
+<li><strong>Admin &gt; Campaigns &gt; [Campaign] &gt; Agent Screen</strong> --- ensure <code>Recording Buttons</code> is set to <code>IN_HEADER</code> or <code>IN_SCRIPT</code></li>
+<li>Train agents on the exact workflow: pause before payment, resume after payment</li>
+</ol>
+<p><strong>Important limitation:</strong> Pause/resume relies on agent behavior. If an agent forgets to pause, you have a PCI compliance violation on tape. For high-volume payment processing, consider a dedicated IVR payment system that removes the agent from the call during payment collection. VICIdial can transfer calls to an external payment IVR and then reconnect the agent afterward.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Audit query: Find recordings that may contain payment data</span>
+<span class="c1">-- Look for calls to payment-focused campaigns that were NOT paused</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">recording_id</span><span class="p">,</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">start_time</span><span class="p">,</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">,</span>
+<span class="w">       </span><span class="n">rl</span><span class="p">.</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">phone_number</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">rl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">vl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">start_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">vicidial_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="n">uniqueid</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;PAYMENT_CAMPAIGN&#39;</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">start_time</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="hipaa-compliance">HIPAA Compliance<a class="headerlink" href="#hipaa-compliance" title="Permanent link">&para;</a></h3>
+<p>Healthcare-related call recordings fall under <a href="/glossary/call-recording-compliance/">HIPAA</a> if they contain Protected Health Information (PHI). HIPAA requires:</p>
+<ul>
+<li><strong>Access controls</strong> --- only authorized personnel can listen to recordings containing PHI</li>
+<li><strong>Audit trails</strong> --- you must log who accessed which recordings and when (the <code>recording_access</code> table handles this)</li>
+<li><strong>Encryption at rest</strong> --- recordings stored on disk must be encrypted</li>
+<li><strong>Encryption in transit</strong> --- recordings transferred between servers or accessed via web must use TLS/HTTPS</li>
+<li><strong>Retention and destruction</strong> --- HIPAA does not specify an exact retention period, but requires a policy and consistent destruction when the period expires</li>
+</ul>
+<p><strong>Encryption at rest for VICIdial recordings:</strong></p>
+<p>The simplest approach is filesystem-level encryption using LUKS on the recording partition:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create encrypted partition for recordings</span>
+cryptsetup<span class="w"> </span>luksFormat<span class="w"> </span>/dev/sdb1
+cryptsetup<span class="w"> </span>luksOpen<span class="w"> </span>/dev/sdb1<span class="w"> </span>recordings_crypt
+mkfs.ext4<span class="w"> </span>/dev/mapper/recordings_crypt
+mount<span class="w"> </span>/dev/mapper/recordings_crypt<span class="w"> </span>/var/spool/asterisk/monitor
+
+<span class="c1"># Add to /etc/crypttab for automatic mount at boot</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;recordings_crypt /dev/sdb1 /root/recordings_key luks&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/crypttab
+</code></pre></div>
+
+<p>This encrypts all recordings at the filesystem level with no changes needed to VICIdial or Asterisk.</p>
+<h3 id="state-retention-requirements">State Retention Requirements<a class="headerlink" href="#state-retention-requirements" title="Permanent link">&para;</a></h3>
+<p>There is no single federal mandate for how long you must retain call recordings, but state laws and industry regulations create effective minimums:</p>
+<table>
+<thead>
+<tr>
+<th>Industry/Regulation</th>
+<th>Minimum Retention</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>General business (no specific regulation)</td>
+<td>90 days recommended</td>
+</tr>
+<tr>
+<td>TCPA-related litigation protection</td>
+<td>4-5 years (statute of limitations)</td>
+</tr>
+<tr>
+<td>Financial services (SEC Rule 17a-4)</td>
+<td>3 years minimum, some records 6 years</td>
+</tr>
+<tr>
+<td>Insurance (varies by state)</td>
+<td>3-7 years depending on state</td>
+</tr>
+<tr>
+<td>Healthcare (HIPAA)</td>
+<td>6 years from creation or last effective date</td>
+</tr>
+<tr>
+<td>Debt collection (FDCPA)</td>
+<td>3-5 years recommended</td>
+</tr>
+<tr>
+<td>Government contracts</td>
+<td>Per contract terms, often 5-7 years</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Practical advice:</strong> Keep recordings for at least the statute of limitations on any claim that could involve the recorded call. For most outbound dialing operations, that means 4-5 years for <a href="/glossary/tcpa/">TCPA</a> protection and 3-7 years for industry-specific requirements. The cost of storing compressed recordings for 5 years in S3 Glacier is trivial compared to the cost of being unable to produce a recording when litigation demands it.</p>
+<hr />
+<h2 id="recording-playback-and-search-in-vicidial-admin">Recording Playback and Search in VICIdial Admin<a class="headerlink" href="#recording-playback-and-search-in-vicidial-admin" title="Permanent link">&para;</a></h2>
+<p>VICIdial provides several built-in tools for finding and listening to recordings.</p>
+<h3 id="admin-recording-search">Admin Recording Search<a class="headerlink" href="#admin-recording-search" title="Permanent link">&para;</a></h3>
+<p>Navigate to <strong>Reports &gt; Recording Lookup</strong> in the VICIdial admin interface. You can search by:</p>
+<ul>
+<li>Date range</li>
+<li>Phone number</li>
+<li>Agent user ID</li>
+<li>Lead ID</li>
+<li>Campaign ID</li>
+</ul>
+<p>The search queries the <code>recording_log</code> table and returns a list of matching recordings with playback links. Each playback link opens an HTML5 audio player in the browser (or triggers a download, depending on your Apache configuration).</p>
+<h3 id="agent-side-recording-access">Agent-Side Recording Access<a class="headerlink" href="#agent-side-recording-access" title="Permanent link">&para;</a></h3>
+<p>Agents can access recordings for their own calls through the agent interface if you enable it. In <strong>Admin &gt; User Groups</strong>, the <code>recording_access</code> permission controls whether agents in that group can listen to recordings. Options:</p>
+<ul>
+<li><strong>ALL</strong> --- agent can listen to all recordings (not recommended for most operations)</li>
+<li><strong>OWN</strong> --- agent can only listen to their own recordings</li>
+<li><strong>NONE</strong> --- agent cannot access recordings</li>
+</ul>
+<p>For QA-focused operations, setting this to <code>OWN</code> lets agents review their own calls for self-improvement without exposing other agents' recordings.</p>
+<h3 id="api-based-recording-retrieval">API-Based Recording Retrieval<a class="headerlink" href="#api-based-recording-retrieval" title="Permanent link">&para;</a></h3>
+<p>VICIdial's non-agent API includes a recording retrieval endpoint. This is useful for integrating recordings with external CRM systems, QA platforms, or compliance tools:</p>
+<div class="codehilite"><pre><span></span><code>https://your-vicidial-server/vicidial/non_agent_api.php?
+  source=recording_api&amp;
+  user=API_USER&amp;
+  pass=API_PASS&amp;
+  function=recording_lookup&amp;
+  lead_id=12345&amp;
+  date=2026-03-18
+</code></pre></div>
+
+<p>The API returns the recording URL(s) and metadata, which your external system can then fetch and process.</p>
+<hr />
+<h2 id="recording-quality-assurance-workflows">Recording Quality Assurance Workflows<a class="headerlink" href="#recording-quality-assurance-workflows" title="Permanent link">&para;</a></h2>
+<p>Recording calls is only useful if someone listens to them. Here are the QA workflows that production VICIdial operations typically implement.</p>
+<h3 id="random-sampling">Random Sampling<a class="headerlink" href="#random-sampling" title="Permanent link">&para;</a></h3>
+<p>The simplest approach: QA managers listen to a random sample of calls each day. A 5% sample rate is common for operations with 50+ agents. For a 50-agent operation generating 4,000-6,000 calls/day, that means 200-300 calls reviewed.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Pull random sample of today&#39;s recordings for QA review</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">recording_id</span><span class="p">,</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">,</span>
+<span class="w">       </span><span class="n">vl</span><span class="p">.</span><span class="n">phone_number</span><span class="p">,</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">first_name</span><span class="p">,</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">last_name</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">rl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">vl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="n">start_time</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">60</span><span class="w">  </span><span class="c1">-- Skip short calls</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">RAND</span><span class="p">()</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="targeted-review">Targeted Review<a class="headerlink" href="#targeted-review" title="Permanent link">&para;</a></h3>
+<p>Rather than random sampling, focus QA time on the calls most likely to have issues:</p>
+<ul>
+<li><strong>Long calls</strong> (&gt;10 minutes) --- possible agent stalling or off-script behavior</li>
+<li><strong>Short calls</strong> (&lt;30 seconds) --- possible hang-ups, wrong numbers, or agent rudeness</li>
+<li><strong>Calls resulting in specific dispositions</strong> --- review all "SALE" dispositions to verify the sale was legitimate</li>
+<li><strong>Calls from new agents</strong> --- higher review rate during the first 2 weeks</li>
+<li><strong>Complaint-flagged leads</strong> --- any lead that called back to complain</li>
+</ul>
+<h3 id="integration-with-external-qa-platforms">Integration with External QA Platforms<a class="headerlink" href="#integration-with-external-qa-platforms" title="Permanent link">&para;</a></h3>
+<p>Several third-party QA platforms can ingest VICIdial recordings for AI-powered analysis, automated scoring, and compliance checking. The integration typically works through:</p>
+<ol>
+<li>A scheduled script that queries <code>recording_log</code> for new recordings</li>
+<li>Upload of recording files to the QA platform via API</li>
+<li>The QA platform processes recordings (speech-to-text, keyword detection, sentiment analysis)</li>
+<li>Results are pushed back to VICIdial or displayed in the QA platform's dashboard</li>
+</ol>
+<p>This is an area where <a href="/blog/ai-call-center-quality-control/">AI-powered quality control</a> is rapidly advancing. Automated transcription and keyword flagging can screen 100% of calls and surface the ones that need human review.</p>
+<blockquote>
+<p><strong>QA at Scale, Without the Manual Effort.</strong>
+ViciStack integrates recording management with monitoring and compliance workflows. <a href="/free-audit/">See How It Works.</a></p>
+</blockquote>
+<hr />
+<h2 id="advanced-recording-configuration">Advanced Recording Configuration<a class="headerlink" href="#advanced-recording-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="dual-channel-stereo-recording">Dual-Channel (Stereo) Recording<a class="headerlink" href="#dual-channel-stereo-recording" title="Permanent link">&para;</a></h3>
+<p>For operations that need to distinguish between agent audio and caller audio (common in QA scoring and transcription), VICIdial supports dual-channel recording:</p>
+<p>In <strong>Admin &gt; Campaigns &gt; [Campaign] &gt; Recording</strong>, set <code>Dual Channel Recording</code> to <code>Y</code>. This creates stereo WAV files where the left channel is the agent and the right channel is the caller.</p>
+<p><strong>Warning:</strong> Dual-channel recordings are twice the size of mono mixed recordings. Plan your storage accordingly. The trade-off is worth it if you use speech analytics that benefit from channel separation, but it is unnecessary for basic QA listening.</p>
+<h3 id="on-demand-recording">On-Demand Recording<a class="headerlink" href="#on-demand-recording" title="Permanent link">&para;</a></h3>
+<p>Not every call needs to be recorded. VICIdial supports several recording modes configured at the campaign level via the <a href="/settings/campaign-recording/">campaign recording</a> setting:</p>
+<table>
+<thead>
+<tr>
+<th>Recording Mode</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ALLCALLS</td>
+<td>Every call is recorded automatically</td>
+</tr>
+<tr>
+<td>ALLFORCE</td>
+<td>Every call is recorded, agents cannot stop recording</td>
+</tr>
+<tr>
+<td>ONDEMAND</td>
+<td>Recording starts only when the agent clicks the record button</td>
+</tr>
+<tr>
+<td>NEVER</td>
+<td>No recording</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ALLFORCE</strong> is the recommended setting for compliance-sensitive operations. It removes the agent's ability to selectively stop recording, which prevents the scenario where an agent stops recording before saying something inappropriate.</p>
+<p><strong>ONDEMAND</strong> is useful for high-volume operations where only a fraction of calls need recording (e.g., recording only sales calls, not survey calls). It reduces storage requirements but creates compliance gaps.</p>
+<h3 id="recording-permissions-by-user-group">Recording Permissions by User Group<a class="headerlink" href="#recording-permissions-by-user-group" title="Permanent link">&para;</a></h3>
+<p>Control which <a href="/glossary/user-group/">user groups</a> can access recordings through <strong>Admin &gt; User Groups &gt; [Group] &gt; Allowed Recordings</strong>. This is essential for multi-tenant or multi-client operations where different teams should only hear their own recordings.</p>
+<p>Permissions include:
+- Which campaigns' recordings the group can access
+- Whether the group can download recordings (vs. only stream playback)
+- Whether the group can delete recordings</p>
+<p>For <a href="/blog/vicidial-multi-tenant/">BPO operations running multi-tenant VICIdial</a>, recording isolation is one of the most important permission configurations. A client should never be able to hear recordings from another client's campaigns.</p>
+<hr />
+<h2 id="troubleshooting-common-recording-issues">Troubleshooting Common Recording Issues<a class="headerlink" href="#troubleshooting-common-recording-issues" title="Permanent link">&para;</a></h2>
+<h3 id="recordings-not-being-created">Recordings Not Being Created<a class="headerlink" href="#recordings-not-being-created" title="Permanent link">&para;</a></h3>
+<p><strong>Check 1:</strong> Is the campaign recording setting enabled?</p>
+<div class="codehilite"><pre><span></span><code><span class="k">Admin</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Campaigns</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">[</span><span class="n">Campaign</span><span class="o">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Recording</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Campaign</span><span class="w"> </span><span class="n">Recording</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ALLCALLS</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">ALLFORCE</span>
+</code></pre></div>
+
+<p><strong>Check 2:</strong> Is the recording directory writable?</p>
+<div class="codehilite"><pre><span></span><code>ls<span class="w"> </span>-la<span class="w"> </span>/var/spool/asterisk/monitor/MIXmonitor/
+<span class="c1"># Should be owned by asterisk:asterisk with 755 permissions</span>
+</code></pre></div>
+
+<p><strong>Check 3:</strong> Is there disk space?</p>
+<div class="codehilite"><pre><span></span><code>df<span class="w"> </span>-h<span class="w"> </span>/var/spool/asterisk/monitor/
+</code></pre></div>
+
+<p><strong>Check 4:</strong> Is the MixMon application loaded in Asterisk?</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show like mix&quot;</span>
+<span class="c1"># Should show app_mixmonitor.so as running</span>
+</code></pre></div>
+
+<h3 id="recordings-are-silent-or-one-sided">Recordings Are Silent or One-Sided<a class="headerlink" href="#recordings-are-silent-or-one-sided" title="Permanent link">&para;</a></h3>
+<p>This is almost always a <a href="/glossary/nat-traversal/">NAT traversal</a> issue. MixMon records the audio streams as they arrive at Asterisk. If one side's audio is not reaching Asterisk due to NAT problems, the recording will be silent on that side.</p>
+<p>Verify <a href="/glossary/rtp/">RTP</a> is flowing in both directions:</p>
+<div class="codehilite"><pre><span></span><code>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>udp<span class="w"> </span>portrange<span class="w"> </span><span class="m">10000</span>-20000<span class="w"> </span>-c<span class="w"> </span><span class="m">100</span>
+</code></pre></div>
+
+<p>You should see UDP packets going both to and from your carrier's IP addresses.</p>
+<h3 id="recordings-are-truncated">Recordings Are Truncated<a class="headerlink" href="#recordings-are-truncated" title="Permanent link">&para;</a></h3>
+<p>If recordings cut off before the call ends, the most common cause is Asterisk running out of file descriptors. Each active recording holds an open file descriptor. Check and increase the limit:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check current limit</span>
+<span class="nb">ulimit</span><span class="w"> </span>-n
+
+<span class="c1"># Increase in /etc/security/limits.conf</span>
+asterisk<span class="w"> </span>soft<span class="w"> </span>nofile<span class="w"> </span><span class="m">65536</span>
+asterisk<span class="w"> </span>hard<span class="w"> </span>nofile<span class="w"> </span><span class="m">65536</span>
+</code></pre></div>
+
+<p>Restart Asterisk after changing limits.</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-much-disk-space-does-vicidial-call-recording-use-per-agent-per-month">How much disk space does VICIdial call recording use per agent per month?<a class="headerlink" href="#how-much-disk-space-does-vicidial-call-recording-use-per-agent-per-month" title="Permanent link">&para;</a></h3>
+<p>For a single agent working an 8-hour shift with <a href="/glossary/predictive-dialing/">predictive dialing</a>, expect approximately 7-8 GB/month in WAV format or 900 MB-1 GB/month in MP3 format. This assumes roughly 40-45 minutes of talk time per hour, which is typical for a well-tuned outbound campaign. Multiply by your agent count for total monthly storage requirements.</p>
+<h3 id="can-i-record-only-specific-campaigns-or-inbound-groups">Can I record only specific campaigns or inbound groups?<a class="headerlink" href="#can-i-record-only-specific-campaigns-or-inbound-groups" title="Permanent link">&para;</a></h3>
+<p>Yes. Recording is configured per campaign in <strong>Admin &gt; Campaigns &gt; Recording</strong> and per <a href="/glossary/inbound-group/">inbound group</a> in <strong>Admin &gt; Inbound Groups &gt; Recording</strong>. You can have one campaign recording all calls while another records none. This is useful for saving storage by not recording surveys, IVR interactions, or other non-sensitive call types.</p>
+<h3 id="how-do-i-move-recordings-between-vicidial-servers">How do I move recordings between VICIdial servers?<a class="headerlink" href="#how-do-i-move-recordings-between-vicidial-servers" title="Permanent link">&para;</a></h3>
+<p>Use rsync to transfer the recording files, then update the <code>recording_log</code> table to reflect the new file locations. The <code>location</code> column in <code>recording_log</code> is the path VICIdial uses for playback. After moving files, run an UPDATE query to change the path prefix to the new server's path.</p>
+<h3 id="is-it-legal-to-record-calls-without-telling-the-other-party">Is it legal to record calls without telling the other party?<a class="headerlink" href="#is-it-legal-to-record-calls-without-telling-the-other-party" title="Permanent link">&para;</a></h3>
+<p>Under federal law (one-party consent), yes --- as long as one party to the call (your agent or your company) consents. However, twelve states require all-party consent. If you are dialing into those states, you must disclose that the call is being recorded. The safest practice is to disclose on every call regardless of the destination state.</p>
+<h3 id="how-do-i-automatically-delete-old-recordings">How do I automatically delete old recordings?<a class="headerlink" href="#how-do-i-automatically-delete-old-recordings" title="Permanent link">&para;</a></h3>
+<p>Create a cron job that deletes recordings older than your retention policy:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Delete WAV recordings older than 365 days</span>
+find<span class="w"> </span>/var/spool/asterisk/monitor/MIXmonitor/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.wav&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+365<span class="w"> </span>-delete
+
+<span class="c1"># Delete corresponding database entries</span>
+mysql<span class="w"> </span>-u<span class="w"> </span>cron<span class="w"> </span>-p<span class="s1">&#39;password&#39;</span><span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="s2">&quot;DELETE FROM recording_log WHERE start_time &lt; DATE_SUB(NOW(), INTERVAL 365 DAY);&quot;</span>
+</code></pre></div>
+
+<p>Always verify your retention policy with legal counsel before implementing automated deletion.</p>
+<h3 id="can-vicidial-recordings-be-used-as-evidence-in-court">Can VICIdial recordings be used as evidence in court?<a class="headerlink" href="#can-vicidial-recordings-be-used-as-evidence-in-court" title="Permanent link">&para;</a></h3>
+<p>Yes, VICIdial recordings are regularly used as evidence in <a href="/glossary/tcpa/">TCPA</a> litigation, consumer disputes, and regulatory proceedings. To maximize evidentiary value: maintain chain of custody documentation, use tamper-evident storage (write-once S3 Glacier with Object Lock), retain recordings in their original WAV format, and ensure your <code>recording_log</code> database entries provide complete metadata (timestamps, agent ID, phone number, lead ID).</p>
+<h3 id="how-do-i-encrypt-recordings-at-rest">How do I encrypt recordings at rest?<a class="headerlink" href="#how-do-i-encrypt-recordings-at-rest" title="Permanent link">&para;</a></h3>
+<p>The simplest approach is filesystem-level encryption using LUKS (Linux Unified Key Setup) on the partition where recordings are stored. This is transparent to VICIdial and Asterisk --- they read and write files normally, and the encryption/decryption happens at the filesystem level. For S3-based archival, enable server-side encryption (SSE-S3 or SSE-KMS) on the S3 bucket.</p>
+<h3 id="does-call-recording-affect-vicidial-performance">Does call recording affect VICIdial performance?<a class="headerlink" href="#does-call-recording-affect-vicidial-performance" title="Permanent link">&para;</a></h3>
+<p>On modern hardware, the performance impact of WAV recording is negligible --- Asterisk is writing raw PCM data that already exists in memory. MP3 recording adds measurable CPU overhead due to real-time encoding. At 50 concurrent recordings with MP3 encoding, expect 5-10% additional CPU utilization on the telephony server. If you are running near CPU capacity, stick with WAV and convert to MP3 offline.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-call-recording">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2175 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-setup-guide/">
+      
+      
+        <link rel="prev" href="../vicidial-vs-calltools/">
+      
+      
+        <link rel="next" href="../vicidial-security-hardening/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>The Complete VICIdial Setup Guide (2026) - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-complete-vicidial-setup-guide-2026-from-bare-metal-to-first-dial-in-under-2-hours" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The Complete VICIdial Setup Guide (2026)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-actually-changed-in-20242026-and-why-your-old-guide-is-lying-to-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Actually Changed in 2024–2026 (And Why Your Old Guide Is Lying to You)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hardware-what-you-actually-need-not-what-the-forum-told-you-in-2015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hardware: What You Actually Need (Not What the Forum Told You in 2015)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hardware: What You Actually Need (Not What the Forum Told You in 2015)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-server-the-i-have-1025-agents-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single Server (The "I Have 10–25 Agents" Setup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-server-cluster-the-im-actually-running-a-business-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Server Cluster (The "I'm Actually Running a Business" Setup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-method-1-vicibox-iso-the-sane-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Method 1: ViciBox ISO (The Sane Path)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation Method 1: ViciBox ISO (The Sane Path)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#download-and-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Download and Boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-vicidial-configuration-dont-skip-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-VICIdial Configuration (Don't Skip This)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-vicidial-the-one-command-miracle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install VICIdial (The One-Command Miracle)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-one-bug-you-need-to-fix-immediately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The One Bug You Need to Fix Immediately
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-method-2-scratch-install-on-almalinux-9-the-control-freak-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Method 2: Scratch Install on AlmaLinux 9 (The Control Freak Path)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-install-from-its-running-to-were-making-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Install: From "It's Running" to "We're Making Calls"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-Install: From &#34;It&#39;s Running&#34; to &#34;We&#39;re Making Calls&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lock-down-the-defaults-do-this-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lock Down the Defaults (Do This First)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-your-sip-trunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Your SIP Trunk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-your-first-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Your First Campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loading-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading Leads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-phone-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Phone Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-server-clustering-the-rules-nobody-writes-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Server Clustering: The Rules Nobody Writes Down
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Server Clustering: The Rules Nobody Writes Down">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-add-what" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Add What
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-troubleshooting-hall-of-fame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Troubleshooting Hall of Fame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-honest-truth-about-diy-vs-managed-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Honest Truth About DIY vs. Managed VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#essential-resources-bookmark-these" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Essential Resources (Bookmark These)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-actually-changed-in-20242026-and-why-your-old-guide-is-lying-to-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Actually Changed in 2024–2026 (And Why Your Old Guide Is Lying to You)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hardware-what-you-actually-need-not-what-the-forum-told-you-in-2015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hardware: What You Actually Need (Not What the Forum Told You in 2015)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hardware: What You Actually Need (Not What the Forum Told You in 2015)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-server-the-i-have-1025-agents-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single Server (The "I Have 10–25 Agents" Setup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-server-cluster-the-im-actually-running-a-business-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Server Cluster (The "I'm Actually Running a Business" Setup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-method-1-vicibox-iso-the-sane-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Method 1: ViciBox ISO (The Sane Path)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation Method 1: ViciBox ISO (The Sane Path)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#download-and-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Download and Boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-vicidial-configuration-dont-skip-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-VICIdial Configuration (Don't Skip This)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-vicidial-the-one-command-miracle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install VICIdial (The One-Command Miracle)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-one-bug-you-need-to-fix-immediately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The One Bug You Need to Fix Immediately
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-method-2-scratch-install-on-almalinux-9-the-control-freak-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Method 2: Scratch Install on AlmaLinux 9 (The Control Freak Path)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-install-from-its-running-to-were-making-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Install: From "It's Running" to "We're Making Calls"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-Install: From &#34;It&#39;s Running&#34; to &#34;We&#39;re Making Calls&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lock-down-the-defaults-do-this-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lock Down the Defaults (Do This First)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-your-sip-trunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Your SIP Trunk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-your-first-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Your First Campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loading-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading Leads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-phone-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Phone Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-server-clustering-the-rules-nobody-writes-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Server Clustering: The Rules Nobody Writes Down
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Server Clustering: The Rules Nobody Writes Down">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-add-what" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Add What
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-troubleshooting-hall-of-fame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Troubleshooting Hall of Fame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-honest-truth-about-diy-vs-managed-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Honest Truth About DIY vs. Managed VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#essential-resources-bookmark-these" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Essential Resources (Bookmark These)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="the-complete-vicidial-setup-guide-2026-from-bare-metal-to-first-dial-in-under-2-hours">The Complete VICIdial Setup Guide (2026): From Bare Metal to First Dial in Under 2 Hours<a class="headerlink" href="#the-complete-vicidial-setup-guide-2026-from-bare-metal-to-first-dial-in-under-2-hours" title="Permanent link">&para;</a></h1>
+<p><strong>Last updated: March 2026 | Reading time: ~18 minutes</strong></p>
+<p>You've done the math. <a href="/blog/vicidial-vs-convoso/">Convoso wants $150/seat/month</a>. <a href="/blog/vicidial-vs-five9/">Five9 wants even more</a>. Meanwhile, VICIdial — the same open-source predictive dialer powering 14,000+ installations worldwide — costs exactly zero in licensing fees.</p>
+<p>There's just one problem: actually setting it up.</p>
+<p>Every guide you'll find on Google right now is either a ViciBox 7 PDF from 2018, a forum thread with 47 conflicting answers, or a blog post that reads like it was translated three times. CentOS 7 — the OS that 90% of those guides reference — hit end-of-life in June 2024. If you follow those instructions in 2026, you're building on a dead foundation.</p>
+<p>This guide fixes that. We're covering ViciBox 12.0.2 (the current stable release), AlmaLinux 9 scratch installs, single-server deployments, multi-server clusters, SIP trunk configuration with real carrier examples, WebRTC setup for remote agents, and every common gotcha that'll eat your weekend if you don't know about it in advance.</p>
+<p><strong>Or — and hear us out — you could skip all of this and let ViciStack handle it overnight.</strong> We migrate VICIdial operators to fully optimized, bare-metal infrastructure with <a href="/blog/vicidial-amd-guide/">AMD accuracy</a> hitting 92–96% out of the box. No compiling Asterisk from source. No debugging one-way audio at 2 AM. But if you want to do it yourself, keep reading. We respect the DIY spirit. We just want you to know there's a better option when you're ready.</p>
+<hr />
+<h2 id="what-actually-changed-in-20242026-and-why-your-old-guide-is-lying-to-you">What Actually Changed in 2024–2026 (And Why Your Old Guide Is Lying to You)<a class="headerlink" href="#what-actually-changed-in-20242026-and-why-your-old-guide-is-lying-to-you" title="Permanent link">&para;</a></h2>
+<p>Let's get this out of the way first, because if you skip this section and follow an outdated tutorial, you're going to waste a solid 6–8 hours before realizing something is fundamentally broken.</p>
+<p><strong>CentOS 7 is dead.</strong> Like, actually dead. EOL June 2024. No more security patches, no more updates. Every "VICIdial installation guide" from striker24x7, every Udemy course, every forum walkthrough that says <code>yum install centos-release-scl</code> — that's all historical fiction now.</p>
+<p><strong>ViciBox jumped from v9 to v12.</strong> The version numbers aren't a typo. ViciBox 12.0.2 dropped in January 2025, running on OpenSuSE Leap 15.6 with Asterisk 18, MariaDB 10.11.9, and PHP 8.2. ViciBox 13.0 is already in beta with OpenSuSE 16.0 and SELinux support coming. If you're following a guide that mentions ViciBox 8 or 9, you're reading ancient history.</p>
+<p><strong>Asterisk 18 is now the default.</strong> The jump from Asterisk 13/16 to 18 brought PJSIP support, improved WebRTC handling, and better codec negotiation. Matt Florell officially confirmed full Asterisk 18 support in September 2025. The VICIdial-specific patches now target Asterisk 18 exclusively for new installs.</p>
+<p><strong>PHP 8.2 is standard.</strong> VICIdial code older than 4 years will throw deprecation warnings or outright break on PHP 8.x. The <code>mysql_*</code> functions your old installation scripts reference? Gone since PHP 7.0.</p>
+<p><strong>The SVN trunk is at revision 3939+</strong>, version 2.14b0.5, database schema 1729. Still hosted at <code>svn://svn.eflo.net:3690/agc_2-X/trunk</code> because the VICIdial project has zero plans to move to Git. Some things never change.</p>
+<p>Here's what this means in practice: <strong>the only two paths worth taking for a new VICIdial install in 2026 are ViciBox 12.0.2 (recommended) or a scratch install on AlmaLinux 9 / Rocky Linux 9.</strong> Everything else is a waste of your time.</p>
+<blockquote>
+<p><strong>Your Old Guide Is Lying to You. We Won't.</strong>
+ViciStack deploys fully optimized VICIdial on Asterisk 18, AlmaLinux 9, with every gotcha pre-solved. <a href="/free-audit/">Skip the Setup →</a></p>
+</blockquote>
+<hr />
+<h2 id="hardware-what-you-actually-need-not-what-the-forum-told-you-in-2015">Hardware: What You Actually Need (Not What the Forum Told You in 2015)<a class="headerlink" href="#hardware-what-you-actually-need-not-what-the-forum-told-you-in-2015" title="Permanent link">&para;</a></h2>
+<p>Let's talk real numbers. The ViciBox 12 documentation finally has proper dimensioning specs, and they're different from what you'll find in old forum posts.</p>
+<h3 id="single-server-the-i-have-1025-agents-setup">Single Server (The "I Have 10–25 Agents" Setup)<a class="headerlink" href="#single-server-the-i-have-1025-agents-setup" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Minimum</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU</td>
+<td>4 cores @ 2.0+ GHz</td>
+<td>6+ cores @ 2.0+ GHz</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td>8 GB</td>
+<td>16 GB ECC</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>160 GB SSD</td>
+<td>500 GB RAID1 SSD</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>1 Gbps</td>
+<td>1 Gbps dedicated</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SSDs are mandatory in 2026.</strong> Not recommended — mandatory. The ViciBox documentation explicitly states SATA SSD as the minimum. If someone tries to sell you a VICIdial server on spinning rust, they're either stuck in 2016 or they don't care about your agents sitting idle waiting for database queries.</p>
+<p>A single Express server realistically handles <strong>15–20 outbound agents</strong> with predictive dialing active, or roughly 50 inbound-only agents under ideal conditions. Once you push past 25 outbound agents, you're playing with fire.</p>
+<h3 id="multi-server-cluster-the-im-actually-running-a-business-setup">Multi-Server Cluster (The "I'm Actually Running a Business" Setup)<a class="headerlink" href="#multi-server-cluster-the-im-actually-running-a-business-setup" title="Permanent link">&para;</a></h3>
+<p>When you outgrow a single box, VICIdial splits into four roles. For the full deep-dive on <a href="/blog/vicidial-cluster-guide/">cluster architecture, capacity planning, and every configuration detail</a>, see our dedicated cluster guide.</p>
+<p><strong>Database server</strong> — The brain. One per cluster, always. For 150 agents: 8+ cores, 32 GB ECC RAM, NVMe RAID1.</p>
+<p><strong>Telephony/dialer servers</strong> — The lungs. Each one handles about 25 outbound agents with heavy recording and 4:1 dial ratios.</p>
+<p><strong>Web servers</strong> — The face. 2–4 cores, 4–8 GB RAM. SSL cuts capacity roughly in half due to TLS overhead.</p>
+<p><strong>Archive server</strong> — The memory. This is the one place where spinning drives are actually fine.</p>
+<blockquote>
+<p><strong>Stop Guessing at Server Specs.</strong>
+ViciStack provisions purpose-built bare metal for your exact agent count and dial ratio. <a href="/pricing/">Get Your Custom Quote →</a></p>
+</blockquote>
+<hr />
+<h2 id="installation-method-1-vicibox-iso-the-sane-path">Installation Method 1: ViciBox ISO (The Sane Path)<a class="headerlink" href="#installation-method-1-vicibox-iso-the-sane-path" title="Permanent link">&para;</a></h2>
+<p>ViciBox is the official pre-built ISO maintained by Kumba (the ViciBox developer). It bundles OpenSuSE Leap 15.6, Asterisk 18, MariaDB, Apache, PHP, and VICIdial into a single bootable image. It's the path of least resistance and the one we recommend for anyone who values their time.</p>
+<h3 id="download-and-boot">Download and Boot<a class="headerlink" href="#download-and-boot" title="Permanent link">&para;</a></h3>
+<p>Grab ViciBox 12.0.2 from <code>download.vicidial.com/iso/vicibox/server/</code>. Two flavors: <strong>Standard</strong> (single disk, hardware RAID, VMs) and <strong>MD</strong> (software RAID1 across two drives). Burn to USB with Rufus or dd, boot it up, and select "Install ViciBox" from the menu.</p>
+<p>The installer copies the OS to disk, you log in as root, and it walks you through locale, keyboard, timezone, and root password. Reboot when prompted. Total time: about 10 minutes.</p>
+<h3 id="pre-vicidial-configuration-dont-skip-this">Pre-VICIdial Configuration (Don't Skip This)<a class="headerlink" href="#pre-vicidial-configuration-dont-skip-this" title="Permanent link">&para;</a></h3>
+<p>Before you touch VICIdial, nail down your networking. VICIdial's configuration is permanently tied to your server's IP address — changing it later is a painful multi-file surgery.</p>
+<p><strong>Set a static IP:</strong></p>
+<div class="codehilite"><pre><span></span><code>yast<span class="w"> </span>lan
+</code></pre></div>
+
+<p>Select your interface, choose "Statically assigned IP Address," enter the IP/subnet/gateway, and set DNS. Hit ALT-O to apply. Verify with <code>ping -4 google.com</code>.</p>
+<p><strong>Set timezone (use the ViciBox command, not yast):</strong></p>
+<div class="codehilite"><pre><span></span><code>vicibox-timezone
+</code></pre></div>
+
+<p>The regular yast timezone command doesn't update PHP's timezone. Ask me how I know.</p>
+<p><strong>Update the system:</strong></p>
+<div class="codehilite"><pre><span></span><code>zypper<span class="w"> </span>ref
+zypper<span class="w"> </span>up
+reboot
+</code></pre></div>
+
+<p><strong>Critical warning:</strong> Always <code>zypper up</code>, never <code>zypper dup</code>. The <code>dup</code> command (distribution upgrade) can downgrade MariaDB or break DAHDI compatibility. Multiple forum posts document this destroying production systems.</p>
+<h3 id="install-vicidial-the-one-command-miracle">Install VICIdial (The One-Command Miracle)<a class="headerlink" href="#install-vicidial-the-one-command-miracle" title="Permanent link">&para;</a></h3>
+<p>For a single server with ≤20 agents:</p>
+<div class="codehilite"><pre><span></span><code>vicibox-express
+</code></pre></div>
+
+<p>Type Y. Wait. Reboot. That's it. VICIdial is running.</p>
+<p>Verify with <code>screen -ls</code> — you should see 10–12 screen sessions. Hit <code>http://&lt;your-server-IP&gt;/vicidial/welcome.php</code> with default credentials <strong>6666 / 1234</strong> and you're looking at a working dialer.</p>
+<p>For a cluster, run <code>vicibox-install</code> on each server (database first, then web, then telephony), select which roles to enable, and point non-DB servers at the database server's IP. Same process, just repeated.</p>
+<h3 id="the-one-bug-you-need-to-fix-immediately">The One Bug You Need to Fix Immediately<a class="headerlink" href="#the-one-bug-you-need-to-fix-immediately" title="Permanent link">&para;</a></h3>
+<p>ViciBox 12 ships with a MariaDB version that deprecated implicit TIMESTAMP behavior. This can silently break tables. Fix it before you do anything else:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;explicit_defaults_for_timestamp = Off&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/my.cnf.d/general.cnf
+systemctl<span class="w"> </span>restart<span class="w"> </span>mariadb.service
+</code></pre></div>
+
+<blockquote>
+<p><strong>ViciBox Gets You Running. ViciStack Gets You Results.</strong>
+We go beyond installation — AMD tuning, DID management, carrier optimization, all included. <a href="/free-audit/">See the Difference →</a></p>
+</blockquote>
+<hr />
+<h2 id="installation-method-2-scratch-install-on-almalinux-9-the-control-freak-path">Installation Method 2: Scratch Install on AlmaLinux 9 (The Control Freak Path)<a class="headerlink" href="#installation-method-2-scratch-install-on-almalinux-9-the-control-freak-path" title="Permanent link">&para;</a></h2>
+<p>Some people need RHEL-family Linux. Some people want to understand every component. Some people just enjoy compiling software from source on a Friday night. We don't judge.</p>
+<p>The best option in 2026 is the <strong>carpenox auto-installer</strong> maintained by Chris at CyburDial/Dialer.one. It's the most actively maintained community script and handles AlmaLinux 9 + Rocky Linux 9 with Asterisk 18:</p>
+<div class="codehilite"><pre><span></span><code>timedatectl<span class="w"> </span>set-timezone<span class="w"> </span>America/New_York
+yum<span class="w"> </span>check-update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>yum<span class="w"> </span>update<span class="w"> </span>-y
+yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>epel-release<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>yum<span class="w"> </span>update<span class="w"> </span>-y
+yum<span class="w"> </span>install<span class="w"> </span>git<span class="w"> </span>kernel*<span class="w"> </span>--exclude<span class="o">=</span>kernel-debug*<span class="w"> </span>-y
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39;</span><span class="w"> </span>/etc/selinux/config
+<span class="nb">cd</span><span class="w"> </span>/usr/src
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/carpenox/vicidial-install-scripts.git
+reboot
+<span class="nb">cd</span><span class="w"> </span>/usr/src/vicidial-install-scripts
+chmod<span class="w"> </span>+x<span class="w"> </span>alma-rocky9-ast18.sh
+./alma-rocky9-ast18.sh
+</code></pre></div>
+
+<p><strong>SELinux must be disabled.</strong> This is non-negotiable. VICIdial's Perl scripts, Asterisk's file operations, and Apache's config all assume SELinux is off. Every single scratch install guide starts with disabling it.</p>
+<p>The script handles dependency installation, Asterisk 18 compilation with VICIdial patches, DAHDI, LAME, Jansson, VICIdial SVN checkout, database setup, crontab configuration, and boot scripts. The five VICIdial-specific Asterisk patches (AMD stats, IAX peer status, SIP peer logging, and two timeout reset patches) are applied automatically.</p>
+<hr />
+<h2 id="post-install-from-its-running-to-were-making-calls">Post-Install: From "It's Running" to "We're Making Calls"<a class="headerlink" href="#post-install-from-its-running-to-were-making-calls" title="Permanent link">&para;</a></h2>
+<p>This is where every other guide on the internet stops. "Congratulations, you installed VICIdial! Here's a screenshot of the login page. Good luck!" Not helpful. Let's actually configure this thing.</p>
+<h3 id="lock-down-the-defaults-do-this-first">Lock Down the Defaults (Do This First)<a class="headerlink" href="#lock-down-the-defaults-do-this-first" title="Permanent link">&para;</a></h3>
+<p>VICIdial ships with training wheels that are also security holes:</p>
+<ol>
+<li><strong>Change admin password</strong> — Admin → Users → Modify user 6666. The default 6666/1234 credentials are known to literally everyone who has ever Googled "vicidial."</li>
+<li><strong>Set MySQL root password</strong> — <code>mysqladmin -u root password 'SOMETHING_STRONG'</code></li>
+<li><strong>Change phone registration passwords</strong> — Default is <code>test</code>. Yes, really.</li>
+<li><strong>Move SSH off port 22</strong> — Every bot on the internet is hammering port 22 right now.</li>
+</ol>
+<h3 id="setting-up-your-sip-trunk">Setting Up Your SIP Trunk<a class="headerlink" href="#setting-up-your-sip-trunk" title="Permanent link">&para;</a></h3>
+<p>This is where most DIY installs stall. You need a VoIP carrier to actually make phone calls, and VICIdial's carrier configuration has some non-obvious quirks.</p>
+<p>Navigate to Admin → Carriers → Add A New Carrier. For an IP-authenticated trunk (most business carriers):</p>
+<p><strong>Account Entry:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[your-carrier]</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">g729</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">insecure</span><span class="o">=</span><span class="s">port,invite</span>
+<span class="na">host</span><span class="o">=</span><span class="s">sip.yourcarrier.com</span>
+<span class="na">dtmfmode</span><span class="o">=</span><span class="s">rfc2833</span>
+<span class="na">context</span><span class="o">=</span><span class="s">trunkinbound</span>
+<span class="na">canreinvite</span><span class="o">=</span><span class="s">no</span>
+</code></pre></div>
+
+<p><strong>Dialplan Entry:</strong></p>
+<div class="codehilite"><pre><span></span><code>exten<span class="w"> </span>=&gt;<span class="w"> </span>_91NXXNXXXXXX,1,AGI(agi://127.0.0.1:4577/call_log)
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_91NXXNXXXXXX,2,Dial(<span class="cp">${</span><span class="n">CARRIER</span><span class="cp">}</span>/<span class="cp">${</span><span class="n">EXTEN</span><span class="p">:</span><span class="mi">1</span><span class="cp">}</span>,60,tTor)
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_91NXXNXXXXXX,3,Hangup
+</code></pre></div>
+
+<p><strong>Global String:</strong> <code>CARRIER=SIP/your-carrier</code></p>
+<p>The <code>9</code> prefix is a dial string convention — when your campaign uses dial prefix <code>9</code>, VICIdial prepends it to each number, and the dialplan strips it before sending to the carrier. Verify your trunk with:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show registry&quot;</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show peers&quot;</span>
+</code></pre></div>
+
+<p><strong>Pro tip from running 100+ VICIdial centers:</strong> <a href="/blog/stir-shaken-vicidial-guide/">STIR/SHAKEN attestation</a> matters enormously in 2026. You need A-level attestation, which requires your DIDs and termination on the same carrier. The dual-stack approach gives you redundancy while maintaining A-level on both.</p>
+<blockquote>
+<p><strong>Carrier Config Is Where DIY Installs Go to Die.</strong>
+Wrong STIR/SHAKEN setup = "Scam Likely" within a week. ViciStack configures your carriers correctly from day one. <a href="/free-audit/">Get It Right →</a></p>
+</blockquote>
+<h3 id="creating-your-first-campaign">Creating Your First Campaign<a class="headerlink" href="#creating-your-first-campaign" title="Permanent link">&para;</a></h3>
+<p>Admin → Campaigns → Add a New Campaign. The critical setting is <strong>Dial Method:</strong></p>
+<ul>
+<li><strong>RATIO</strong> — Fixed calls per agent (e.g., 2.0 = two simultaneous calls per idle agent). Simple, predictable, good for small teams.</li>
+<li><strong>ADAPT_HARD_LIMIT</strong> — Predictive dialing with a hard ceiling on drop rate. Set this to 3% for TCPA compliance. This is what most outbound operations should use.</li>
+<li><strong>ADAPT_TAPERED</strong> — More aggressive early, more conservative as the day goes on. Good for experienced operations that understand the tradeoffs.</li>
+<li><strong>MANUAL</strong> — Agent clicks to dial. For compliance-heavy environments or testing.</li>
+</ul>
+<p>Key settings to get right from the start: <strong>Hopper Level</strong> (100–200 leads pre-loaded), <strong>Dial Timeout</strong> (26–30 seconds — carrier-dependent), <strong>Available Only Tally = Y</strong> (only dial when agents are actually idle), and <strong>Auto Dial Level</strong> (start at 1.5 for adaptive modes and adjust based on performance). For the complete breakdown of <a href="/blog/vicidial-predictive-dialer-settings/">every dialer setting that matters</a>, see our dedicated guide.</p>
+<h3 id="loading-leads">Loading Leads<a class="headerlink" href="#loading-leads" title="Permanent link">&para;</a></h3>
+<p>Lists → Add A New List → assign to your campaign → Lists → Load New Leads. Upload a CSV with at minimum: <code>phone_number</code>, <code>first_name</code>, <code>last_name</code>, <code>state</code>. Always test with a small batch first. VICIdial's lead loader is powerful but unforgiving with formatting issues.</p>
+<h3 id="agent-phone-setup">Agent Phone Setup<a class="headerlink" href="#agent-phone-setup" title="Permanent link">&para;</a></h3>
+<p>Two options in 2026:</p>
+<p><strong>SIP Softphone (MicroSIP, Zoiper, X-Lite):</strong> Create a phone in Admin → Phones with an extension (e.g., 1001), server IP, and registration password. Agent configures their softphone with these credentials. Works, but requires software on every agent machine.</p>
+<p><strong>WebRTC/ViciPhone (the modern way):</strong> Requires SSL/TLS on your web server and port 8089 open. Set up with <code>vicibox-ssl</code> on ViciBox, or certbot on scratch installs. Enable WebRTC phone templates in Admin, set phones to "As Webphone = Y," and agents get a browser-based phone built right into the agent interface. No software installs, works from anywhere. This is how most remote operations run in 2026.</p>
+<hr />
+<h2 id="multi-server-clustering-the-rules-nobody-writes-down">Multi-Server Clustering: The Rules Nobody Writes Down<a class="headerlink" href="#multi-server-clustering-the-rules-nobody-writes-down" title="Permanent link">&para;</a></h2>
+<p>Once you grow past 20–25 outbound agents, you need a <a href="/blog/vicidial-cluster-guide/">cluster</a>. Here are the rules that will save you from the forum's graveyard of broken cluster posts:</p>
+<p><strong>Rule 1: One adaptive process, one server.</strong> The <code>AST_VDadapt</code> process (keepalive 5) manages the predictive algorithm. It runs on <strong>exactly one server</strong> in the entire cluster. Running it on two servers causes dial-level conflicts that look like random drops. Same goes for <code>AST_VDauto_dial_FILL</code> (keepalive 7).</p>
+<p><strong>Rule 2: Same LAN, no routers.</strong> All cluster servers must be on the same local network with sub-1ms latency. A router between your database and dialer servers adds enough latency to break agent sessions. Use IAX2 (not SIP) for inter-server trunks.</p>
+<p><strong>Rule 3: NTP from one source.</strong> All servers sync their clocks to the database server or one designated NTP source. Independent NTP sync to external servers causes clock drift that breaks agent sessions, disconnects calls, and corrupts reporting.</p>
+<p><strong>Rule 4: Know your ceiling.</strong> VICIdial's MEMORY tables are single-threaded. One cluster maxes out around 450–500 agents. Plan your growth accordingly.</p>
+<h3 id="when-to-add-what">When to Add What<a class="headerlink" href="#when-to-add-what" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>You Hit...</th>
+<th>You Add...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20 outbound agents</td>
+<td>Split DB from telephony</td>
+</tr>
+<tr>
+<td>25 more agents</td>
+<td>Second dialer server</td>
+</tr>
+<tr>
+<td>50+ agents</td>
+<td>Dedicated DB server</td>
+</tr>
+<tr>
+<td>70+ agents</td>
+<td>Dedicated web server</td>
+</tr>
+<tr>
+<td>150+ agents</td>
+<td>Slave database for reporting</td>
+</tr>
+<tr>
+<td>450+ agents</td>
+<td>Second cluster</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Rule #1 of Clustering: Don't Learn It the Hard Way.</strong>
+We've built 100+ clusters. Let our scars save your weekend. <a href="/free-audit/">Talk to a Cluster Expert →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-troubleshooting-hall-of-fame">The Troubleshooting Hall of Fame<a class="headerlink" href="#the-troubleshooting-hall-of-fame" title="Permanent link">&para;</a></h2>
+<p>These are the issues that fill the VICIdial forum's 13,400+ support threads. Learn from others' pain:</p>
+<p><strong>No audio / one-way audio</strong> — 80% chance it's the firewall blocking UDP 10000–20000 (RTP ports). 15% chance it's a missing <code>externip</code> in sip.conf. 5% chance it's SIP ALG on a NAT router. Temporarily disable the firewall and test. If audio works, it's the firewall.</p>
+<p><strong>"No available sessions"</strong> — Conference extensions aren't populated for your server IP. Admin → Conferences → Show VICIDIAL Conferences. Each server needs its own conference range.</p>
+<p><strong>Recordings missing</strong> — Check the full pipeline: Is SOX installed? Is campaign recording set to ALLCALLS? Are the cron jobs running? Check <code>/var/spool/asterisk/monitor/</code> for raw files. The user-level recording setting can silently override the campaign setting — check both.</p>
+<p><strong>Database schema mismatch warning</strong> — You updated the SVN code but forgot the database. Run:</p>
+<div class="codehilite"><pre><span></span><code>mysql<span class="w"> </span>-p<span class="w"> </span>-f<span class="w"> </span>--database<span class="o">=</span>asterisk<span class="w"> </span>&lt;<span class="w"> </span>/usr/src/astguiclient/trunk/extras/upgrade_2.14.sql
+</code></pre></div>
+
+<hr />
+<h2 id="the-honest-truth-about-diy-vs-managed-vicidial">The Honest Truth About DIY vs. Managed VICIdial<a class="headerlink" href="#the-honest-truth-about-diy-vs-managed-vicidial" title="Permanent link">&para;</a></h2>
+<p>Look, we wrote this entire guide because we believe in transparency. VICIdial is incredible software. It's free, it's powerful, and in the right hands, it outperforms dialers that <a href="/blog/vicidial-cost-2026/">cost 10x more</a>.</p>
+<p>But "the right hands" is doing a lot of heavy lifting in that sentence.</p>
+<p>Running VICIdial yourself means you're the sysadmin, the DBA, the telephony engineer, the security auditor, and the carrier relationship manager. When Asterisk crashes at 9 AM on a Monday and 50 agents are sitting idle, you're the one in the terminal. When your <a href="/blog/vicidial-did-management/">DIDs get flagged</a> as spam and your connect rates drop 40%, you're the one calling carriers.</p>
+<p><strong>ViciStack exists because we've done this 200+ times.</strong> We've built and sold over 200 call centers. We've hired 10,000+ agents. We've spent 15+ years learning every VICIdial quirk, every Asterisk gotcha, every carrier optimization that moves the needle.</p>
+<p>Here's what we deliver that this guide can't:</p>
+<ul>
+<li><strong>AMD accuracy of 92–96%</strong> (vs. the 80–85% most self-managed installs achieve). That delta means 7–16% more live conversations per hour.</li>
+<li><strong>Overnight migration</strong> — Your entire VICIdial environment, moved to our optimized bare-metal infrastructure while your agents sleep.</li>
+<li><strong><a href="/blog/stir-shaken-vicidial-guide/">STIR/SHAKEN A-level attestation</a></strong> configured correctly from day one.</li>
+<li><strong>DID reputation management</strong> — We rotate and monitor your numbers so "Spam Likely" doesn't eat your connect rates.</li>
+</ul>
+<blockquote>
+<p><strong>You Read the Whole Guide. Respect.</strong>
+Now imagine skipping all of it and making calls tomorrow instead. That's ViciStack. <a href="/free-audit/">Get Your Free Proof of Concept →</a></p>
+</blockquote>
+<hr />
+<h2 id="essential-resources-bookmark-these">Essential Resources (Bookmark These)<a class="headerlink" href="#essential-resources-bookmark-these" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>ViciBox 12 Documentation:</strong> docs.vicibox.com — Hardware specs, installation phases, networking, firewall</li>
+<li><strong>VICIdial Forum:</strong> forum.vicidial.org — 13,400+ topics. Search before posting. Matt Florell (mflorell) and William Conley (williamconley) are the most authoritative voices</li>
+<li><strong>VICIdial SVN:</strong> svn://svn.eflo.net:3690/agc_2-X/trunk — The source code</li>
+<li><strong>Carpenox Install Scripts:</strong> github.com/carpenox/vicidial-install-scripts — Best maintained auto-installer for Alma/Rocky</li>
+<li><strong>VICIdial Manager Manual:</strong> Amazon, $45–65 — Matt Florell's comprehensive reference</li>
+<li><strong>ViciStack:</strong> vicistack.com — When you're done doing it yourself</li>
+</ul>
+<hr />
+<p><em>This guide is maintained by ViciStack and updated as the VICIdial ecosystem evolves. Last verified against ViciBox 12.0.2 and VICIdial SVN trunk 2.14b0.5, March 2026. Found something outdated? <a href="/free-audit/">Let us know.</a></em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-setup-guide">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a></li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a></li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

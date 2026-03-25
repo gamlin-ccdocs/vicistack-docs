@@ -1,0 +1,4503 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-inbound-setup/">
+      
+      
+        <link rel="prev" href="../vicidial-hosted-migration-checklist/">
+      
+      
+        <link rel="next" href="../vicidial-ivr-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Queue & Inbound Group Configuration Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-queue-inbound-group-configuration-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Queue & Inbound Group Configuration Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicidial-inbound-routing-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Inbound Routing Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How VICIdial Inbound Routing Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-call-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Call Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-database-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Database Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-an-inbound-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating an Inbound Group
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating an Inbound Group">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-setup-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Setup Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-initial-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical Initial Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ring-strategies-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ring Strategies Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ring Strategies Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#longest_wait_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        longest_wait_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ring_all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ring_all
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fewest_calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fewest_calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fewest_calls_campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fewest_calls_campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oldest_call_start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oldest_call_start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oldest_call_finish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oldest_call_finish
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-the-right-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the Right Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hold-music-and-queue-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hold Music and Queue Announcements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hold Music and Queue Announcements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-hold-music" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Hold Music
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue-position-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue Position Announcements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overflow-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overflow Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overflow Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-overflow-routes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Overflow Routes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-stage-overflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Stage Overflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-no-agent-no-queue-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The No Agent No Queue Setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#after-hours-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="After-Hours Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-business-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Business Hours
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-hours-voicemail-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Voicemail Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#holiday-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Holiday Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#skill-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skill-Based Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Skill-Based Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-implements-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Implements Skills
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skill-priority-and-weighting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skill Priority and Weighting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blended-agent-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blended Agent Setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Blended Agent Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-a-blended-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring a Blended Campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-blending-actually-works-in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Blending Actually Works in Practice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#priority-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Priority Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#priority-by-did" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority by DID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-by-caller-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority by Caller ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-by-ivr-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority by IVR Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-stacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority Stacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-time-queue-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-Time Queue Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-Time Queue Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-real-time-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Real-Time Report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue Alerts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-real-time-monitoring-via-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Real-Time Monitoring via SQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#voicemail-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Groups
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Voicemail Groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-voicemail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Voicemail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voicemail-notification-and-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Notification and Follow-Up
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-configuration-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Configuration Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Configuration Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-language-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Language Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geographic-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geographic Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tiered-support-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tiered Support Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-of-day-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-of-Day Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-to-inbound-group-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID to Inbound Group Mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID to Inbound Group Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-did-entries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating DID Entries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-did-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk DID Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-inbound-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Inbound Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Inbound Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calls-not-reaching-the-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calls Not Reaching the Queue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calls-in-queue-but-not-reaching-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calls in Queue But Not Reaching Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#high-abandonment-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High Abandonment Rate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audio-quality-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Quality Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-benchmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Benchmarks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-difference-between-an-inbound-group-and-a-campaign-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is the difference between an inbound group and a campaign in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-inbound-groups-can-vicidial-handle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many inbound groups can VICIdial handle?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-route-the-same-did-to-different-inbound-groups-based-on-time-of-day" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I route the same DID to different inbound groups based on time of day?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-if-all-agents-log-out-while-calls-are-still-in-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if all agents log out while calls are still in queue?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-set-up-a-blended-campaign-so-agents-take-inbound-calls-between-outbound-dials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I set up a blended campaign so agents take inbound calls between outbound dials?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-give-priority-to-certain-callers-without-creating-separate-inbound-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I give priority to certain callers without creating separate inbound groups?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-inbound-calls-after-hours-without-losing-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle inbound calls after hours without losing leads?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-best-ring-strategy-for-a-small-team-versus-a-large-call-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is the best ring strategy for a small team versus a large call center?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-can-i-monitor-queue-performance-in-real-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How can I monitor queue performance in real time?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicidial-inbound-routing-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Inbound Routing Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How VICIdial Inbound Routing Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-call-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Call Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-database-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Database Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-an-inbound-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating an Inbound Group
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating an Inbound Group">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-setup-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Setup Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-initial-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical Initial Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ring-strategies-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ring Strategies Explained
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ring Strategies Explained">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#longest_wait_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        longest_wait_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ring_all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ring_all
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fewest_calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fewest_calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fewest_calls_campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fewest_calls_campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oldest_call_start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oldest_call_start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oldest_call_finish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oldest_call_finish
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-the-right-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the Right Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hold-music-and-queue-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hold Music and Queue Announcements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hold Music and Queue Announcements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-hold-music" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Hold Music
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue-position-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue Position Announcements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overflow-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overflow Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overflow Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-overflow-routes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Overflow Routes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-stage-overflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Stage Overflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-no-agent-no-queue-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The No Agent No Queue Setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#after-hours-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="After-Hours Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-business-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Business Hours
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-hours-voicemail-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Voicemail Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#holiday-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Holiday Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#skill-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skill-Based Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Skill-Based Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-implements-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Implements Skills
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skill-priority-and-weighting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skill Priority and Weighting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blended-agent-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blended Agent Setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Blended Agent Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-a-blended-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring a Blended Campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-blending-actually-works-in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Blending Actually Works in Practice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#priority-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Priority Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#priority-by-did" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority by DID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-by-caller-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority by Caller ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-by-ivr-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority by IVR Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-stacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority Stacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-time-queue-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-Time Queue Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-Time Queue Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-real-time-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Real-Time Report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue Alerts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-real-time-monitoring-via-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Real-Time Monitoring via SQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#voicemail-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Groups
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Voicemail Groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-voicemail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Voicemail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voicemail-notification-and-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Notification and Follow-Up
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-configuration-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Configuration Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Configuration Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-language-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Language Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geographic-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geographic Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tiered-support-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tiered Support Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-of-day-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-of-Day Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-to-inbound-group-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID to Inbound Group Mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID to Inbound Group Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-did-entries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating DID Entries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-did-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk DID Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-inbound-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Inbound Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Inbound Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calls-not-reaching-the-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calls Not Reaching the Queue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calls-in-queue-but-not-reaching-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calls in Queue But Not Reaching Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#high-abandonment-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High Abandonment Rate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audio-quality-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Quality Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-benchmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Benchmarks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-difference-between-an-inbound-group-and-a-campaign-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is the difference between an inbound group and a campaign in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-inbound-groups-can-vicidial-handle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many inbound groups can VICIdial handle?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-route-the-same-did-to-different-inbound-groups-based-on-time-of-day" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I route the same DID to different inbound groups based on time of day?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-if-all-agents-log-out-while-calls-are-still-in-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if all agents log out while calls are still in queue?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-set-up-a-blended-campaign-so-agents-take-inbound-calls-between-outbound-dials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I set up a blended campaign so agents take inbound calls between outbound dials?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-give-priority-to-certain-callers-without-creating-separate-inbound-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I give priority to certain callers without creating separate inbound groups?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-inbound-calls-after-hours-without-losing-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle inbound calls after hours without losing leads?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-best-ring-strategy-for-a-small-team-versus-a-large-call-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is the best ring strategy for a small team versus a large call center?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-can-i-monitor-queue-performance-in-real-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How can I monitor queue performance in real time?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-queue-inbound-group-configuration-guide">VICIdial Queue &amp; Inbound Group Configuration Guide<a class="headerlink" href="#vicidial-queue-inbound-group-configuration-guide" title="Permanent link">&para;</a></h1>
+<p><strong>Last updated: March 2026 | Reading time: ~22 minutes</strong></p>
+<p>A potential customer calls your sales line. They navigated your <a href="/glossary/ivr/">IVR</a>, pressed 2 for Sales, and landed in a <a href="/glossary/queue/">queue</a>. They hear silence for 8 seconds, then a ring that nobody answers, then silence again. After 45 seconds of this they hang up. Your real-time report shows a new abandoned call. The lead is gone.</p>
+<p>This happens because VICIdial's inbound system ships with sensible defaults but zero awareness of your actual operation. The default <a href="/glossary/inbound-group/">inbound group</a> has no hold music, no queue position announcement, no overflow route, and no after-hours handling. If you stood up your inbound DIDs and pointed them at an inbound group without touching the configuration, you are running a skeleton setup that actively loses calls.</p>
+<p>VICIdial's inbound engine is genuinely powerful. It supports <a href="/glossary/skill-based-routing/">skill-based routing</a>, weighted ring strategies, queue priority by <a href="/glossary/did/">DID</a> or caller ID, <a href="/glossary/blended-agent/">blended agent</a> configurations that mix inbound and outbound on the same campaign, overflow cascades, after-hours voicemail, and real-time queue monitoring. But none of it works unless you configure it, and VICIdial's admin interface gives you approximately 80 settings per inbound group with minimal documentation about what most of them do.</p>
+<p>This guide covers every aspect of VICIdial inbound group configuration: creation, queue management, ring strategies, hold music, overflow handling, after-hours routing, blended agent setup, priority routing, and the operational patterns that separate a professional inbound operation from a ringing phone that nobody answers.</p>
+<p><strong>ViciStack deploys inbound configurations tuned to your call volume, agent count, and routing requirements from day one.</strong> <a href="/pricing/">Start with a properly configured inbound system.</a></p>
+<hr />
+<h2 id="how-vicidial-inbound-routing-works">How VICIdial Inbound Routing Works<a class="headerlink" href="#how-vicidial-inbound-routing-works" title="Permanent link">&para;</a></h2>
+<p>Before configuring anything, you need to understand the path a call takes from the PSTN to an agent's headset. VICIdial's inbound architecture has four layers: the DID, the inbound group, the queue, and the agent selection.</p>
+<h3 id="the-call-flow">The Call Flow<a class="headerlink" href="#the-call-flow" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>DID receives the call.</strong> An inbound call hits your SIP trunk and reaches VICIdial's Asterisk server. The dialplan matches the dialed number to a <a href="/glossary/did/">DID</a> entry in VICIdial's <code>vicidial_inbound_dids</code> table.</p>
+</li>
+<li>
+<p><strong>DID routes to an inbound group (or IVR).</strong> The DID configuration specifies where to send the call. For direct-to-queue routing, this is an inbound group. For menu-driven routing, this is an <a href="/glossary/ivr/">IVR</a> that eventually routes to one or more inbound groups. See our <a href="/blog/vicidial-ivr-setup/">IVR setup guide</a> for the menu layer.</p>
+</li>
+<li>
+<p><strong>Inbound group places the call in queue.</strong> The call enters the inbound group's queue. Hold music plays. Queue position announcements fire at configured intervals. The queue engine evaluates which agents are eligible to take this call.</p>
+</li>
+<li>
+<p><strong>Agent is selected and connected.</strong> Based on the ring strategy (longest wait time, ring all, random, etc.), VICIdial selects an agent, rings their phone, and connects the call. The agent's screen pops with the caller's information.</p>
+</li>
+</ol>
+<h3 id="key-database-tables">Key Database Tables<a class="headerlink" href="#key-database-tables" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vicidial_inbound_dids</code></td>
+<td>Maps phone numbers to routing destinations (inbound groups, IVRs, phones)</td>
+</tr>
+<tr>
+<td><code>vicidial_inbound_groups</code></td>
+<td>Defines inbound group configuration --- ring strategy, hold music, overflow, etc.</td>
+</tr>
+<tr>
+<td><code>vicidial_closer_log</code></td>
+<td>Logs every inbound call with timestamps, queue time, handle time, agent, disposition</td>
+</tr>
+<tr>
+<td><code>vicidial_auto_calls</code></td>
+<td>Active calls currently in queue or being handled</td>
+</tr>
+<tr>
+<td><code>vicidial_live_inbound_agents</code></td>
+<td>Agents currently logged into inbound groups with their status and weight</td>
+</tr>
+</tbody>
+</table>
+<p>Understanding these tables helps when you need to debug routing issues, build custom reports, or troubleshoot calls that are not reaching agents.</p>
+<hr />
+<h2 id="creating-an-inbound-group">Creating an Inbound Group<a class="headerlink" href="#creating-an-inbound-group" title="Permanent link">&para;</a></h2>
+<p>Navigate to <strong>Admin &gt; Inbound &gt; Add a New In-Group</strong>. This is where you define the fundamental identity and behavior of your queue.</p>
+<h3 id="basic-setup-fields">Basic Setup Fields<a class="headerlink" href="#basic-setup-fields" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Example Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Group ID</td>
+<td>SALES_QUEUE</td>
+<td>Unique identifier, no spaces, max 20 characters</td>
+</tr>
+<tr>
+<td>Group Name</td>
+<td>Sales Inbound Queue</td>
+<td>Human-readable label for reports and agent interface</td>
+</tr>
+<tr>
+<td>Group Color</td>
+<td>#0066CC</td>
+<td>Color coding in real-time monitoring screens</td>
+</tr>
+<tr>
+<td>Active</td>
+<td>Y</td>
+<td>Whether agents can log into this group</td>
+</tr>
+<tr>
+<td>Web Form</td>
+<td>https://crm.example.com/lead?phone=--A--phone_number--B--</td>
+<td>URL that pops on the agent screen when the call connects</td>
+</tr>
+<tr>
+<td>Voicemail</td>
+<td>vm-salesbox</td>
+<td>Voicemail box for after-hours or overflow</td>
+</tr>
+<tr>
+<td>Next Agent Call</td>
+<td>longest_wait_time</td>
+<td>Ring strategy (covered in detail below)</td>
+</tr>
+<tr>
+<td>Fronter Display</td>
+<td>Y</td>
+<td>Whether agents see the inbound group name on their screen</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The Group ID matters.</strong> You will reference it in DID routing, IVR configuration, <a href="/settings/closer-campaigns/">closer campaigns</a> settings, and SQL queries. Use a naming convention that scales: <code>SALES_QUEUE</code>, <code>SUPPORT_T1</code>, <code>SUPPORT_T2</code>, <code>BILLING_MAIN</code>. Do not use generic names like <code>INBOUND1</code> that tell you nothing when you are troubleshooting at 3 AM.</p>
+<h3 id="critical-initial-settings">Critical Initial Settings<a class="headerlink" href="#critical-initial-settings" title="Permanent link">&para;</a></h3>
+<p>After creating the inbound group, click into its detail page. Here are the settings that must be configured before you take a single call:</p>
+<p><strong>Queue handling:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Recommended Value</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hold Time Option</td>
+<td>NONE initially, then customize</td>
+<td>What happens to callers in queue (announcements, overflow)</td>
+</tr>
+<tr>
+<td>Hold Time Option Seconds</td>
+<td>60-120</td>
+<td>How long before the hold time option triggers</td>
+</tr>
+<tr>
+<td>Hold Recall Transfer</td>
+<td>CLOSERSELECT</td>
+<td>Where to send calls that hit the overflow threshold</td>
+</tr>
+<tr>
+<td>No Agent No Queue</td>
+<td><a href="/settings/no-agent-no-queue/">N</a></td>
+<td>If Y, calls are rejected when no agents are logged in --- use voicemail instead</td>
+</tr>
+<tr>
+<td>After Hours Action</td>
+<td>MESSAGE</td>
+<td>Play a message and/or route to voicemail after hours</td>
+</tr>
+<tr>
+<td>After Hours Message Filename</td>
+<td>after-hours-sales</td>
+<td>Audio file to play outside business hours</td>
+</tr>
+<tr>
+<td>After Hours Voicemail</td>
+<td>vm-salesbox</td>
+<td>Voicemail box for after-hours calls</td>
+</tr>
+<tr>
+<td>Call Time ID</td>
+<td>9am-9pm</td>
+<td>Defines business hours for this inbound group</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agent connection:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Recommended Value</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Next Agent Call</td>
+<td>longest_wait_time</td>
+<td>Routes to the agent who has been waiting longest (most common)</td>
+</tr>
+<tr>
+<td>Agent Alert Delay</td>
+<td>0</td>
+<td>Seconds to wait before alerting the agent (0 for immediate)</td>
+</tr>
+<tr>
+<td>Agent Alert Hold</td>
+<td>On</td>
+<td>Whether the agent hears a brief tone before the call connects</td>
+</tr>
+<tr>
+<td>Drop Call Seconds</td>
+<td>0</td>
+<td>For inbound, set to 0 --- you do not want to drop inbound calls</td>
+</tr>
+<tr>
+<td>Max Queue Ingroup Calls</td>
+<td>0 (unlimited)</td>
+<td>Maximum calls allowed in queue, 0 for no limit</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ring-strategies-explained">Ring Strategies Explained<a class="headerlink" href="#ring-strategies-explained" title="Permanent link">&para;</a></h2>
+<p>The <code>Next Agent Call</code> setting determines how VICIdial selects which agent receives the next inbound call. This single setting has more impact on your inbound operation than almost any other configuration.</p>
+<h3 id="longest_wait_time">longest_wait_time<a class="headerlink" href="#longest_wait_time" title="Permanent link">&para;</a></h3>
+<p>The agent who has been idle the longest gets the next call. This is the default and the most commonly used strategy for general inbound operations.</p>
+<p><strong>How it works:</strong> VICIdial tracks the timestamp of each agent's last call end time. When a new inbound call needs routing, it selects the agent with the oldest <code>last_call_time</code>.</p>
+<p><strong>Best for:</strong> General sales queues, support lines, any scenario where all agents are equally qualified and you want even call distribution.</p>
+<p><strong>Watch out for:</strong> In blended environments, agents who just finished an outbound call have a recent <code>last_call_time</code>, so they will receive fewer inbound calls than agents who have been sitting idle. This is usually correct behavior --- but if your outbound agents complain about getting fewer inbound calls, this is why.</p>
+<h3 id="ring_all">ring_all<a class="headerlink" href="#ring_all" title="Permanent link">&para;</a></h3>
+<p>Every available agent's phone rings simultaneously. The first agent to pick up gets the call.</p>
+<p><strong>How it works:</strong> VICIdial sends a SIP INVITE to all available agents in the inbound group at the same time. The first agent to answer is connected, and all other agent phones stop ringing.</p>
+<p><strong>Best for:</strong> Small teams (under 10 agents), scenarios where speed-to-answer is critical, operations where you want agents competing for calls.</p>
+<p><strong>Watch out for:</strong> Ring-all does not scale well. With 50 agents, you are generating 50 simultaneous SIP INVITEs per inbound call. This puts load on your Asterisk server and SIP infrastructure. Also, aggressive agents will always answer first, leading to uneven call distribution. For teams over 10-15 agents, use <code>longest_wait_time</code> instead.</p>
+<h3 id="random">random<a class="headerlink" href="#random" title="Permanent link">&para;</a></h3>
+<p>A random available agent is selected.</p>
+<p><strong>How it works:</strong> VICIdial picks a random agent from the pool of available agents in the inbound group.</p>
+<p><strong>Best for:</strong> Almost nothing, honestly. Random distribution means some agents get 3 calls in a row while others sit idle for 20 minutes. The only valid use case is when you explicitly want unpredictable distribution for compliance or fairness auditing purposes.</p>
+<h3 id="fewest_calls">fewest_calls<a class="headerlink" href="#fewest_calls" title="Permanent link">&para;</a></h3>
+<p>The agent with the fewest calls in the current session gets the next call.</p>
+<p><strong>How it works:</strong> VICIdial counts each agent's calls since login and routes to the agent with the lowest count.</p>
+<p><strong>Best for:</strong> Operations where you need exactly equal call counts per agent per shift (some union environments, regulated operations).</p>
+<p><strong>Watch out for:</strong> A slow agent who takes 15-minute calls will get the same number of calls as a fast agent who handles calls in 3 minutes. This means your efficient agents are penalized with more idle time.</p>
+<h3 id="fewest_calls_campaign">fewest_calls_campaign<a class="headerlink" href="#fewest_calls_campaign" title="Permanent link">&para;</a></h3>
+<p>Same as <code>fewest_calls</code>, but counts across the campaign rather than just the inbound group. Relevant for <a href="/glossary/blended-agent/">blended campaigns</a> where agents handle both inbound and outbound.</p>
+<h3 id="oldest_call_start">oldest_call_start<a class="headerlink" href="#oldest_call_start" title="Permanent link">&para;</a></h3>
+<p>Routes to the agent whose last call started earliest (not ended earliest). Subtly different from <code>longest_wait_time</code> --- this factors in agents who are on long calls.</p>
+<h3 id="oldest_call_finish">oldest_call_finish<a class="headerlink" href="#oldest_call_finish" title="Permanent link">&para;</a></h3>
+<p>Routes to the agent whose last call finished earliest. This is similar to <code>longest_wait_time</code> but explicitly uses the call finish timestamp rather than the last state change timestamp.</p>
+<h3 id="choosing-the-right-strategy">Choosing the Right Strategy<a class="headerlink" href="#choosing-the-right-strategy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Operation Type</th>
+<th>Recommended Strategy</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sales inbound (general)</td>
+<td>longest_wait_time</td>
+<td>Even distribution, rewards idle agents</td>
+</tr>
+<tr>
+<td>Small team (&lt;10 agents)</td>
+<td>ring_all</td>
+<td>Fastest answer time</td>
+</tr>
+<tr>
+<td>Support tier 1</td>
+<td>longest_wait_time</td>
+<td>Even workload distribution</td>
+</tr>
+<tr>
+<td>Support tier 2 (specialists)</td>
+<td>longest_wait_time or fewest_calls</td>
+<td>Even distribution among limited specialists</td>
+</tr>
+<tr>
+<td>Blended inbound + outbound</td>
+<td>longest_wait_time</td>
+<td>Correctly prioritizes idle agents over agents on outbound</td>
+</tr>
+<tr>
+<td>Compliance-sensitive</td>
+<td>fewest_calls</td>
+<td>Provably equal distribution</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="hold-music-and-queue-announcements">Hold Music and Queue Announcements<a class="headerlink" href="#hold-music-and-queue-announcements" title="Permanent link">&para;</a></h2>
+<p>Nothing tells a caller "we don't have our act together" faster than dead silence in a queue. VICIdial's hold music and announcement system is flexible, but you have to configure it.</p>
+<h3 id="setting-up-hold-music">Setting Up Hold Music<a class="headerlink" href="#setting-up-hold-music" title="Permanent link">&para;</a></h3>
+<p>VICIdial uses Music on Hold (MOH) classes from Asterisk. The default class is <code>default</code>, which plays whatever files are in <code>/var/lib/asterisk/mohmp3/</code>.</p>
+<p><strong>To configure hold music for an inbound group:</strong></p>
+<ol>
+<li>
+<p>Upload your hold music files to <code>/var/lib/asterisk/mohmp3/</code> (or a custom directory for a custom MOH class). Files should be MP3 or WAV format. For best quality with minimal CPU usage, use 8kHz 16-bit mono WAV files.</p>
+</li>
+<li>
+<p>If using a custom MOH class, define it in <code>/etc/asterisk/musiconhold.conf</code>:</p>
+</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">[sales_hold]</span>
+<span class="na">mode</span><span class="o">=</span><span class="s">files</span>
+<span class="na">directory</span><span class="o">=</span><span class="s">/var/lib/asterisk/moh/sales</span>
+<span class="na">sort</span><span class="o">=</span><span class="s">random</span>
+</code></pre></div>
+
+<ol>
+<li>
+<p>Reload Asterisk MOH: <code>asterisk -rx "moh reload"</code></p>
+</li>
+<li>
+<p>In the inbound group settings, set <strong>On Hold Music</strong> to your MOH class name (e.g., <code>sales_hold</code>).</p>
+</li>
+</ol>
+<p>For more on Asterisk audio configuration, see our <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration guide</a>.</p>
+<p><strong>Hold music best practices:</strong></p>
+<ul>
+<li><strong>Keep it short.</strong> 60-90 seconds of music on a loop is sufficient. Callers who are on hold for 5 minutes will hear it repeat, but that is acceptable.</li>
+<li><strong>Avoid music with vocals.</strong> Instrumental is clearer over phone audio codecs. Vocals compete with announcements and sound garbled on low-bandwidth codecs.</li>
+<li><strong>Match your brand.</strong> A law firm should not have upbeat pop music. A youth-oriented brand should not have classical.</li>
+<li><strong>License your music.</strong> Using copyrighted music on hold is technically a public performance. Use royalty-free hold music or license it properly.</li>
+</ul>
+<h3 id="queue-position-announcements">Queue Position Announcements<a class="headerlink" href="#queue-position-announcements" title="Permanent link">&para;</a></h3>
+<p>Callers want to know two things: where they are in the queue and how long they will wait. VICIdial can announce both.</p>
+<p><strong>Configuration in the inbound group settings:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Recommended Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hold Time Option</td>
+<td>ANNOUNCE_POSITION</td>
+<td>Announces the caller's queue position</td>
+</tr>
+<tr>
+<td>Hold Time Option Seconds</td>
+<td>30-60</td>
+<td>Interval between announcements</td>
+</tr>
+<tr>
+<td>Hold Time Option Exten</td>
+<td>announce_position</td>
+<td>Asterisk extension that plays the announcement</td>
+</tr>
+<tr>
+<td>Hold Time Option Voicemail</td>
+<td>(leave blank for position announcements)</td>
+<td>Voicemail box for alternate hold action</td>
+</tr>
+<tr>
+<td>Onhold CID</td>
+<td>INBOUND</td>
+<td>Caller ID displayed to agents during hold</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>ANNOUNCE_POSITION</code> option tells callers "You are caller number X in the queue." VICIdial dynamically counts the calls ahead of the current caller and plays the number.</p>
+<p><strong>Other Hold Time Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NONE</td>
+<td>No announcements --- caller hears hold music only</td>
+</tr>
+<tr>
+<td>ANNOUNCE_POSITION</td>
+<td>"You are caller number X"</td>
+</tr>
+<tr>
+<td>ANNOUNCE_WAIT_TIME</td>
+<td>"Your estimated wait time is X minutes"</td>
+</tr>
+<tr>
+<td>ANNOUNCE_POSITION_AND_WAIT</td>
+<td>Combines position and estimated wait time</td>
+</tr>
+<tr>
+<td>CALLERID_CALLBACK</td>
+<td>Offers the caller a callback option instead of waiting</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Estimated wait time</strong> is calculated from the average handle time of the inbound group over the last N calls divided by available agents. It is not perfectly accurate during volume spikes, but it is better than telling callers nothing.</p>
+<p><strong>The CALLERID_CALLBACK option</strong> is particularly powerful for high-volume queues. Instead of waiting on hold, the caller can press a key to receive a callback when an agent becomes available. This reduces abandonment rates dramatically. The system records the caller's number and injects it into the queue as a callback, maintaining the caller's original queue position. When an agent becomes available, VICIdial dials the caller back. Configure this in conjunction with VICIdial's <a href="/blog/vicidial-callback-automation/">callback automation system</a>.</p>
+<hr />
+<h2 id="overflow-handling">Overflow Handling<a class="headerlink" href="#overflow-handling" title="Permanent link">&para;</a></h2>
+<p>What happens when your queue is full, wait times are too long, or all agents are busy? Without overflow configuration, the answer is: the caller sits in queue forever or hangs up. Both outcomes are bad.</p>
+<h3 id="configuring-overflow-routes">Configuring Overflow Routes<a class="headerlink" href="#configuring-overflow-routes" title="Permanent link">&para;</a></h3>
+<p>VICIdial's overflow mechanism is controlled by the <code>Hold Recall Transfer</code> setting in the inbound group. When a caller has been in queue for longer than <code>Hold Time Option Seconds</code>, the system takes action based on the hold time option configuration.</p>
+<p><strong>Overflow to a different inbound group:</strong></p>
+<p>Set <code>Hold Recall Transfer</code> to the Group ID of your overflow queue. This is useful for tiered routing:</p>
+<ul>
+<li>Primary queue: <code>SALES_QUEUE</code> (specialized sales agents)</li>
+<li>Overflow after 120 seconds: <code>SALES_OVERFLOW</code> (general agents who can handle sales)</li>
+<li>Final overflow after 240 seconds: <code>VOICEMAIL_SALES</code> (voicemail group)</li>
+</ul>
+<p><strong>Overflow to voicemail:</strong></p>
+<p>Set <code>Hold Recall Transfer</code> to <code>VOICEMAIL</code> and configure the voicemail box in the <code>Voicemail</code> field. After the configured wait time, the caller hears "All agents are currently busy. Please leave a message after the tone."</p>
+<p><strong>Overflow to an external number:</strong></p>
+<p>If you need to overflow to an external call center, BPO, or answering service, set up a DID route that forwards to an external number and use that as your overflow destination.</p>
+<h3 id="multi-stage-overflow">Multi-Stage Overflow<a class="headerlink" href="#multi-stage-overflow" title="Permanent link">&para;</a></h3>
+<p>For production inbound operations, a single overflow route is not sufficient. Here is a pattern that works:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Trigger</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Queue entry</td>
+<td>Caller enters queue</td>
+<td>Play welcome message, start hold music</td>
+</tr>
+<tr>
+<td>30 seconds</td>
+<td>First announcement</td>
+<td>"Your call is important. You are caller number X."</td>
+</tr>
+<tr>
+<td>60 seconds</td>
+<td>Second announcement</td>
+<td>"Estimated wait time is X minutes. Press 1 for a callback."</td>
+</tr>
+<tr>
+<td>120 seconds</td>
+<td>Overflow stage 1</td>
+<td>Route to overflow inbound group (wider agent pool)</td>
+</tr>
+<tr>
+<td>180 seconds</td>
+<td>Overflow stage 2</td>
+<td>"We apologize for the wait. Press 1 for a callback, press 2 to leave a voicemail."</td>
+</tr>
+<tr>
+<td>240 seconds</td>
+<td>Final overflow</td>
+<td>Route to voicemail group</td>
+</tr>
+</tbody>
+</table>
+<p>This requires chaining multiple inbound groups with different <code>Hold Time Option Seconds</code> values. Each group in the chain has its own announcements and its own <code>Hold Recall Transfer</code> pointing to the next stage.</p>
+<h3 id="the-no-agent-no-queue-setting">The No Agent No Queue Setting<a class="headerlink" href="#the-no-agent-no-queue-setting" title="Permanent link">&para;</a></h3>
+<p>The <a href="/settings/no-agent-no-queue/">No Agent No Queue</a> setting deserves special attention. When set to <code>Y</code>, if no agents are logged into the inbound group when a call arrives, the call is immediately rejected --- the caller hears fast busy or gets disconnected.</p>
+<p><strong>This is almost never what you want.</strong> Set it to <code>N</code> and configure an after-hours route or voicemail instead. The only valid use case for <code>No Agent No Queue = Y</code> is when you are using VICIdial purely as a call router and the inbound group is a passthrough to a live agent pool that must always be staffed.</p>
+<p>Better alternatives to <code>No Agent No Queue = Y</code>:</p>
+<ul>
+<li><strong>Route to voicemail:</strong> Capture the caller's information even when nobody is available</li>
+<li><strong>Route to IVR:</strong> Let the caller navigate to self-service options or leave a message</li>
+<li><strong>Route to external number:</strong> Forward to an answering service or overflow center</li>
+<li><strong>Play a message and disconnect:</strong> "Our office is currently closed. Please call back during business hours: Monday through Friday, 9 AM to 6 PM Eastern."</li>
+</ul>
+<hr />
+<h2 id="after-hours-routing">After-Hours Routing<a class="headerlink" href="#after-hours-routing" title="Permanent link">&para;</a></h2>
+<p>Every inbound group needs an after-hours plan. Calls do not stop coming in at 5 PM, and a caller who gets dead silence or fast busy at 5:01 PM is a lost opportunity.</p>
+<h3 id="configuring-business-hours">Configuring Business Hours<a class="headerlink" href="#configuring-business-hours" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Navigate to <strong>Admin &gt; Call Times</strong> and create (or select) a call time definition for your inbound group's business hours.</li>
+</ol>
+<p>Example:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Call Time ID</td>
+<td>9am-6pm-EST</td>
+</tr>
+<tr>
+<td>Call Time Name</td>
+<td>Business Hours Eastern</td>
+</tr>
+<tr>
+<td>CT Default Start</td>
+<td>900</td>
+</tr>
+<tr>
+<td>CT Default Stop</td>
+<td>1800</td>
+</tr>
+<tr>
+<td>Sunday Start/Stop</td>
+<td>(leave blank for closed)</td>
+</tr>
+<tr>
+<td>Saturday Start/Stop</td>
+<td>(leave blank for closed, or 1000-1400 for half days)</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>In the inbound group settings, set <strong>Call Time ID</strong> to your business hours definition.</p>
+</li>
+<li>
+<p>Configure the after-hours behavior:</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>After Hours Action</td>
+<td>MESSAGE</td>
+<td>Play an audio message</td>
+</tr>
+<tr>
+<td>After Hours Message Filename</td>
+<td>after-hours-sales</td>
+<td>The audio file to play</td>
+</tr>
+<tr>
+<td>After Hours Exten</td>
+<td>8300</td>
+<td>Asterisk extension to route to after the message</td>
+</tr>
+<tr>
+<td>After Hours Voicemail</td>
+<td>vm-sales-afterhours</td>
+<td>Voicemail box for after-hours messages</td>
+</tr>
+</tbody>
+</table>
+<h3 id="after-hours-voicemail-groups">After-Hours Voicemail Groups<a class="headerlink" href="#after-hours-voicemail-groups" title="Permanent link">&para;</a></h3>
+<p>For operations that need after-hours voicemail with notification, set up a voicemail group:</p>
+<ol>
+<li>In <strong>Admin &gt; Phones</strong>, create a voicemail box or use an existing one</li>
+<li>Configure email notification on the voicemail box so your team gets notified of after-hours messages</li>
+<li>Set the inbound group's <code>After Hours Voicemail</code> to this box</li>
+</ol>
+<p><strong>The often-missed step:</strong> Configure someone to actually check and return voicemails. VICIdial will store the voicemail, but without a process to review and call back, voicemails are just a slightly polite way to lose leads. Set up a morning task for your first shift --- pull all after-hours voicemails and schedule <a href="/blog/vicidial-callback-automation/">callbacks</a> for each one.</p>
+<h3 id="holiday-routing">Holiday Routing<a class="headerlink" href="#holiday-routing" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports holiday-specific routing through the Call Time system. In <strong>Admin &gt; Call Times</strong>, you can add holiday exceptions to any call time:</p>
+<ol>
+<li>Edit your call time definition</li>
+<li>In the "CT Holiday" section, add dates with custom start/stop times (or 0000/0000 for closed all day)</li>
+<li>The after-hours routing automatically applies on holidays</li>
+</ol>
+<p>Plan your holiday schedule at the beginning of each year. Nothing is more embarrassing than having your phones ring into a dead queue on Christmas Day because nobody updated the holiday list.</p>
+<hr />
+<h2 id="skill-based-routing">Skill-Based Routing<a class="headerlink" href="#skill-based-routing" title="Permanent link">&para;</a></h2>
+<p>Not all agents are equal. Some speak Spanish. Some are licensed in certain states. Some are product specialists. <a href="/glossary/skill-based-routing/">Skill-based routing</a> ensures callers reach agents who can actually help them.</p>
+<h3 id="how-vicidial-implements-skills">How VICIdial Implements Skills<a class="headerlink" href="#how-vicidial-implements-skills" title="Permanent link">&para;</a></h3>
+<p>VICIdial does not have a dedicated "skills" database. Instead, skill-based routing is implemented through multiple inbound groups, agent group assignments, and <a href="/settings/closer-campaigns/">closer campaigns</a> selection.</p>
+<p>The model works like this:</p>
+<ol>
+<li><strong>Create inbound groups per skill.</strong> <code>SALES_ENGLISH</code>, <code>SALES_SPANISH</code>, <code>SUPPORT_BILLING</code>, <code>SUPPORT_TECHNICAL</code>.</li>
+<li><strong>Assign agents to inbound groups.</strong> Each agent selects (or is assigned via the campaign) which inbound groups they handle.</li>
+<li><strong>Route calls to the correct inbound group.</strong> Your IVR routes callers to the appropriate inbound group based on their selection, DID, or caller ID.</li>
+</ol>
+<p>This is not as elegant as a tag-based skill system, but it is effective and scales to complex routing scenarios.</p>
+<h3 id="configuration-steps">Configuration Steps<a class="headerlink" href="#configuration-steps" title="Permanent link">&para;</a></h3>
+<p><strong>Step 1: Create skill-specific inbound groups.</strong></p>
+<p>Navigate to <strong>Admin &gt; Inbound &gt; Add a New In-Group</strong> and create a group for each skill:</p>
+<table>
+<thead>
+<tr>
+<th>Group ID</th>
+<th>Group Name</th>
+<th>Ring Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SALES_EN</td>
+<td>Sales - English</td>
+<td>longest_wait_time</td>
+</tr>
+<tr>
+<td>SALES_ES</td>
+<td>Sales - Spanish</td>
+<td>longest_wait_time</td>
+</tr>
+<tr>
+<td>SUP_BILLING</td>
+<td>Support - Billing</td>
+<td>longest_wait_time</td>
+</tr>
+<tr>
+<td>SUP_TECH</td>
+<td>Support - Technical</td>
+<td>fewest_calls</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 2: Configure campaigns to allow inbound group selection.</strong></p>
+<p>Navigate to <strong>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail</strong> and set:</p>
+<ul>
+<li><a href="/settings/campaign-allow-inbound/">Campaign Allow Inbound</a> = <code>Y</code></li>
+<li><a href="/settings/closer-campaigns/">Closer Campaigns</a> = list the inbound groups this campaign's agents can receive calls from</li>
+</ul>
+<p>The <code>Closer Campaigns</code> setting is a space-separated list of inbound group IDs:</p>
+<div class="codehilite"><pre><span></span><code>SALES_EN SALES_ES
+</code></pre></div>
+
+<p>Only agents on campaigns that include an inbound group in their <code>Closer Campaigns</code> list will receive calls from that group. This is the core mechanism for skill-based routing.</p>
+<p><strong>Step 3: Configure agent-level inbound group selection.</strong></p>
+<p>There are two approaches:</p>
+<p><strong>Manager-controlled:</strong> Set <code>Closer Default Blended</code> to <code>1</code> in the campaign settings. This forces all agents on the campaign to take calls from all inbound groups listed in <code>Closer Campaigns</code>. Agents cannot opt out.</p>
+<p><strong>Agent-controlled:</strong> Set <code>Closer Default Blended</code> to <code>0</code> and allow agents to select their inbound groups when they log in. The agent interface presents a list of available inbound groups, and agents check the ones they want to handle. This works for operations where agents self-report their skills, but it means agents can deselect busy queues to avoid work.</p>
+<p><strong>Recommended approach:</strong> Manager-controlled for core skills, with supervisor overrides for temporary skill adjustments (e.g., pulling a Spanish-speaking agent off the Spanish queue during low-volume hours to help with English overflow).</p>
+<h3 id="skill-priority-and-weighting">Skill Priority and Weighting<a class="headerlink" href="#skill-priority-and-weighting" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports agent rank/weight within inbound groups. Navigate to <strong>Admin &gt; Users &gt; [Agent] &gt; Inbound Group Rank</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Inbound Group</th>
+<th>Rank</th>
+<th>Grade</th>
+<th>Calls Today</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SALES_EN</td>
+<td>5</td>
+<td>A</td>
+<td>23</td>
+</tr>
+<tr>
+<td>SALES_ES</td>
+<td>3</td>
+<td>B</td>
+<td>8</td>
+</tr>
+<tr>
+<td>SUP_BILLING</td>
+<td>0</td>
+<td>-</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Rank</strong> (0-9): Higher rank means the agent is preferred for this inbound group. A rank-9 agent will receive calls before a rank-1 agent in the same group (assuming <code>Next Agent Call</code> supports ranking).</li>
+<li><strong>Grade</strong>: Optional categorization for reporting.</li>
+</ul>
+<p>To use ranking with ring strategies, set <code>Inbound Group Rank</code> to <code>Y</code> in the inbound group settings. When enabled, VICIdial considers rank as a primary sort before applying the ring strategy. All rank-9 agents are evaluated first; if all are busy, rank-8 agents are evaluated, and so on.</p>
+<p>This enables tiered skill routing without separate inbound groups:</p>
+<ul>
+<li>Your best closers are rank 9 in <code>SALES_EN</code> --- they get calls first</li>
+<li>Newer agents are rank 3 --- they get calls only when all senior agents are busy</li>
+<li>Overflow agents from other departments are rank 1 --- last resort only</li>
+</ul>
+<hr />
+<h2 id="blended-agent-setup">Blended Agent Setup<a class="headerlink" href="#blended-agent-setup" title="Permanent link">&para;</a></h2>
+<p>A <a href="/glossary/blended-agent/">blended agent</a> handles both inbound and outbound calls on the same campaign. When no inbound calls are queued, the agent makes outbound calls. When an inbound call arrives, the agent is pulled off outbound to handle it.</p>
+<p>This is the most efficient way to staff a call center with mixed inbound and outbound volume. Without blending, you either overstaff inbound (agents sit idle between calls) or understaff inbound (callers wait in long queues while outbound agents dial away).</p>
+<h3 id="configuring-a-blended-campaign">Configuring a Blended Campaign<a class="headerlink" href="#configuring-a-blended-campaign" title="Permanent link">&para;</a></h3>
+<p><strong>Step 1: Enable inbound on the outbound campaign.</strong></p>
+<p>Navigate to <strong>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="/settings/campaign-allow-inbound/">Campaign Allow Inbound</a></td>
+<td>Y</td>
+<td>Allows agents on this campaign to receive inbound calls</td>
+</tr>
+<tr>
+<td><a href="/settings/closer-campaigns/">Closer Campaigns</a></td>
+<td>SALES_EN SALES_ES</td>
+<td>Space-separated list of inbound groups this campaign can receive from</td>
+</tr>
+<tr>
+<td>Closer Default Blended</td>
+<td>1</td>
+<td>Automatically blend all agents (1) or let agents choose (0)</td>
+</tr>
+<tr>
+<td>Dial Method</td>
+<td>RATIO or ADAPT_HARD_LIMIT</td>
+<td>Predictive dialing method for outbound</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 2: Configure inbound priority.</strong></p>
+<p>When an agent is available and both an outbound lead and an inbound call are waiting, which takes priority? This is controlled by <a href="/settings/inbound-queue-priority/">Inbound Queue Priority</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inbound Queue Priority</td>
+<td>99</td>
+<td>Inbound always takes priority over outbound (recommended)</td>
+</tr>
+<tr>
+<td>Inbound Queue Priority</td>
+<td>50</td>
+<td>Inbound and outbound compete based on timing</td>
+</tr>
+<tr>
+<td>Inbound Queue Priority</td>
+<td>0</td>
+<td>Outbound takes priority (rarely appropriate)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Set this to 99 for most operations.</strong> A caller waiting in queue has already invested time and attention. An outbound lead does not know you are about to call them. Prioritizing inbound is almost always correct.</p>
+<p><strong>Step 3: Configure outbound throttling during inbound peaks.</strong></p>
+<p>VICIdial can automatically reduce outbound dial level when inbound volume spikes. This prevents the scenario where your dialer places 50 outbound calls, all agents get pulled to inbound, and the outbound calls go to voicemail or get dropped.</p>
+<p>In <strong>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Auto Dial Level</td>
+<td>3.0 (example)</td>
+<td>Base outbound dial level</td>
+</tr>
+<tr>
+<td>Available Only Ratio Tally</td>
+<td>Y</td>
+<td>Only count available agents when calculating dial ratio</td>
+</tr>
+<tr>
+<td>Drop Rate Group</td>
+<td>INBOUND_OVERFLOW</td>
+<td>Inbound group to route dropped outbound calls to</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>Available Only Ratio Tally</code> setting is critical for blended campaigns. Without it, VICIdial counts all logged-in agents when calculating how many outbound calls to place --- including agents currently on inbound calls. This leads to over-dialing and dropped calls. With this set to <code>Y</code>, only truly available agents are counted.</p>
+<h3 id="how-blending-actually-works-in-practice">How Blending Actually Works in Practice<a class="headerlink" href="#how-blending-actually-works-in-practice" title="Permanent link">&para;</a></h3>
+<p>Here is the real-time behavior of a blended campaign:</p>
+<ol>
+<li>Agent finishes a call and enters <a href="/glossary/wrap-time/">wrap-up</a></li>
+<li>Wrap-up ends, agent becomes available</li>
+<li>VICIdial checks: are there inbound calls waiting in any of the campaign's <code>Closer Campaigns</code> groups?</li>
+<li><strong>If yes:</strong> Route the highest-priority inbound call to the agent</li>
+<li><strong>If no:</strong> The outbound dialer includes this agent in its next dial calculation</li>
+</ol>
+<p>The transition is seamless from the agent's perspective. Their screen shows whether the incoming call is inbound or outbound, the inbound group name (if inbound), and the caller information.</p>
+<p><strong>Common blended issues and fixes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agents never get outbound calls</td>
+<td>Inbound volume is too high</td>
+<td>Add dedicated inbound agents, or increase inbound agent pool</td>
+</tr>
+<tr>
+<td>Outbound calls get dropped when inbound spikes</td>
+<td>Available Only Ratio Tally is N</td>
+<td>Set to Y</td>
+</tr>
+<tr>
+<td>Agents complain about constant switching</td>
+<td>Blending inherently requires context switching</td>
+<td>Train agents on both workflows, or separate agents by shift rather than blending</td>
+</tr>
+<tr>
+<td>Queue times spike during outbound dial bursts</td>
+<td>Agents locked into outbound calls cannot take inbound</td>
+<td>Reduce dial level, or set Inbound Queue Priority to 99</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Blended campaigns are the highest-ROI configuration in VICIdial --- and the hardest to get right.</strong>
+ViciStack configures and tunes blended campaigns for your specific inbound/outbound ratio. <a href="/free-audit/">Get a free audit of your current setup.</a></p>
+</blockquote>
+<hr />
+<h2 id="priority-routing">Priority Routing<a class="headerlink" href="#priority-routing" title="Permanent link">&para;</a></h2>
+<p>Not all inbound calls are equal. A call from a returning customer on your premium support line should not wait behind 15 calls from a general inquiry DID. VICIdial supports priority routing through several mechanisms.</p>
+<h3 id="priority-by-did">Priority by DID<a class="headerlink" href="#priority-by-did" title="Permanent link">&para;</a></h3>
+<p>Different DIDs can route to the same inbound group with different priority levels. This lets you maintain a single agent pool while giving priority to certain phone numbers.</p>
+<p><strong>Configuration:</strong></p>
+<ol>
+<li>Navigate to <strong>Admin &gt; Inbound &gt; DIDs &gt; [DID Number]</strong></li>
+<li>Set the DID to route to your inbound group</li>
+<li>Set the <strong>DID Inbound Queue Priority</strong> field</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="n">DID</span><span class="o">:</span><span class="w"> </span><span class="mi">800</span><span class="o">-</span><span class="mi">555</span><span class="o">-</span><span class="mi">1000</span><span class="w"> </span><span class="o">(</span><span class="n">General</span><span class="w"> </span><span class="n">Sales</span><span class="o">)</span><span class="w">     </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_EN</span><span class="o">,</span><span class="w"> </span><span class="n">Priority</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">DID</span><span class="o">:</span><span class="w"> </span><span class="mi">800</span><span class="o">-</span><span class="mi">555</span><span class="o">-</span><span class="mi">2000</span><span class="w"> </span><span class="o">(</span><span class="n">Premium</span><span class="w"> </span><span class="n">Sales</span><span class="o">)</span><span class="w">     </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_EN</span><span class="o">,</span><span class="w"> </span><span class="n">Priority</span><span class="w"> </span><span class="mi">50</span>
+<span class="n">DID</span><span class="o">:</span><span class="w"> </span><span class="mi">800</span><span class="o">-</span><span class="mi">555</span><span class="o">-</span><span class="mi">3000</span><span class="w"> </span><span class="o">(</span><span class="n">VIP</span><span class="w"> </span><span class="n">Line</span><span class="o">)</span><span class="w">          </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_EN</span><span class="o">,</span><span class="w"> </span><span class="n">Priority</span><span class="w"> </span><span class="mi">99</span>
+</code></pre></div>
+
+<p>All three DIDs route to the same <code>SALES_EN</code> inbound group and the same pool of agents. But a caller on the VIP line (priority 99) jumps ahead of callers on the general line (priority 0) in the queue.</p>
+<p>This is configured in the <code>vicidial_inbound_groups</code> table via the <code>queue_priority</code> column, or through the inbound group admin interface.</p>
+<h3 id="priority-by-caller-id">Priority by Caller ID<a class="headerlink" href="#priority-by-caller-id" title="Permanent link">&para;</a></h3>
+<p>You can route calls based on the caller's phone number. This is useful for:</p>
+<ul>
+<li>Giving priority to known customers whose numbers are in your database</li>
+<li>Routing calls from specific area codes to region-specific agents</li>
+<li>Blocking known spam callers</li>
+</ul>
+<p><strong>CID-based routing</strong> is configured in the DID settings:</p>
+<ol>
+<li>Navigate to <strong>Admin &gt; Inbound &gt; DIDs &gt; [DID Number] &gt; CID Group</strong></li>
+<li>Create a CID group with rules:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>CID Pattern</th>
+<th>Action</th>
+<th>Destination</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>212XXXXXXX</td>
+<td>ROUTE</td>
+<td>SALES_NY</td>
+<td>10</td>
+</tr>
+<tr>
+<td>310XXXXXXX</td>
+<td>ROUTE</td>
+<td>SALES_LA</td>
+<td>10</td>
+</tr>
+<tr>
+<td>8005551234</td>
+<td>ROUTE</td>
+<td>VIP_QUEUE</td>
+<td>99</td>
+</tr>
+<tr>
+<td>DEFAULT</td>
+<td>ROUTE</td>
+<td>SALES_EN</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>This sends New York callers to a New York sales team, LA callers to an LA team, a specific known VIP number to the VIP queue, and everyone else to the general queue.</p>
+<h3 id="priority-by-ivr-selection">Priority by IVR Selection<a class="headerlink" href="#priority-by-ivr-selection" title="Permanent link">&para;</a></h3>
+<p>The most common priority routing pattern uses <a href="/glossary/ivr/">IVR</a> selections. Your IVR menu gives callers options, and each option routes to a different inbound group with different priority:</p>
+<div class="codehilite"><pre><span></span><code>&quot;Press 1 for Sales&quot; → SALES_QUEUE (priority 10)
+&quot;Press 2 for Support&quot; → SUPPORT_QUEUE (priority 10)
+&quot;Press 3 for Billing&quot; → BILLING_QUEUE (priority 10)
+&quot;Press 0 for Operator&quot; → OPERATOR_QUEUE (priority 50)
+</code></pre></div>
+
+<p>Or, for a single queue with different priorities:</p>
+<div class="codehilite"><pre><span></span><code>&quot;Press 1 if you are a current customer&quot; → SUPPORT_QUEUE (priority 50)
+&quot;Press 2 for all other inquiries&quot; → SUPPORT_QUEUE (priority 0)
+</code></pre></div>
+
+<p>Current customers get priority in the same queue. This is configured in the IVR call menu settings, where each menu option specifies both the destination inbound group and the queue priority. See our <a href="/blog/vicidial-ivr-setup/">IVR setup guide</a> for detailed IVR configuration.</p>
+<h3 id="priority-stacking">Priority Stacking<a class="headerlink" href="#priority-stacking" title="Permanent link">&para;</a></h3>
+<p>Priorities from different sources stack. If a call comes in on a priority-50 DID and the caller navigates an IVR option that adds priority 20, the final queue priority is 70. This allows for sophisticated priority schemes:</p>
+<ul>
+<li>Base priority from DID (which product line the caller dialed)</li>
+<li>Added priority from IVR selection (urgency of their need)</li>
+<li>Added priority from CID matching (known customer vs. unknown)</li>
+</ul>
+<p>A known customer calling your premium line who selects "urgent" in the IVR could have a combined priority of 99 + 50 + 50, putting them well ahead of any other caller in the queue.</p>
+<hr />
+<h2 id="real-time-queue-monitoring">Real-Time Queue Monitoring<a class="headerlink" href="#real-time-queue-monitoring" title="Permanent link">&para;</a></h2>
+<p>You cannot manage a queue you cannot see. VICIdial provides several real-time monitoring tools for inbound operations.</p>
+<h3 id="the-real-time-report">The Real-Time Report<a class="headerlink" href="#the-real-time-report" title="Permanent link">&para;</a></h3>
+<p>Navigate to <strong>Reports &gt; Real-Time Report</strong>. This is your inbound command center:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>What It Shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>In-Group</td>
+<td>Inbound group name</td>
+</tr>
+<tr>
+<td>Calls Waiting</td>
+<td>Number of calls currently in queue</td>
+</tr>
+<tr>
+<td>Agents Avail</td>
+<td>Number of agents available to take calls</td>
+</tr>
+<tr>
+<td>Agents on Calls</td>
+<td>Agents currently on inbound calls</td>
+</tr>
+<tr>
+<td>Avg Wait</td>
+<td>Average wait time for calls currently in queue</td>
+</tr>
+<tr>
+<td>Longest Wait</td>
+<td>The caller who has been waiting the longest</td>
+</tr>
+<tr>
+<td>Calls Today</td>
+<td>Total inbound calls received today</td>
+</tr>
+<tr>
+<td>Answered</td>
+<td>Calls answered by agents today</td>
+</tr>
+<tr>
+<td>Abandoned</td>
+<td>Calls that hung up before reaching an agent</td>
+</tr>
+<tr>
+<td>SLA %</td>
+<td>Percentage of calls answered within the SLA threshold</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key metrics to watch:</strong></p>
+<ul>
+<li><strong>Calls Waiting &gt; Agents Available:</strong> You are understaffed. Either pull agents from outbound or activate overflow routing.</li>
+<li><strong>Longest Wait &gt; 120 seconds:</strong> Your queue is backing up. Take immediate action.</li>
+<li><strong>Abandoned % &gt; 5%:</strong> Callers are giving up. Your hold music, announcements, and callback options may need improvement.</li>
+</ul>
+<h3 id="queue-alerts">Queue Alerts<a class="headerlink" href="#queue-alerts" title="Permanent link">&para;</a></h3>
+<p>VICIdial can alert managers when queue conditions exceed thresholds:</p>
+<p>In the inbound group settings, configure:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Queue Calls Count Alert</td>
+<td>10</td>
+<td>Alert when more than 10 calls are waiting</td>
+</tr>
+<tr>
+<td>Queue Seconds Alert</td>
+<td>120</td>
+<td>Alert when any call has waited more than 120 seconds</td>
+</tr>
+<tr>
+<td>Alert Email</td>
+<td>manager@example.com</td>
+<td>Email address for queue alerts</td>
+</tr>
+</tbody>
+</table>
+<p>These alerts are not instantaneous --- they depend on VICIdial's reporting refresh cycle. For operations where queue conditions change rapidly, designate a supervisor to monitor the real-time report continuously.</p>
+<h3 id="custom-real-time-monitoring-via-sql">Custom Real-Time Monitoring via SQL<a class="headerlink" href="#custom-real-time-monitoring-via-sql" title="Permanent link">&para;</a></h3>
+<p>For real-time dashboards or integration with external monitoring tools:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Current queue status across all inbound groups</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">inbound_group</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">calls_waiting</span><span class="p">,</span>
+<span class="w">    </span><span class="k">MIN</span><span class="p">(</span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">SECOND</span><span class="p">,</span><span class="w"> </span><span class="n">call_time</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">()))</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">newest_call_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="k">MAX</span><span class="p">(</span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">SECOND</span><span class="p">,</span><span class="w"> </span><span class="n">call_time</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">()))</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">longest_wait_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">SECOND</span><span class="p">,</span><span class="w"> </span><span class="n">call_time</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">()))</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_wait_seconds</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_auto_calls</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;IN&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;LIVE&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+
+<span class="c1">-- Available agents per inbound group</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">vlia</span><span class="p">.</span><span class="n">group_id</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">agents_available</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_live_inbound_agents</span><span class="w"> </span><span class="n">vlia</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_live_agents</span><span class="w"> </span><span class="n">vla</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vlia</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="k">user</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;READY&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vlia</span><span class="p">.</span><span class="n">group_id</span><span class="p">;</span>
+
+<span class="c1">-- Inbound SLA report (calls answered within 30 seconds)</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">inbound_group</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">queue_seconds</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">within_sla</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">queue_seconds</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">sla_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="voicemail-groups">Voicemail Groups<a class="headerlink" href="#voicemail-groups" title="Permanent link">&para;</a></h2>
+<p>Voicemail is the safety net for your inbound operation. When queues overflow, after-hours calls come in, or no agents are available, voicemail ensures the caller can still leave a message.</p>
+<h3 id="setting-up-voicemail">Setting Up Voicemail<a class="headerlink" href="#setting-up-voicemail" title="Permanent link">&para;</a></h3>
+<p><strong>Step 1: Create a voicemail box in Asterisk.</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Add to /etc/asterisk/voicemail.conf under [default] context</span>
+<span class="c1"># Format: mailbox =&gt; password,name,email,pager,options</span>
+<span class="nv">8300</span><span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="m">1234</span>,Sales<span class="w"> </span>Voicemail,sales@company.com,,tz<span class="o">=</span>eastern<span class="p">|</span><span class="nv">attach</span><span class="o">=</span>yes<span class="p">|</span><span class="nv">saycid</span><span class="o">=</span>yes
+<span class="nv">8301</span><span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="m">1234</span>,Support<span class="w"> </span>Voicemail,support@company.com,,tz<span class="o">=</span>eastern<span class="p">|</span><span class="nv">attach</span><span class="o">=</span>yes<span class="p">|</span><span class="nv">saycid</span><span class="o">=</span>yes
+</code></pre></div>
+
+<p>Reload voicemail: <code>asterisk -rx "voicemail reload"</code></p>
+<p><strong>Step 2: Record a voicemail greeting.</strong></p>
+<p>Record a professional greeting via the Asterisk voicemail system (dial *98 from an extension, enter the mailbox number and PIN, then follow prompts to record a greeting) or upload a pre-recorded WAV file to <code>/var/spool/asterisk/voicemail/default/8300/greet.wav</code>.</p>
+<p><strong>Step 3: Link voicemail to the inbound group.</strong></p>
+<p>In the inbound group settings:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Voicemail</td>
+<td>8300</td>
+</tr>
+<tr>
+<td>After Hours Voicemail</td>
+<td>8300</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>Voicemail</code> field is used for overflow routing. <code>After Hours Voicemail</code> is used when calls arrive outside business hours.</p>
+<h3 id="voicemail-notification-and-follow-up">Voicemail Notification and Follow-Up<a class="headerlink" href="#voicemail-notification-and-follow-up" title="Permanent link">&para;</a></h3>
+<p>Getting voicemails into a mailbox is only half the job. They need to trigger follow-up:</p>
+<ol>
+<li>
+<p><strong>Email notification:</strong> Configure <code>attach=yes</code> in voicemail.conf to email the recording as a WAV attachment. Ensure your Asterisk server has a working MTA (sendmail/postfix).</p>
+</li>
+<li>
+<p><strong>CRM integration:</strong> Use a script that monitors the voicemail spool directory (<code>/var/spool/asterisk/voicemail/default/XXXX/INBOX/</code>) and creates leads or tasks in your CRM when new voicemails arrive.</p>
+</li>
+<li>
+<p><strong>Morning callback queue:</strong> Create a process where your first-shift supervisor reviews all overnight voicemails and schedules <a href="/blog/vicidial-callback-automation/">callbacks</a> for each one. This turns voicemails from dead leads into the first callbacks of the day.</p>
+</li>
+</ol>
+<hr />
+<h2 id="advanced-configuration-patterns">Advanced Configuration Patterns<a class="headerlink" href="#advanced-configuration-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="multi-language-routing">Multi-Language Routing<a class="headerlink" href="#multi-language-routing" title="Permanent link">&para;</a></h3>
+<p>For operations serving multilingual markets:</p>
+<ol>
+<li>Create an IVR that offers language selection: "For English, press 1. Para Espanol, oprima 2."</li>
+<li>Each option routes to a language-specific inbound group: <code>SALES_EN</code>, <code>SALES_ES</code></li>
+<li>Staff each group with appropriately skilled agents</li>
+<li>Configure overflow from <code>SALES_ES</code> to <code>SALES_EN</code> with a longer wait time (bilingual customers may accept English support if the Spanish wait is too long)</li>
+</ol>
+<h3 id="geographic-routing">Geographic Routing<a class="headerlink" href="#geographic-routing" title="Permanent link">&para;</a></h3>
+<p>Route callers to regional teams based on DID or area code:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">DIDs</span><span class="o">:</span><span class="w"> </span><span class="mi">212</span><span class="o">-</span><span class="mi">555</span><span class="o">-</span><span class="n">XXXX</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_NORTHEAST</span>
+<span class="n">DIDs</span><span class="o">:</span><span class="w"> </span><span class="mi">310</span><span class="o">-</span><span class="mi">555</span><span class="o">-</span><span class="n">XXXX</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_WEST</span>
+<span class="n">DIDs</span><span class="o">:</span><span class="w"> </span><span class="mi">312</span><span class="o">-</span><span class="mi">555</span><span class="o">-</span><span class="n">XXXX</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_MIDWEST</span>
+<span class="n">DIDs</span><span class="o">:</span><span class="w"> </span><span class="mi">800</span><span class="o">-</span><span class="mi">555</span><span class="o">-</span><span class="n">XXXX</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_NATIONAL</span><span class="w"> </span><span class="o">(</span><span class="n">overflow</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="n">regions</span><span class="o">)</span>
+</code></pre></div>
+
+<p>Each regional group has agents with local market knowledge. The national group handles overflow and after-hours from all regions.</p>
+<h3 id="tiered-support-routing">Tiered Support Routing<a class="headerlink" href="#tiered-support-routing" title="Permanent link">&para;</a></h3>
+<p>For support operations with escalation tiers:</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Inbound Group</th>
+<th>Agents</th>
+<th>Overflow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tier 1</td>
+<td>SUP_T1</td>
+<td>General support agents</td>
+<td>After 180s → SUP_T2</td>
+</tr>
+<tr>
+<td>Tier 2</td>
+<td>SUP_T2</td>
+<td>Senior support agents</td>
+<td>After 300s → SUP_T3</td>
+</tr>
+<tr>
+<td>Tier 3</td>
+<td>SUP_T3</td>
+<td>Engineering/specialists</td>
+<td>After 600s → Voicemail with urgent page</td>
+</tr>
+</tbody>
+</table>
+<p>Tier 1 handles most calls. Overflow goes to Tier 2, which handles complex issues and overflow. Tier 3 is for critical issues only. Each tier has its own hold music, announcements, and SLA thresholds.</p>
+<h3 id="time-of-day-routing">Time-of-Day Routing<a class="headerlink" href="#time-of-day-routing" title="Permanent link">&para;</a></h3>
+<p>Route calls differently based on time of day without changing the DID configuration:</p>
+<ol>
+<li>Create multiple call time definitions: <code>morning-shift</code> (8AM-12PM), <code>afternoon-shift</code> (12PM-6PM), <code>evening-shift</code> (6PM-10PM)</li>
+<li>Use VICIdial's filter routing (or a custom AGI script) to evaluate the current time and select the appropriate inbound group</li>
+<li>Staff each shift's inbound group with the agents working that shift</li>
+</ol>
+<p>This is particularly useful for operations that split shifts between in-house and remote agents, or between domestic and offshore teams.</p>
+<hr />
+<h2 id="did-to-inbound-group-mapping">DID to Inbound Group Mapping<a class="headerlink" href="#did-to-inbound-group-mapping" title="Permanent link">&para;</a></h2>
+<p>Every inbound operation starts with mapping DIDs to inbound groups. This is where the call enters VICIdial's routing engine.</p>
+<h3 id="creating-did-entries">Creating DID Entries<a class="headerlink" href="#creating-did-entries" title="Permanent link">&para;</a></h3>
+<p>Navigate to <strong>Admin &gt; Inbound &gt; DIDs &gt; Add a New DID</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Example</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DID Extension</td>
+<td>8005551000</td>
+<td>The phone number (no dashes, no spaces)</td>
+</tr>
+<tr>
+<td>DID Description</td>
+<td>Main Sales Line</td>
+<td>Human-readable label</td>
+</tr>
+<tr>
+<td>DID Route</td>
+<td>IN_GROUP</td>
+<td>Where to send the call (IN_GROUP, IVR, PHONE, etc.)</td>
+</tr>
+<tr>
+<td>In-Group ID</td>
+<td>SALES_EN</td>
+<td>Which inbound group receives the call</td>
+</tr>
+<tr>
+<td>DID Filter</td>
+<td>(optional)</td>
+<td>CID-based routing filter</td>
+</tr>
+<tr>
+<td>DID Active</td>
+<td>Y</td>
+<td>Whether this DID is routing calls</td>
+</tr>
+</tbody>
+</table>
+<p><strong>DID Route options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route Type</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IN_GROUP</td>
+<td>Route directly to an inbound group (queue)</td>
+</tr>
+<tr>
+<td>IVR</td>
+<td>Route to an IVR call menu</td>
+</tr>
+<tr>
+<td>PHONE</td>
+<td>Route directly to a specific phone/extension</td>
+</tr>
+<tr>
+<td>VOICEMAIL</td>
+<td>Route directly to a voicemail box</td>
+</tr>
+<tr>
+<td>EXTEN</td>
+<td>Route to a custom Asterisk extension</td>
+</tr>
+</tbody>
+</table>
+<p>For most operations, DIDs route to either an IVR (for menu-driven routing) or directly to an inbound group (for dedicated lines).</p>
+<h3 id="bulk-did-management">Bulk DID Management<a class="headerlink" href="#bulk-did-management" title="Permanent link">&para;</a></h3>
+<p>If you manage dozens or hundreds of DIDs, the admin interface is painfully slow. Use direct SQL for bulk operations:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Bulk update: Route all DIDs in the 800-555-1XXX range to SALES_EN</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_inbound_dids</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">group_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALES_EN&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">did_route</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;IN_GROUP&#39;</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">did_pattern</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;8005551%&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Audit: Show all active DIDs and their routing</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">did_pattern</span><span class="p">,</span>
+<span class="w">    </span><span class="n">did_description</span><span class="p">,</span>
+<span class="w">    </span><span class="n">did_route</span><span class="p">,</span>
+<span class="w">    </span><span class="n">group_id</span><span class="p">,</span>
+<span class="w">    </span><span class="n">menu_id</span><span class="p">,</span>
+<span class="w">    </span><span class="n">did_active</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_inbound_dids</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">did_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">did_pattern</span><span class="p">;</span>
+</code></pre></div>
+
+<p>For comprehensive DID management strategies, see our <a href="/blog/vicidial-did-management/">DID management guide</a>.</p>
+<hr />
+<h2 id="troubleshooting-inbound-issues">Troubleshooting Inbound Issues<a class="headerlink" href="#troubleshooting-inbound-issues" title="Permanent link">&para;</a></h2>
+<p>When inbound calls are not routing correctly, here is the diagnostic process.</p>
+<h3 id="calls-not-reaching-the-queue">Calls Not Reaching the Queue<a class="headerlink" href="#calls-not-reaching-the-queue" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Callers hear ringing or fast busy, but no call appears in the queue.</p>
+<p><strong>Diagnostic steps:</strong></p>
+<ol>
+<li>Check the DID entry: Is it active? Is the DID pattern matching the incoming call?</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_inbound_dids</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">did_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;8005551000&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<ol>
+<li>Check Asterisk CLI for the inbound call:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show channels&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>inbound
+</code></pre></div>
+
+<ol>
+<li>
+<p>Check that the SIP trunk is delivering the call with the correct DID in the DNIS field. Some carriers strip leading digits or add country codes.</p>
+</li>
+<li>
+<p>Verify the inbound group exists and is active:</p>
+</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_inbound_groups</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">group_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALES_EN&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="calls-in-queue-but-not-reaching-agents">Calls in Queue But Not Reaching Agents<a class="headerlink" href="#calls-in-queue-but-not-reaching-agents" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Calls appear in the queue (real-time report shows calls waiting), but agents are available and not receiving calls.</p>
+<p><strong>Diagnostic steps:</strong></p>
+<ol>
+<li>Verify agents are logged into the correct inbound groups:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">vlia</span><span class="p">.</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">vlia</span><span class="p">.</span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_live_inbound_agents</span><span class="w"> </span><span class="n">vlia</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_live_agents</span><span class="w"> </span><span class="n">vla</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vlia</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="k">user</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vlia</span><span class="p">.</span><span class="n">group_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALES_EN&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;READY&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<ol>
+<li>
+<p>Check the campaign's <code>Closer Campaigns</code> setting --- does it include the inbound group?</p>
+</li>
+<li>
+<p>Check agent phone registration --- the agent may appear logged in but their SIP phone is not registered:</p>
+</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show peers&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>agent_extension
+</code></pre></div>
+
+<ol>
+<li>Check for stuck calls --- a previous call may not have been properly cleared:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_auto_calls</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;agent001&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="high-abandonment-rate">High Abandonment Rate<a class="headerlink" href="#high-abandonment-rate" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Many callers hang up before reaching an agent.</p>
+<p><strong>Root causes and fixes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Indicator</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No hold music</td>
+<td>Callers hear silence</td>
+<td>Configure MOH class in inbound group</td>
+</tr>
+<tr>
+<td>No announcements</td>
+<td>Callers do not know their queue position</td>
+<td>Enable ANNOUNCE_POSITION</td>
+</tr>
+<tr>
+<td>Understaffed</td>
+<td>Average wait &gt; 60 seconds</td>
+<td>Add agents or activate blended campaign</td>
+</tr>
+<tr>
+<td>No overflow route</td>
+<td>Callers wait indefinitely</td>
+<td>Configure Hold Recall Transfer</td>
+</tr>
+<tr>
+<td>No callback option</td>
+<td>Callers must wait or abandon</td>
+<td>Enable CALLERID_CALLBACK hold time option</td>
+</tr>
+</tbody>
+</table>
+<h3 id="audio-quality-issues">Audio Quality Issues<a class="headerlink" href="#audio-quality-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Callers or agents report choppy audio, echo, or one-way audio on inbound calls.</p>
+<p>This is typically an Asterisk/SIP configuration issue rather than a VICIdial issue. Check:</p>
+<ol>
+<li>NAT configuration on the SIP trunk</li>
+<li>Codec negotiation (prefer G.711 for quality, G.729 for bandwidth)</li>
+<li>RTP port ranges in <code>rtp.conf</code></li>
+<li>Network QoS settings</li>
+</ol>
+<p>See our <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration guide</a> for detailed SIP and codec troubleshooting.</p>
+<blockquote>
+<p><strong>Inbound issues cost you money every minute they persist.</strong>
+ViciStack provides 24/7 monitoring and rapid troubleshooting for VICIdial inbound operations. <a href="/free-audit/">Find out how we can help.</a></p>
+</blockquote>
+<hr />
+<h2 id="performance-benchmarks">Performance Benchmarks<a class="headerlink" href="#performance-benchmarks" title="Permanent link">&para;</a></h2>
+<p>Here are target benchmarks for a well-configured VICIdial inbound operation:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>How to Measure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Average Speed of Answer (ASA)</td>
+<td>&lt; 30 seconds</td>
+<td><code>vicidial_closer_log</code> → avg <code>queue_seconds</code></td>
+</tr>
+<tr>
+<td>Service Level (calls answered within 20s)</td>
+<td>&gt; 80%</td>
+<td><code>queue_seconds &lt;= 20</code> / total calls</td>
+</tr>
+<tr>
+<td>Abandonment Rate</td>
+<td>&lt; 5%</td>
+<td>Calls with <code>status = DROP</code> / total inbound calls</td>
+</tr>
+<tr>
+<td>First Call Resolution</td>
+<td>&gt; 70%</td>
+<td>Calls not followed by another call from the same number within 24h</td>
+</tr>
+<tr>
+<td>Agent Occupancy</td>
+<td>75-85%</td>
+<td>Time on calls / total logged-in time</td>
+</tr>
+<tr>
+<td>Average Handle Time</td>
+<td>Varies by operation</td>
+<td><code>length_in_sec</code> from <code>vicidial_closer_log</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>ASA under 30 seconds</strong> is the industry standard for sales lines. Support lines can tolerate up to 60 seconds. If your ASA is consistently above these thresholds, you have a staffing or routing problem.</p>
+<p><strong>Abandonment under 5%</strong> is achievable with proper hold music, queue announcements, and callback options. Operations running ViciStack-configured inbound with CALLERID_CALLBACK enabled typically see abandonment rates below 3%.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Daily inbound performance dashboard</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">inbound_group</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;AFTHRS&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">abandoned</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">queue_seconds</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_queue_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_handle_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">queue_seconds</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">sla_20s_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">abandon_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">),</span><span class="w"> </span><span class="n">campaign_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="nb">date</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="n">inbound_group</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-the-difference-between-an-inbound-group-and-a-campaign-in-vicidial">What is the difference between an inbound group and a campaign in VICIdial?<a class="headerlink" href="#what-is-the-difference-between-an-inbound-group-and-a-campaign-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>A campaign is the operational container for outbound dialing --- it holds the dial settings, lead lists, agents, and dispositions. An <a href="/glossary/inbound-group/">inbound group</a> is the container for inbound call handling --- it holds the queue settings, ring strategy, hold music, and overflow configuration. Agents can belong to both simultaneously (this is the <a href="/glossary/blended-agent/">blended agent</a> setup). Think of campaigns as outbound engines and inbound groups as queues. They are separate entities that share agents through the <a href="/settings/closer-campaigns/">Closer Campaigns</a> configuration.</p>
+<h3 id="how-many-inbound-groups-can-vicidial-handle">How many inbound groups can VICIdial handle?<a class="headerlink" href="#how-many-inbound-groups-can-vicidial-handle" title="Permanent link">&para;</a></h3>
+<p>There is no hard limit on the number of inbound groups. VICIdial operations with 50+ inbound groups running simultaneously are common. The practical limit is administrative --- managing 100 inbound groups with different configurations, overflow routes, and agent assignments becomes complex. Use a naming convention and documentation. Performance is not a concern; VICIdial's inbound routing is lightweight compared to outbound predictive dialing.</p>
+<h3 id="can-i-route-the-same-did-to-different-inbound-groups-based-on-time-of-day">Can I route the same DID to different inbound groups based on time of day?<a class="headerlink" href="#can-i-route-the-same-did-to-different-inbound-groups-based-on-time-of-day" title="Permanent link">&para;</a></h3>
+<p>Yes, but not through a single DID configuration. The cleanest approach is to route the DID to an <a href="/glossary/ivr/">IVR</a> (call menu) and use VICIdial's time-based routing within the IVR to select different inbound groups based on the current time. Alternatively, you can use a custom AGI script in the Asterisk dialplan that evaluates the time and routes accordingly. The DID's <code>Call Time</code> setting handles after-hours routing, but for mid-day routing changes (e.g., morning team vs. afternoon team), IVR-based routing is the standard approach. See our <a href="/blog/vicidial-ivr-setup/">IVR setup guide</a> for details.</p>
+<h3 id="what-happens-if-all-agents-log-out-while-calls-are-still-in-queue">What happens if all agents log out while calls are still in queue?<a class="headerlink" href="#what-happens-if-all-agents-log-out-while-calls-are-still-in-queue" title="Permanent link">&para;</a></h3>
+<p>The calls remain in queue and continue hearing hold music and announcements. If <a href="/settings/no-agent-no-queue/">No Agent No Queue</a> is set to <code>N</code> (recommended), the calls persist until the caller hangs up or the overflow timer triggers. If you have configured overflow routing (Hold Recall Transfer), calls will overflow to the next destination after the configured wait time. If you have configured after-hours routing, calls that arrive after hours will follow the after-hours path. The worst case --- no overflow, no after-hours, all agents gone --- is a caller sitting in queue hearing hold music until they give up. This is why overflow configuration is not optional.</p>
+<h3 id="how-do-i-set-up-a-blended-campaign-so-agents-take-inbound-calls-between-outbound-dials">How do I set up a blended campaign so agents take inbound calls between outbound dials?<a class="headerlink" href="#how-do-i-set-up-a-blended-campaign-so-agents-take-inbound-calls-between-outbound-dials" title="Permanent link">&para;</a></h3>
+<p>Three settings make blending work: (1) Set <a href="/settings/campaign-allow-inbound/">Campaign Allow Inbound</a> to <code>Y</code> on the outbound campaign, (2) list the inbound groups in <a href="/settings/closer-campaigns/">Closer Campaigns</a>, and (3) set <code>Closer Default Blended</code> to <code>1</code> to auto-enable blending for all agents. Then set <a href="/settings/inbound-queue-priority/">Inbound Queue Priority</a> to <code>99</code> so inbound calls always take precedence. When an agent finishes any call (inbound or outbound), VICIdial checks for waiting inbound calls first. If none are queued, the agent goes back into the outbound dial pool. Set <code>Available Only Ratio Tally</code> to <code>Y</code> on the campaign to prevent over-dialing when agents are pulled to inbound.</p>
+<h3 id="can-i-give-priority-to-certain-callers-without-creating-separate-inbound-groups">Can I give priority to certain callers without creating separate inbound groups?<a class="headerlink" href="#can-i-give-priority-to-certain-callers-without-creating-separate-inbound-groups" title="Permanent link">&para;</a></h3>
+<p>Yes. Use DID-level queue priority. Each DID entry has a <code>Queue Priority</code> field. Calls from higher-priority DIDs jump ahead in the same inbound group's queue. You can also use CID-based routing on the DID to assign priority based on the caller's phone number. If your <a href="/glossary/ivr/">IVR</a> routes callers, each IVR option can pass a different priority value to the same inbound group. These priorities stack, so a VIP caller (CID priority 50) calling your premium line (DID priority 50) who selects "urgent" in the IVR (IVR priority 30) enters the queue with priority 130.</p>
+<h3 id="how-do-i-handle-inbound-calls-after-hours-without-losing-leads">How do I handle inbound calls after hours without losing leads?<a class="headerlink" href="#how-do-i-handle-inbound-calls-after-hours-without-losing-leads" title="Permanent link">&para;</a></h3>
+<p>Configure these settings on your inbound group: set the <code>Call Time ID</code> to your business hours, set <code>After Hours Action</code> to <code>MESSAGE</code>, record a professional after-hours greeting and set it as <code>After Hours Message Filename</code>, and set <code>After Hours Voicemail</code> to a monitored voicemail box. Enable email notification on the voicemail box so your team gets notified immediately. Then implement a morning process: your first-shift supervisor pulls all overnight voicemails and schedules <a href="/blog/vicidial-callback-automation/">callbacks</a> for each one. The initial VICIdial setup guide covers base configuration if you are starting from scratch --- see our <a href="/blog/vicidial-setup-guide/">complete setup guide</a>.</p>
+<h3 id="what-is-the-best-ring-strategy-for-a-small-team-versus-a-large-call-center">What is the best ring strategy for a small team versus a large call center?<a class="headerlink" href="#what-is-the-best-ring-strategy-for-a-small-team-versus-a-large-call-center" title="Permanent link">&para;</a></h3>
+<p>For teams under 10 agents, <code>ring_all</code> gives you the fastest answer times --- every available agent's phone rings at once, and the first to answer gets the call. For teams of 10-50 agents, <code>longest_wait_time</code> is the standard --- it evenly distributes calls and prevents agent cherry-picking. For large operations (50+ agents), <code>longest_wait_time</code> with agent ranking enabled provides both even distribution and <a href="/glossary/skill-based-routing/">skill-based routing</a>. Avoid <code>random</code> in almost all cases --- it creates uneven distribution and unpredictable wait times. The <code>fewest_calls</code> strategy is useful for compliance-sensitive operations that need provably equal call distribution per agent.</p>
+<h3 id="how-can-i-monitor-queue-performance-in-real-time">How can I monitor queue performance in real time?<a class="headerlink" href="#how-can-i-monitor-queue-performance-in-real-time" title="Permanent link">&para;</a></h3>
+<p>VICIdial's built-in Real-Time Report (Reports &gt; Real-Time Report) shows calls waiting, agents available, average wait time, longest wait, and abandonment counts per inbound group. For custom dashboards, query the <code>vicidial_auto_calls</code> table for current queue state and <code>vicidial_closer_log</code> for historical metrics. Configure queue alerts on the inbound group (Queue Calls Count Alert and Queue Seconds Alert) to receive email notifications when thresholds are exceeded. For operations that need sub-minute visibility, build a polling script that queries the live tables every 10-15 seconds and pushes to an external dashboard (Grafana, Datadog, or a custom web dashboard).</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-inbound-setup">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

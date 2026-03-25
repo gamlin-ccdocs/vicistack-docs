@@ -1,0 +1,2995 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-carrier-selection/">
+      
+      
+        <link rel="prev" href="../vicidial-callback-automation/">
+      
+      
+        <link rel="next" href="../vicidial-cnam-lookup-inbound/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Carrier Selection: SIP Trunks, Rates & Quality - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-carrier-selection-sip-trunks-rates-quality" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-carrier-selection-matters-more-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Carrier Selection Matters More Than You Think
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-carrier-evaluation-framework-what-actually-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Carrier Evaluation Framework: What Actually Matters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Carrier Evaluation Framework: What Actually Matters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-call-quality-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Call Quality Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stirshaken-attestation-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STIR/SHAKEN Attestation Capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-network-quality-and-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Network Quality and Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-concurrent-channel-model-and-burst-capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Concurrent Channel Model and Burst Capacity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-did-services-and-number-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. DID Services and Number Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rate-comparison-what-you-are-actually-paying-and-what-you-should-be" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Comparison: What You Are Actually Paying and What You Should Be
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rate Comparison: What You Are Actually Paying and What You Should Be">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-rate-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Rate Structures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-hidden-costs-most-operators-miss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hidden Costs Most Operators Miss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-compare-carriers-apples-to-apples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Compare Carriers Apples-to-Apples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stirshaken-attestation-by-carrier-type-what-you-will-actually-get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STIR/SHAKEN Attestation by Carrier Type: What You Will Actually Get
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STIR/SHAKEN Attestation by Carrier Type: What You Will Actually Get">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-attestation-landscape-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Attestation Landscape in 2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-scenarios-that-degrade-attestation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Scenarios That Degrade Attestation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-verify-your-attestation-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Verify Your Attestation Level
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#carrier-redundancy-and-failover-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Redundancy and Failover in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Carrier Redundancy and Failover in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-two-carrier-minimum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Two-Carrier Minimum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-failover-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Failover in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-carrier-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Carrier Health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-failover-decision-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Failover Decision Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rate-negotiation-how-to-get-better-pricing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Negotiation: How to Get Better Pricing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rate Negotiation: How to Get Better Pricing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#know-your-leverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Know Your Leverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-negotiation-playbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Negotiation Playbook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-carriers-in-vicidial-the-technical-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Carriers in VICIdial: The Technical Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring Carriers in VICIdial: The Technical Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#carrier-entry-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Entry Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-trunk-configuration-in-sipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Trunk Configuration in sip.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-a-new-carrier-before-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing a New Carrier Before Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-carrier-evaluation-scorecard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Carrier Evaluation Scorecard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-carrier-problems-in-vicidial-and-how-to-fix-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Carrier Problems in VICIdial and How to Fix Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Carrier Problems in VICIdial and How to Fix Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-calls-connecting-but-no-audio-one-way-or-no-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 1: Calls Connecting But No Audio (One-Way or No-Way Audio)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-caller-id-not-transmitting-correctly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 2: Caller ID Not Transmitting Correctly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-high-failure-rate-during-peak-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 3: High Failure Rate During Peak Hours
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-intermittent-call-quality-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 4: Intermittent Call Quality Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-5-stirshaken-attestation-drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 5: STIR/SHAKEN Attestation Drops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-sip-trunk-providers-should-i-use-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many SIP trunk providers should I use for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-a-good-per-minute-rate-for-outbound-sip-trunking-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is a good per-minute rate for outbound SIP trunking in 2026?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-carrier-is-providing-a-level-stirshaken-attestation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my carrier is providing A-level STIR/SHAKEN attestation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-different-carriers-for-different-campaigns-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use different carriers for different campaigns in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-causes-congestion-dispositions-in-vicidial-call-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What causes CONGESTION dispositions in VICIdial call logs?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-test-call-quality-on-my-sip-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I test call quality on my SIP trunks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-choose-a-carrier-that-specializes-in-outbound-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I choose a carrier that specializes in outbound calling?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-if-my-sip-trunk-provider-goes-out-of-business-or-gets-shut-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if my SIP trunk provider goes out of business or gets shut down?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-carrier-selection-matters-more-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Carrier Selection Matters More Than You Think
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-carrier-evaluation-framework-what-actually-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Carrier Evaluation Framework: What Actually Matters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Carrier Evaluation Framework: What Actually Matters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-call-quality-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Call Quality Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stirshaken-attestation-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STIR/SHAKEN Attestation Capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-network-quality-and-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Network Quality and Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-concurrent-channel-model-and-burst-capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Concurrent Channel Model and Burst Capacity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-did-services-and-number-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. DID Services and Number Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rate-comparison-what-you-are-actually-paying-and-what-you-should-be" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Comparison: What You Are Actually Paying and What You Should Be
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rate Comparison: What You Are Actually Paying and What You Should Be">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-rate-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Rate Structures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-hidden-costs-most-operators-miss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hidden Costs Most Operators Miss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-compare-carriers-apples-to-apples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Compare Carriers Apples-to-Apples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stirshaken-attestation-by-carrier-type-what-you-will-actually-get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STIR/SHAKEN Attestation by Carrier Type: What You Will Actually Get
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STIR/SHAKEN Attestation by Carrier Type: What You Will Actually Get">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-attestation-landscape-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Attestation Landscape in 2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-scenarios-that-degrade-attestation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Scenarios That Degrade Attestation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-verify-your-attestation-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Verify Your Attestation Level
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#carrier-redundancy-and-failover-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Redundancy and Failover in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Carrier Redundancy and Failover in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-two-carrier-minimum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Two-Carrier Minimum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-failover-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Failover in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-carrier-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Carrier Health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-failover-decision-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Failover Decision Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rate-negotiation-how-to-get-better-pricing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Negotiation: How to Get Better Pricing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rate Negotiation: How to Get Better Pricing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#know-your-leverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Know Your Leverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-negotiation-playbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Negotiation Playbook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-carriers-in-vicidial-the-technical-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Carriers in VICIdial: The Technical Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring Carriers in VICIdial: The Technical Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#carrier-entry-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Entry Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-trunk-configuration-in-sipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Trunk Configuration in sip.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-a-new-carrier-before-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing a New Carrier Before Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-carrier-evaluation-scorecard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Carrier Evaluation Scorecard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-carrier-problems-in-vicidial-and-how-to-fix-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Carrier Problems in VICIdial and How to Fix Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Carrier Problems in VICIdial and How to Fix Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-calls-connecting-but-no-audio-one-way-or-no-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 1: Calls Connecting But No Audio (One-Way or No-Way Audio)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-caller-id-not-transmitting-correctly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 2: Caller ID Not Transmitting Correctly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-high-failure-rate-during-peak-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 3: High Failure Rate During Peak Hours
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-intermittent-call-quality-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 4: Intermittent Call Quality Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-5-stirshaken-attestation-drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 5: STIR/SHAKEN Attestation Drops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-sip-trunk-providers-should-i-use-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many SIP trunk providers should I use for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-a-good-per-minute-rate-for-outbound-sip-trunking-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is a good per-minute rate for outbound SIP trunking in 2026?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-carrier-is-providing-a-level-stirshaken-attestation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my carrier is providing A-level STIR/SHAKEN attestation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-different-carriers-for-different-campaigns-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use different carriers for different campaigns in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-causes-congestion-dispositions-in-vicidial-call-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What causes CONGESTION dispositions in VICIdial call logs?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-test-call-quality-on-my-sip-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I test call quality on my SIP trunks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-choose-a-carrier-that-specializes-in-outbound-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I choose a carrier that specializes in outbound calling?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-if-my-sip-trunk-provider-goes-out-of-business-or-gets-shut-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if my SIP trunk provider goes out of business or gets shut down?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-carrier-selection-sip-trunks-rates-quality">VICIdial Carrier Selection: SIP Trunks, Rates &amp; Quality<a class="headerlink" href="#vicidial-carrier-selection-sip-trunks-rates-quality" title="Permanent link">&para;</a></h1>
+<p><em>Published by ViciStack — the managed VICIdial platform built by operators, for operators.</em></p>
+<hr />
+<p>You are paying too much for bad calls. Your <a href="/glossary/sip-trunk/">SIP trunk</a> provider quoted you a rate that looked competitive, your calls connect most of the time, and you have never thought much about it since. Meanwhile, 15% of your outbound dials are failing silently, your <a href="/glossary/post-dial-delay/">post-dial delay</a> is adding 3 seconds to every call attempt, your <a href="/glossary/stir-shaken/">STIR/SHAKEN</a> attestation is sitting at B-level because your <a href="/glossary/carrier/">carrier</a> cannot sign your numbers properly, and you have no idea because you have never measured any of it.</p>
+<p>This is the norm. Most VICIdial operators pick a carrier the same way they pick a cell phone plan — they compare the per-minute rate, pick the cheapest one that does not seem obviously terrible, and move on. The problem is that in high-volume outbound operations, carrier selection is not a billing decision. It is an infrastructure decision that directly determines your answer rates, your call quality, your compliance posture, and ultimately your revenue per seat per hour.</p>
+<p>We manage SIP trunk relationships across over 100 VICIdial-based contact centers. We have tested every major carrier that serves the outbound calling market. We track quality metrics across roughly 600,000 dials per month spanning dozens of carrier configurations. What follows is everything we know about choosing, evaluating, and configuring carriers for VICIdial — laid out in the order you need it.</p>
+<hr />
+<h2 id="why-carrier-selection-matters-more-than-you-think">Why Carrier Selection Matters More Than You Think<a class="headerlink" href="#why-carrier-selection-matters-more-than-you-think" title="Permanent link">&para;</a></h2>
+<p>The math is simple and brutal. Take a 25-seat outbound call center dialing 4,000 calls per day. If your carrier's Answer Seizure Ratio (ASR) is 45% instead of the 52% you would get from a better carrier, that is 280 fewer connected calls per day. At a conservative 10% conversion rate and $50 average revenue per conversion, that is $1,400 per day — $30,800 per month — evaporating because of a carrier problem you never measured.</p>
+<p>Now layer on call quality. If your carrier's <a href="/glossary/mos-score/">MOS score</a> is averaging 3.4 instead of 4.0, your agents are straining to hear leads, leads are straining to hear agents, and conversations that should convert are falling apart 30 seconds in because someone said "can you repeat that?" three times and hung up. You cannot see this in any VICIdial report. It shows up as lower conversion rates that everyone blames on the list, the script, or the agents.</p>
+<p>Then there is compliance. If your carrier is handing you B-level STIR/SHAKEN attestation — or worse, C-level gateway attestation — every single call you place starts with a trust deficit. The terminating carrier sees your call as unverified. Analytics engines at AT&amp;T, T-Mobile, and Verizon treat unverified calls with increased scrutiny. Your <a href="/blog/vicidial-did-management/">DID management</a> strategy becomes twice as hard because your numbers are fighting an uphill battle from the moment the call is placed. For the full breakdown on attestation levels and their impact, see our <a href="/blog/stir-shaken-vicidial-guide/">STIR/SHAKEN implementation guide</a>.</p>
+<p>The carrier you choose affects everything downstream. Picking the wrong one — or failing to evaluate the one you have — is the most expensive mistake you can make that does not show up on any line item in your budget.</p>
+<hr />
+<h2 id="the-carrier-evaluation-framework-what-actually-matters">The Carrier Evaluation Framework: What Actually Matters<a class="headerlink" href="#the-carrier-evaluation-framework-what-actually-matters" title="Permanent link">&para;</a></h2>
+<p>Most operators evaluate carriers on two dimensions: price and "does it work." That is not an evaluation framework. That is coin-flipping with extra steps. Here is the framework we use when onboarding a new ViciStack client or auditing an existing carrier relationship.</p>
+<h3 id="1-call-quality-metrics">1. Call Quality Metrics<a class="headerlink" href="#1-call-quality-metrics" title="Permanent link">&para;</a></h3>
+<p>There are four metrics that define whether a carrier is actually delivering quality calls. If your carrier cannot provide these numbers — or if you have never asked for them — you are flying blind.</p>
+<p><strong>ASR (Answer Seizure Ratio)</strong>: The percentage of call attempts that result in a connection (answered by a human or machine, not failed at the network level). For U.S. domestic outbound calling, a healthy ASR ranges from 45-60% depending on the campaign type and list quality. If your carrier's ASR is consistently below 40%, the problem is likely carrier-side — failed routes, overloaded gateways, or poor interconnect agreements with terminating carriers.</p>
+<div class="codehilite"><pre><span></span><code>ASR = (Answered Calls / Total Call Attempts) × 100
+</code></pre></div>
+
+<p><strong>ACD (Average Call Duration)</strong>: The average length of connected calls in seconds. ACD itself is more of a campaign metric than a carrier metric, but abnormally low ACD (under 15 seconds average) can indicate carrier-level problems: calls connecting but dropping immediately, one-way audio issues causing immediate hangups, or codec negotiation failures producing garbled audio that leads to quick disconnects.</p>
+<div class="codehilite"><pre><span></span><code>ACD = Total Talk Time (seconds) / Number of Answered Calls
+</code></pre></div>
+
+<p><strong>PDD (Post-Dial Delay)</strong>: The time between when VICIdial sends the INVITE and when the caller hears ringing or the call is answered. This is the metric most operators never measure and should. A good PDD is under 3 seconds. An acceptable PDD is 3-5 seconds. Anything over 5 seconds means your carrier is routing calls through too many hops, and those extra seconds compound across thousands of dials per day into hours of lost agent productivity.</p>
+<p>For a 25-seat center making 4,000 calls per day, every additional second of PDD costs roughly 67 minutes of aggregate agent wait time. At 5 seconds average PDD versus 2 seconds, that is over 3 hours of agent time per day spent listening to dead air. At $15/hour loaded agent cost, that is $45/day or nearly $1,000/month — just from slow call setup.</p>
+<div class="codehilite"><pre><span></span><code>PDD = Time of first ringback or answer - Time of SIP INVITE sent
+</code></pre></div>
+
+<p><strong>MOS (Mean Opinion Score)</strong>: A standardized measurement of voice quality on a scale of 1 (unintelligible) to 5 (perfect). In VoIP, a MOS of 4.0+ is considered good. 3.5-4.0 is acceptable. Below 3.5, your agents and leads are having degraded conversations. MOS is affected by <a href="/glossary/codec/">codec</a> selection, packet loss, jitter, and the number of transcoding steps between your server and the terminating carrier. Your <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration</a> plays a role here, but carrier routing quality is the bigger factor.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Good</th>
+<th>Acceptable</th>
+<th>Problem</th>
+<th>How to Measure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ASR</strong></td>
+<td>50-60%</td>
+<td>40-50%</td>
+<td>Below 40%</td>
+<td>VICIdial outbound report, filter by carrier trunk</td>
+</tr>
+<tr>
+<td><strong>ACD</strong></td>
+<td>Campaign-dependent</td>
+<td>Campaign-dependent</td>
+<td>Below 15 sec avg</td>
+<td>VICIdial call log, filter by disposition</td>
+</tr>
+<tr>
+<td><strong>PDD</strong></td>
+<td>Under 3 sec</td>
+<td>3-5 sec</td>
+<td>Over 5 sec</td>
+<td>SIP packet capture (Asterisk CLI: <code>sip set debug on</code>)</td>
+</tr>
+<tr>
+<td><strong>MOS</strong></td>
+<td>4.0+</td>
+<td>3.5-4.0</td>
+<td>Below 3.5</td>
+<td>VoIP monitoring tools (VoIPmonitor, Homer) or carrier-provided dashboards</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-stirshaken-attestation-capability">2. STIR/SHAKEN Attestation Capability<a class="headerlink" href="#2-stirshaken-attestation-capability" title="Permanent link">&para;</a></h3>
+<p>This is non-negotiable in 2026. Your carrier must provide A-level <a href="/glossary/stir-shaken/">STIR/SHAKEN</a> attestation for every DID you use for outbound calling. Here is what that requires:</p>
+<p><strong>The carrier must own their own STIR/SHAKEN certificate.</strong> As of June 2025, the FCC requires all voice service providers with a STIR/SHAKEN implementation obligation to authenticate calls using their own certificates — third-party signing arrangements are no longer compliant. If your carrier is still using a third-party certificate, your calls are at risk of receiving reduced attestation or being flagged as non-compliant at the terminating end.</p>
+<p><strong>The carrier must verify your identity and your authorization to use each DID.</strong> A-level attestation means the carrier knows who you are and has confirmed that you are authorized to use the specific number being displayed. This requires that every DID in your pool is properly registered with your carrier and linked to your account. If you are porting numbers from another provider or using DIDs purchased from a third party, the new carrier must complete their own verification before they can provide A-level attestation.</p>
+<p><strong>The carrier must sign calls in real time.</strong> STIR/SHAKEN signing happens at the SIP level. The carrier's Session Border Controller (SBC) adds Identity headers to the SIP INVITE. If the carrier's signing infrastructure is slow or unreliable, it can add latency to call setup (increasing PDD) or fail silently, resulting in unsigned calls that get treated as suspicious.</p>
+<p>Here is how attestation levels break down by carrier type:</p>
+<table>
+<thead>
+<tr>
+<th>Carrier Type</th>
+<th>Typical Attestation</th>
+<th>Why</th>
+<th>Risk to Your Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tier 1 carrier with direct certificate</strong></td>
+<td>A-level for verified DIDs</td>
+<td>Full identity verification, own certificate</td>
+<td>Low — calls are trusted</td>
+</tr>
+<tr>
+<td><strong>Mid-tier VoIP carrier with own certificate</strong></td>
+<td>A-level if DIDs are properly registered</td>
+<td>Depends on their verification process</td>
+<td>Medium — verify their process is thorough</td>
+</tr>
+<tr>
+<td><strong>Reseller using upstream provider's certificate</strong></td>
+<td>B or C-level</td>
+<td>Cannot fully verify your identity or DID authorization</td>
+<td>High — calls start with trust deficit</td>
+</tr>
+<tr>
+<td><strong>Offshore carrier routing through U.S. gateway</strong></td>
+<td>C-level or unsigned</td>
+<td>Gateway attestation only; no caller identity verification</td>
+<td>Very high — calls treated as suspicious by default</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ask your carrier directly:</strong> "What attestation level are my calls receiving?" If they cannot answer immediately, that is a red flag. If they say "B-level" or "it depends," that is a problem you need to solve before worrying about anything else.</p>
+<h3 id="3-network-quality-and-routing">3. Network Quality and Routing<a class="headerlink" href="#3-network-quality-and-routing" title="Permanent link">&para;</a></h3>
+<p>Not all SIP trunks are created equal, even among carriers quoting the same per-minute rate. The difference is in how calls are routed.</p>
+<p><strong>Direct interconnects vs. least-cost routing (LCR)</strong>: Tier 1 carriers maintain direct interconnect agreements with the major terminating carriers (AT&amp;T, Verizon, T-Mobile, etc.). Your call goes from their network directly to the terminating network in one hop. LCR carriers route calls through the cheapest available path, which may involve multiple intermediate carriers. Each hop adds latency, increases the chance of packet loss, and can introduce transcoding that degrades audio quality.</p>
+<p><strong>The transcoding problem</strong>: If your VICIdial server sends audio using the G.711 <a href="/glossary/codec/">codec</a> and one of the intermediate carriers only supports G.729, the audio gets transcoded. Every transcoding step degrades the <a href="/glossary/mos-score/">MOS score</a> by approximately 0.2-0.5 points. A call that starts at MOS 4.2 on your server can arrive at the recipient's phone at MOS 3.3 after two transcoding steps. Your <a href="/blog/vicidial-asterisk-configuration/">Asterisk codec configuration</a> matters, but it only controls the first leg — after that, it is up to your carrier's routing decisions.</p>
+<p><strong>Geographic routing intelligence</strong>: Good carriers route calls based on the terminating number's location and carrier, optimizing for quality. Poor carriers route every call through the same path regardless of destination. The difference is measurable: 1-3 seconds of PDD improvement and 0.3-0.5 MOS improvement on average.</p>
+<p><strong>Network capacity and congestion</strong>: During peak calling hours (typically 10am-2pm and 4pm-7pm in each time zone), carrier networks experience congestion. Carriers with adequate capacity handle this gracefully. Carriers running close to capacity during peaks will show increased PDD, higher call failure rates, and degraded audio quality — exactly when you need performance most.</p>
+<h3 id="4-concurrent-channel-model-and-burst-capacity">4. Concurrent Channel Model and Burst Capacity<a class="headerlink" href="#4-concurrent-channel-model-and-burst-capacity" title="Permanent link">&para;</a></h3>
+<p>The way your carrier prices and allocates channels directly affects your dialing capacity and your cost structure. There are three primary models:</p>
+<p><strong>Per-channel pricing (committed channels)</strong>: You purchase a fixed number of concurrent channels — say, 100. You can have up to 100 simultaneous calls in progress at any moment. You pay for these channels whether you use them or not. This model is predictable and guarantees capacity, but you pay for idle channels during off-peak hours.</p>
+<p>Typical pricing: $1.50-$5.00 per channel per month, plus per-minute usage.</p>
+<p><strong>Pay-per-minute (no channel commitment)</strong>: You pay only for the minutes you use, with no dedicated channels. The carrier allocates channels dynamically from their pool. This is cheaper when you are small or have irregular call volume, but you have no guaranteed capacity. During peak hours, when every outbound call center on that carrier is dialing simultaneously, you may experience channel exhaustion — your calls fail because the carrier has no available channels to allocate.</p>
+<p>Typical pricing: $0.005-$0.015 per minute for U.S. domestic, no monthly minimum or a low minimum ($25-$100).</p>
+<p><strong>Hybrid (base channels + burst)</strong>: You commit to a base number of channels (e.g., 50) and can burst above that up to a maximum (e.g., 150) on a per-minute basis. The base channels are guaranteed. Burst channels are available when the carrier has capacity. This is the model most well-run outbound operations use because it provides guaranteed minimum capacity with flexibility for peak periods.</p>
+<p>Typical pricing: $2.00-$4.00 per base channel per month + $0.008-$0.020 per minute for burst channels.</p>
+<p><strong>How to calculate channels needed for VICIdial:</strong></p>
+<div class="codehilite"><pre><span></span><code>Minimum channels = Agents × Dial Level × 1.2 (safety margin)
+</code></pre></div>
+
+<p>For a 25-seat center running a predictive dialer at a 3:1 dial ratio:</p>
+<div class="codehilite"><pre><span></span><code>Minimum channels = 25 × 3 × 1.2 = 90 channels
+</code></pre></div>
+
+<p>But VICIdial's predictive algorithm adjusts the dial level dynamically. During periods of low answer rates, it may push the ratio to 4:1 or 5:1. You need burst capacity for these peaks:</p>
+<div class="codehilite"><pre><span></span><code>Burst capacity = Agents × Max Dial Level × 1.2
+             = 25 × 5 × 1.2 = 150 channels
+</code></pre></div>
+
+<p>If your carrier caps you at 100 channels and VICIdial tries to place 120 simultaneous calls, 20 calls will fail with a SIP 503 (Service Unavailable) response. VICIdial logs these as "CONGESTION" dispositions. If you are seeing CONGESTION dispositions in your call logs, your channel count is too low for your dial level.</p>
+<table>
+<thead>
+<tr>
+<th>Operation Size</th>
+<th>Agents</th>
+<th>Recommended Base Channels</th>
+<th>Recommended Burst Capacity</th>
+<th>Estimated Monthly Channel Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Small</td>
+<td>5-10</td>
+<td>20-40</td>
+<td>40-60</td>
+<td>$40-$200</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>10-25</td>
+<td>40-90</td>
+<td>80-150</td>
+<td>$120-$450</td>
+</tr>
+<tr>
+<td>Large</td>
+<td>25-50</td>
+<td>90-180</td>
+<td>150-300</td>
+<td>$270-$900</td>
+</tr>
+<tr>
+<td>Enterprise</td>
+<td>50-100</td>
+<td>180-360</td>
+<td>300-600</td>
+<td>$540-$1,800</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-did-services-and-number-management">5. DID Services and Number Management<a class="headerlink" href="#5-did-services-and-number-management" title="Permanent link">&para;</a></h3>
+<p>Your carrier is also your DID provider in most cases. Evaluate their DID capabilities alongside their trunk services:</p>
+<ul>
+<li><strong>DID provisioning speed</strong>: How fast can you get new numbers? Same-day provisioning is the standard. If your carrier needs 3-5 business days to provision DIDs, they are not built for outbound operations.</li>
+<li><strong>Number quality</strong>: Do they provision clean numbers with no prior call history, or are you getting recycled numbers that may already carry spam flags? Always test new numbers before deploying them.</li>
+<li><strong>Local number availability</strong>: If you run local presence campaigns, your carrier needs broad area code coverage. Can they provide numbers in every area code you need?</li>
+<li><strong>Porting support</strong>: If you are moving from another carrier, porting speed and accuracy matter. A botched port can leave your numbers in limbo for days.</li>
+<li><strong>CNAM registration</strong>: Can the carrier register CNAM (Caller Name) records for your DIDs? Some carriers handle this; others require you to use a third-party CNAM provider.</li>
+</ul>
+<p>For a complete guide to managing your DIDs once they are provisioned, see our <a href="/blog/vicidial-did-management/">DID management guide</a>.</p>
+<hr />
+<h2 id="rate-comparison-what-you-are-actually-paying-and-what-you-should-be">Rate Comparison: What You Are Actually Paying and What You Should Be<a class="headerlink" href="#rate-comparison-what-you-are-actually-paying-and-what-you-should-be" title="Permanent link">&para;</a></h2>
+<p>Per-minute rates are the number every operator fixates on. They matter, but they are only one component of your total carrier cost — and often not the largest one.</p>
+<h3 id="understanding-rate-structures">Understanding Rate Structures<a class="headerlink" href="#understanding-rate-structures" title="Permanent link">&para;</a></h3>
+<p><strong>Flat rate per minute</strong>: A single per-minute rate for all U.S. domestic calls regardless of destination. Simple, predictable, and the most common model for outbound-focused carriers. Typical range: $0.005-$0.015 per minute.</p>
+<p><strong>Tiered rate by destination</strong>: Different rates for different destination types — landline vs. mobile, local vs. long distance, rate center-based pricing. This model can save money if your traffic is heavily weighted toward cheaper destinations, but it makes cost prediction harder. Some carriers advertise a low rate that only applies to landline terminations, while mobile terminations (which are the majority of outbound consumer calls in 2026) carry a 2-3x premium.</p>
+<p><strong>Blended rate</strong>: A single advertised rate that averages across all destination types. This is functionally similar to flat rate but may be recalculated periodically based on your actual traffic mix.</p>
+<p><strong>Volume commitment pricing</strong>: Lower per-minute rates in exchange for committing to a minimum monthly spend. Common tiers:</p>
+<table>
+<thead>
+<tr>
+<th>Monthly Commitment</th>
+<th>Typical Per-Minute Rate</th>
+<th>Annual Savings vs. No Commitment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No minimum</td>
+<td>$0.010-$0.015</td>
+<td>Baseline</td>
+</tr>
+<tr>
+<td>$500/month</td>
+<td>$0.008-$0.012</td>
+<td>$600-$1,800/year</td>
+</tr>
+<tr>
+<td>$2,000/month</td>
+<td>$0.006-$0.010</td>
+<td>$2,400-$6,000/year</td>
+</tr>
+<tr>
+<td>$5,000/month</td>
+<td>$0.004-$0.008</td>
+<td>$7,200-$14,400/year</td>
+</tr>
+<tr>
+<td>$10,000+/month</td>
+<td>$0.003-$0.006</td>
+<td>Negotiate directly</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-hidden-costs-most-operators-miss">The Hidden Costs Most Operators Miss<a class="headerlink" href="#the-hidden-costs-most-operators-miss" title="Permanent link">&para;</a></h3>
+<p>The per-minute rate your carrier quotes is not your true cost per minute. Here are the line items that inflate your actual cost:</p>
+<p><strong>Billing increment</strong>: Some carriers bill in 6-second increments. Others bill in 1-minute increments. On a 25-second call, a 6-second increment carrier charges you for 30 seconds. A 1-minute increment carrier charges you for 60 seconds — double the cost for the same call. For outbound operations where a huge percentage of calls are short (unanswered calls that ring for 20-30 seconds before dropping), billing increment can increase your effective cost per minute by 20-40%.</p>
+<p><strong>Regulatory surcharges and fees</strong>: USF (Universal Service Fund) contributions, state and local telecom taxes, E911 surcharges, PICC fees, number portability fees — these can add $0.002-$0.005 per minute on top of your quoted rate. A carrier quoting $0.006/min with $0.003 in surcharges costs you more than a carrier quoting $0.008/min with no surcharges.</p>
+<p><strong>Minimum monthly spend</strong>: If you commit to a monthly minimum and your actual usage falls below it, you pay the minimum anyway. Size your commitment accurately based on 3 months of call data, not on what you hope to be doing next quarter.</p>
+<p><strong>Setup fees and contract terms</strong>: Some carriers charge setup fees ($50-$500) and require 12-24 month contracts. Others are month-to-month with no setup cost. For a growing operation, flexibility has real value — getting locked into a contract with an underperforming carrier is expensive to unwind.</p>
+<p><strong>Channel overage fees</strong>: If you are on a committed channel model and burst above your allocation, overage charges can be 2-5x the base channel rate. Understand the overage structure before you sign.</p>
+<h3 id="how-to-compare-carriers-apples-to-apples">How to Compare Carriers Apples-to-Apples<a class="headerlink" href="#how-to-compare-carriers-apples-to-apples" title="Permanent link">&para;</a></h3>
+<p>Here is the formula for calculating your true effective rate:</p>
+<div class="codehilite"><pre><span></span><code>True Effective Rate = (Total Monthly Carrier Invoice) / (Total Billed Minutes)
+</code></pre></div>
+
+<p>Do this calculation for your current carrier using the last 3 months of invoices. Then ask prospective carriers to quote you based on your actual traffic profile — volume, destination mix, average call duration, peak concurrent channels. Compare the projected True Effective Rate, not the headline per-minute rate.</p>
+<p>For a detailed breakdown of all VICIdial operating costs including carrier expenses, see our <a href="/blog/vicidial-cost-2026/">cost analysis guide</a>.</p>
+<hr />
+<h2 id="stirshaken-attestation-by-carrier-type-what-you-will-actually-get">STIR/SHAKEN Attestation by Carrier Type: What You Will Actually Get<a class="headerlink" href="#stirshaken-attestation-by-carrier-type-what-you-will-actually-get" title="Permanent link">&para;</a></h2>
+<p>We touched on attestation levels in the evaluation framework. This section goes deeper, because this is where most outbound operations are unknowingly sabotaging themselves.</p>
+<h3 id="the-attestation-landscape-in-2026">The Attestation Landscape in 2026<a class="headerlink" href="#the-attestation-landscape-in-2026" title="Permanent link">&para;</a></h3>
+<p>The FCC's STIR/SHAKEN mandate has matured enough that nearly all legitimate U.S. voice carriers have implemented signing. But "implemented" does not mean "implemented well." The quality of implementation varies enormously, and the differences directly affect your calls.</p>
+<p><strong>Full A-level attestation</strong> requires three things:
+1. The carrier knows the identity of the customer originating the call
+2. The carrier has verified the customer is authorized to use the specific calling number
+3. The carrier signs the call with their own STI certificate in real time</p>
+<p>Most Tier 1 and reputable Tier 2 carriers can deliver this for DIDs they provision directly to your account. The problems start when the DID chain gets complicated.</p>
+<h3 id="common-scenarios-that-degrade-attestation">Common Scenarios That Degrade Attestation<a class="headerlink" href="#common-scenarios-that-degrade-attestation" title="Permanent link">&para;</a></h3>
+<p><strong>Scenario 1: DIDs from one carrier, trunk from another.</strong> You bought 50 DIDs from Carrier A but your SIP trunk is through Carrier B. When Carrier B originates the call, they can verify your identity (they know you as a customer), but they cannot verify that you are authorized to use Carrier A's numbers. Result: B-level attestation at best. This is the single most common attestation problem in VICIdial operations, and most operators do not even know it is happening.</p>
+<p><strong>Scenario 2: Ported numbers with incomplete registration.</strong> You ported numbers from a previous carrier to your current one. The port completed, the numbers work, but the carrier's STIR/SHAKEN system was never updated with the new ownership records. The carrier's signing system sees a number that is not in their internal DID registry and assigns B or C attestation.</p>
+<p><strong>Scenario 3: Carrier reseller arrangement.</strong> Your "carrier" is actually a reseller sitting on top of a Tier 1 carrier's infrastructure. The reseller may not have their own STI certificate. Calls are signed by the upstream carrier, who may only know the reseller — not you. Result: B-level attestation because the signing carrier cannot verify the end customer.</p>
+<p><strong>Scenario 4: Multiple trunks, inconsistent signing.</strong> You have two SIP trunks for redundancy — one through Carrier A and one through Carrier B. Carrier A provides A-level attestation. Carrier B, your backup, provides B-level. When your failover activates, your attestation drops and your answer rates drop with it. You might not notice for days because you are focused on getting calls flowing again, not checking attestation levels.</p>
+<h3 id="how-to-verify-your-attestation-level">How to Verify Your Attestation Level<a class="headerlink" href="#how-to-verify-your-attestation-level" title="Permanent link">&para;</a></h3>
+<p>You cannot see attestation levels in VICIdial. You need to check at the SIP level or through your carrier.</p>
+<p><strong>Method 1: Ask your carrier directly.</strong> Request a report showing the attestation level assigned to your calls. Any carrier with proper STIR/SHAKEN implementation can provide this.</p>
+<p><strong>Method 2: Check SIP headers.</strong> Enable SIP debug logging on your Asterisk server (your <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration</a> guide covers this) and look for the <code>Identity</code> header in outgoing INVITE messages. The header contains the attestation level. If you do not see an Identity header, the call is being sent unsigned.</p>
+<p><strong>Method 3: Test with a terminating carrier tool.</strong> Some terminating carriers and analytics providers offer tools that show the STIR/SHAKEN verification result for incoming calls. TransNexus, for example, provides a STIR/SHAKEN verification service that can tell you how your calls look from the receiving end.</p>
+<blockquote>
+<p><strong>Not sure what attestation level your calls are getting?</strong> <a href="/free-audit/">Request a free audit</a> — we will analyze your carrier's STIR/SHAKEN signing and tell you exactly what the terminating carriers see when your calls arrive.</p>
+</blockquote>
+<hr />
+<h2 id="carrier-redundancy-and-failover-in-vicidial">Carrier Redundancy and Failover in VICIdial<a class="headerlink" href="#carrier-redundancy-and-failover-in-vicidial" title="Permanent link">&para;</a></h2>
+<p>A single carrier is a single point of failure. When that carrier has an outage — and every carrier has outages — your entire operation stops. For a 25-seat call center, one hour of downtime costs roughly $375-$750 in lost productivity alone, before accounting for lost sales.</p>
+<p>VICIdial supports multi-carrier configurations natively through its carrier entry system. Here is how to set it up properly.</p>
+<h3 id="the-two-carrier-minimum">The Two-Carrier Minimum<a class="headerlink" href="#the-two-carrier-minimum" title="Permanent link">&para;</a></h3>
+<p>Every production VICIdial operation should have at least two carriers configured:</p>
+<ul>
+<li><strong>Primary carrier</strong>: Handles 100% of traffic under normal conditions. Selected for best combination of quality, attestation, and cost.</li>
+<li><strong>Secondary carrier</strong>: Activated when the primary fails. May have slightly higher rates or slightly lower quality, but must still provide A-level attestation and acceptable call quality.</li>
+</ul>
+<p>Some operations run a three-carrier setup: primary (70% of traffic), secondary (30% of traffic), and tertiary (failover only). Splitting traffic across two active carriers provides real-time comparison data — you can see which carrier is performing better on a daily basis.</p>
+<h3 id="configuring-failover-in-vicidial">Configuring Failover in VICIdial<a class="headerlink" href="#configuring-failover-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>VICIdial handles carrier failover through its dial prefix and carrier configuration system. Here is the setup:</p>
+<p><strong>Step 1: Create carrier entries for each carrier.</strong></p>
+<p>In Admin → Carriers, create a separate carrier entry for each SIP trunk. Each entry includes the trunk name, SIP peer details, and <a href="/settings/dial-prefix/">dial prefix</a> configuration.</p>
+<p><strong>Step 2: Configure dial plans with failover logic.</strong></p>
+<p>In your Asterisk dialplan (extensions.conf), you can configure failover using the <code>|</code> (pipe) delimiter in the Dial() application, or by using sequential priority steps:</p>
+<div class="codehilite"><pre><span></span><code>;<span class="w"> </span>Primary<span class="w"> </span>carrier<span class="w"> </span>attempt
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_1NXXNXXXXXX,1,Dial(SIP/<span class="cp">${</span><span class="n">EXTEN</span><span class="cp">}</span>@carrier_primary,60,tT)
+;<span class="w"> </span>If<span class="w"> </span>primary<span class="w"> </span>fails,<span class="w"> </span>try<span class="w"> </span>secondary
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_1NXXNXXXXXX,2,Dial(SIP/<span class="cp">${</span><span class="n">EXTEN</span><span class="cp">}</span>@carrier_secondary,60,tT)
+;<span class="w"> </span>If<span class="w"> </span>both<span class="w"> </span>fail,<span class="w"> </span>set<span class="w"> </span>disposition
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_1NXXNXXXXXX,3,Hangup()
+</code></pre></div>
+
+<p><strong>Step 3: Set the <a href="/settings/force-dial-prefix/">Force Dial Prefix</a> appropriately.</strong></p>
+<p>The <a href="/settings/force-dial-prefix/">Force Dial Prefix</a> setting in VICIdial determines which carrier entry processes the call. If you are using dial prefix routing, each carrier gets a unique prefix, and VICIdial's campaign configuration determines which prefix (and therefore which carrier) is used.</p>
+<p><strong>Step 4: Test failover before you need it.</strong></p>
+<p>Simulate a primary carrier failure by temporarily disabling the primary SIP trunk registration. Verify that calls automatically route to the secondary carrier. Check that caller ID, STIR/SHAKEN attestation, and call quality are acceptable on the failover path. Do this during a maintenance window, not during a production emergency.</p>
+<h3 id="monitoring-carrier-health">Monitoring Carrier Health<a class="headerlink" href="#monitoring-carrier-health" title="Permanent link">&para;</a></h3>
+<p>VICIdial does not have built-in carrier health monitoring. You need to build or implement external monitoring:</p>
+<p><strong>SIP OPTIONS polling</strong>: Configure your Asterisk server to send periodic SIP OPTIONS messages to each carrier's SBC. If the OPTIONS response stops arriving, the trunk is down. Asterisk's <code>qualify=yes</code> setting in sip.conf handles this natively — it sends periodic checks and marks the peer as unreachable if responses stop.</p>
+<p><strong>CDR-based monitoring</strong>: Parse VICIdial's call detail records (CDRs) and track failure rates per carrier trunk. A sudden spike in SIP 503 (Service Unavailable), 408 (Request Timeout), or 487 (Request Terminated) responses indicates a carrier problem. Set up alerting thresholds: if failure rate exceeds 10% in a 15-minute window, trigger a notification.</p>
+<p><strong>Real-time dashboard</strong>: VICIdial's real-time report shows active calls and waiting agents. A sudden drop in active calls with agents piling up in "WAIT" status is a strong indicator of a carrier outage. Watch the ratio — if agents are available but calls are not connecting, check your carrier trunks immediately.</p>
+<h3 id="carrier-failover-decision-matrix">Carrier Failover Decision Matrix<a class="headerlink" href="#carrier-failover-decision-matrix" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Action</th>
+<th>Automation Possible?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary carrier total outage</td>
+<td>Route 100% to secondary</td>
+<td>Yes — Asterisk failover dialplan</td>
+</tr>
+<tr>
+<td>Primary carrier degraded (high PDD, low ASR)</td>
+<td>Split traffic or route to secondary</td>
+<td>Partial — requires monitoring + manual switch</td>
+</tr>
+<tr>
+<td>Primary carrier attestation degraded</td>
+<td>Route to secondary immediately</td>
+<td>No — requires manual detection and switch</td>
+</tr>
+<tr>
+<td>Both carriers degraded</td>
+<td>Reduce dial level, alert management</td>
+<td>No — requires human judgment</td>
+</tr>
+<tr>
+<td>Primary carrier maintenance window (scheduled)</td>
+<td>Pre-route to secondary</td>
+<td>Yes — time-based dialplan rules</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="rate-negotiation-how-to-get-better-pricing">Rate Negotiation: How to Get Better Pricing<a class="headerlink" href="#rate-negotiation-how-to-get-better-pricing" title="Permanent link">&para;</a></h2>
+<p>Carriers expect you to negotiate. The first rate they quote is never the best rate they can offer. Here is how to negotiate effectively.</p>
+<h3 id="know-your-leverage">Know Your Leverage<a class="headerlink" href="#know-your-leverage" title="Permanent link">&para;</a></h3>
+<p>Your negotiating power comes from three factors:</p>
+<p><strong>Volume</strong>: The more minutes you push, the better your rate. Carriers have fixed infrastructure costs and want to fill their pipes. A commitment of 100,000 minutes per month gets a significantly better rate than 10,000 minutes per month.</p>
+<p><strong>Consistency</strong>: Carriers prefer predictable, steady traffic over spiky, unpredictable volume. If you can commit to a consistent monthly volume (even with seasonal variation), you are a more attractive customer than someone whose usage swings 3x month to month.</p>
+<p><strong>Payment reliability</strong>: Carriers extending credit to VoIP customers take on risk. If you pay on time, have been with your current carrier for 12+ months without payment issues, and have good business credit, mention it. Some carriers offer rate reductions for prepayment or auto-pay.</p>
+<h3 id="the-negotiation-playbook">The Negotiation Playbook<a class="headerlink" href="#the-negotiation-playbook" title="Permanent link">&para;</a></h3>
+<p><strong>Step 1: Get quotes from at least three carriers.</strong> Do not negotiate with your current carrier until you have competing quotes in hand. The quotes do not need to be from carriers you would actually switch to — they just need to be legitimate alternatives.</p>
+<p><strong>Step 2: Provide your actual traffic data.</strong> Give each carrier your CDR summary for the past 3 months: total minutes, peak concurrent channels, destination mix (% mobile vs. landline), average call duration, and geographic distribution. Carriers quote better rates when they can model your traffic accurately.</p>
+<p><strong>Step 3: Ask for the right things.</strong> Beyond the per-minute rate, negotiate:
+- Billing increment (push for 6-second)
+- Regulatory surcharge cap or inclusion in the per-minute rate
+- Free or reduced-cost DID provisioning
+- Channel burst capacity at base rates (not overage rates)
+- Month-to-month terms instead of annual contracts
+- Free porting for your existing DIDs
+- Dedicated support contact (not a general support queue)</p>
+<p><strong>Step 4: Use competing quotes transparently.</strong> Tell your current carrier and the new prospects what you have received. "Carrier X quoted me $0.006 per minute with 6-second billing and no regulatory surcharges. Can you match or beat that?" This is not aggressive — it is how business works. Carriers expect it.</p>
+<p><strong>Step 5: Negotiate quality guarantees.</strong> The best deal in the world means nothing if call quality degrades. Ask for SLA (Service Level Agreement) commitments on:
+- ASR minimum (e.g., 45% floor)
+- PDD maximum (e.g., 5 seconds)
+- Uptime guarantee (e.g., 99.95%)
+- STIR/SHAKEN A-level attestation guarantee
+- Remediation timeline for quality issues (e.g., 4-hour response for degradation events)</p>
+<p>If a carrier will not commit to quality SLAs in writing, they are telling you something about their confidence in their own network.</p>
+<hr />
+<h2 id="configuring-carriers-in-vicidial-the-technical-details">Configuring Carriers in VICIdial: The Technical Details<a class="headerlink" href="#configuring-carriers-in-vicidial-the-technical-details" title="Permanent link">&para;</a></h2>
+<p>Getting a carrier contract signed is half the job. Configuring it properly in VICIdial is the other half. Misconfiguration here leads to failed calls, wrong caller IDs, and compliance problems. For a complete guide to SIP and Asterisk settings, see our <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration guide</a>.</p>
+<h3 id="carrier-entry-configuration">Carrier Entry Configuration<a class="headerlink" href="#carrier-entry-configuration" title="Permanent link">&para;</a></h3>
+<p>In VICIdial Admin → Carriers, each carrier entry defines how VICIdial communicates with a SIP trunk. The critical fields:</p>
+<p><strong>Carrier ID and Name</strong>: Use descriptive naming. "CARRIER_PRIMARY_THINQ" is better than "CARRIER1." When something breaks at 2am, clear naming saves time.</p>
+<p><strong>Registration</strong>: Most carriers use IP authentication (your server's IP is whitelisted on their SBC) or SIP registration (your server registers with a username and password). IP authentication is preferred for production environments because it eliminates registration failures as a point of failure.</p>
+<p><strong>Dial Prefix and Dialplan</strong>: The <a href="/settings/dial-prefix/">Dial Prefix</a> setting determines what gets prepended to the number before dialing. The dialplan in the carrier entry controls how Asterisk processes the call. A common mistake: the dialplan overwrites the caller ID set by VICIdial's campaign or CID Group configuration. If your caller ID is not transmitting correctly, check the carrier entry's dialplan first.</p>
+<p>Example of a carrier dialplan entry that preserves VICIdial's caller ID:</p>
+<div class="codehilite"><pre><span></span><code>exten<span class="w"> </span>=&gt;<span class="w"> </span>_91NXXNXXXXXX,1,AGI(agi://127.0.0.1:4577/call_log)
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_91NXXNXXXXXX,2,Dial(SIP/<span class="cp">${</span><span class="n">FILTER</span><span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span><span class="err">$</span><span class="p">{</span><span class="n">EXTEN</span><span class="p">:</span><span class="mi">1</span><span class="cp">}</span>)}@carrier_trunk,,tTor)
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_91NXXNXXXXXX,3,Hangup()
+</code></pre></div>
+
+<p>The key: do not include any <code>Set(CALLERID(num)=...)</code> commands in the carrier dialplan unless you specifically need to override VICIdial's caller ID. If the carrier requires a specific format for the caller ID header (e.g., E.164 format with country code), handle it in the <code>fromuser</code> or <code>sendrpid</code> settings in sip.conf, not in the dialplan.</p>
+<h3 id="sip-trunk-configuration-in-sipconf">SIP Trunk Configuration in sip.conf<a class="headerlink" href="#sip-trunk-configuration-in-sipconf" title="Permanent link">&para;</a></h3>
+<p>Each carrier needs a SIP peer definition in <code>/etc/asterisk/sip.conf</code>. The critical parameters:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[carrier_primary]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">host</span><span class="o">=</span><span class="s">sip.carrier.com</span><span class="w">           </span><span class="c1">; Carrier&#39;s SBC address</span>
+<span class="na">port</span><span class="o">=</span><span class="s">5060</span><span class="w">                       </span><span class="c1">; SIP port (5060 standard, some carriers use 5080)</span>
+<span class="na">context</span><span class="o">=</span><span class="s">trunkinbound</span><span class="w">            </span><span class="c1">; Context for inbound calls from this carrier</span>
+<span class="na">dtmfmode</span><span class="o">=</span><span class="s">rfc2833</span><span class="w">                </span><span class="c1">; DTMF handling — rfc2833 is standard</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span><span class="w">                    </span><span class="c1">; Reset codec preferences</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span><span class="w">                      </span><span class="c1">; G.711 ulaw — best quality, highest bandwidth</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">alaw</span><span class="w">                      </span><span class="c1">; G.711 alaw — fallback</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">g729</span><span class="w">                      </span><span class="c1">; G.729 — lower bandwidth, acceptable quality</span>
+<span class="na">insecure</span><span class="o">=</span><span class="s">port,invite</span><span class="w">            </span><span class="c1">; Required for most IP-authenticated trunks</span>
+<span class="na">qualify</span><span class="o">=</span><span class="s">yes</span><span class="w">                     </span><span class="c1">; Enable SIP OPTIONS health checks</span>
+<span class="na">qualifyfreq</span><span class="o">=</span><span class="s">60</span><span class="w">                  </span><span class="c1">; Check every 60 seconds</span>
+<span class="na">nat</span><span class="o">=</span><span class="s">no</span><span class="w">                          </span><span class="c1">; Set based on your network topology</span>
+<span class="na">sendrpid</span><span class="o">=</span><span class="s">yes</span><span class="w">                    </span><span class="c1">; Send Remote-Party-ID header (some carriers need this for CID)</span>
+<span class="na">trustrpid</span><span class="o">=</span><span class="s">yes</span><span class="w">                   </span><span class="c1">; Trust incoming RPID from carrier</span>
+</code></pre></div>
+
+<p><strong>Codec order matters.</strong> List your preferred <a href="/glossary/codec/">codec</a> first. G.711 (ulaw/alaw) provides the best audio quality but uses 87.2 kbps per call. G.729 uses only 31.2 kbps but has slightly lower quality. For most VICIdial operations on modern bandwidth, G.711 is the right choice. Only use G.729 if you are bandwidth-constrained.</p>
+<p><strong>The NAT question</strong>: If your VICIdial server is behind a NAT firewall (common in cloud deployments), set <code>nat=force_rport,comedia</code> to handle NAT traversal. Incorrect NAT settings are the number one cause of one-way audio — calls connect but the lead cannot hear the agent, or vice versa.</p>
+<h3 id="testing-a-new-carrier-before-production">Testing a New Carrier Before Production<a class="headerlink" href="#testing-a-new-carrier-before-production" title="Permanent link">&para;</a></h3>
+<p>Never cut over to a new carrier without testing. Here is the process:</p>
+<ol>
+<li><strong>Configure the carrier entry in VICIdial</strong> as a secondary carrier with a unique dial prefix</li>
+<li><strong>Place 50-100 test calls</strong> to numbers you control across all three major carriers</li>
+<li><strong>Verify caller ID transmission</strong>: Does the correct CID display on the receiving phone?</li>
+<li><strong>Verify STIR/SHAKEN</strong>: Check that calls arrive with A-level attestation at the terminating end</li>
+<li><strong>Measure PDD</strong>: Time the delay from dial to first ringback on at least 20 calls. Calculate the average.</li>
+<li><strong>Test audio quality</strong>: Have a two-way conversation on at least 10 calls. Listen for echo, one-way audio, choppy audio, or latency.</li>
+<li><strong>Test under load</strong>: Run a small campaign (5-10 agents) through the new carrier for a full day. Compare ASR, ACD, and connect rates against your primary carrier's baseline.</li>
+<li><strong>Test failover</strong>: Disable the new carrier's trunk and verify that calls route correctly to your existing carrier.</li>
+</ol>
+<p>Only after all tests pass should you begin migrating production traffic to the new carrier.</p>
+<blockquote>
+<p><strong>Want help evaluating a new carrier or optimizing your existing trunk configuration?</strong> <a href="/free-audit/">Request a free audit</a> — we will review your SIP configuration, measure your call quality metrics, and identify specific changes that will improve your connect rates.</p>
+</blockquote>
+<hr />
+<h2 id="the-carrier-evaluation-scorecard">The Carrier Evaluation Scorecard<a class="headerlink" href="#the-carrier-evaluation-scorecard" title="Permanent link">&para;</a></h2>
+<p>Here is the complete scorecard we use when evaluating carriers for ViciStack-managed operations. Score each category 1-5, then weight by importance.</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Weight</th>
+<th>What to Evaluate</th>
+<th>Red Flags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>STIR/SHAKEN attestation</strong></td>
+<td>25%</td>
+<td>A-level for all DIDs, own certificate, real-time signing</td>
+<td>B/C attestation, third-party certificate, no clear answer</td>
+</tr>
+<tr>
+<td><strong>Call quality (ASR/PDD/MOS)</strong></td>
+<td>25%</td>
+<td>ASR above 45%, PDD under 3 sec, MOS above 3.8</td>
+<td>No quality metrics available, PDD over 5 sec, frequent audio issues</td>
+</tr>
+<tr>
+<td><strong>Pricing</strong></td>
+<td>15%</td>
+<td>True effective rate including all fees, billing increment, volume pricing</td>
+<td>1-minute billing, hidden surcharges, long-term contract required</td>
+</tr>
+<tr>
+<td><strong>Channel capacity</strong></td>
+<td>10%</td>
+<td>Adequate base + burst channels, no congestion during peaks</td>
+<td>CONGESTION dispositions, no burst option, overage penalties</td>
+</tr>
+<tr>
+<td><strong>DID services</strong></td>
+<td>10%</td>
+<td>Fast provisioning, clean numbers, CNAM support, broad area code coverage</td>
+<td>Slow provisioning, recycled numbers, limited area codes</td>
+</tr>
+<tr>
+<td><strong>Redundancy/uptime</strong></td>
+<td>10%</td>
+<td>99.95%+ uptime SLA, redundant infrastructure, geographic diversity</td>
+<td>No SLA, single data center, history of extended outages</td>
+</tr>
+<tr>
+<td><strong>Support</strong></td>
+<td>5%</td>
+<td>Dedicated contact, fast response times, technical competence</td>
+<td>Ticket-only support, 24+ hour response, non-technical support staff</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scoring guidelines:</strong>
+- <strong>5</strong>: Exceptional — best-in-class for this category
+- <strong>4</strong>: Good — meets all requirements with minor gaps
+- <strong>3</strong>: Acceptable — meets minimum requirements
+- <strong>2</strong>: Below standard — noticeable gaps that affect operations
+- <strong>1</strong>: Unacceptable — fails to meet minimum requirements</p>
+<p><strong>Minimum passing score: 3.5 weighted average.</strong> Any carrier scoring below 3.5 is not suitable for a production outbound VICIdial operation. Any carrier scoring below 2.0 in STIR/SHAKEN attestation or call quality should be disqualified regardless of overall score.</p>
+<hr />
+<h2 id="common-carrier-problems-in-vicidial-and-how-to-fix-them">Common Carrier Problems in VICIdial and How to Fix Them<a class="headerlink" href="#common-carrier-problems-in-vicidial-and-how-to-fix-them" title="Permanent link">&para;</a></h2>
+<p>These are the carrier-related issues we see most frequently across ViciStack-managed operations. If you are experiencing any of these, the fix is almost always carrier-side, not VICIdial-side.</p>
+<h3 id="problem-1-calls-connecting-but-no-audio-one-way-or-no-way-audio">Problem 1: Calls Connecting But No Audio (One-Way or No-Way Audio)<a class="headerlink" href="#problem-1-calls-connecting-but-no-audio-one-way-or-no-way-audio" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms</strong>: Agents hear ringing, the call appears to connect, but either the agent cannot hear the lead, the lead cannot hear the agent, or neither can hear the other.</p>
+<p><strong>Cause</strong>: Almost always a NAT/firewall issue. The SIP signaling (call setup) passes through correctly, but the RTP media stream (actual audio) is being blocked or misrouted. This happens when your VICIdial server is behind a NAT and the SIP configuration does not account for it.</p>
+<p><strong>Fix</strong>: Set <code>nat=force_rport,comedia</code> in sip.conf for the carrier peer. Ensure your firewall allows RTP traffic on ports 10000-20000 (or whatever range is configured in rtp.conf). If you are in a cloud environment, verify that your provider's security groups allow UDP traffic on both SIP and RTP port ranges. See the <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration guide</a> for detailed NAT troubleshooting.</p>
+<h3 id="problem-2-caller-id-not-transmitting-correctly">Problem 2: Caller ID Not Transmitting Correctly<a class="headerlink" href="#problem-2-caller-id-not-transmitting-correctly" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms</strong>: Recipients see the wrong number, a blank caller ID, or your carrier's default number instead of the CID set in VICIdial.</p>
+<p><strong>Cause</strong>: Usually one of three things:
+1. The carrier entry's dialplan is overwriting the CID with a <code>Set(CALLERID(num)=...)</code> command
+2. The carrier's SBC is stripping or replacing the From header based on their trunk configuration
+3. The <code>fromuser</code> setting in sip.conf is overriding the CID</p>
+<p><strong>Fix</strong>: Check the carrier entry dialplan in VICIdial Admin → Carriers for any CALLERID manipulation. Check sip.conf for <code>fromuser</code> settings on the carrier peer. If both are clean, contact your carrier — they may be stripping CID at their SBC level. Some carriers require you to register each DID in their portal before they will pass it through as caller ID. The <a href="/settings/force-dial-prefix/">Force Dial Prefix</a> setting can also affect CID transmission if configured incorrectly.</p>
+<h3 id="problem-3-high-failure-rate-during-peak-hours">Problem 3: High Failure Rate During Peak Hours<a class="headerlink" href="#problem-3-high-failure-rate-during-peak-hours" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms</strong>: Call failures spike between 10am-2pm and 5pm-8pm. VICIdial logs show CONGESTION or CHANUNAVAIL dispositions. Agents sit in WAIT status despite having leads to call.</p>
+<p><strong>Cause</strong>: Channel exhaustion. Your carrier does not have enough capacity to handle your peak traffic, or you have hit your concurrent channel limit.</p>
+<p><strong>Fix</strong>: Check your carrier's channel allocation against your actual peak usage. In VICIdial's real-time report, note the maximum number of simultaneous calls during peak hours. If that number is at or near your channel limit, you need more channels. If it is well below your limit and calls are still failing, the problem is on the carrier's side — their infrastructure cannot handle the load. Time to escalate or switch carriers.</p>
+<h3 id="problem-4-intermittent-call-quality-degradation">Problem 4: Intermittent Call Quality Degradation<a class="headerlink" href="#problem-4-intermittent-call-quality-degradation" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms</strong>: Audio quality is good most of the time but periodically degrades — choppy audio, echo, robotic-sounding voices, or noticeable delay in conversation.</p>
+<p><strong>Cause</strong>: Network congestion or routing changes. Carriers sometimes shift traffic to alternate routes during peak periods, and those alternate routes may have more hops, more transcoding, or more congestion.</p>
+<p><strong>Fix</strong>: Deploy a VoIP monitoring tool (VoIPmonitor is open-source and works well with Asterisk) to measure MOS, jitter, and packet loss per call. Correlate quality degradation with time of day and carrier trunk. If the pattern is consistent, present the data to your carrier and request routing optimization. If they cannot or will not fix it, this is a strong argument for a carrier switch.</p>
+<h3 id="problem-5-stirshaken-attestation-drops">Problem 5: STIR/SHAKEN Attestation Drops<a class="headerlink" href="#problem-5-stirshaken-attestation-drops" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms</strong>: Answer rates decline gradually over 1-2 weeks with no change in list quality, dial strategy, or DID pool. DID reputation checks come back clean.</p>
+<p><strong>Cause</strong>: Your carrier's STIR/SHAKEN signing may have changed — certificate renewal issues, system updates that altered signing behavior, or changes to their verification database that downgraded your attestation level. This is insidious because nothing in VICIdial will tell you it is happening.</p>
+<p><strong>Fix</strong>: Contact your carrier and ask for a current attestation report for your DIDs. If attestation has dropped from A to B, demand immediate remediation. While waiting for the fix, consider routing traffic through your secondary carrier if they provide A-level attestation. For ongoing protection, build attestation verification into your weekly monitoring routine.</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-many-sip-trunk-providers-should-i-use-for-vicidial">How many SIP trunk providers should I use for VICIdial?<a class="headerlink" href="#how-many-sip-trunk-providers-should-i-use-for-vicidial" title="Permanent link">&para;</a></h3>
+<p>At minimum, two. One primary and one secondary for failover. The cost of maintaining a second carrier relationship — even if it only carries 5-10% of your traffic under normal conditions — is trivial compared to the cost of a total outage when your single carrier goes down. For enterprise operations (50+ seats), consider three carriers: primary (60-70% of traffic), secondary (30-40%), and tertiary (failover only). Distributing traffic across two active carriers also gives you real-time quality comparison data that is invaluable for ongoing carrier evaluation.</p>
+<h3 id="what-is-a-good-per-minute-rate-for-outbound-sip-trunking-in-2026">What is a good per-minute rate for outbound SIP trunking in 2026?<a class="headerlink" href="#what-is-a-good-per-minute-rate-for-outbound-sip-trunking-in-2026" title="Permanent link">&para;</a></h3>
+<p>For U.S. domestic outbound calling at moderate volume (50,000-200,000 minutes per month), expect to pay $0.005-$0.010 per minute with 6-second billing increments. At higher volume (500,000+ minutes), rates of $0.003-$0.006 are achievable. But remember: the per-minute rate is not the number that matters. The True Effective Rate — total invoice divided by total minutes — is what you should track. A carrier quoting $0.005/min with 1-minute billing and $0.003 in surcharges costs you more than a carrier quoting $0.008/min with 6-second billing and no surcharges. Do the math on your actual traffic pattern before choosing based on headline rate.</p>
+<h3 id="how-do-i-know-if-my-carrier-is-providing-a-level-stirshaken-attestation">How do I know if my carrier is providing A-level STIR/SHAKEN attestation?<a class="headerlink" href="#how-do-i-know-if-my-carrier-is-providing-a-level-stirshaken-attestation" title="Permanent link">&para;</a></h3>
+<p>Ask them directly. Any carrier with a proper STIR/SHAKEN implementation can tell you the attestation level assigned to your calls. If they cannot answer the question, that is a problem. You can also verify by capturing SIP headers on your Asterisk server — enable SIP debug logging and look for the Identity header on outgoing calls. The header contains the attestation level. If there is no Identity header, your calls are being sent unsigned, which is worse than any attestation level. For a deeper technical walkthrough, see our <a href="/blog/stir-shaken-vicidial-guide/">STIR/SHAKEN implementation guide</a>.</p>
+<h3 id="can-i-use-different-carriers-for-different-campaigns-in-vicidial">Can I use different carriers for different campaigns in VICIdial?<a class="headerlink" href="#can-i-use-different-carriers-for-different-campaigns-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>Yes. VICIdial's carrier system supports this through <a href="/settings/dial-prefix/">dial prefixes</a>. Each carrier entry is associated with a dial prefix, and each campaign can be configured with a specific <a href="/settings/force-dial-prefix/">Force Dial Prefix</a> that routes calls through the designated carrier. This is useful when you have campaigns with different quality requirements — for example, a high-value sales campaign routed through your premium carrier and a survey campaign routed through your lower-cost carrier. Just ensure that both carriers provide A-level STIR/SHAKEN attestation, or your lower-tier campaigns will suffer from reputation damage that can spill over to your DIDs.</p>
+<h3 id="what-causes-congestion-dispositions-in-vicidial-call-logs">What causes CONGESTION dispositions in VICIdial call logs?<a class="headerlink" href="#what-causes-congestion-dispositions-in-vicidial-call-logs" title="Permanent link">&para;</a></h3>
+<p>CONGESTION means VICIdial (via Asterisk) attempted to place a call but the carrier returned a SIP 503 (Service Unavailable) response — typically because you have exceeded your concurrent channel limit or the carrier's network is overloaded. Check your peak concurrent call count against your channel allocation. If you are hitting the limit during peak hours, you need more channels or burst capacity. If CONGESTION dispositions appear randomly throughout the day at low call volumes, the problem is on the carrier's side — their infrastructure may be experiencing issues. A small number of CONGESTION dispositions (under 1% of total attempts) is normal. Above 3% is a problem that needs immediate attention.</p>
+<h3 id="how-do-i-test-call-quality-on-my-sip-trunks">How do I test call quality on my SIP trunks?<a class="headerlink" href="#how-do-i-test-call-quality-on-my-sip-trunks" title="Permanent link">&para;</a></h3>
+<p>Start with manual testing: place calls to phones on each major carrier and listen for audio quality, echo, delay, and one-way audio issues. For ongoing monitoring, deploy VoIPmonitor or a similar open-source tool that captures RTP streams and calculates <a href="/glossary/mos-score/">MOS scores</a> per call. You can also use Asterisk's built-in <code>sip set debug on</code> command to inspect SIP signaling in real time. For PDD measurement, timestamp the SIP INVITE and the first 180 Ringing or 200 OK response — the difference is your <a href="/glossary/post-dial-delay/">post-dial delay</a>. Run these measurements across at least 100 calls at different times of day to get a reliable baseline. Compare your results against the benchmarks in the quality metrics table earlier in this guide.</p>
+<h3 id="should-i-choose-a-carrier-that-specializes-in-outbound-calling">Should I choose a carrier that specializes in outbound calling?<a class="headerlink" href="#should-i-choose-a-carrier-that-specializes-in-outbound-calling" title="Permanent link">&para;</a></h3>
+<p>Yes, with a caveat. Carriers that specialize in outbound calling understand the needs of high-volume operations: they offer appropriate channel models, they are experienced with STIR/SHAKEN for outbound caller ID, and their support teams understand predictive dialer traffic patterns. General-purpose VoIP carriers may offer lower rates but lack the outbound-specific infrastructure and expertise. The caveat: some "outbound specialist" carriers have reputations with terminating carriers as spam originators. If a carrier's other customers are burning DIDs and generating complaints, the carrier's IP ranges and network may carry negative reputation that affects your calls. Ask potential carriers about their acceptable use policies and how they handle customers who violate calling regulations.</p>
+<h3 id="what-happens-if-my-sip-trunk-provider-goes-out-of-business-or-gets-shut-down">What happens if my SIP trunk provider goes out of business or gets shut down?<a class="headerlink" href="#what-happens-if-my-sip-trunk-provider-goes-out-of-business-or-gets-shut-down" title="Permanent link">&para;</a></h3>
+<p>This is not hypothetical — several VoIP carriers have been shut down by the FCC in recent years for facilitating illegal robocalling. If your sole carrier disappears, your operation stops immediately. This is the strongest argument for maintaining at least two active carrier relationships. Keep your secondary carrier configured, tested, and carrying at least some regular traffic so you know it works. Keep copies of your DID ownership records and be prepared to port your numbers to a new carrier on short notice. Porting typically takes 5-10 business days for standard requests, though emergency ports can sometimes be expedited. Having your DIDs registered on <a href="https://freecallerregistry.com/">FreeCallerRegistry.com</a> and your CNAM records documented independently of your carrier makes the transition smoother. For a complete view of operational risk management, see our <a href="/blog/vicidial-cost-2026/">cost analysis guide</a>.</p>
+<hr />
+<h3 id="the-bottom-line">The Bottom Line<a class="headerlink" href="#the-bottom-line" title="Permanent link">&para;</a></h3>
+<p>Your carrier is not a commodity vendor. It is the foundation of your entire dialing operation — the infrastructure that determines whether your calls connect, whether they sound good, whether they are trusted by terminating carriers, and whether your DIDs survive long enough to be useful. Choosing a carrier on rate alone is like choosing an office building on rent alone without checking whether it has electricity.</p>
+<p>The operators who are winning in 2026 are the ones who treat carrier selection as a strategic decision. They measure quality metrics. They verify attestation levels. They maintain redundancy. They negotiate from a position of data, not desperation. They know exactly what they are paying and exactly what they are getting for it.</p>
+<p>You now have the framework, the metrics, and the technical knowledge to evaluate your current carrier — or choose a better one. The only question is whether you will actually measure what matters or keep assuming the cheapest rate is the best deal.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-carrier-selection">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

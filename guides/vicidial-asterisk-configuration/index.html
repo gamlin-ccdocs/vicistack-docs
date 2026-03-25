@@ -1,0 +1,3341 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-asterisk-configuration/">
+      
+      
+        <link rel="prev" href="../vicidial-amd-guide/">
+      
+      
+        <link rel="next" href="../vicidial-auto-dial-level-tuning/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Asterisk Configuration: SIP, Codecs & NAT - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-asterisk-configuration-sip-codecs-nat" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Asterisk Configuration: SIP, Codecs & NAT
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#channel-drivers-chan_sip-vs-pjsip-and-why-vicidial-uses-both" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel Drivers: chan_sip vs PJSIP (And Why VICIdial Uses Both)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Channel Drivers: chan_sip vs PJSIP (And Why VICIdial Uses Both)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chan_sip-the-legacy-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chan_sip: The Legacy Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pjsip-required-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PJSIP: Required for WebRTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-coexistence-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Coexistence Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#codec-configuration-what-to-use-and-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Configuration: What to Use and When
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Codec Configuration: What to Use and When">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#g711-ulaw-pcmu-the-north-american-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G.711 ulaw (PCMU) — The North American Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g711-alaw-pcma-the-international-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G.711 alaw (PCMA) — The International Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g729-for-bandwidth-constrained-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G.729 — For Bandwidth-Constrained Links
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opus-the-webrtc-codec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opus — The WebRTC Codec
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codec-priority-in-carrier-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Priority in Carrier Trunks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nat-traversal-the-1-source-of-vicidial-audio-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Traversal: The #1 Source of VICIdial Audio Problems
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NAT Traversal: The #1 Source of VICIdial Audio Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sipconf-nat-settings-chan_sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sip.conf NAT Settings (chan_sip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-peer-nat-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Peer NAT Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stunturn-for-remote-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STUN/TURN for Remote Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster-nat-the-private-network-shortcut" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster NAT: The Private Network Shortcut
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trunk-configuration-from-vicidial-admin-to-sipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trunk Configuration: From VICIdial Admin to sip.conf
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trunk Configuration: From VICIdial Admin to sip.conf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-carrier-in-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a Carrier in VICIdial Admin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registration-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registration Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codec-priority-in-trunk-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Priority in Trunk Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dtmf-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DTMF Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dialplan-internals-what-vicidial-generates-in-extensionsconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dialplan Internals: What VICIdial Generates in extensions.conf
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dialplan Internals: What VICIdial Generates in extensions.conf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-core-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Core Contexts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-an-outbound-call-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How an Outbound Call Flows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-dialplan-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Dialplan Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-hardening-protecting-asterisk-on-the-public-internet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Hardening: Protecting Asterisk on the Public Internet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security Hardening: Protecting Asterisk on the Public Internet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fail2ban-for-sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fail2ban for SIP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iptables-rules-for-sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iptables Rules for SIP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-registration-acls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Registration ACLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tlssrtp-for-sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS/SRTP for SIP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-module-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Module Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Module Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#essential-modules-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Essential Modules for VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modules-to-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modules to Disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-and-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring and Diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring and Diagnostics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-essential-cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Essential CLI Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ami-events-for-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI Events for Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Debug Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues-and-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues and Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues and Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registration-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registration Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-issues-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Issues (WebRTC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audio-quality-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Quality Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-circuits-busy-on-outbound-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "All Circuits Busy" on Outbound Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#astguiclientconf-the-bridge-between-vicidial-and-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        astguiclient.conf: The Bridge Between VICIdial and Asterisk
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#should-i-switch-from-chan_sip-to-pjsip-for-all-my-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I switch from chan_sip to PJSIP for all my trunks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-best-codec-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the best codec for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-do-my-remote-agents-keep-getting-one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do my remote agents keep getting one-way audio?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-sip-channels-does-my-trunk-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many SIP channels does my trunk need?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-debug-sip-registration-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I debug SIP registration failures?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-asterisk-configuration-differ-in-a-vicidial-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does Asterisk configuration differ in a VICIdial cluster?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-monitor-asterisk-performance-in-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I monitor Asterisk performance in production?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-to-my-asterisk-configuration-when-i-update-vicidial-via-svn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens to my Asterisk configuration when I update VICIdial via SVN?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#channel-drivers-chan_sip-vs-pjsip-and-why-vicidial-uses-both" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel Drivers: chan_sip vs PJSIP (And Why VICIdial Uses Both)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Channel Drivers: chan_sip vs PJSIP (And Why VICIdial Uses Both)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chan_sip-the-legacy-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chan_sip: The Legacy Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pjsip-required-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PJSIP: Required for WebRTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-coexistence-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Coexistence Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#codec-configuration-what-to-use-and-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Configuration: What to Use and When
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Codec Configuration: What to Use and When">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#g711-ulaw-pcmu-the-north-american-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G.711 ulaw (PCMU) — The North American Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g711-alaw-pcma-the-international-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G.711 alaw (PCMA) — The International Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g729-for-bandwidth-constrained-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G.729 — For Bandwidth-Constrained Links
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opus-the-webrtc-codec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opus — The WebRTC Codec
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codec-priority-in-carrier-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Priority in Carrier Trunks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nat-traversal-the-1-source-of-vicidial-audio-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Traversal: The #1 Source of VICIdial Audio Problems
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NAT Traversal: The #1 Source of VICIdial Audio Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sipconf-nat-settings-chan_sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sip.conf NAT Settings (chan_sip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-peer-nat-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Peer NAT Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stunturn-for-remote-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STUN/TURN for Remote Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster-nat-the-private-network-shortcut" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster NAT: The Private Network Shortcut
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trunk-configuration-from-vicidial-admin-to-sipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trunk Configuration: From VICIdial Admin to sip.conf
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trunk Configuration: From VICIdial Admin to sip.conf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-carrier-in-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a Carrier in VICIdial Admin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registration-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registration Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codec-priority-in-trunk-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Priority in Trunk Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dtmf-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DTMF Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dialplan-internals-what-vicidial-generates-in-extensionsconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dialplan Internals: What VICIdial Generates in extensions.conf
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dialplan Internals: What VICIdial Generates in extensions.conf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-core-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Core Contexts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-an-outbound-call-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How an Outbound Call Flows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-dialplan-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Dialplan Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-hardening-protecting-asterisk-on-the-public-internet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Hardening: Protecting Asterisk on the Public Internet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security Hardening: Protecting Asterisk on the Public Internet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fail2ban-for-sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fail2ban for SIP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iptables-rules-for-sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iptables Rules for SIP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-registration-acls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Registration ACLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tlssrtp-for-sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS/SRTP for SIP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-module-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Module Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Module Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#essential-modules-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Essential Modules for VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modules-to-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modules to Disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-and-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring and Diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring and Diagnostics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-essential-cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Essential CLI Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ami-events-for-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI Events for Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Debug Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues-and-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues and Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues and Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registration-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registration Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-issues-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Issues (WebRTC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audio-quality-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Quality Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-circuits-busy-on-outbound-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "All Circuits Busy" on Outbound Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#astguiclientconf-the-bridge-between-vicidial-and-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        astguiclient.conf: The Bridge Between VICIdial and Asterisk
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#should-i-switch-from-chan_sip-to-pjsip-for-all-my-trunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I switch from chan_sip to PJSIP for all my trunks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-best-codec-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the best codec for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-do-my-remote-agents-keep-getting-one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do my remote agents keep getting one-way audio?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-sip-channels-does-my-trunk-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many SIP channels does my trunk need?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-debug-sip-registration-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I debug SIP registration failures?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-asterisk-configuration-differ-in-a-vicidial-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does Asterisk configuration differ in a VICIdial cluster?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-monitor-asterisk-performance-in-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I monitor Asterisk performance in production?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-to-my-asterisk-configuration-when-i-update-vicidial-via-svn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens to my Asterisk configuration when I update VICIdial via SVN?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-asterisk-configuration-sip-codecs-nat">VICIdial Asterisk Configuration: SIP, Codecs &amp; NAT<a class="headerlink" href="#vicidial-asterisk-configuration-sip-codecs-nat" title="Permanent link">&para;</a></h1>
+<p><em>You finished the <a href="/blog/vicidial-setup-guide/">VICIdial install</a>, agents can log in, and you've got a SIP trunk registered. Then the real problems start. One-way audio on half your calls. Registration drops every 90 seconds. Your carrier complains about codec mismatches. Remote agents hear nothing. And every forum thread you find says "check your NAT settings" without telling you what that actually means.</em></p>
+<p><em>This is the Asterisk configuration guide that VICIdial operators actually need.</em></p>
+<p>VICIdial is, at its core, a sophisticated wrapper around <a href="/glossary/asterisk/">Asterisk</a> — the open-source PBX that handles every call, every transfer, every recording, every piece of audio that flows through your contact center. The VICIdial admin GUI manages campaigns, agents, and lists. But underneath all of that, Asterisk is doing the actual telephony work. And Asterisk's configuration determines whether your calls sound crystal clear or like they're being routed through a tin can on a string.</p>
+<p>We've configured Asterisk on hundreds of VICIdial deployments — from 5-agent shops to 500-agent <a href="/blog/vicidial-cluster-guide/">clusters</a> processing over a million calls per day. This guide covers everything: channel drivers, codec selection, NAT traversal, trunk configuration, dialplan structure, security hardening, module management, and the diagnostic commands that will save you at 2 AM when calls stop connecting.</p>
+<hr />
+<h2 id="channel-drivers-chan_sip-vs-pjsip-and-why-vicidial-uses-both">Channel Drivers: chan_sip vs PJSIP (And Why VICIdial Uses Both)<a class="headerlink" href="#channel-drivers-chan_sip-vs-pjsip-and-why-vicidial-uses-both" title="Permanent link">&para;</a></h2>
+<p>Asterisk has two SIP channel drivers, and understanding which one VICIdial uses — and when — is foundational to every configuration decision that follows.</p>
+<h3 id="chan_sip-the-legacy-default">chan_sip: The Legacy Default<a class="headerlink" href="#chan_sip-the-legacy-default" title="Permanent link">&para;</a></h3>
+<p>VICIdial has used <code>chan_sip</code> since the beginning. Every SIP trunk, every phone registration, every <a href="/glossary/carrier/">carrier</a> connection in a standard VICIdial installation runs through <code>chan_sip</code>. The configuration lives in <code>/etc/asterisk/sip.conf</code>, and VICIdial's installer generates most of it automatically.</p>
+<p>Why does VICIdial still default to chan_sip? Because it works. It has been battle-tested across 14,000+ VICIdial installations for over 15 years. Matt Florell and the VICIdial development team know its behavior intimately — every edge case, every quirk, every workaround. Switching the entire platform to PJSIP would mean regression-testing every call flow, every transfer scenario, every conference bridge interaction. That's a massive engineering effort for a project maintained by a small team.</p>
+<p>But here's the critical timeline: <strong>Asterisk 21 removes chan_sip entirely.</strong> It's gone. Not deprecated — removed from the source tree. Asterisk 20 is the last LTS release that includes it, with full support through 2026 and security fixes through 2027. If you're deploying VICIdial today on Asterisk 18 (the recommended version), you have runway. But this is not a problem you can defer indefinitely.</p>
+<h3 id="pjsip-required-for-webrtc">PJSIP: Required for WebRTC<a class="headerlink" href="#pjsip-required-for-webrtc" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/pjsip/">PJSIP</a> is Asterisk's modern SIP stack. It runs as <code>res_pjsip</code> and its configuration lives in <code>/etc/asterisk/pjsip.conf</code>. In VICIdial, PJSIP serves one primary purpose: <strong><a href="/glossary/webrtc/">WebRTC</a> support for ViciPhone.</strong></p>
+<p>ViciPhone — VICIdial's browser-based softphone — requires WebSocket transport (WSS) for <a href="/glossary/sip/">SIP</a> signaling and DTLS-SRTP for encrypted media. chan_sip doesn't support either. So VICIdial runs both channel drivers simultaneously: chan_sip handles trunks and traditional SIP phones, while PJSIP handles WebRTC connections from ViciPhone.</p>
+<p>This dual-driver architecture means you need to be careful about port conflicts. By default:</p>
+<ul>
+<li><strong>chan_sip</strong> binds to UDP port 5060</li>
+<li><strong>PJSIP</strong> binds to UDP port 5060 <em>and</em> TCP port 5060</li>
+</ul>
+<p>If both try to bind to the same port, one fails silently and you spend an afternoon wondering why registrations work intermittently. The fix:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; In sip.conf — keep chan_sip on 5060</span>
+<span class="k">[general]</span>
+<span class="na">bindport</span><span class="o">=</span><span class="s">5060</span>
+
+<span class="c1">; In pjsip.conf — move PJSIP transports to different ports</span>
+<span class="k">[transport-wss]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">transport</span>
+<span class="na">protocol</span><span class="o">=</span><span class="s">wss</span>
+<span class="na">bind</span><span class="o">=</span><span class="s">0.0.0.0:8089</span>
+</code></pre></div>
+
+<p>VICIdial's installer handles this correctly on fresh installs with WebRTC enabled. But if you're retrofitting WebRTC onto an existing installation, verify that the ports don't collide. Run <code>asterisk -rx "sip show settings"</code> and <code>asterisk -rx "pjsip show transports"</code> to confirm what's actually bound.</p>
+<h3 id="the-coexistence-configuration">The Coexistence Configuration<a class="headerlink" href="#the-coexistence-configuration" title="Permanent link">&para;</a></h3>
+<p>Here's what a properly configured dual-driver VICIdial system looks like at the transport level:</p>
+<div class="codehilite"><pre><span></span><code>chan_sip (sip.conf):     UDP/5060  — SIP trunks, hardware phones
+PJSIP (pjsip.conf):     WSS/8089  — ViciPhone WebRTC clients
+                         UDP/5062  — (optional) PJSIP SIP phones
+</code></pre></div>
+
+<p>The key rule: <strong>never register the same endpoint on both drivers.</strong> A SIP trunk goes in sip.conf OR pjsip.conf, not both. A phone registers to chan_sip OR PJSIP. Mixing creates race conditions where both drivers try to handle the same INVITE and calls fail unpredictably.</p>
+<blockquote>
+<p><strong>WebRTC Configuration Giving You Headaches?</strong>
+ViciStack deploys ViciPhone with PJSIP, STUN/TURN, and certificate management pre-configured. No port conflicts, no certificate debugging. <a href="/free-audit/">Get Your Free Assessment →</a></p>
+</blockquote>
+<hr />
+<h2 id="codec-configuration-what-to-use-and-when">Codec Configuration: What to Use and When<a class="headerlink" href="#codec-configuration-what-to-use-and-when" title="Permanent link">&para;</a></h2>
+<p><a href="/glossary/codec/">Codecs</a> determine how voice audio gets compressed for transmission. The wrong codec choice means either wasted bandwidth, degraded audio quality, or both. VICIdial supports every codec Asterisk supports, but in practice you're choosing between four options.</p>
+<h3 id="g711-ulaw-pcmu-the-north-american-default">G.711 ulaw (PCMU) — The North American Default<a class="headerlink" href="#g711-ulaw-pcmu-the-north-american-default" title="Permanent link">&para;</a></h3>
+<p>G.711 ulaw is uncompressed audio at 64 kbps per channel. It's the default for VICIdial installations in North America and the codec your SIP <a href="/glossary/trunk/">trunks</a> almost certainly prefer.</p>
+<p><strong>Use ulaw when:</strong>
+- Your trunks are in North America (carriers optimize for ulaw)
+- Bandwidth is not a constraint (LAN or high-bandwidth WAN)
+- You want zero transcoding overhead on your Asterisk server
+- Call quality is paramount</p>
+<p><strong>Configuration in sip.conf:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+</code></pre></div>
+
+<p>The <code>disallow=all</code> line is critical. Without it, Asterisk offers every loaded codec during SDP negotiation, and you might end up transcoding G.729 to ulaw on every call — burning CPU for no benefit.</p>
+<h3 id="g711-alaw-pcma-the-international-default">G.711 alaw (PCMA) — The International Default<a class="headerlink" href="#g711-alaw-pcma-the-international-default" title="Permanent link">&para;</a></h3>
+<p>G.711 alaw is the same 64 kbps uncompressed audio, but using the A-law companding algorithm instead of u-law. It's the standard in Europe, Asia, and most countries outside North America.</p>
+<p><strong>Use alaw when:</strong>
+- Your trunks terminate in Europe, Asia, or other ITU-T regions
+- Your carrier explicitly requires alaw</p>
+<p>In sip.conf, just swap the codec:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">alaw</span>
+</code></pre></div>
+
+<p>If you're running a global operation with trunks in multiple regions, allow both:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">alaw</span>
+</code></pre></div>
+
+<p>Asterisk will negotiate the first matching codec. Put your preferred codec first.</p>
+<h3 id="g729-for-bandwidth-constrained-links">G.729 — For Bandwidth-Constrained Links<a class="headerlink" href="#g729-for-bandwidth-constrained-links" title="Permanent link">&para;</a></h3>
+<p>G.729 compresses audio to 8 kbps — one-eighth the bandwidth of G.711. The tradeoff is measurable quality loss (especially on conference bridges and transfers where audio gets re-encoded) and CPU overhead for transcoding.</p>
+<p><strong>Use G.729 when:</strong>
+- Remote agents connect over low-bandwidth links
+- You're paying per-megabyte for transit (some international carriers)
+- Inter-server links in a <a href="/glossary/vicidial-cluster/">cluster</a> cross a WAN</p>
+<p><strong>Critical caveat:</strong> G.729 is a licensed codec. Asterisk's built-in G.729 implementation (<code>codec_g729</code>) requires a per-channel license from Digium (now Sangoma). However, the open-source <code>bcg729</code> library provides a free G.729 implementation that works with Asterisk. On ViciBox/AlmaLinux:</p>
+<div class="codehilite"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>bcg729<span class="w"> </span>asterisk-codec-g729
+</code></pre></div>
+
+<p>Verify it loaded:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show codecs&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>g729
+</code></pre></div>
+
+<p><strong>Do not mix G.729 and G.711 on the same call path without understanding the transcoding cost.</strong> Every call that enters your system on G.729 from a remote agent and exits on G.711 to a carrier (or vice versa) requires real-time transcoding. At 20 agents, this is negligible. At 200 agents with 5:1 dial ratios, that's potentially 1,000 simultaneous transcoding operations — enough to measurably impact your telephony server's capacity.</p>
+<h3 id="opus-the-webrtc-codec">Opus — The WebRTC Codec<a class="headerlink" href="#opus-the-webrtc-codec" title="Permanent link">&para;</a></h3>
+<p>Opus is the modern variable-bitrate codec used by WebRTC. When agents connect via ViciPhone, the browser-to-Asterisk leg uses Opus. Asterisk then transcodes to whatever codec your trunks use (almost always G.711).</p>
+<p>You don't configure Opus in sip.conf — it's handled in the PJSIP WebRTC endpoint configuration. VICIdial's WebRTC installer sets this up automatically, but here's what the relevant pjsip.conf section looks like:</p>
+<div class="codehilite"><pre><span></span><code><span class="na">[webrtc-endpoint](!)</span>
+<span class="na">type</span><span class="o">=</span><span class="s">endpoint</span>
+<span class="na">transport</span><span class="o">=</span><span class="s">transport-wss</span>
+<span class="na">context</span><span class="o">=</span><span class="s">default</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">opus</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">dtls_auto_generate_cert</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">webrtc</span><span class="o">=</span><span class="s">yes</span>
+</code></pre></div>
+
+<p>The <code>allow=opus</code> line must come before <code>allow=ulaw</code> so Opus is preferred for the WebRTC leg. Asterisk handles the Opus-to-ulaw transcoding internally for the carrier leg.</p>
+<p><strong>Performance note:</strong> Opus transcoding is heavier than G.711 passthrough. Each WebRTC agent on ViciPhone adds roughly 15-20% more CPU load per channel compared to a hardware SIP phone using ulaw. Plan your <a href="/blog/vicidial-cluster-guide/">telephony server capacity</a> accordingly — if your servers handle 20 agents on SIP phones, expect 15-17 on ViciPhone.</p>
+<h3 id="codec-priority-in-carrier-trunks">Codec Priority in Carrier Trunks<a class="headerlink" href="#codec-priority-in-carrier-trunks" title="Permanent link">&para;</a></h3>
+<p>When you configure a carrier in VICIdial Admin → Carriers, the codec priority is set in the trunk registration string or the sip.conf peer definition. Here's a real-world example for a SIP trunk:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[carrier-voip-trunk]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">host</span><span class="o">=</span><span class="s">sip.yourcarrier.com</span>
+<span class="na">port</span><span class="o">=</span><span class="s">5060</span>
+<span class="na">username</span><span class="o">=</span><span class="s">your_account</span>
+<span class="na">secret</span><span class="o">=</span><span class="s">your_password</span>
+<span class="na">fromuser</span><span class="o">=</span><span class="s">your_account</span>
+<span class="na">fromdomain</span><span class="o">=</span><span class="s">sip.yourcarrier.com</span>
+<span class="na">insecure</span><span class="o">=</span><span class="s">port,invite</span>
+<span class="na">qualify</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">alaw</span>
+<span class="na">dtmfmode</span><span class="o">=</span><span class="s">rfc2833</span>
+<span class="na">nat</span><span class="o">=</span><span class="s">force_rport,comedia</span>
+</code></pre></div>
+
+<p>The <code>disallow=all</code> followed by <code>allow=ulaw</code> and <code>allow=alaw</code> tells Asterisk to offer ulaw first, fall back to alaw if the carrier doesn't support ulaw. Most North American VoIP carriers support both, but some international routes only do alaw.</p>
+<p><strong>Always match your trunk codec config to your carrier's documentation.</strong> Codec mismatches cause either failed calls (if no common codec exists) or unnecessary transcoding (if Asterisk accepts a codec and then has to transcode for the agent leg).</p>
+<hr />
+<h2 id="nat-traversal-the-1-source-of-vicidial-audio-problems">NAT Traversal: The #1 Source of VICIdial Audio Problems<a class="headerlink" href="#nat-traversal-the-1-source-of-vicidial-audio-problems" title="Permanent link">&para;</a></h2>
+<p>If you've ever had "one-way audio" on a VICIdial system, you've had a NAT problem. If you've had agents who can hear the customer but the customer can't hear them, that's NAT. If calls connect fine for 30 seconds and then go silent, that's probably NAT. <a href="/glossary/nat-traversal/">NAT traversal</a> issues account for more VICIdial support tickets than every other Asterisk configuration problem combined.</p>
+<p>Here's why: <a href="/glossary/sip/">SIP</a> was designed in the 1990s when every device had a public IP address. The protocol embeds IP addresses directly into signaling messages (SDP bodies). When a server behind a NAT sends a SIP INVITE, it advertises its <em>private</em> IP (10.x.x.x, 172.16.x.x, 192.168.x.x) in the SDP. The remote side tries to send <a href="/glossary/rtp/">RTP</a> audio to that private IP, the packets hit the NAT boundary, and the audio disappears into the void.</p>
+<h3 id="sipconf-nat-settings-chan_sip">sip.conf NAT Settings (chan_sip)<a class="headerlink" href="#sipconf-nat-settings-chan_sip" title="Permanent link">&para;</a></h3>
+<p>The three critical settings in <code>sip.conf [general]</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">externip</span><span class="o">=</span><span class="s">203.0.113.50</span><span class="w">          </span><span class="c1">; Your server&#39;s PUBLIC IP address</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">10.0.0.0/8</span><span class="w">            </span><span class="c1">; Private network ranges — traffic here stays internal</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">172.16.0.0/12</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">192.168.0.0/16</span>
+
+<span class="na">nat</span><span class="o">=</span><span class="s">force_rport,comedia</span><span class="w">         </span><span class="c1">; Force symmetric RTP for NATed clients</span>
+</code></pre></div>
+
+<p><strong><code>externip</code></strong> tells Asterisk what public IP to substitute into SDP bodies when communicating with endpoints outside the <code>localnet</code> ranges. Without this, every call to/from a carrier on the public internet will have audio issues.</p>
+<p><strong><code>localnet</code></strong> defines which networks are "inside" the NAT. Asterisk uses the original private IPs for traffic within these ranges (server-to-server in a cluster) and substitutes <code>externip</code> for everything else.</p>
+<p><strong><code>nat=force_rport,comedia</code></strong> is the nuclear option for NAT — and it's the right one for VICIdial. <code>force_rport</code> makes Asterisk ignore the port in the Via header and use the port the packet actually arrived from. <code>comedia</code> makes Asterisk send RTP to the address and port where it <em>receives</em> RTP from, rather than where the SDP says to send it. Together, these settings handle 95% of NAT scenarios.</p>
+<p><strong>If your server has a dynamic public IP</strong> (cloud instances, some colo providers), use <code>externhost</code> instead:</p>
+<div class="codehilite"><pre><span></span><code><span class="na">externhost</span><span class="o">=</span><span class="s">myserver.example.com</span>
+<span class="na">externrefresh</span><span class="o">=</span><span class="s">60</span>
+</code></pre></div>
+
+<p>Asterisk will resolve the hostname every 60 seconds to get the current IP.</p>
+<h3 id="per-peer-nat-settings">Per-Peer NAT Settings<a class="headerlink" href="#per-peer-nat-settings" title="Permanent link">&para;</a></h3>
+<p>For SIP trunks and phones that are behind NAT (which is almost all of them in 2026), set NAT handling on the peer definition:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[my-carrier]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">nat</span><span class="o">=</span><span class="s">force_rport,comedia</span>
+<span class="na">qualify</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">qualifyfreq</span><span class="o">=</span><span class="s">30</span>
+</code></pre></div>
+
+<p>The <code>qualify=yes</code> with <code>qualifyfreq=30</code> sends OPTIONS packets every 30 seconds. This serves two purposes: it tells you if the peer is reachable (status shows in <code>sip show peers</code>), and — critically — it keeps the NAT pinhole open. Without qualify, many NAT gateways close the UDP mapping after 60-90 seconds of inactivity, causing registration drops and call failures.</p>
+<h3 id="stunturn-for-remote-agents">STUN/TURN for Remote Agents<a class="headerlink" href="#stunturn-for-remote-agents" title="Permanent link">&para;</a></h3>
+<p>When agents connect from home networks — behind consumer routers, hotel WiFi, corporate firewalls — the NAT situation gets significantly worse. Double NAT, symmetric NAT, and restrictive firewalls can defeat <code>force_rport,comedia</code> because the RTP port mapping changes unpredictably.</p>
+<p>This is where STUN and TURN servers become essential, particularly for <a href="/glossary/webrtc/">WebRTC</a> connections via ViciPhone.</p>
+<p><strong>STUN</strong> (Session Traversal Utilities for NAT) helps clients discover their public IP and port mapping. It works for most consumer NAT scenarios but fails with symmetric NAT.</p>
+<p><strong>TURN</strong> (Traversal Using Relays around NAT) relays all media through a server with a public IP. It works in every scenario but adds latency and bandwidth cost because all audio routes through the TURN server.</p>
+<p>For ViciPhone/WebRTC, configure STUN/TURN in the VICIdial admin under System Settings → WebRTC:</p>
+<div class="codehilite"><pre><span></span><code>STUN server: stun:stun.l.google.com:19302
+TURN server: turn:your-turn-server.example.com:3478
+TURN username: vicidial
+TURN credential: your-secure-password
+</code></pre></div>
+
+<p><strong>Deploy your own TURN server.</strong> Don't rely on public STUN servers for production traffic. Install <code>coturn</code> on a dedicated VM with a public IP:</p>
+<div class="codehilite"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>coturn
+</code></pre></div>
+
+<p>Minimal <code>/etc/turnserver.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="na">listening-port</span><span class="o">=</span><span class="s">3478</span>
+<span class="na">tls-listening-port</span><span class="o">=</span><span class="s">5349</span>
+<span class="na">relay-ip</span><span class="o">=</span><span class="s">203.0.113.60</span>
+<span class="na">external-ip</span><span class="o">=</span><span class="s">203.0.113.60</span>
+<span class="na">realm</span><span class="o">=</span><span class="s">yourdomain.com</span>
+<span class="na">server-name</span><span class="o">=</span><span class="s">yourdomain.com</span>
+<span class="na">lt-cred-mech</span>
+<span class="na">user</span><span class="o">=</span><span class="s">vicidial:your-secure-password</span>
+<span class="na">total-quota</span><span class="o">=</span><span class="s">300</span>
+<span class="na">stale-nonce</span><span class="o">=</span><span class="s">600</span>
+<span class="na">no-multicast-peers</span>
+</code></pre></div>
+
+<p>The TURN server needs bandwidth — every active WebRTC call relayed through TURN uses roughly 100-200 kbps in each direction. For 50 remote WebRTC agents, provision at least 20 Mbps on the TURN server.</p>
+<h3 id="cluster-nat-the-private-network-shortcut">Cluster NAT: The Private Network Shortcut<a class="headerlink" href="#cluster-nat-the-private-network-shortcut" title="Permanent link">&para;</a></h3>
+<p>In a <a href="/blog/vicidial-cluster-guide/">VICIdial cluster</a>, inter-server communication (IAX2 between dialers, MySQL connections to the database server) should happen on a <strong>private network</strong> with no NAT involved. Use dual NICs:</p>
+<ul>
+<li><strong>NIC 1 (public):</strong> Carriers, agents, WebRTC — gets the <code>externip</code> treatment</li>
+<li><strong>NIC 2 (private):</strong> Inter-server traffic on 10.x.x.x — stays in <code>localnet</code>, no NAT rewriting</li>
+</ul>
+<p>This eliminates an entire category of audio issues. Calls that transfer between dialers in a cluster use IAX2 over the private network, and <a href="/glossary/iax2/">IAX2</a> handles NAT far better than SIP because it multiplexes signaling and media on a single port.</p>
+<blockquote>
+<p><strong>One-Way Audio Is a Solved Problem.</strong>
+Every ViciStack deployment ships with externip, localnet, STUN/TURN, and dual-NIC configuration verified before your first call. <a href="/pricing/">See How We Do It →</a></p>
+</blockquote>
+<hr />
+<h2 id="trunk-configuration-from-vicidial-admin-to-sipconf">Trunk Configuration: From VICIdial Admin to sip.conf<a class="headerlink" href="#trunk-configuration-from-vicidial-admin-to-sipconf" title="Permanent link">&para;</a></h2>
+<p>Configuring SIP trunks in VICIdial involves two layers: the VICIdial admin GUI (Carriers page) and the underlying Asterisk configuration files.</p>
+<h3 id="adding-a-carrier-in-vicidial-admin">Adding a Carrier in VICIdial Admin<a class="headerlink" href="#adding-a-carrier-in-vicidial-admin" title="Permanent link">&para;</a></h3>
+<p>Navigate to Admin → Carriers and create a new entry. The critical fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Example Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Carrier ID</td>
+<td>Internal identifier</td>
+<td>VOIP_TRUNK_1</td>
+</tr>
+<tr>
+<td>Carrier Name</td>
+<td>Descriptive name</td>
+<td>Telnyx Primary</td>
+</tr>
+<tr>
+<td>Registration String</td>
+<td>SIP registration line for sip.conf</td>
+<td><code>register =&gt; user:pass@sip.telnyx.com</code></td>
+</tr>
+<tr>
+<td>Account Entry</td>
+<td>Full peer definition for sip.conf</td>
+<td>(see below)</td>
+</tr>
+<tr>
+<td>Protocol</td>
+<td>SIP, IAX2, or CUSTOM</td>
+<td>SIP</td>
+</tr>
+<tr>
+<td>Global String</td>
+<td>Dialplan variables</td>
+<td>(usually empty)</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>Account Entry</strong> field is where you paste the actual sip.conf peer definition:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[telnyx-trunk]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">host</span><span class="o">=</span><span class="s">sip.telnyx.com</span>
+<span class="na">port</span><span class="o">=</span><span class="s">5060</span>
+<span class="na">username</span><span class="o">=</span><span class="s">+15551234567</span>
+<span class="na">secret</span><span class="o">=</span><span class="s">your_sip_password</span>
+<span class="na">fromuser</span><span class="o">=</span><span class="s">+15551234567</span>
+<span class="na">fromdomain</span><span class="o">=</span><span class="s">sip.telnyx.com</span>
+<span class="na">insecure</span><span class="o">=</span><span class="s">port,invite</span>
+<span class="na">qualify</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">qualifyfreq</span><span class="o">=</span><span class="s">30</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">dtmfmode</span><span class="o">=</span><span class="s">rfc2833</span>
+<span class="na">nat</span><span class="o">=</span><span class="s">force_rport,comedia</span>
+<span class="na">context</span><span class="o">=</span><span class="s">trunkinbound</span>
+</code></pre></div>
+
+<p>When you save the carrier, VICIdial writes this configuration to the Asterisk configuration and triggers a SIP reload. You can verify the trunk registered with:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show registry&quot;</span>
+</code></pre></div>
+
+<p>And check the peer status:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show peers&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>telnyx
+</code></pre></div>
+
+<h3 id="registration-strings">Registration Strings<a class="headerlink" href="#registration-strings" title="Permanent link">&para;</a></h3>
+<p>Some carriers require SIP registration (your server sends REGISTER to the carrier). Others use IP-based authentication (carrier whitelists your IP, no registration needed).</p>
+<p><strong>Registration-based carrier:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">register</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nl">username</span><span class="p">:</span><span class="n">password</span><span class="nv">@sip</span><span class="p">.</span><span class="n">carrier</span><span class="p">.</span><span class="n">com</span>
+</code></pre></div>
+
+<p><strong>IP-authenticated carrier:</strong> Leave the registration string blank. Just define the peer with <code>host=sip.carrier.com</code> and ensure your server's IP is whitelisted on the carrier's portal.</p>
+<p><strong>Registration with specific Contact header</strong> (some carriers require this):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">register</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nl">username</span><span class="p">:</span><span class="n">password</span><span class="nv">@sip</span><span class="p">.</span><span class="n">carrier</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">username</span>
+</code></pre></div>
+
+<h3 id="codec-priority-in-trunk-definitions">Codec Priority in Trunk Definitions<a class="headerlink" href="#codec-priority-in-trunk-definitions" title="Permanent link">&para;</a></h3>
+<p>Your trunk's codec priority should match what your carrier documents. Most North American VoIP carriers prefer this order:</p>
+<div class="codehilite"><pre><span></span><code><span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">alaw</span>
+</code></pre></div>
+
+<p>If your carrier supports G.729 and you want to conserve bandwidth on the carrier leg:</p>
+<div class="codehilite"><pre><span></span><code><span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">g729</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+</code></pre></div>
+
+<p><strong>Warning:</strong> Using G.729 on carrier trunks when your agents are on G.711 (or Opus via WebRTC) means every single call gets transcoded. At scale, this CPU cost is significant. Only use G.729 on trunks if bandwidth savings justify it.</p>
+<h3 id="dtmf-mode">DTMF Mode<a class="headerlink" href="#dtmf-mode" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/dtmf/">DTMF</a> (touch-tone signals) configuration is a surprisingly common source of issues. If your IVR transfers aren't working, or customers can't navigate phone trees after transfer, DTMF mode mismatch is the likely culprit.</p>
+<div class="codehilite"><pre><span></span><code><span class="na">dtmfmode</span><span class="o">=</span><span class="s">rfc2833</span><span class="w">    </span><span class="c1">; Most common, most compatible</span>
+</code></pre></div>
+
+<p>Options:
+- <strong>rfc2833</strong> — DTMF sent as RTP events (out-of-band). This is the standard and what 95% of carriers expect.
+- <strong>info</strong> — DTMF sent as SIP INFO messages. Some legacy carriers use this.
+- <strong>inband</strong> — DTMF tones in the audio stream. Unreliable with compressed codecs. Avoid.
+- <strong>auto</strong> — Asterisk tries to detect. Sounds smart, works poorly.</p>
+<p>Always set <code>dtmfmode=rfc2833</code> unless your carrier specifically documents otherwise.</p>
+<hr />
+<h2 id="dialplan-internals-what-vicidial-generates-in-extensionsconf">Dialplan Internals: What VICIdial Generates in extensions.conf<a class="headerlink" href="#dialplan-internals-what-vicidial-generates-in-extensionsconf" title="Permanent link">&para;</a></h2>
+<p>VICIdial auto-generates its Asterisk <a href="/glossary/dialplan/">dialplan</a> — you should never manually edit <code>extensions.conf</code> on a VICIdial system. But understanding the structure is essential for troubleshooting call flow issues.</p>
+<h3 id="the-core-contexts">The Core Contexts<a class="headerlink" href="#the-core-contexts" title="Permanent link">&para;</a></h3>
+<p>VICIdial creates several contexts in <code>extensions.conf</code>. The most important:</p>
+<p><strong><code>[default]</code></strong> — The catchall context. Inbound calls from carriers land here. VICIdial routes them based on DID matching.</p>
+<p><strong><code>[trunkinbound]</code></strong> — Where carrier trunks deliver inbound calls. This context is referenced in the carrier peer definition (<code>context=trunkinbound</code>).</p>
+<p><strong><code>[vicidial-auto]</code></strong> — The outbound auto-dial context. When the predictive dialer places a call, it originates through this context. The dialplan here handles answer detection, <a href="/glossary/amd/">AMD</a> processing, and routing to agents.</p>
+<p><strong><code>[vicidial-auto-agent]</code></strong> — After a call is answered (and passes AMD if enabled), it gets routed here to connect to the waiting agent via a MeetMe/<a href="/glossary/confbridge/">ConfBridge</a> conference.</p>
+<h3 id="how-an-outbound-call-flows">How an Outbound Call Flows<a class="headerlink" href="#how-an-outbound-call-flows" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>AST_VDauto_dial.pl</code> identifies a lead to call and uses AMI to originate a call</li>
+<li>Asterisk places the call through the carrier trunk</li>
+<li>The call enters the <code>[vicidial-auto]</code> context</li>
+<li>If AMD is enabled, the call hits the AMD application</li>
+<li>On answer/human detection, the call gets routed to <a href="/glossary/agi/">AGI</a> (<code>agi-VDAD_ALL_outbound.agi</code>)</li>
+<li>The AGI script creates a conference room and bridges the agent to the answered call</li>
+<li>The agent's phone (already in a "listening" conference) hears the call connect</li>
+</ol>
+<h3 id="custom-dialplan-additions">Custom Dialplan Additions<a class="headerlink" href="#custom-dialplan-additions" title="Permanent link">&para;</a></h3>
+<p>If you need custom dialplan logic (after-hours routing, custom IVR flows, special transfer destinations), add it to <code>extensions_custom.conf</code> — not <code>extensions.conf</code>. VICIdial overwrites <code>extensions.conf</code> on reload, but <code>extensions_custom.conf</code> is included via <code>#include</code> and survives updates.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; extensions_custom.conf</span>
+<span class="k">[custom-afterhours]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,1,Answer()</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,n,Playback(after-hours-message)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,n,Voicemail(1000@default)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,n,Hangup()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="security-hardening-protecting-asterisk-on-the-public-internet">Security Hardening: Protecting Asterisk on the Public Internet<a class="headerlink" href="#security-hardening-protecting-asterisk-on-the-public-internet" title="Permanent link">&para;</a></h2>
+<p>A VICIdial server with SIP ports open to the internet is a target. SIP scanning bots hit every public IP on port 5060 continuously. Without hardening, you'll see registration attempts from random IPs within hours of deployment, and a successful breach means toll fraud — someone making international calls on your trunks at your expense.</p>
+<h3 id="fail2ban-for-sip">fail2ban for SIP<a class="headerlink" href="#fail2ban-for-sip" title="Permanent link">&para;</a></h3>
+<p>fail2ban monitors Asterisk logs for failed authentication attempts and blocks offending IPs via iptables. ViciBox includes a pre-configured fail2ban jail for Asterisk, but if you're on a custom install:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/fail2ban/jail.local</span>
+<span class="k">[asterisk]</span>
+<span class="na">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5060,5061,8089</span>
+<span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">all</span>
+<span class="na">filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+<span class="na">logpath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/asterisk/messages</span>
+<span class="na">maxretry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3</span>
+<span class="na">findtime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">600</span>
+<span class="na">bantime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">86400</span>
+<span class="na">action</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">iptables-allports[name=asterisk, protocol=all]</span>
+</code></pre></div>
+
+<p>This bans any IP that fails 3 authentication attempts within 10 minutes, for 24 hours. For production systems, consider <code>bantime = -1</code> (permanent) and a whitelist for your known IPs.</p>
+<p>Verify fail2ban is working:</p>
+<div class="codehilite"><pre><span></span><code>fail2ban-client<span class="w"> </span>status<span class="w"> </span>asterisk
+</code></pre></div>
+
+<h3 id="iptables-rules-for-sip">iptables Rules for SIP<a class="headerlink" href="#iptables-rules-for-sip" title="Permanent link">&para;</a></h3>
+<p>Don't rely solely on fail2ban. Use iptables to restrict SIP access to known IP ranges:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Allow SIP from your carrier&#39;s IP range</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>-s<span class="w"> </span><span class="m">203</span>.0.113.0/24<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># Allow SIP from your office/agent network</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>-s<span class="w"> </span><span class="m">198</span>.51.100.0/24<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># Allow WebSocket from anywhere (for ViciPhone — agents need this)</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">8089</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># Allow RTP from anywhere (audio must flow)</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">10000</span>:20000<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># Drop all other SIP</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-j<span class="w"> </span>DROP
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-j<span class="w"> </span>DROP
+</code></pre></div>
+
+<p><strong>RTP ports must be open to all sources.</strong> You can't restrict RTP to known IPs because carriers route media from different IPs than signaling, and NATed agents send RTP from unpredictable source addresses. The SIP layer is where you lock things down.</p>
+<h3 id="sip-registration-acls">SIP Registration ACLs<a class="headerlink" href="#sip-registration-acls" title="Permanent link">&para;</a></h3>
+<p>In <code>sip.conf</code>, use <code>permit</code> and <code>deny</code> to restrict which IPs can register:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="c1">; Only allow registration from these networks</span>
+<span class="na">contactdeny</span><span class="o">=</span><span class="s">0.0.0.0/0.0.0.0</span>
+<span class="na">contactpermit</span><span class="o">=</span><span class="s">10.0.0.0/255.0.0.0</span>
+<span class="na">contactpermit</span><span class="o">=</span><span class="s">203.0.113.0/255.255.255.0</span>
+</code></pre></div>
+
+<p>For individual peers, add ACLs:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[my-carrier]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">permit</span><span class="o">=</span><span class="s">203.0.113.50/32</span>
+<span class="na">deny</span><span class="o">=</span><span class="s">0.0.0.0/0.0.0.0</span>
+</code></pre></div>
+
+<h3 id="tlssrtp-for-sip">TLS/SRTP for SIP<a class="headerlink" href="#tlssrtp-for-sip" title="Permanent link">&para;</a></h3>
+<p>If your carrier supports SIP over TLS (and most modern carriers do), enable it:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">tlsenable</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">tlsbindaddr</span><span class="o">=</span><span class="s">0.0.0.0:5061</span>
+<span class="na">tlscertfile</span><span class="o">=</span><span class="s">/etc/asterisk/keys/asterisk.pem</span>
+<span class="na">tlscafile</span><span class="o">=</span><span class="s">/etc/asterisk/keys/ca.crt</span>
+<span class="na">tlscipher</span><span class="o">=</span><span class="s">ALL</span>
+<span class="na">tlsclientmethod</span><span class="o">=</span><span class="s">tlsv1_2</span>
+</code></pre></div>
+
+<p>For the carrier peer:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[secure-carrier]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">transport</span><span class="o">=</span><span class="s">tls</span>
+<span class="na">encryption</span><span class="o">=</span><span class="s">yes</span><span class="w">     </span><span class="c1">; Require SRTP</span>
+</code></pre></div>
+
+<p><strong>Note:</strong> TLS encrypts SIP signaling. SRTP (<code>encryption=yes</code>) encrypts the audio. For full encryption, you need both. But SRTP adds CPU overhead — roughly 10-15% per channel. Factor this into your server capacity planning.</p>
+<hr />
+<h2 id="asterisk-module-management">Asterisk Module Management<a class="headerlink" href="#asterisk-module-management" title="Permanent link">&para;</a></h2>
+<p>Asterisk loads dozens of modules at startup. VICIdial only needs a subset of them, and unnecessary modules waste memory and can cause conflicts. The module configuration lives in <code>/etc/asterisk/modules.conf</code>.</p>
+<h3 id="essential-modules-for-vicidial">Essential Modules for VICIdial<a class="headerlink" href="#essential-modules-for-vicidial" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">[modules]</span>
+<span class="na">autoload</span><span class="o">=</span><span class="s">yes</span>
+
+<span class="c1">; Core telephony</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_rtp_asterisk.so</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_sip.so</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_pjsip.so</span><span class="w">           </span><span class="c1">; Only if using WebRTC</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_meetme.so</span><span class="w">           </span><span class="c1">; Legacy conferencing</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_confbridge.so</span><span class="w">       </span><span class="c1">; Modern conferencing (recommended)</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_agi.so</span><span class="w">              </span><span class="c1">; AGI — VICIdial&#39;s brain</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_dial.so</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_playback.so</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_record.so</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_musiconhold.so</span>
+
+<span class="c1">; Recording</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_mixmonitor.so</span><span class="w">       </span><span class="c1">; MixMonitor for call recording</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; func_cdr.so</span>
+
+<span class="c1">; AMD</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_amd.so</span><span class="w">              </span><span class="c1">; If using AMD</span>
+</code></pre></div>
+
+<h3 id="modules-to-disable">Modules to Disable<a class="headerlink" href="#modules-to-disable" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">; Disable unused channel drivers</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_alsa.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_console.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_oss.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_mgcp.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_skinny.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_unistim.so</span>
+
+<span class="c1">; Disable unused protocols</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_xmpp.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_http_websocket.so</span><span class="w">  </span><span class="c1">; Only noload if NOT using WebRTC</span>
+
+<span class="c1">; Disable database backends you&#39;re not using</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_config_pgsql.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; cdr_pgsql.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_config_sqlite3.so</span>
+</code></pre></div>
+
+<p><strong>The ConfBridge migration matters here.</strong> If you're on Asterisk 18 and have enabled ConfBridge (which you should for new deployments), you still need <code>app_meetme.so</code> loaded because VICIdial's code references both. Set <code>mixing_interval=20</code> in <code>confbridge.conf</code> as noted in the <a href="/blog/vicidial-cluster-guide/">cluster guide</a> to prevent RTP packet ordering issues.</p>
+<p>To check what's currently loaded:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="w">      </span><span class="c1"># Total module count</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show like chan_&quot;</span><span class="w">    </span><span class="c1"># Channel drivers</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show like res_&quot;</span><span class="w">    </span><span class="c1"># Resource modules</span>
+</code></pre></div>
+
+<hr />
+<h2 id="monitoring-and-diagnostics">Monitoring and Diagnostics<a class="headerlink" href="#monitoring-and-diagnostics" title="Permanent link">&para;</a></h2>
+<p>When calls stop working at 2 AM, you need to know exactly which Asterisk commands give you answers fast.</p>
+<h3 id="the-essential-cli-commands">The Essential CLI Commands<a class="headerlink" href="#the-essential-cli-commands" title="Permanent link">&para;</a></h3>
+<p>Connect to the Asterisk CLI:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rvvv<span class="w">     </span><span class="c1"># Read-only, verbosity level 3</span>
+</code></pre></div>
+
+<p>The verbosity level controls how much real-time output you see. Level 3 (<code>vvv</code>) shows call setup and teardown. Level 5 (<code>vvvvv</code>) shows SIP message details. Level 10+ shows everything including RTP — useful for deep debugging but extremely noisy on a busy system.</p>
+<p><strong>Check SIP trunk status:</strong></p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show registry&quot;</span><span class="w">       </span><span class="c1"># Registration status</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show peers&quot;</span><span class="w">          </span><span class="c1"># Peer status and latency</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show peer telnyx-trunk&quot;</span><span class="w">  </span><span class="c1"># Detailed peer info</span>
+</code></pre></div>
+
+<p><strong>Active call monitoring:</strong></p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show channels&quot;</span><span class="w">      </span><span class="c1"># All active channels</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show channels concise&quot;</span><span class="w">  </span><span class="c1"># Machine-parseable format</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show channel SIP/xxx&quot;</span><span class="w">   </span><span class="c1"># Specific channel details</span>
+</code></pre></div>
+
+<p><strong>Conference monitoring</strong> (essential for VICIdial — every call is a conference):</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;meetme list&quot;</span><span class="w">             </span><span class="c1"># All active conferences</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;confbridge list&quot;</span><span class="w">         </span><span class="c1"># ConfBridge conferences</span>
+</code></pre></div>
+
+<p><strong>Codec negotiation debugging:</strong></p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show channel SIP/trunk-00000001&quot;</span><span class="w">  </span><span class="c1"># Shows negotiated codec</span>
+</code></pre></div>
+
+<h3 id="ami-events-for-monitoring">AMI Events for Monitoring<a class="headerlink" href="#ami-events-for-monitoring" title="Permanent link">&para;</a></h3>
+<p>The <a href="/glossary/asterisk-manager-interface/">Asterisk Manager Interface (AMI)</a> is how VICIdial communicates with Asterisk programmatically. It's also useful for external monitoring. Connect to AMI on port 5038:</p>
+<div class="codehilite"><pre><span></span><code>telnet<span class="w"> </span>localhost<span class="w"> </span><span class="m">5038</span>
+</code></pre></div>
+
+<p>Login and listen for events:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Action</span><span class="o">:</span><span class="w"> </span><span class="n">Login</span>
+<span class="n">Username</span><span class="o">:</span><span class="w"> </span><span class="n">cron</span>
+<span class="n">Secret</span><span class="o">:</span><span class="w"> </span><span class="n">your_ami_password</span>
+
+<span class="n">Action</span><span class="o">:</span><span class="w"> </span><span class="n">Events</span>
+<span class="n">EventMask</span><span class="o">:</span><span class="w"> </span><span class="n">call</span>
+</code></pre></div>
+
+<p>Key events to monitor:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Registry</code></td>
+<td>SIP registration state change (trunk up/down)</td>
+</tr>
+<tr>
+<td><code>PeerStatus</code></td>
+<td>SIP peer reachable/unreachable</td>
+</tr>
+<tr>
+<td><code>Newchannel</code></td>
+<td>New call created</td>
+</tr>
+<tr>
+<td><code>Hangup</code></td>
+<td>Call ended (includes cause code)</td>
+</tr>
+<tr>
+<td><code>AGIExec</code></td>
+<td>AGI script execution (VICIdial call routing)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sip-debug-mode">SIP Debug Mode<a class="headerlink" href="#sip-debug-mode" title="Permanent link">&para;</a></h3>
+<p>When you need to see the actual SIP messages (INVITE, 200 OK, BYE, etc.):</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip set debug on&quot;</span><span class="w">        </span><span class="c1"># All SIP traffic (very noisy)</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip set debug peer telnyx-trunk&quot;</span><span class="w">  </span><span class="c1"># Just one peer</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip set debug off&quot;</span><span class="w">       </span><span class="c1"># Turn it off when done</span>
+</code></pre></div>
+
+<p><strong>Never leave SIP debug on in production.</strong> It writes massive amounts of data to the Asterisk log and can fill your disk in hours on a busy system.</p>
+<hr />
+<h2 id="common-issues-and-fixes">Common Issues and Fixes<a class="headerlink" href="#common-issues-and-fixes" title="Permanent link">&para;</a></h2>
+<p>After hundreds of deployments and thousands of forum threads, these are the Asterisk configuration problems VICIdial operators actually hit.</p>
+<h3 id="one-way-audio">One-Way Audio<a class="headerlink" href="#one-way-audio" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Agent hears customer, customer doesn't hear agent (or vice versa).</p>
+<p><strong>Cause:</strong> NAT. 95% of the time.</p>
+<p><strong>Fix:</strong>
+1. Verify <code>externip</code> is set correctly in sip.conf
+2. Verify <code>localnet</code> includes all your private networks
+3. Set <code>nat=force_rport,comedia</code> on both <code>[general]</code> and the carrier peer
+4. Ensure UDP ports 10000-20000 are open in iptables (both directions)
+5. For remote agents: deploy STUN/TURN</p>
+<h3 id="registration-failures">Registration Failures<a class="headerlink" href="#registration-failures" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> <code>sip show registry</code> shows "Rejected" or "Request Sent" that never resolves.</p>
+<p><strong>Troubleshooting:</strong></p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip set debug peer carrier-name&quot;</span>
+<span class="c1"># Watch for 401/403 responses — credentials wrong</span>
+<span class="c1"># Watch for 408 Timeout — network/firewall issue</span>
+<span class="c1"># Watch for 503 Service Unavailable — carrier side problem</span>
+</code></pre></div>
+
+<p>Common causes:
+- Wrong username/password in the registration string
+- Carrier requires <code>fromuser</code> or <code>fromdomain</code> that doesn't match
+- Firewall blocking outbound UDP 5060
+- DNS resolution failure (check with <code>dig sip.carrier.com</code>)</p>
+<h3 id="certificate-issues-webrtc">Certificate Issues (WebRTC)<a class="headerlink" href="#certificate-issues-webrtc" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> ViciPhone connects but no audio, or connection fails entirely.</p>
+<p>WebRTC requires valid TLS certificates. Self-signed certs are rejected by browsers. Use Let's Encrypt:</p>
+<div class="codehilite"><pre><span></span><code>certbot<span class="w"> </span>certonly<span class="w"> </span>--standalone<span class="w"> </span>-d<span class="w"> </span>vicidial.yourdomain.com
+</code></pre></div>
+
+<p>Then create the combined PEM that Asterisk needs:</p>
+<div class="codehilite"><pre><span></span><code>cat<span class="w"> </span>/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>&gt;<span class="w"> </span>/etc/asterisk/keys/asterisk.pem
+</code></pre></div>
+
+<p>Set up a cron job to renew and restart Asterisk:</p>
+<div class="codehilite"><pre><span></span><code><span class="m">0</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span><span class="m">1</span><span class="w"> </span>certbot<span class="w"> </span>renew<span class="w"> </span>--quiet<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cat<span class="w"> </span>/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem<span class="w"> </span>/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem<span class="w"> </span>&gt;<span class="w"> </span>/etc/asterisk/keys/asterisk.pem<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module reload res_pjsip.so&quot;</span>
+</code></pre></div>
+
+<h3 id="audio-quality-degradation">Audio Quality Degradation<a class="headerlink" href="#audio-quality-degradation" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Calls sound robotic, choppy, or have echo.</p>
+<p><strong>Checklist:</strong>
+1. Check for packet loss: <code>asterisk -rx "rtp set debug on"</code> — look for gaps in sequence numbers
+2. Check for codec transcoding you didn't intend: <code>sip show channel</code> on an active call
+3. Check server CPU: if Asterisk is above 80% CPU utilization, audio quality drops
+4. Check for jitter buffer settings: VICIdial default is usually fine, but for high-jitter links:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">jbenable</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">jbmaxsize</span><span class="o">=</span><span class="s">200</span>
+<span class="na">jbimpl</span><span class="o">=</span><span class="s">adaptive</span>
+</code></pre></div>
+
+<h3 id="all-circuits-busy-on-outbound-calls">"All Circuits Busy" on Outbound Calls<a class="headerlink" href="#all-circuits-busy-on-outbound-calls" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Dialer shows trunk errors, agents get no calls.</p>
+<p><strong>Check trunk capacity:</strong></p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show channels&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SIP/carrier&quot;</span>
+</code></pre></div>
+
+<p>If this number equals your trunk's channel limit, you need more capacity. VICIdial's <a href="/glossary/predictive-dialing/">predictive dialer</a> at a 5:1 ratio with 50 agents tries to maintain 250 simultaneous outbound channels. Make sure your SIP trunk supports that volume.</p>
+<hr />
+<h2 id="astguiclientconf-the-bridge-between-vicidial-and-asterisk">astguiclient.conf: The Bridge Between VICIdial and Asterisk<a class="headerlink" href="#astguiclientconf-the-bridge-between-vicidial-and-asterisk" title="Permanent link">&para;</a></h2>
+<p>Every VICIdial server has <code>/etc/astguiclient.conf</code> — the configuration file that tells VICIdial how to talk to Asterisk. Key Asterisk-related settings:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># AMI credentials — must match manager.conf</span>
+<span class="na">VARserver_ip</span><span class="o">=</span><span class="s">10.0.0.1</span>
+<span class="na">VARDB_server</span><span class="o">=</span><span class="s">10.0.0.2</span>
+<span class="na">VARactionURL</span><span class="o">=</span>
+<span class="na">VARfastagi_log_min_servers</span><span class="o">=</span><span class="s">3</span>
+<span class="na">VARfastagi_log_server_ip</span><span class="o">=</span><span class="s">10.0.0.1</span>
+<span class="na">VARactive_keepalives</span><span class="o">=</span><span class="s">123456789</span>
+</code></pre></div>
+
+<p>The <code>VARserver_ip</code> is the IP this server uses for Asterisk operations. In a cluster, this must be the IP in the <code>servers</code> table in the VICIdial database. Get it wrong and calls originate but can't be tracked back to the right server, causing orphaned channels and ghost calls.</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>This guide gives you everything you need to configure Asterisk correctly in VICIdial. But knowing what to configure and keeping it configured correctly across updates, certificate renewals, carrier changes, and capacity scaling are two very different problems.</p>
+<p><strong>ViciStack ships every deployment with Asterisk pre-configured</strong>: correct NAT settings for your network topology, carrier trunks tested and verified, codec optimization for your specific carriers, fail2ban and iptables hardened, WebRTC with valid certificates and TURN servers, and ConfBridge ready for the Asterisk 21 migration.</p>
+<p>When your Asterisk configuration is right, calls connect cleanly, audio is clear, and your agents hear a human voice instead of dead air. When it's wrong, you're debugging SIP traces at 2 AM.</p>
+<p>We'd rather you not do that.</p>
+<p><a href="/free-audit/">Get a free Asterisk configuration audit →</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial, Asterisk, and best practices evolve. Last updated: March 2026.</em></p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="should-i-switch-from-chan_sip-to-pjsip-for-all-my-trunks">Should I switch from chan_sip to PJSIP for all my trunks?<a class="headerlink" href="#should-i-switch-from-chan_sip-to-pjsip-for-all-my-trunks" title="Permanent link">&para;</a></h3>
+<p>Not yet. VICIdial's codebase is still primarily built around chan_sip for trunk and phone registration. Switching all trunks to PJSIP requires testing every call flow — outbound, inbound, transfers, three-way calls, and conferencing. The VICIdial development team is working on full PJSIP migration, but for production systems in 2026, the recommended approach is chan_sip for trunks and phones, PJSIP only for WebRTC/ViciPhone endpoints. Start testing PJSIP trunks in a lab environment so you're ready when the transition becomes necessary.</p>
+<h3 id="whats-the-best-codec-for-vicidial">What's the best codec for VICIdial?<a class="headerlink" href="#whats-the-best-codec-for-vicidial" title="Permanent link">&para;</a></h3>
+<p>G.711 ulaw for North American operations, G.711 alaw for international. These provide the best call quality with zero transcoding overhead. Only use G.729 when bandwidth constraints genuinely require it (remote offices on limited WAN links, international trunks with per-MB billing). For WebRTC agents on ViciPhone, Opus is used automatically and transcoded to G.711 for the carrier leg.</p>
+<h3 id="why-do-my-remote-agents-keep-getting-one-way-audio">Why do my remote agents keep getting one-way audio?<a class="headerlink" href="#why-do-my-remote-agents-keep-getting-one-way-audio" title="Permanent link">&para;</a></h3>
+<p>Remote agents behind consumer NAT are the hardest audio scenario. The fix is layered: (1) <code>externip</code> and <code>localnet</code> correctly set on your Asterisk server, (2) <code>nat=force_rport,comedia</code> on both general and peer sections, (3) RTP ports 10000-20000 open, (4) for WebRTC agents, a properly configured TURN server. If you're using hardware SIP phones at remote locations, a SIP-aware router (like those from Grandstream or Ubiquiti) that handles SIP ALG correctly makes a significant difference. Alternatively, move remote agents to ViciPhone — WebRTC with TURN solves NAT problems more reliably than SIP through consumer routers.</p>
+<h3 id="how-many-sip-channels-does-my-trunk-need">How many SIP channels does my trunk need?<a class="headerlink" href="#how-many-sip-channels-does-my-trunk-need" title="Permanent link">&para;</a></h3>
+<p>Multiply your agent count by your expected dial ratio. For predictive dialing at a 5:1 ratio with 50 agents, you need at least 250 simultaneous channels. Add 20% headroom for spikes, so 300 channels. Most SIP trunk providers sell in blocks or offer unlimited channels with per-minute billing. Check your provider's concurrent channel limit — it's often lower than you'd assume on basic plans.</p>
+<h3 id="how-do-i-debug-sip-registration-failures">How do I debug SIP registration failures?<a class="headerlink" href="#how-do-i-debug-sip-registration-failures" title="Permanent link">&para;</a></h3>
+<p>Run <code>asterisk -rx "sip set debug peer your-carrier-name"</code> and then trigger a registration with <code>asterisk -rx "sip reload"</code>. Watch the output for the SIP exchange. A 401 response means authentication failure (wrong credentials). A 403 means forbidden (IP not whitelisted, or account issue). A 408 timeout means the packets aren't reaching the carrier (firewall, DNS, or routing issue). Check DNS resolution with <code>dig sip.carrier.com</code> and verify outbound UDP 5060 isn't blocked.</p>
+<h3 id="does-asterisk-configuration-differ-in-a-vicidial-cluster">Does Asterisk configuration differ in a VICIdial cluster?<a class="headerlink" href="#does-asterisk-configuration-differ-in-a-vicidial-cluster" title="Permanent link">&para;</a></h3>
+<p>Yes. In a cluster, each telephony server runs its own Asterisk instance with its own <code>sip.conf</code>. Key differences: (1) each server has its own <code>externip</code> set to its own public IP, (2) <code>localnet</code> includes the private cluster network, (3) IAX2 trunks between dialers use the private network IPs, (4) each server registers independently to SIP carriers (or a subset of carriers for redundancy). The database server and web servers don't run Asterisk at all. See the <a href="/blog/vicidial-cluster-guide/">cluster guide</a> for the complete architecture.</p>
+<h3 id="how-do-i-monitor-asterisk-performance-in-production">How do I monitor Asterisk performance in production?<a class="headerlink" href="#how-do-i-monitor-asterisk-performance-in-production" title="Permanent link">&para;</a></h3>
+<p>Beyond the CLI commands covered above, set up automated monitoring. Use <code>asterisk -rx "core show channels count"</code> in a cron job piped to your monitoring system (Nagios, Zabbix, or Prometheus via the Asterisk exporter). Alert on: channel count approaching trunk limits, peer status changes (trunk going unreachable), and AMI connection failures. For call quality monitoring, enable RTCP statistics in <code>rtp.conf</code> with <code>rtcpinterval=5000</code> and collect jitter/packet loss metrics per call.</p>
+<h3 id="what-happens-to-my-asterisk-configuration-when-i-update-vicidial-via-svn">What happens to my Asterisk configuration when I update VICIdial via SVN?<a class="headerlink" href="#what-happens-to-my-asterisk-configuration-when-i-update-vicidial-via-svn" title="Permanent link">&para;</a></h3>
+<p>VICIdial's SVN update process (<code>svn update</code> followed by running the install scripts) regenerates <code>extensions.conf</code> and may update other Asterisk config files. This is why custom dialplan changes go in <code>extensions_custom.conf</code> — it survives updates. Your <code>sip.conf</code> trunk definitions are managed through the VICIdial admin Carriers page and get regenerated from the database, so they're safe. Manual edits to <code>sip.conf</code> outside of VICIdial's management (like custom global settings) should be documented so you can reapply them after updates. Better yet, put them in <code>sip_custom.conf</code> if your VICIdial version supports custom includes.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-asterisk-configuration">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

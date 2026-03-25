@@ -1,0 +1,2841 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-qa-scoring/">
+      
+      
+        <link rel="prev" href="../vicidial-political-campaigns/">
+      
+      
+        <link rel="next" href="../vicidial-realtime-agent-dashboard/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Quality Assurance Scoring with Call Recordings - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-quality-assurance-scoring-with-call-recordings" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Quality Assurance Scoring with Call Recordings
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-call-recording-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Call Recording in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Up Call Recording in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-file-location-and-database-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording File Location and Database Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qa-scorecard-design-for-outbound-sales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QA Scorecard Design for Outbound Sales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="QA Scorecard Design for Outbound Sales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-scorecard-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Scorecard Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scoring-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoring Scale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementing-scorecards-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing Scorecards in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing Scorecards in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-custom-mysql-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Custom MySQL Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-spreadsheet-based-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Spreadsheet-Based Scoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-calls-to-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many Calls to Score
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-search-and-playback-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Search and Playback Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Search and Playback Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-built-in-recording-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-in Recording Search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-faster-search-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Faster Search Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#playback-tips-for-qa-reviewers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Playback Tips for QA Reviewers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-qa-flagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated QA Flagging
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated QA Flagging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#duration-based-flagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Duration-Based Flagging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-based-flagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status-Based Flagging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silence-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Silence Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyword-spotting-basic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keyword Spotting (Basic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-coaching-based-on-qa-scores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Coaching Based on QA Scores
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Coaching Based on QA Scores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#weekly-coaching-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weekly Coaching Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-coaching-conversation-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Coaching Conversation Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracking-improvement-over-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracking Improvement Over Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calibration-sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibration Sessions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-recording-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Recording Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Recording Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-party-vs-two-party-consent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Party vs. Two-Party Consent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-vicidial-to-play-recording-disclosures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring VICIdial to Play Recording Disclosures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retention-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retention Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pci-dss-compliance-pausing-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCI-DSS Compliance: Pausing Recordings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-complete-qa-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Complete QA Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Complete QA Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#daily" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daily
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weekly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weekly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monthly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monthly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-call-recording-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Call Recording in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Up Call Recording in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-file-location-and-database-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording File Location and Database Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qa-scorecard-design-for-outbound-sales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QA Scorecard Design for Outbound Sales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="QA Scorecard Design for Outbound Sales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-scorecard-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Scorecard Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scoring-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoring Scale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementing-scorecards-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing Scorecards in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing Scorecards in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-custom-mysql-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Custom MySQL Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-spreadsheet-based-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Spreadsheet-Based Scoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-calls-to-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many Calls to Score
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-search-and-playback-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Search and Playback Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Search and Playback Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-built-in-recording-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-in Recording Search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-faster-search-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Faster Search Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#playback-tips-for-qa-reviewers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Playback Tips for QA Reviewers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-qa-flagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated QA Flagging
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated QA Flagging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#duration-based-flagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Duration-Based Flagging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-based-flagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status-Based Flagging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silence-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Silence Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyword-spotting-basic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keyword Spotting (Basic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-coaching-based-on-qa-scores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Coaching Based on QA Scores
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Coaching Based on QA Scores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#weekly-coaching-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weekly Coaching Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-coaching-conversation-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Coaching Conversation Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracking-improvement-over-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracking Improvement Over Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calibration-sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibration Sessions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-recording-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Recording Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Recording Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-party-vs-two-party-consent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Party vs. Two-Party Consent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-vicidial-to-play-recording-disclosures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring VICIdial to Play Recording Disclosures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retention-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retention Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pci-dss-compliance-pausing-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCI-DSS Compliance: Pausing Recordings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-complete-qa-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Complete QA Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Complete QA Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#daily" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daily
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weekly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weekly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monthly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monthly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-quality-assurance-scoring-with-call-recordings">VICIdial Quality Assurance Scoring with Call Recordings<a class="headerlink" href="#vicidial-quality-assurance-scoring-with-call-recordings" title="Permanent link">&para;</a></h1>
+<p>Quality assurance is where good call centers separate from great ones. You can optimize your dialer settings, tune your lead lists, and hire the best agents, but without a systematic QA process that scores calls, identifies coaching opportunities, and tracks improvement over time, you are flying blind. VICIdial includes robust call recording capabilities out of the box, but turning those recordings into an actionable QA workflow requires deliberate configuration and process design.</p>
+<p>This guide covers the full QA pipeline: setting up recording in VICIdial, designing scorecards that actually improve performance, efficiently searching and reviewing recordings, automating quality flagging, building a coaching process around scores, and meeting compliance recording requirements.</p>
+<h2 id="setting-up-call-recording-in-vicidial">Setting Up Call Recording in VICIdial<a class="headerlink" href="#setting-up-call-recording-in-vicidial" title="Permanent link">&para;</a></h2>
+<p>VICIdial supports multiple recording methods, each with different trade-offs for quality, storage, and resource usage.</p>
+<h3 id="recording-methods">Recording Methods<a class="headerlink" href="#recording-methods" title="Permanent link">&para;</a></h3>
+<p>VICIdial offers three recording approaches, configured at the campaign level:</p>
+<p><strong>1. Asterisk Native Recording (MONITOR)</strong></p>
+<div class="codehilite"><pre><span></span><code>Campaign &gt; Recording: ALLCALLS or ALLFORCE
+Recording Method: MONITOR
+</code></pre></div>
+
+<p>The MONITOR method uses Asterisk's <code>Monitor()</code> application, which records the call into two separate audio channels (agent and caller) and then mixes them into a single file. This gives you the ability to analyze each side independently, which is valuable for QA scoring.</p>
+<p><strong>2. MixMon Recording</strong></p>
+<div class="codehilite"><pre><span></span><code>Campaign &gt; Recording: ALLCALLS or ALLFORCE
+Recording Method: MIXMON
+</code></pre></div>
+
+<p>MixMon (<code>MixMonitor()</code>) records both channels into a single file in real time. It uses less CPU than MONITOR because it skips the post-call mixing step. The trade-off is that you lose the ability to isolate agent vs. caller audio.</p>
+<p><strong>3. Server-Side Trunk Recording</strong></p>
+<p>For environments where agent-side recording is not feasible (remote agents with unreliable connections), you can record at the trunk level using Asterisk's built-in recording on the inbound/outbound trunk channels.</p>
+<h3 id="recommended-configuration">Recommended Configuration<a class="headerlink" href="#recommended-configuration" title="Permanent link">&para;</a></h3>
+<p>For a QA-focused deployment, use these settings:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">Campaign</span><span class="w"> </span><span class="nt">Settings</span><span class="o">:</span>
+<span class="w">  </span><span class="nt">Recording</span><span class="o">:</span><span class="w"> </span><span class="nt">ALLFORCE</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="nt">Records</span><span class="w"> </span><span class="nt">every</span><span class="w"> </span><span class="nt">call</span><span class="o">,</span><span class="w"> </span><span class="nt">agents</span><span class="w"> </span><span class="nt">cannot</span><span class="w"> </span><span class="nt">disable</span>
+<span class="w">  </span><span class="nt">Recording</span><span class="w"> </span><span class="nt">Method</span><span class="o">:</span><span class="w"> </span><span class="nt">MIXMON</span><span class="w">     </span><span class="err">#</span><span class="w"> </span><span class="nt">Lower</span><span class="w"> </span><span class="nt">CPU</span><span class="o">,</span><span class="w"> </span><span class="nt">single</span><span class="w"> </span><span class="nt">file</span>
+<span class="w">  </span><span class="nt">Recording</span><span class="w"> </span><span class="nt">Format</span><span class="o">:</span><span class="w"> </span><span class="nt">WAV</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="nt">Uncompressed</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nt">quality</span><span class="o">;</span><span class="w"> </span><span class="nt">convert</span><span class="w"> </span><span class="nt">to</span><span class="w"> </span><span class="nt">MP3</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nt">storage</span><span class="w"> </span><span class="nt">later</span>
+</code></pre></div>
+
+<p>In VICIdial Admin, navigate to <strong>Campaigns &gt; [Your Campaign] &gt; Detail</strong> and set:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campaign Recording</td>
+<td>ALLFORCE</td>
+<td>Ensures 100% recording -- agents cannot toggle it off</td>
+</tr>
+<tr>
+<td>Campaign Rec Exten</td>
+<td>sip-vicidial</td>
+<td>Default recording extension</td>
+</tr>
+<tr>
+<td>Recording Filename</td>
+<td>FULLDATE_AGENT_CUSTPHONE</td>
+<td>Makes searching recordings easier</td>
+</tr>
+</tbody>
+</table>
+<h3 id="storage-planning">Storage Planning<a class="headerlink" href="#storage-planning" title="Permanent link">&para;</a></h3>
+<p>Call recordings consume significant storage. Plan for it:</p>
+<table>
+<thead>
+<tr>
+<th>Codec</th>
+<th>Per Minute</th>
+<th>Per Hour</th>
+<th>25 Agents x 6hr Talk/Day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WAV (16-bit, 8kHz)</td>
+<td>960 KB</td>
+<td>57 MB</td>
+<td>8.5 GB/day</td>
+</tr>
+<tr>
+<td>MP3 (32 kbps)</td>
+<td>240 KB</td>
+<td>14 MB</td>
+<td>2.1 GB/day</td>
+</tr>
+<tr>
+<td>GSM</td>
+<td>200 KB</td>
+<td>12 MB</td>
+<td>1.8 GB/day</td>
+</tr>
+</tbody>
+</table>
+<p>For long-term storage, convert recordings from WAV to MP3 after they have been reviewed:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /opt/vicistack/compress_recordings.sh</span>
+<span class="c1"># Convert WAV recordings older than 7 days to MP3</span>
+
+<span class="nv">RECORDING_DIR</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor&quot;</span>
+find<span class="w"> </span><span class="si">${</span><span class="nv">RECORDING_DIR</span><span class="si">}</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.wav&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+7<span class="w"> </span>-exec<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">  lame --quiet -b 32 &quot;$1&quot; &quot;${1%.wav}.mp3&quot; &amp;&amp; rm &quot;$1&quot;</span>
+<span class="s1">&#39;</span><span class="w"> </span>_<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+</code></pre></div>
+
+<p>Run this nightly via cron:</p>
+<div class="codehilite"><pre><span></span><code><span class="mf">0</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">vicistack</span><span class="o">/</span><span class="n">compress_recordings</span><span class="mf">.</span><span class="n">sh</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">recording</span><span class="o">-</span><span class="n">compress</span><span class="mf">.</span><span class="nb">log</span><span class="w"> </span><span class="mf">2</span><span class="o">&gt;</span><span class="err">&amp;</span><span class="mf">1</span>
+</code></pre></div>
+
+<h3 id="recording-file-location-and-database-mapping">Recording File Location and Database Mapping<a class="headerlink" href="#recording-file-location-and-database-mapping" title="Permanent link">&para;</a></h3>
+<p>Recordings are stored in <code>/var/spool/asterisk/monitor/</code> (or a custom path you configure) and referenced in the <code>recording_log</code> table:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">recording_id</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">server_ip</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="k">location</span><span class="p">,</span>
+<span class="w">       </span><span class="n">start_time</span><span class="p">,</span><span class="w"> </span><span class="n">end_time</span><span class="p">,</span><span class="w"> </span><span class="n">length_in_sec</span><span class="p">,</span><span class="w"> </span><span class="n">lead_id</span><span class="p">,</span><span class="w"> </span><span class="k">user</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">start_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">&#39;2026-03-18&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">start_time</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The <code>location</code> field contains the full URL or file path where the recording can be accessed. If you run multiple servers, ensure recordings are accessible from a central location (NFS mount, S3 sync, or a centralized web server).</p>
+<h2 id="qa-scorecard-design-for-outbound-sales">QA Scorecard Design for Outbound Sales<a class="headerlink" href="#qa-scorecard-design-for-outbound-sales" title="Permanent link">&para;</a></h2>
+<p>A QA scorecard turns subjective "that was a good call" observations into measurable, repeatable scores. The key is designing a scorecard that captures the behaviors that actually drive conversions, not a 50-point checklist that takes 20 minutes to complete.</p>
+<h3 id="core-scorecard-structure">Core Scorecard Structure<a class="headerlink" href="#core-scorecard-structure" title="Permanent link">&para;</a></h3>
+<p>For outbound sales campaigns, we recommend a scorecard with 5-7 categories and a 1-5 scale:</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Weight</th>
+<th>What to Evaluate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Opening</strong></td>
+<td>15%</td>
+<td>Identified themselves, stated purpose, asked permission to continue</td>
+</tr>
+<tr>
+<td><strong>Discovery</strong></td>
+<td>20%</td>
+<td>Asked qualifying questions, identified pain points, listened actively</td>
+</tr>
+<tr>
+<td><strong>Presentation</strong></td>
+<td>20%</td>
+<td>Presented solution clearly, connected features to pain points, used customer's language</td>
+</tr>
+<tr>
+<td><strong>Objection Handling</strong></td>
+<td>20%</td>
+<td>Addressed objections without being defensive, used approved rebuttals, maintained composure</td>
+</tr>
+<tr>
+<td><strong>Closing</strong></td>
+<td>15%</td>
+<td>Asked for the commitment, handled final concerns, set clear next steps</td>
+</tr>
+<tr>
+<td><strong>Compliance</strong></td>
+<td>10%</td>
+<td>Followed script requirements, disclosed required information, did not make unauthorized promises</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scoring-scale">Scoring Scale<a class="headerlink" href="#scoring-scale" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="mf">5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Exceptional</span><span class="w">  </span><span class="o">--</span><span class="w"> </span><span class="n">Textbook</span><span class="w"> </span><span class="n">execution</span><span class="p">,</span><span class="w"> </span><span class="n">could</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">training</span><span class="w"> </span><span class="n">example</span>
+<span class="mf">4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Proficient</span><span class="w">   </span><span class="o">--</span><span class="w"> </span><span class="n">Met</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="n">requirements</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">minor</span><span class="w"> </span><span class="n">gaps</span>
+<span class="mf">3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Acceptable</span><span class="w">   </span><span class="o">--</span><span class="w"> </span><span class="n">Met</span><span class="w"> </span><span class="n">minimum</span><span class="w"> </span><span class="n">requirements</span><span class="w"> </span><span class="n">but</span><span class="w"> </span><span class="n">missed</span><span class="w"> </span><span class="n">opportunities</span>
+<span class="mf">2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Needs</span><span class="w"> </span><span class="n">Work</span><span class="w">   </span><span class="o">--</span><span class="w"> </span><span class="n">Missed</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="n">elements</span><span class="p">,</span><span class="w"> </span><span class="n">coaching</span><span class="w"> </span><span class="n">required</span>
+<span class="mf">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Unacceptable</span><span class="w"> </span><span class="o">--</span><span class="w"> </span><span class="n">Failed</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">meet</span><span class="w"> </span><span class="n">requirements</span><span class="p">,</span><span class="w"> </span><span class="n">immediate</span><span class="w"> </span><span class="n">coaching</span><span class="w"> </span><span class="n">required</span>
+</code></pre></div>
+
+<h3 id="implementing-scorecards-in-vicidial">Implementing Scorecards in VICIdial<a class="headerlink" href="#implementing-scorecards-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>VICIdial does not have a built-in QA scorecard module, but you can implement one using custom fields and the callback/note system, or (more commonly) by building a lightweight external scoring tool that reads from VICIdial's <code>recording_log</code> table.</p>
+<h4 id="option-1-custom-mysql-table">Option 1: Custom MySQL Table<a class="headerlink" href="#option-1-custom-mysql-table" title="Permanent link">&para;</a></h4>
+<p>Create a dedicated QA scoring table:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicistack_qa_scores</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">score_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">recording_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">lead_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">agent_user</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">scorer_user</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">score_date</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="n">campaign_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+<span class="w">  </span><span class="n">call_date</span><span class="w"> </span><span class="n">DATETIME</span><span class="p">,</span>
+
+<span class="w">  </span><span class="c1">-- Category scores (1-5)</span>
+<span class="w">  </span><span class="n">opening_score</span><span class="w"> </span><span class="n">TINYINT</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">opening_score</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span>
+<span class="w">  </span><span class="n">discovery_score</span><span class="w"> </span><span class="n">TINYINT</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">discovery_score</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span>
+<span class="w">  </span><span class="n">presentation_score</span><span class="w"> </span><span class="n">TINYINT</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">presentation_score</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span>
+<span class="w">  </span><span class="n">objection_score</span><span class="w"> </span><span class="n">TINYINT</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">objection_score</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span>
+<span class="w">  </span><span class="n">closing_score</span><span class="w"> </span><span class="n">TINYINT</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">closing_score</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span>
+<span class="w">  </span><span class="n">compliance_score</span><span class="w"> </span><span class="n">TINYINT</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">compliance_score</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span>
+
+<span class="w">  </span><span class="c1">-- Weighted total (calculated on insert)</span>
+<span class="w">  </span><span class="n">weighted_total</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+
+<span class="w">  </span><span class="c1">-- Notes</span>
+<span class="w">  </span><span class="n">comments</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">coaching_notes</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">flagged_for_review</span><span class="w"> </span><span class="n">TINYINT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_agent</span><span class="w"> </span><span class="p">(</span><span class="n">agent_user</span><span class="p">,</span><span class="w"> </span><span class="n">call_date</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_campaign</span><span class="w"> </span><span class="p">(</span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">call_date</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_recording</span><span class="w"> </span><span class="p">(</span><span class="n">recording_id</span><span class="p">)</span>
+<span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Calculate the weighted score on insert:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Trigger to calculate weighted total</span>
+<span class="k">DELIMITER</span><span class="w"> </span><span class="o">//</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="n">qa_score_calc</span><span class="w"> </span><span class="k">BEFORE</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vicistack_qa_scores</span>
+<span class="k">FOR</span><span class="w"> </span><span class="k">EACH</span><span class="w"> </span><span class="k">ROW</span>
+<span class="k">BEGIN</span>
+<span class="w">  </span><span class="k">SET</span><span class="w"> </span><span class="k">NEW</span><span class="p">.</span><span class="n">weighted_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">opening_score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">15</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">    </span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">discovery_score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">    </span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">presentation_score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">    </span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">objection_score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">    </span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">closing_score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">15</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">    </span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">compliance_score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">)</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="k">END</span><span class="o">//</span>
+<span class="k">DELIMITER</span><span class="w"> </span><span class="p">;</span>
+</code></pre></div>
+
+<h4 id="option-2-spreadsheet-based-scoring">Option 2: Spreadsheet-Based Scoring<a class="headerlink" href="#option-2-spreadsheet-based-scoring" title="Permanent link">&para;</a></h4>
+<p>For smaller teams, a Google Sheet or Excel workbook linked to your recording URLs works well as a starting point. Pull recording metadata daily:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># Export today&#39;s recordings for QA review</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT r.recording_id, r.filename, r.start_time, r.length_in_sec,</span>
+<span class="s2">       r.user AS agent, r.lead_id, l.phone_number, l.first_name, l.last_name</span>
+<span class="s2">FROM recording_log r</span>
+<span class="s2">JOIN vicidial_list l ON r.lead_id = l.lead_id</span>
+<span class="s2">WHERE r.start_time &gt;= CURDATE()</span>
+<span class="s2">AND r.length_in_sec &gt; 30</span>
+<span class="s2">ORDER BY r.start_time</span>
+<span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39;\t&#39;</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/qa_review_<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.csv
+</code></pre></div>
+
+<h3 id="how-many-calls-to-score">How Many Calls to Score<a class="headerlink" href="#how-many-calls-to-score" title="Permanent link">&para;</a></h3>
+<p>For statistical significance with a 25-agent team:</p>
+<ul>
+<li><strong>Minimum</strong>: 5 calls per agent per week (125 total)</li>
+<li><strong>Recommended</strong>: 10 calls per agent per week (250 total)</li>
+<li><strong>New agents</strong>: 5 calls per day for the first 2 weeks</li>
+</ul>
+<p>Sample randomly, but weight toward:
+- Calls with extreme durations (very short or very long)
+- Calls from agents with declining conversion rates
+- Calls flagged by automated systems (covered below)</p>
+<h2 id="recording-search-and-playback-workflow">Recording Search and Playback Workflow<a class="headerlink" href="#recording-search-and-playback-workflow" title="Permanent link">&para;</a></h2>
+<p>An efficient search workflow is critical. If QA reviewers spend 10 minutes finding each recording, you will review far fewer calls.</p>
+<h3 id="vicidials-built-in-recording-search">VICIdial's Built-in Recording Search<a class="headerlink" href="#vicidials-built-in-recording-search" title="Permanent link">&para;</a></h3>
+<p>VICIdial's admin interface provides recording search under <strong>Reports &gt; Recording Lookup</strong>. You can search by:</p>
+<ul>
+<li>Date range</li>
+<li>Agent user ID</li>
+<li>Phone number</li>
+<li>Lead ID</li>
+<li>Campaign</li>
+<li>Call status (SALE, DNC, NI, etc.)</li>
+</ul>
+<h3 id="building-a-faster-search-interface">Building a Faster Search Interface<a class="headerlink" href="#building-a-faster-search-interface" title="Permanent link">&para;</a></h3>
+<p>For QA teams that review 50+ recordings per day, build a custom search page or script:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Find recordings to review: sales calls over 2 minutes from today</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">recording_id</span><span class="p">,</span>
+<span class="w">       </span><span class="n">r</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">agent</span><span class="p">,</span>
+<span class="w">       </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="p">,</span>
+<span class="w">       </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">,</span>
+<span class="w">       </span><span class="n">r</span><span class="p">.</span><span class="k">location</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">recording_url</span><span class="p">,</span>
+<span class="w">       </span><span class="n">l</span><span class="p">.</span><span class="n">phone_number</span><span class="p">,</span>
+<span class="w">       </span><span class="n">l</span><span class="p">.</span><span class="n">first_name</span><span class="p">,</span>
+<span class="w">       </span><span class="n">l</span><span class="p">.</span><span class="n">last_name</span><span class="p">,</span>
+<span class="w">       </span><span class="n">v</span><span class="p">.</span><span class="n">status</span><span class="p">,</span>
+<span class="w">       </span><span class="n">v</span><span class="p">.</span><span class="n">term_reason</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">r</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">vicidial_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">120</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="p">;</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Find an agent&#39;s worst calls (short duration, non-sale status)</span>
+<span class="c1">-- These often reveal coaching opportunities</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">recording_id</span><span class="p">,</span>
+<span class="w">       </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="p">,</span>
+<span class="w">       </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">,</span>
+<span class="w">       </span><span class="n">r</span><span class="p">.</span><span class="k">location</span><span class="p">,</span>
+<span class="w">       </span><span class="n">v</span><span class="p">.</span><span class="n">status</span><span class="p">,</span>
+<span class="w">       </span><span class="n">l</span><span class="p">.</span><span class="n">phone_number</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">r</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">vicidial_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;agent123&#39;</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">60</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;CALLBK&#39;</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="k">ASC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="playback-tips-for-qa-reviewers">Playback Tips for QA Reviewers<a class="headerlink" href="#playback-tips-for-qa-reviewers" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Use playback speed controls</strong>: Review at 1.25x or 1.5x speed. A 5-minute call takes 3.3 minutes at 1.5x, and you can still catch everything.</li>
+<li><strong>Skip dead air</strong>: If the first 15 seconds are ringing, start at the 20-second mark.</li>
+<li><strong>Flag timestamps</strong>: When you hear a notable moment (good objection handling, compliance issue, missed opportunity), note the timestamp for the coaching session.</li>
+<li><strong>Batch by agent</strong>: Review all of one agent's calls in sequence -- patterns emerge faster than reviewing random agents.</li>
+</ul>
+<h2 id="automated-qa-flagging">Automated QA Flagging<a class="headerlink" href="#automated-qa-flagging" title="Permanent link">&para;</a></h2>
+<p>Manual QA review is essential, but automation can prioritize which recordings need human attention first.</p>
+<h3 id="duration-based-flagging">Duration-Based Flagging<a class="headerlink" href="#duration-based-flagging" title="Permanent link">&para;</a></h3>
+<p>Calls that are unusually short or unusually long often indicate problems:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Flag calls shorter than 30 seconds (probable immediate hangup or wrong number)</span>
+<span class="c1">-- and longer than 20 minutes (probable compliance risk)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">recording_id</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">,</span>
+<span class="w">       </span><span class="k">CASE</span>
+<span class="w">         </span><span class="k">WHEN</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;SHORT_CALL&#39;</span>
+<span class="w">         </span><span class="k">WHEN</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1200</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;LONG_CALL&#39;</span>
+<span class="w">       </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">flag_reason</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">r</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="k">AND</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1200</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="status-based-flagging">Status-Based Flagging<a class="headerlink" href="#status-based-flagging" title="Permanent link">&para;</a></h3>
+<p>Flag recordings where the call status raises questions:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Flag SALE calls that were under 2 minutes (possible fraudulent disposition)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">recording_id</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">,</span>
+<span class="w">       </span><span class="n">v</span><span class="p">.</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">phone_number</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="n">r</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">vicidial_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">120</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">start_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">DAY</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="silence-detection">Silence Detection<a class="headerlink" href="#silence-detection" title="Permanent link">&para;</a></h3>
+<p>High silence percentage on a call often indicates an agent who is disengaged or a customer who has lost interest. While full speech analytics requires specialized tools, you can do basic silence detection with SOX:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># Detect recordings with high silence ratio</span>
+<span class="nv">RECORDING_DIR</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor&quot;</span>
+
+<span class="k">for</span><span class="w"> </span>wav<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="si">${</span><span class="nv">RECORDING_DIR</span><span class="si">}</span>/*<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>*.wav<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$wav</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">TOTAL_DURATION</span><span class="o">=</span><span class="k">$(</span>soxi<span class="w"> </span>-D<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$wav</span><span class="s2">&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="k">)</span>
+<span class="w">    </span><span class="nv">SILENCE_DURATION</span><span class="o">=</span><span class="k">$(</span>sox<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$wav</span><span class="s2">&quot;</span><span class="w"> </span>-n<span class="w"> </span>silence<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span>.5<span class="w"> </span><span class="m">0</span>.1%<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>reverse<span class="w"> </span>silence<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span>.5<span class="w"> </span><span class="m">0</span>.1%<span class="w"> </span>reverse<span class="w"> </span>stat<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>grep<span class="w"> </span><span class="s2">&quot;Length&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $3}&#39;</span><span class="k">)</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TOTAL_DURATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SILENCE_DURATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">      </span><span class="nv">SILENCE_PCT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;scale=0; (</span><span class="nv">$SILENCE_DURATION</span><span class="s2"> / </span><span class="nv">$TOTAL_DURATION</span><span class="s2">) * 100&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bc<span class="k">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SILENCE_PCT</span><span class="s2">&quot;</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">40</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;HIGH_SILENCE: </span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$wav</span><span class="k">)</span><span class="s2"> - </span><span class="si">${</span><span class="nv">SILENCE_PCT</span><span class="si">}</span><span class="s2">% silence&quot;</span>
+<span class="w">      </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<h3 id="keyword-spotting-basic">Keyword Spotting (Basic)<a class="headerlink" href="#keyword-spotting-basic" title="Permanent link">&para;</a></h3>
+<p>For basic keyword detection without investing in a full speech analytics platform, you can use open-source speech-to-text and grep for compliance keywords:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># Basic keyword spotting using Whisper (or similar STT)</span>
+<span class="c1"># Requires: whisper CLI installed</span>
+
+<span class="nv">RECORDING</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">KEYWORDS</span><span class="o">=</span><span class="s2">&quot;guarantee|promise|definitely will|100 percent|no risk|free money&quot;</span>
+
+<span class="c1"># Transcribe the recording</span>
+whisper<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$RECORDING</span><span class="s2">&quot;</span><span class="w"> </span>--model<span class="w"> </span>small<span class="w"> </span>--output_format<span class="w"> </span>txt<span class="w"> </span>--output_dir<span class="w"> </span>/tmp/
+
+<span class="c1"># Search transcript for flagged keywords</span>
+<span class="nv">TRANSCRIPT</span><span class="o">=</span><span class="s2">&quot;/tmp/</span><span class="k">$(</span>basename<span class="w"> </span><span class="si">${</span><span class="nv">RECORDING</span><span class="p">%.wav</span><span class="si">}</span><span class="k">)</span><span class="s2">.txt&quot;</span>
+<span class="k">if</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$KEYWORDS</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TRANSCRIPT</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FLAGGED: </span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$RECORDING</span><span class="k">)</span><span class="s2"> contains compliance-risk keywords&quot;</span>
+<span class="w">  </span>grep<span class="w"> </span>-inE<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$KEYWORDS</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TRANSCRIPT</span><span class="s2">&quot;</span>
+<span class="k">fi</span>
+</code></pre></div>
+
+<p>This is CPU-intensive, so run it on flagged recordings only (not every call), or use a dedicated processing server.</p>
+<h2 id="agent-coaching-based-on-qa-scores">Agent Coaching Based on QA Scores<a class="headerlink" href="#agent-coaching-based-on-qa-scores" title="Permanent link">&para;</a></h2>
+<p>QA scores are only valuable if they drive coaching conversations that improve performance. Here is a process that works.</p>
+<h3 id="weekly-coaching-reports">Weekly Coaching Reports<a class="headerlink" href="#weekly-coaching-reports" title="Permanent link">&para;</a></h3>
+<p>Generate a per-agent summary weekly:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Weekly agent QA summary</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">agent_user</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls_scored</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">weighted_total</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_score</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">opening_score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_opening</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">discovery_score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_discovery</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">presentation_score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_presentation</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">objection_score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_objection</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">closing_score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_closing</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">compliance_score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_compliance</span><span class="p">,</span>
+<span class="w">       </span><span class="k">MIN</span><span class="p">(</span><span class="n">weighted_total</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">worst_score</span><span class="p">,</span>
+<span class="w">       </span><span class="k">MAX</span><span class="p">(</span><span class="n">weighted_total</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">best_score</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicistack_qa_scores</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">score_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">agent_user</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">avg_score</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="the-coaching-conversation-structure">The Coaching Conversation Structure<a class="headerlink" href="#the-coaching-conversation-structure" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Start positive</strong>: Play the agent's highest-scored call from the week. Highlight what they did well.</li>
+<li><strong>Identify one focus area</strong>: Do not overwhelm them with 10 things to fix. Pick the category with the lowest average score.</li>
+<li><strong>Play the example</strong>: Play a specific recording where that category scored low. Ask the agent what they would do differently.</li>
+<li><strong>Role play</strong>: Practice the specific scenario with the corrected approach.</li>
+<li><strong>Set a measurable goal</strong>: "Next week, I want to see your discovery score average go from 2.3 to 3.0."</li>
+</ol>
+<h3 id="tracking-improvement-over-time">Tracking Improvement Over Time<a class="headerlink" href="#tracking-improvement-over-time" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- 4-week trend by agent</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">agent_user</span><span class="p">,</span>
+<span class="w">       </span><span class="n">YEARWEEK</span><span class="p">(</span><span class="n">score_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">week</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">weighted_total</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_score</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls_scored</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicistack_qa_scores</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">score_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">28</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">agent_user</span><span class="p">,</span><span class="w"> </span><span class="n">YEARWEEK</span><span class="p">(</span><span class="n">score_date</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">agent_user</span><span class="p">,</span><span class="w"> </span><span class="n">week</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="calibration-sessions">Calibration Sessions<a class="headerlink" href="#calibration-sessions" title="Permanent link">&para;</a></h3>
+<p>QA scores are only meaningful if scorers are consistent. Run monthly calibration sessions:</p>
+<ol>
+<li>Select 3 recordings (one good, one average, one poor)</li>
+<li>Have all QA scorers independently score each recording</li>
+<li>Compare scores. If any category differs by more than 1 point between scorers, discuss and align</li>
+<li>Document the calibration decisions as scoring precedents</li>
+</ol>
+<h2 id="compliance-recording-requirements">Compliance Recording Requirements<a class="headerlink" href="#compliance-recording-requirements" title="Permanent link">&para;</a></h2>
+<p>Depending on your jurisdiction and industry, you may have legal obligations around call recording.</p>
+<h3 id="one-party-vs-two-party-consent">One-Party vs. Two-Party Consent<a class="headerlink" href="#one-party-vs-two-party-consent" title="Permanent link">&para;</a></h3>
+<p>In the United States, recording laws vary by state:</p>
+<p><strong>One-Party Consent States</strong> (most states): Only one party needs to know the call is being recorded. Since your agent knows, you are covered without informing the customer.</p>
+<p><strong>Two-Party (All-Party) Consent States</strong>: All parties must be informed. These states include California, Connecticut, Florida, Illinois, Maryland, Massachusetts, Michigan, Montana, New Hampshire, Oregon, Pennsylvania, and Washington.</p>
+<p>If you dial into two-party consent states, you <strong>must</strong> play a recording notification or have agents verbally disclose at the start of every call:</p>
+<div class="codehilite"><pre><span></span><code><span class="s2">&quot;This call may be monitored or recorded for quality assurance purposes.&quot;</span>
+</code></pre></div>
+
+<h3 id="configuring-vicidial-to-play-recording-disclosures">Configuring VICIdial to Play Recording Disclosures<a class="headerlink" href="#configuring-vicidial-to-play-recording-disclosures" title="Permanent link">&para;</a></h3>
+<p>Set up an automated disclosure message in the campaign settings:</p>
+<div class="codehilite"><pre><span></span><code>Campaign &gt; Campaign Recording &gt; Recording Disclosure:
+  Recording Disclosure: Y
+  Recording Disclosure Message: &quot;recording_disclosure&quot;
+</code></pre></div>
+
+<p>Upload the audio file (<code>recording_disclosure.wav</code>) to <code>/var/lib/asterisk/sounds/</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Convert your disclosure recording to the correct format</span>
+sox<span class="w"> </span>recording_disclosure_original.wav<span class="w"> </span>-r<span class="w"> </span><span class="m">8000</span><span class="w"> </span>-c<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/var/lib/asterisk/sounds/recording_disclosure.wav
+</code></pre></div>
+
+<h3 id="retention-requirements">Retention Requirements<a class="headerlink" href="#retention-requirements" title="Permanent link">&para;</a></h3>
+<p>Different regulations require different retention periods:</p>
+<table>
+<thead>
+<tr>
+<th>Regulation</th>
+<th>Retention Period</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TCPA</td>
+<td>No specific requirement</td>
+<td>But maintain records for 4 years (statute of limitations)</td>
+</tr>
+<tr>
+<td>PCI-DSS</td>
+<td>Do NOT record credit card data</td>
+<td>Pause recording during payment collection</td>
+</tr>
+<tr>
+<td>HIPAA</td>
+<td>6 years minimum</td>
+<td>If handling healthcare-related calls</td>
+</tr>
+<tr>
+<td>State regulations</td>
+<td>Varies</td>
+<td>Check your state's requirements</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pci-dss-compliance-pausing-recordings">PCI-DSS Compliance: Pausing Recordings<a class="headerlink" href="#pci-dss-compliance-pausing-recordings" title="Permanent link">&para;</a></h3>
+<p>If agents collect credit card numbers over the phone, you must pause recording during the payment portion. VICIdial supports this with the agent interface's PAUSE RECORDING button, or you can automate it:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Campaign</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">Recording</span>:<span class="w"> </span><span class="nv">ALLFORCE</span>
+<span class="nv">Allow</span><span class="w"> </span><span class="nv">Recording</span><span class="w"> </span><span class="k">Pause</span>:<span class="w"> </span><span class="nv">Y</span>
+</code></pre></div>
+
+<p>Train agents to:
+1. Click "Pause Recording" before asking for the card number
+2. Collect payment information
+3. Click "Resume Recording" after the payment section</p>
+<p>Audit this regularly -- agents forgetting to pause is a PCI violation.</p>
+<h2 id="building-a-complete-qa-workflow">Building a Complete QA Workflow<a class="headerlink" href="#building-a-complete-qa-workflow" title="Permanent link">&para;</a></h2>
+<p>Here is the end-to-end workflow for a 25-agent center:</p>
+<h3 id="daily">Daily<a class="headerlink" href="#daily" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Automated flagging</strong> runs overnight, generating a priority review list</li>
+<li><strong>QA reviewer</strong> scores 50 calls (2 per agent) from the flagged + random pool</li>
+<li><strong>Scores entered</strong> into the QA scoring system</li>
+<li><strong>Critical flags</strong> (compliance issues, fraudulent dispositions) escalated to manager immediately</li>
+</ol>
+<h3 id="weekly">Weekly<a class="headerlink" href="#weekly" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Agent reports</strong> generated showing 7-day averages by category</li>
+<li><strong>Coaching sessions</strong> conducted for agents below threshold (weighted score &lt; 3.0)</li>
+<li><strong>Top performers</strong> recognized (weighted score &gt; 4.5)</li>
+</ol>
+<h3 id="monthly">Monthly<a class="headerlink" href="#monthly" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Calibration session</strong> with all QA scorers</li>
+<li><strong>Scorecard review</strong> -- adjust categories or weights based on what is driving conversions</li>
+<li><strong>Compliance audit</strong> -- verify all two-party consent disclosures are playing correctly</li>
+<li><strong>Storage management</strong> -- archive old recordings, verify retention compliance</li>
+</ol>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>Building a QA workflow from scratch on VICIdial requires database customization, recording infrastructure management, storage planning, and ongoing process optimization. Most 25+ agent centers do not have a dedicated VICIdial DBA who can build the custom scoring tables, automated flagging queries, and reporting dashboards described in this guide.</p>
+<p>ViciStack handles the QA infrastructure for VICIdial call centers:</p>
+<ul>
+<li><strong>Recording configuration</strong> optimized for storage efficiency and audio quality</li>
+<li><strong>Custom QA scoring tables</strong> integrated with your VICIdial database</li>
+<li><strong>Automated flagging</strong> for short calls, disposition anomalies, and silence detection</li>
+<li><strong>Agent performance dashboards</strong> showing QA trends alongside dial metrics</li>
+<li><strong>Storage management</strong> with automated compression, archiving, and retention compliance</li>
+<li><strong>Compliance configuration</strong> including recording disclosure setup and PCI pause automation</li>
+</ul>
+<p>We have seen QA programs increase agent conversion rates by 15-30% within 60 days when combined with proper coaching. The recordings are already there -- ViciStack helps you turn them into revenue.</p>
+<p><strong>Get a free analysis of your VICIdial recording and QA setup.</strong> We will review your recording configuration, storage usage, and show you exactly where coaching opportunities are hiding in your data.</p>
+<p><a href="https://vicistack.com/proof/">Request your free ViciStack analysis</a> -- response in under 5 minutes.</p>
+<h2 id="related-articles">Related Articles<a class="headerlink" href="#related-articles" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-database-partitioning">VICIdial Database Partitioning for High-Volume Call Centers</a> -- manage recording_log table growth</li>
+<li><a href="/blog/vicidial-remote-agent-setup">VICIdial Remote Agent Setup</a> -- ensure recording works for remote agents</li>
+<li><a href="/blog/vicidial-timezone-dialing-tcpa">VICIdial Timezone-Aware Dialing and TCPA Compliance</a> -- compliance extends beyond recordings</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-qa-scoring">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

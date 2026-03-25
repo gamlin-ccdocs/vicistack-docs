@@ -1,0 +1,3440 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-agent-coaching/">
+      
+      
+        <link rel="prev" href="../goautodial-to-vicidial-migration/">
+      
+      
+        <link rel="next" href="../vicidial-agent-efficiency-metrics/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Real-Time Agent Coaching Setup Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-real-time-agent-coaching-setup-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Real-Time Agent Coaching Setup Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-vicidials-three-coaching-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding VICIdial's Three Coaching Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding VICIdial&#39;s Three Coaching Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-monitor-listen-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Silent Monitor (Listen Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whisper-coach-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Whisper (Coach Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#barge-in-3-way-conference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Barge-In (3-Way Conference)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-silent-monitor-whisper-and-barge-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Silent Monitor, Whisper, and Barge-In
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring Silent Monitor, Whisper, and Barge-In">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-a-monitoring-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Starting a Monitoring Session
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Starting a Monitoring Session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-real-time-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the Real-Time Report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-the-manager-interface-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the Manager Interface (API)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-modes-during-a-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching Modes During a Session
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-configuration-for-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Configuration for Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-monitored-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Monitored Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-screen-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Screen Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Screen Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-built-in-screen-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-In Screen Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-time-agent-status-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-Time Agent Status Tracking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-dashboards-for-coaching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Dashboards for Coaching
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Dashboards for Coaching">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-coaching-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Coaching Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Coaching Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calls-per-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calls Per Hour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conversion-rate-by-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversion Rate by Agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#talk-time-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Talk Time Distribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-utilization-productive-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Utilization (Productive Time)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disposition-accuracy-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disposition Accuracy Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-coaching-dashboard-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Coaching Dashboard in Grafana
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-coaching-workflow-that-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Coaching Workflow That Actually Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Coaching Workflow That Actually Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-identify-coaching-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Identify Coaching Targets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-pre-coaching-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Pre-Coaching Preparation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-the-coaching-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: The Coaching Session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-post-coaching-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Post-Coaching Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-coaching-for-new-agents-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Coaching for New Agents (Onboarding)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-coaching-effectiveness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring Coaching Effectiveness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring Coaching Effectiveness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beforeafter-metrics-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before/After Metrics Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-wide-coaching-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team-Wide Coaching Impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roi-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROI Calculation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-coaching-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Coaching Techniques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Coaching Techniques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer-coaching-and-call-shadowing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Peer Coaching and Call Shadowing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-augmented-coaching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI-Augmented Coaching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calibration-sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibration Sessions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coaching-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coaching Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-coaching-pitfalls-and-how-to-avoid-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Coaching Pitfalls and How to Avoid Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Coaching Pitfalls and How to Avoid Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-1-coaching-everyone-the-same-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 1: Coaching Everyone the Same Way
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-2-coaching-without-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 2: Coaching Without Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-3-trying-to-fix-everything-at-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 3: Trying to Fix Everything at Once
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-4-no-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 4: No Follow-Up
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-5-only-coaching-bottom-performers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 5: Only Coaching Bottom Performers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-6-using-barge-in-as-a-crutch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 6: Using Barge-In as a Crutch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-enable-silent-monitoring-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I enable silent monitoring in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-agents-tell-when-theyre-being-monitored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can agents tell when they're being monitored?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-difference-between-whisper-and-barge-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the difference between whisper and barge-in?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-coach-each-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I coach each agent?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-agents-can-one-supervisor-effectively-coach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many agents can one supervisor effectively coach?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-monitor-remote-agents-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I monitor remote agents with VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-measure-whether-my-coaching-program-is-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I measure whether my coaching program is working?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-metrics-should-i-show-agents-during-a-coaching-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What metrics should I show agents during a coaching session?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-vicidial-support-recording-the-whisper-audio-during-coached-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does VICIdial support recording the whisper audio during coached calls?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-vicidials-three-coaching-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding VICIdial's Three Coaching Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding VICIdial&#39;s Three Coaching Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-monitor-listen-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Silent Monitor (Listen Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whisper-coach-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Whisper (Coach Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#barge-in-3-way-conference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Barge-In (3-Way Conference)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-silent-monitor-whisper-and-barge-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Silent Monitor, Whisper, and Barge-In
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring Silent Monitor, Whisper, and Barge-In">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-a-monitoring-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Starting a Monitoring Session
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Starting a Monitoring Session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-real-time-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the Real-Time Report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-the-manager-interface-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the Manager Interface (API)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-modes-during-a-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching Modes During a Session
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-configuration-for-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Configuration for Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-monitored-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Monitored Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-screen-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Screen Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Screen Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-built-in-screen-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-In Screen Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-time-agent-status-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-Time Agent Status Tracking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-dashboards-for-coaching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Dashboards for Coaching
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Dashboards for Coaching">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-coaching-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Coaching Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Coaching Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calls-per-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calls Per Hour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conversion-rate-by-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversion Rate by Agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#talk-time-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Talk Time Distribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-utilization-productive-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Utilization (Productive Time)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disposition-accuracy-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disposition Accuracy Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-coaching-dashboard-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Coaching Dashboard in Grafana
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-coaching-workflow-that-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Coaching Workflow That Actually Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Coaching Workflow That Actually Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-identify-coaching-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Identify Coaching Targets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-pre-coaching-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Pre-Coaching Preparation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-the-coaching-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: The Coaching Session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-post-coaching-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Post-Coaching Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-coaching-for-new-agents-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Coaching for New Agents (Onboarding)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-coaching-effectiveness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring Coaching Effectiveness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring Coaching Effectiveness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beforeafter-metrics-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before/After Metrics Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-wide-coaching-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team-Wide Coaching Impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roi-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROI Calculation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-coaching-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Coaching Techniques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Coaching Techniques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer-coaching-and-call-shadowing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Peer Coaching and Call Shadowing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-augmented-coaching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI-Augmented Coaching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calibration-sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibration Sessions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coaching-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coaching Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-coaching-pitfalls-and-how-to-avoid-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Coaching Pitfalls and How to Avoid Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Coaching Pitfalls and How to Avoid Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-1-coaching-everyone-the-same-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 1: Coaching Everyone the Same Way
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-2-coaching-without-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 2: Coaching Without Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-3-trying-to-fix-everything-at-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 3: Trying to Fix Everything at Once
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-4-no-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 4: No Follow-Up
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-5-only-coaching-bottom-performers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 5: Only Coaching Bottom Performers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-6-using-barge-in-as-a-crutch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 6: Using Barge-In as a Crutch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-enable-silent-monitoring-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I enable silent monitoring in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-agents-tell-when-theyre-being-monitored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can agents tell when they're being monitored?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-difference-between-whisper-and-barge-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the difference between whisper and barge-in?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-coach-each-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I coach each agent?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-agents-can-one-supervisor-effectively-coach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many agents can one supervisor effectively coach?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-monitor-remote-agents-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I monitor remote agents with VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-measure-whether-my-coaching-program-is-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I measure whether my coaching program is working?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-metrics-should-i-show-agents-during-a-coaching-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What metrics should I show agents during a coaching session?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-vicidial-support-recording-the-whisper-audio-during-coached-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does VICIdial support recording the whisper audio during coached calls?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-real-time-agent-coaching-setup-guide">VICIdial Real-Time Agent Coaching Setup Guide<a class="headerlink" href="#vicidial-real-time-agent-coaching-setup-guide" title="Permanent link">&para;</a></h1>
+<p><strong>The complete, practical guide to VICIdial's real-time coaching tools — silent monitor, whisper, barge-in, agent screen monitoring, performance-based coaching workflows, and how to measure whether your coaching actually moves the numbers.</strong></p>
+<hr />
+<p>Most call centers have the same coaching problem: they know they should be doing more of it, they have the tools sitting right there in VICIdial, and they still end up coaching reactively — pulling an agent aside after a bad call, reviewing a random recording once a week, or waiting until someone's numbers are so bad they're about to get fired.</p>
+<p>That's not coaching. That's damage control.</p>
+<p>Real coaching — the kind that actually improves conversion rates, reduces handle times, and retains agents — is systematic. It's data-driven. It happens in real time, not three days after the call. And VICIdial has every tool you need to do it. <a href="/glossary/silent-monitor/">Silent monitoring</a>, <a href="/glossary/whisper-coaching/">whisper coaching</a>, <a href="/glossary/barge-in/">barge-in</a>, agent screen monitoring, real-time status tracking, performance dashboards — it's all built in or easily configured.</p>
+<p>The problem isn't the toolset. The problem is that most operations never set it up properly, never build a repeatable coaching workflow around it, and never measure whether the coaching is actually working.</p>
+<p>This guide fixes that. We'll walk through every VICIdial coaching capability, show you how to configure each one, build a coaching workflow that identifies who needs help and when, and give you the queries and dashboards to prove it's working. If you're looking to layer AI-powered analysis on top of these fundamentals, see our <a href="/features/ai-coaching/">AI coaching feature</a> — but start here first.</p>
+<hr />
+<h2 id="understanding-vicidials-three-coaching-modes">Understanding VICIdial's Three Coaching Modes<a class="headerlink" href="#understanding-vicidials-three-coaching-modes" title="Permanent link">&para;</a></h2>
+<p>VICIdial provides three real-time call intervention modes, all accessible from the real-time report or the manager interface. Each serves a different purpose in the coaching workflow.</p>
+<h3 id="silent-monitor-listen-mode">Silent Monitor (Listen Mode)<a class="headerlink" href="#silent-monitor-listen-mode" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/silent-monitor/">Silent monitoring</a> lets a supervisor listen to a live call without the agent or the caller knowing. The supervisor hears both sides of the conversation in real time. No one on the call hears the supervisor.</p>
+<p><strong>When to use it:</strong></p>
+<ul>
+<li>Routine quality monitoring — listening to calls to evaluate script adherence, tone, objection handling</li>
+<li>Evaluating new agents during their first days on the floor</li>
+<li>Investigating customer complaints about specific agents</li>
+<li>Gathering examples of good calls for training purposes</li>
+<li>Pre-coaching — listening to an agent's calls before a coaching session to identify specific behaviors to address</li>
+</ul>
+<p><strong>How it works technically:</strong> VICIdial uses Asterisk's ChanSpy application under the hood. When a supervisor initiates silent monitor, the system creates a ChanSpy channel pointed at the agent's active call channel. The audio is mixed and sent to the supervisor's phone or softphone. The agent's channel is not modified, so there's no telltale beep or audio artifact.</p>
+<h3 id="whisper-coach-mode">Whisper (Coach Mode)<a class="headerlink" href="#whisper-coach-mode" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/whisper-coaching/">Whisper coaching</a> lets a supervisor speak to the agent during a live call without the caller hearing. The supervisor hears both sides. The agent hears the supervisor and the caller. The caller only hears the agent.</p>
+<p><strong>When to use it:</strong></p>
+<ul>
+<li>Real-time coaching during a call — feeding the agent rebuttals, product information, or pricing</li>
+<li>Guiding a new agent through their first live calls</li>
+<li>Helping an agent recover a call that's going sideways</li>
+<li>Walking an agent through a complex compliance disclosure</li>
+<li>Assisting with upsell or cross-sell opportunities in real time</li>
+</ul>
+<p><strong>How it works technically:</strong> Whisper uses Asterisk's ChanSpy with the whisper flag enabled. The supervisor's audio is injected into the agent's channel only, not the bridged caller channel. This means the caller has zero indication a third party is on the line.</p>
+<p><strong>Important limitation:</strong> Whisper requires the agent to be comfortable with receiving real-time instructions while simultaneously talking to a caller. This is a skill that takes practice. Don't throw agents into whisper coaching cold — let them know in advance and start with simple, short prompts ("ask about the warranty," "slow down") before attempting full rebuttal feeding.</p>
+<h3 id="barge-in-3-way-conference">Barge-In (3-Way Conference)<a class="headerlink" href="#barge-in-3-way-conference" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/barge-in/">Barge-in</a> puts the supervisor directly on the call as a three-way conference. All three parties — supervisor, agent, and caller — can hear each other and speak.</p>
+<p><strong>When to use it:</strong></p>
+<ul>
+<li>Escalation support — the agent needs a manager to close a deal or handle a complaint</li>
+<li>Compliance situations — a supervisor needs to deliver a required disclosure</li>
+<li>Saving a call from an agent who's completely lost</li>
+<li>Taking over a call from an agent who needs to be pulled off the floor</li>
+<li>Handling a hostile or threatening caller</li>
+</ul>
+<p><strong>When NOT to use it:</strong> Barge-in should be rare. If supervisors are barging into calls regularly, your training program has a problem. Barge-in is the emergency brake, not the steering wheel. Over-using it damages agent confidence and creates a culture where agents lean on supervisors instead of developing their own skills.</p>
+<hr />
+<h2 id="configuring-silent-monitor-whisper-and-barge-in">Configuring Silent Monitor, Whisper, and Barge-In<a class="headerlink" href="#configuring-silent-monitor-whisper-and-barge-in" title="Permanent link">&para;</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<p>Before setting up coaching modes, verify the following:</p>
+<p><strong>1. Manager user account with appropriate permissions</strong></p>
+<p>The supervisor or manager account needs specific permissions in VICIdial. Go to <strong>Admin → Users → [manager user]</strong> and verify:</p>
+<ul>
+<li><strong>User Level:</strong> 7 or higher (7 = manager, 8 = admin, 9 = superadmin). Level 6 and below cannot monitor.</li>
+<li><strong>Agent API access:</strong> Enabled (required for the monitoring functions)</li>
+<li><strong>Monitor allowed:</strong> Yes</li>
+<li><strong>Barge-in allowed:</strong> Yes (separate from monitor permission)</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Verify user permissions for coaching capabilities</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="n">user_level</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vdc_agent_api_access</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_users</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">user_level</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>2. Asterisk Manager Interface (AMI) configured</strong></p>
+<p>The monitoring functions work through Asterisk's AMI. Verify the manager connection is working on each dialer server:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check AMI is listening</span>
+ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">5038</span>
+
+<span class="c1"># Verify manager credentials from VICIdial</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;manager show connected&quot;</span>
+
+<span class="c1"># Test AMI connectivity from the web server</span>
+telnet<span class="w"> </span>dialer-server-ip<span class="w"> </span><span class="m">5038</span>
+</code></pre></div>
+
+<p>If AMI isn't responding, check <code>/etc/asterisk/manager.conf</code> for the correct credentials and permitted network ranges.</p>
+<p><strong>3. SIP/IAX phones for supervisors</strong></p>
+<p>Supervisors need a phone or softphone registered to the VICIdial Asterisk system. The monitoring audio is delivered to this phone. This can be:</p>
+<ul>
+<li>A hardware SIP phone at the supervisor's desk</li>
+<li>A software phone (Zoiper, MicroSIP, Linphone) on their computer</li>
+<li>A WebRTC phone if you're running VICIdial's WebRTC configuration</li>
+</ul>
+<p>The supervisor's phone extension must be configured in VICIdial under <strong>Admin → Phones</strong>. The phone must be registered and working before initiating monitoring.</p>
+<h3 id="starting-a-monitoring-session">Starting a Monitoring Session<a class="headerlink" href="#starting-a-monitoring-session" title="Permanent link">&para;</a></h3>
+<h4 id="from-the-real-time-report">From the Real-Time Report<a class="headerlink" href="#from-the-real-time-report" title="Permanent link">&para;</a></h4>
+<p>The fastest way to start monitoring is from VICIdial's real-time report at <code>/vicidial/realtime_report.php</code>:</p>
+<ol>
+<li>Locate the agent you want to monitor in the agent detail section</li>
+<li>Click the agent's row or the monitoring icon next to their name</li>
+<li>Select the monitoring mode:</li>
+<li><strong>MONITOR</strong> — silent listen</li>
+<li><strong>BARGE</strong> — barge-in (3-way)</li>
+<li><strong>WHISPER</strong> — whisper to agent only</li>
+<li>Your supervisor phone will ring. Answer it to begin the session.</li>
+</ol>
+<p>The monitoring session continues until the supervisor hangs up or the call ends. If the call ends and the agent takes another call, the monitoring session does NOT automatically continue to the next call — you'll need to initiate a new session.</p>
+<h4 id="from-the-manager-interface-api">From the Manager Interface (API)<a class="headerlink" href="#from-the-manager-interface-api" title="Permanent link">&para;</a></h4>
+<p>For more control, use VICIdial's non-agent API to initiate monitoring programmatically:</p>
+<div class="codehilite"><pre><span></span><code>http://your-vicidial-server/agc/api.php?source=test
+  &amp;function=blind_monitor
+  &amp;user=manager_user
+  &amp;pass=manager_pass
+  &amp;phone_login=manager_phone_extension
+  &amp;session_id=active_session_id
+  &amp;agent_user=agent_to_monitor
+  &amp;stage=MONITOR
+</code></pre></div>
+
+<p>Change <code>stage</code> to <code>WHISPER</code> or <code>BARGE</code> for those modes.</p>
+<p><strong>API parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phone_login</code></td>
+<td>The supervisor's phone extension</td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td>Active manager session ID</td>
+</tr>
+<tr>
+<td><code>agent_user</code></td>
+<td>Agent ID to monitor</td>
+</tr>
+<tr>
+<td><code>stage</code></td>
+<td>MONITOR, WHISPER, or BARGE</td>
+</tr>
+</tbody>
+</table>
+<p>This API approach is useful if you're building a custom supervisory interface or integrating coaching tools into a separate application.</p>
+<h4 id="switching-modes-during-a-session">Switching Modes During a Session<a class="headerlink" href="#switching-modes-during-a-session" title="Permanent link">&para;</a></h4>
+<p>You can switch between monitoring modes mid-call. If you start in silent monitor and realize the agent needs help, you can escalate to whisper without ending the session. From the real-time report, click the mode change option while monitoring is active.</p>
+<p>The escalation path typically goes: <strong>Silent Monitor → Whisper → Barge-In</strong>. Going in reverse (barge-in back to silent) is also possible but less common — once the caller knows a supervisor is on the line, dropping to silent feels awkward.</p>
+<h3 id="asterisk-configuration-for-monitoring">Asterisk Configuration for Monitoring<a class="headerlink" href="#asterisk-configuration-for-monitoring" title="Permanent link">&para;</a></h3>
+<p>VICIdial handles most of the Asterisk configuration automatically, but if monitoring isn't working, check these Asterisk settings:</p>
+<div class="codehilite"><pre><span></span><code>;<span class="w"> </span>In<span class="w"> </span>/etc/asterisk/features.conf<span class="w"> </span>(or<span class="w"> </span>featuremap<span class="w"> </span>section)
+;<span class="w"> </span>ChanSpy<span class="w"> </span>must<span class="w"> </span>be<span class="w"> </span>enabled
+
+;<span class="w"> </span>In<span class="w"> </span>/etc/asterisk/extensions.conf
+;<span class="w"> </span>VICIdial<span class="w"> </span>adds<span class="w"> </span>the<span class="w"> </span>monitoring<span class="w"> </span>context<span class="w"> </span>automatically
+;<span class="w"> </span>But<span class="w"> </span>verify<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>context<span class="w"> </span>exists:
+[monitor-agent]
+exten<span class="w"> </span>=&gt;<span class="w"> </span>_X.,1,ChanSpy(SIP/<span class="cp">${</span><span class="n">EXTEN</span><span class="cp">}</span>,qBw)
+</code></pre></div>
+
+<p>The ChanSpy flags control behavior:</p>
+<ul>
+<li><code>q</code> — quiet mode (no beep when entering the channel)</li>
+<li><code>B</code> — bridge mode (required for whisper)</li>
+<li><code>w</code> — whisper mode (supervisor audio goes to agent only)</li>
+</ul>
+<p>If agents hear a beep when monitoring starts, the <code>q</code> flag is missing. This immediately defeats the purpose of silent monitoring. Fix this in the dialplan or VICIdial's Asterisk configuration templates.</p>
+<h3 id="recording-monitored-calls">Recording Monitored Calls<a class="headerlink" href="#recording-monitored-calls" title="Permanent link">&para;</a></h3>
+<p>VICIdial records calls independently of monitoring sessions. The call recording continues regardless of whether a supervisor is monitoring. However, the default recording captures only the agent-caller audio — the supervisor's whisper or barge-in audio may or may not be included depending on your recording configuration.</p>
+<p>To ensure monitored sessions are fully captured (including supervisor audio during barge-in):</p>
+<ul>
+<li>Verify recording is set to <strong>server-side</strong> (MixMon or Monitor application), not client-side</li>
+<li>Barge-in audio is captured because the supervisor joins the call bridge</li>
+<li>Whisper audio may not be captured in the main recording because it's a separate audio stream injected into the agent channel</li>
+</ul>
+<p>For <a href="/glossary/quality-control/">quality control</a> purposes, note which calls were coached during the monitoring session so you can compare coached vs. uncoached performance.</p>
+<hr />
+<h2 id="agent-screen-monitoring">Agent Screen Monitoring<a class="headerlink" href="#agent-screen-monitoring" title="Permanent link">&para;</a></h2>
+<p>Audio monitoring is half the picture. VICIdial also supports screen monitoring — letting supervisors see what's on an agent's screen in real time. This is critical for identifying:</p>
+<ul>
+<li>Agents not following the script or call flow displayed on screen</li>
+<li>Data entry errors (wrong dispositions, incomplete lead records)</li>
+<li>Call avoidance behavior (agents slow-rolling disposition or deliberately staying in wrap-up)</li>
+<li>Technical issues (frozen screens, error messages, connectivity problems)</li>
+</ul>
+<h3 id="vicidials-built-in-screen-monitoring">VICIdial's Built-In Screen Monitoring<a class="headerlink" href="#vicidials-built-in-screen-monitoring" title="Permanent link">&para;</a></h3>
+<p>VICIdial's agent screen is a web application, which means screen monitoring can be accomplished through several methods:</p>
+<p><strong>1. Agent Screen Preview (built-in)</strong></p>
+<p>VICIdial includes an agent screen preview feature accessible from the real-time report. When viewing an agent in the real-time detail, the supervisor can open a read-only view of what the agent's screen shows — the current lead information, call status, script, and disposition options.</p>
+<p>This isn't a pixel-perfect screen mirror. It's a reconstructed view of the agent's VICIdial interface state based on database data. It shows:</p>
+<ul>
+<li>Current lead information displayed to the agent</li>
+<li>Active script and script position</li>
+<li>Call status and timer</li>
+<li>Available dispositions</li>
+<li>Agent's current status and queue position</li>
+</ul>
+<p><strong>2. Web-Based Screen Sharing</strong></p>
+<p>For full screen monitoring (including non-VICIdial applications the agent might have open), deploy a lightweight screen-sharing solution:</p>
+<ul>
+<li><strong>Apache Guacamole</strong> — open-source, web-based remote desktop gateway. Supervisors can view agent desktops through a browser without installing client software.</li>
+<li><strong>VNC with a web viewer</strong> — noVNC provides browser-based VNC access. Each agent workstation runs a VNC server, and supervisors connect through the web viewer.</li>
+</ul>
+<p>For remote agent teams, Guacamole is the best option. It works over standard HTTPS, doesn't require VPN, and supports view-only connections that prevent supervisors from accidentally interacting with the agent's screen.</p>
+<h3 id="real-time-agent-status-tracking">Real-Time Agent Status Tracking<a class="headerlink" href="#real-time-agent-status-tracking" title="Permanent link">&para;</a></h3>
+<p>Beyond screen monitoring, VICIdial's real-time status tracking gives you a second-by-second view of what every agent is doing. The <code>vicidial_live_agents</code> table is the source of truth:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Current agent status with time in state</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">vla</span><span class="p">.</span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vla</span><span class="p">.</span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vla</span><span class="p">.</span><span class="n">status</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vla</span><span class="p">.</span><span class="n">pause_code</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">SECOND</span><span class="p">,</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="n">last_state_change</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">())</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">seconds_in_state</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vla</span><span class="p">.</span><span class="n">callerid</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vla</span><span class="p">.</span><span class="n">lead_id</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vl</span><span class="p">.</span><span class="n">phone_number</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vl</span><span class="p">.</span><span class="n">first_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vl</span><span class="p">.</span><span class="n">last_name</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_live_agents</span><span class="w"> </span><span class="n">vla</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">vl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vla</span><span class="p">.</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">seconds_in_state</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>What to watch for in real-time status:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status Pattern</th>
+<th>What It Means</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PAUSED &gt; 10 min, no pause code</td>
+<td>Agent may be avoiding calls</td>
+<td>Investigate immediately</td>
+</tr>
+<tr>
+<td>PAUSED with BREAK code &gt; 20 min</td>
+<td>Extended break</td>
+<td>Check break schedule</td>
+</tr>
+<tr>
+<td>READY &gt; 3 min</td>
+<td>No calls coming in</td>
+<td>Dialer issue — check hopper and dial level</td>
+</tr>
+<tr>
+<td>INCALL &gt; avg talk time * 2</td>
+<td>Unusually long call</td>
+<td>May need assistance — silent monitor</td>
+</tr>
+<tr>
+<td>DISPO &gt; 2 min</td>
+<td>Slow disposition</td>
+<td>May need training on dispo workflow</td>
+</tr>
+</tbody>
+</table>
+<p>Track these patterns over time. An agent who consistently spends 90+ seconds in DISPO when the team average is 30 seconds is either being thorough with notes (good) or stalling before the next call (bad). Silent monitoring during their dispo phase will tell you which.</p>
+<hr />
+<h2 id="performance-dashboards-for-coaching">Performance Dashboards for Coaching<a class="headerlink" href="#performance-dashboards-for-coaching" title="Permanent link">&para;</a></h2>
+<p>Effective coaching starts with data. You need to identify which agents need coaching and what specific behaviors to address — before you ever listen to a call. VICIdial's database gives you everything you need to build coaching-focused dashboards.</p>
+<p>For a deeper dive into VICIdial's reporting infrastructure and how to set up Grafana dashboards, see our <a href="/blog/vicidial-reporting-monitoring/">VICIdial Reporting &amp; Real-Time Monitoring Guide</a>.</p>
+<h3 id="key-coaching-metrics">Key Coaching Metrics<a class="headerlink" href="#key-coaching-metrics" title="Permanent link">&para;</a></h3>
+<p>These are the metrics that tell you who needs coaching and what kind of coaching they need.</p>
+<h4 id="calls-per-hour">Calls Per Hour<a class="headerlink" href="#calls-per-hour" title="Permanent link">&para;</a></h4>
+<p>The most basic productivity metric. Measures how many calls an agent handles in an hour of logged-in time.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">val</span><span class="p">.</span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">MINUTE</span><span class="p">,</span>
+<span class="w">            </span><span class="k">MIN</span><span class="p">(</span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="p">),</span>
+<span class="w">            </span><span class="k">MAX</span><span class="p">(</span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="p">)</span>
+<span class="w">        </span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">hours_logged</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">NULLIF</span><span class="p">(</span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">MINUTE</span><span class="p">,</span>
+<span class="w">            </span><span class="k">MIN</span><span class="p">(</span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="p">),</span>
+<span class="w">            </span><span class="k">MAX</span><span class="p">(</span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="p">)</span>
+<span class="w">        </span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">calls_per_hour</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">val</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="k">user</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">hours_logged</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">calls_per_hour</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Sort ascending to find your lowest performers first. An agent handling 8 calls per hour when the team average is 15 has a problem — either excessive pausing, long dispo times, or system issues. This query tells you where to look; monitoring tells you why.</p>
+<h4 id="conversion-rate-by-agent">Conversion Rate by Agent<a class="headerlink" href="#conversion-rate-by-agent" title="Permanent link">&para;</a></h4>
+<p>The metric that matters most for revenue-generating campaigns:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">vl</span><span class="p">.</span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversion_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="n">STDDEV</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">stddev_talk_sec</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="k">user</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">total_calls</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">50</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">conversion_rate</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The <code>stddev_talk_sec</code> column is underrated. An agent with high standard deviation in talk time is inconsistent — some calls way too short, some way too long. Coaching should focus on consistency: what does a good call look like, and how do we replicate that pattern?</p>
+<h4 id="talk-time-distribution">Talk Time Distribution<a class="headerlink" href="#talk-time-distribution" title="Permanent link">&para;</a></h4>
+<p>Average talk time hides a lot. Two agents with the same 180-second average could have very different distributions — one might be consistently 170-190 seconds, while the other bounces between 60 and 400 seconds. The consistent agent is likely following a process. The inconsistent one is winging it.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">MIN</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">min_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">MAX</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">max_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="n">STDDEV</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">stddev_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">under_30s</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">120</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s1">&#39;30_to_120s&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">121</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s1">&#39;121_to_300s&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">over_300s</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">total_calls</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">50</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">stddev_sec</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Agents at the top of this list (highest standard deviation) are your primary coaching targets for process consistency. Listen to their short calls and long calls — you'll likely find they're skipping steps on short calls and rambling or losing control on long ones.</p>
+<h4 id="agent-utilization-productive-time">Agent Utilization (Productive Time)<a class="headerlink" href="#agent-utilization-productive-time" title="Permanent link">&para;</a></h4>
+<p><a href="/glossary/agent-utilization/">Agent utilization</a> measures how much of an agent's logged-in time is spent productively (talking to prospects or in dispo) versus waiting or pausing:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">talk_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">talk_min</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">dispo_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">dispo_min</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">wait_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">wait_min</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">pause_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">pause_min</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dispo_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dispo_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">wait_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">pause_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">productive_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="n">pause_sec</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dispo_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">wait_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">pause_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">pause_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">pause_pct</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>An agent with 35% pause time when the team average is 15% is either taking too many breaks, slow-rolling between calls, or having legitimate system issues. Sorting by <code>pause_pct</code> descending puts your biggest coaching opportunities at the top.</p>
+<h4 id="disposition-accuracy-check">Disposition Accuracy Check<a class="headerlink" href="#disposition-accuracy-check" title="Permanent link">&para;</a></h4>
+<p>Agents who consistently mis-disposition calls corrupt your data and your list management. This query identifies agents whose disposition patterns deviate significantly from the team norm:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">sale_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NI&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">ni_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;CALLBK&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">callback_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DNC&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">dnc_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">np_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">total_calls</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">50</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Compare each agent's disposition distribution against the team average. An agent with 40% "Not Interested" when the team average is 25% might be giving up too quickly. An agent with unusually high DNC dispositions might be using DNC as a way to remove leads they don't want to call back. Both are coaching opportunities.</p>
+<h3 id="building-a-coaching-dashboard-in-grafana">Building a Coaching Dashboard in Grafana<a class="headerlink" href="#building-a-coaching-dashboard-in-grafana" title="Permanent link">&para;</a></h3>
+<p>Combine the queries above into a Grafana dashboard specifically designed for coaching decisions. The recommended layout:</p>
+<p><strong>Row 1: Team Overview</strong>
+- Stat panel: Total agents logged in, average utilization, team conversion rate
+- Gauge: Current drop rate (for context — high drop rate affects agent performance)</p>
+<p><strong>Row 2: Agent Performance Table</strong>
+- Table panel showing all agents with: calls today, conversion rate (7-day), avg talk time, utilization %, pause %, calls/hour
+- Color-code cells: green for above team average, red for significantly below</p>
+<p><strong>Row 3: Coaching Priority List</strong>
+- Table filtered to agents more than one standard deviation below the team mean on key metrics
+- Sort by the metric that matters most for your campaign (conversion rate for sales, handle time for service)</p>
+<p><strong>Row 4: Trend Charts</strong>
+- Time series: Agent conversion rates over the past 30 days (identify declining performance)
+- Time series: Agent utilization over the past 30 days (identify emerging behavior issues)</p>
+<p>Set the dashboard refresh to 60 seconds. Supervisors should have this open alongside the real-time report. The real-time report tells you what's happening right now. The coaching dashboard tells you who needs help and why.</p>
+<blockquote>
+<p><strong>Not sure where your coaching gaps are?</strong> <a href="/free-audit/">Request a free ViciStack audit</a> and we'll analyze your agent performance data, identify your highest-impact coaching opportunities, and show you exactly where better coaching will move the revenue needle.</p>
+</blockquote>
+<hr />
+<h2 id="building-a-coaching-workflow-that-actually-works">Building a Coaching Workflow That Actually Works<a class="headerlink" href="#building-a-coaching-workflow-that-actually-works" title="Permanent link">&para;</a></h2>
+<p>Tools are useless without a process. Here's how to build a coaching workflow that systematically improves agent performance instead of reacting to problems after they've already cost you money.</p>
+<h3 id="step-1-identify-coaching-targets">Step 1: Identify Coaching Targets<a class="headerlink" href="#step-1-identify-coaching-targets" title="Permanent link">&para;</a></h3>
+<p>Run the coaching dashboard queries weekly (at minimum). Identify agents who fall into these categories:</p>
+<p><strong>Priority 1 — Immediate coaching needed:</strong>
+- Conversion rate more than 2 standard deviations below team average
+- Calls per hour less than 60% of team average
+- Pause time more than double the team average
+- Disposition patterns that suggest gaming (unusually high DNC, callback, or not-interested rates)</p>
+<p><strong>Priority 2 — Coaching opportunity:</strong>
+- Conversion rate 1-2 standard deviations below team average
+- Inconsistent talk times (high standard deviation)
+- Utilization declining over the past 2 weeks
+- New agents in their first 30 days (everyone needs coaching here)</p>
+<p><strong>Priority 3 — Reinforcement coaching:</strong>
+- Top performers — identify what they're doing right and document it for training
+- Average performers who could move to above-average with targeted intervention
+- Agents returning from extended absence</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Identify Priority 1 coaching targets</span>
+<span class="c1">-- Agents with conversion rate &gt; 2 stddev below team average</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">sub</span><span class="p">.</span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="n">sub</span><span class="p">.</span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">sub</span><span class="p">.</span><span class="n">conversions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">sub</span><span class="p">.</span><span class="n">conversion_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">team</span><span class="p">.</span><span class="n">team_avg_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">team</span><span class="p">.</span><span class="n">team_stddev</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">((</span><span class="n">sub</span><span class="p">.</span><span class="n">conversion_rate</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">team</span><span class="p">.</span><span class="n">team_avg_rate</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="n">team</span><span class="p">.</span><span class="n">team_stddev</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">z_score</span>
+<span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">SELECT</span>
+<span class="w">        </span><span class="k">user</span><span class="p">,</span>
+<span class="w">        </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">        </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversions</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">              </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversion_rate</span>
+<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">        </span><span class="k">AND</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="w">    </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+<span class="w">    </span><span class="k">HAVING</span><span class="w"> </span><span class="n">total_calls</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">50</span>
+<span class="p">)</span><span class="w"> </span><span class="n">sub</span>
+<span class="k">CROSS</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">SELECT</span>
+<span class="w">        </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">agent_rate</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">team_avg_rate</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ROUND</span><span class="p">(</span><span class="n">STDDEV</span><span class="p">(</span><span class="n">agent_rate</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">team_stddev</span>
+<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="k">SELECT</span>
+<span class="w">            </span><span class="k">user</span><span class="p">,</span>
+<span class="w">            </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">                  </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">agent_rate</span>
+<span class="w">        </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="w">        </span><span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">            </span><span class="k">AND</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">            </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="w">        </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+<span class="w">        </span><span class="k">HAVING</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">50</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="n">rates</span>
+<span class="p">)</span><span class="w"> </span><span class="n">team</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="p">(</span><span class="n">sub</span><span class="p">.</span><span class="n">conversion_rate</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">team</span><span class="p">.</span><span class="n">team_avg_rate</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="n">team</span><span class="p">.</span><span class="n">team_stddev</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">z_score</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Agents with a z-score below -2 are your Priority 1 coaching targets. They're performing significantly below the team, and the gap is too large to be random variation.</p>
+<h3 id="step-2-pre-coaching-preparation">Step 2: Pre-Coaching Preparation<a class="headerlink" href="#step-2-pre-coaching-preparation" title="Permanent link">&para;</a></h3>
+<p>Before sitting down with an agent, do the work:</p>
+<p><strong>1. Pull their metrics for the past 2 weeks.</strong> Get specific: conversion rate, calls per hour, average talk time, pause percentage, disposition distribution. Compare to team averages and to their own historical performance. Is this a new decline or a consistent pattern?</p>
+<p><strong>2. Silent monitor 5-10 of their calls.</strong> Don't just listen to one bad call. Listen to enough calls to identify patterns. Common patterns you'll find:</p>
+<ul>
+<li><strong>Rushing the opener</strong> — agent doesn't build rapport, jumps straight to the pitch</li>
+<li><strong>Weak objection handling</strong> — agent accepts the first "no" instead of working through it</li>
+<li><strong>Talking too much</strong> — agent doesn't ask questions, doesn't let the prospect talk</li>
+<li><strong>Poor closing</strong> — agent presents well but never actually asks for the sale</li>
+<li><strong>Script non-compliance</strong> — agent is off-script, missing required disclosures or key talking points</li>
+<li><strong>Dead air</strong> — agent can't find information, long pauses while searching the system</li>
+</ul>
+<p><strong>3. Pull 2-3 specific call recordings as examples.</strong> Have concrete examples ready. "Your conversion rate is low" is not coaching. "On this call at 2:14 PM on Tuesday, you got the objection 'I need to think about it' and you said 'okay, thanks for your time' — let's talk about how to handle that differently" is coaching.</p>
+<p><strong>4. Check if there are systemic issues.</strong> Before assuming it's a skill problem, verify:
+- Is the agent getting the same lead quality as other agents? (Check list assignment and lead recycling)
+- Is the agent's dialer connection working properly? (Check audio quality, latency)
+- Did something change in the campaign recently? (New list, new script, pricing change)</p>
+<h3 id="step-3-the-coaching-session">Step 3: The Coaching Session<a class="headerlink" href="#step-3-the-coaching-session" title="Permanent link">&para;</a></h3>
+<p>Keep it structured. A coaching session should be 15-30 minutes and follow this format:</p>
+<p><strong>1. Data review (3 minutes).</strong> Show the agent their metrics compared to team averages. No judgment — just numbers. "Here's where you are, here's where the team is."</p>
+<p><strong>2. Call review (10-15 minutes).</strong> Play the specific recordings you identified. Pause at key moments. Ask the agent what they were thinking. Often, agents know what went wrong but don't know how to fix it.</p>
+<p><strong>3. Skill building (5-10 minutes).</strong> Focus on ONE specific behavior to change. Not five things — one thing. Role-play the scenario. Have the agent practice the new approach with you. For objection handling, go through the specific objection they're struggling with until they can deliver the rebuttal naturally.</p>
+<p><strong>4. Action items (2 minutes).</strong> One measurable goal for the next week. "Increase your conversion rate from 3.2% to 4.0%" is measurable. "Do better on calls" is not.</p>
+<h3 id="step-4-post-coaching-monitoring">Step 4: Post-Coaching Monitoring<a class="headerlink" href="#step-4-post-coaching-monitoring" title="Permanent link">&para;</a></h3>
+<p>This is where most coaching programs fail. The session happens, the agent nods along, goes back on the floor, and nothing changes because nobody follows up.</p>
+<p><strong>Within 24 hours of the coaching session:</strong>
+- Silent monitor 3-5 of the agent's calls
+- Check if the specific behavior discussed in coaching is being applied
+- If yes, send a quick positive message (Slack, email, whatever your team uses)
+- If no, consider a brief follow-up conversation — the behavior change didn't stick</p>
+<p><strong>At 3 days:</strong>
+- Pull updated metrics and compare to pre-coaching baseline
+- Silent monitor 2-3 more calls
+- Are you seeing the behavior change?</p>
+<p><strong>At 7 days:</strong>
+- Full metrics comparison: pre-coaching week vs. post-coaching week
+- If metrics improved, acknowledge it publicly (team leaderboards, shout-outs)
+- If metrics didn't improve, schedule a follow-up coaching session focused on the same behavior</p>
+<p><strong>At 30 days:</strong>
+- Final assessment: did coaching produce a sustained improvement?
+- Document the outcome (improved, partially improved, no change)
+- Use this data to evaluate and refine your coaching approach</p>
+<h3 id="step-5-coaching-for-new-agents-onboarding">Step 5: Coaching for New Agents (Onboarding)<a class="headerlink" href="#step-5-coaching-for-new-agents-onboarding" title="Permanent link">&para;</a></h3>
+<p>New agent coaching follows a more intensive schedule. During the first two weeks, supervisors should be monitoring new agents on the majority of their calls. For a complete onboarding process, see our <a href="/blog/call-center-agent-onboarding/">Call Center Agent Onboarding Checklist</a>.</p>
+<p><strong>Days 1-3: Nesting</strong>
+- Supervisor monitors every call via whisper
+- Active whisper coaching on every call — feeding rebuttals, guiding the flow
+- End-of-day review of all calls with the agent
+- Goal: agent can get through the script without major supervisor intervention</p>
+<p><strong>Days 4-7: Supervised independence</strong>
+- Silent monitor 50% of calls
+- Whisper only when the agent is about to lose a call
+- Brief mid-day and end-of-day check-ins
+- Goal: agent handles routine calls independently, escalates appropriately</p>
+<p><strong>Days 8-14: Spot monitoring</strong>
+- Silent monitor 10-20% of calls (random sampling)
+- No whisper unless specifically requested by the agent
+- Daily metrics review
+- Goal: agent is performing within 80% of team average</p>
+<p><strong>After 30 days:</strong>
+- Transition to standard coaching cadence (same as tenured agents)
+- If agent is still significantly below team average after 30 days of intensive coaching, have a frank conversation about fit</p>
+<hr />
+<h2 id="measuring-coaching-effectiveness">Measuring Coaching Effectiveness<a class="headerlink" href="#measuring-coaching-effectiveness" title="Permanent link">&para;</a></h2>
+<p>If you can't measure it, you can't improve it. Here's how to prove that your coaching program is actually working — or identify that it isn't so you can fix your approach.</p>
+<h3 id="beforeafter-metrics-query">Before/After Metrics Query<a class="headerlink" href="#beforeafter-metrics-query" title="Permanent link">&para;</a></h3>
+<p>Run this query for each agent who has gone through a coaching session. Replace the dates with the coaching session date:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Compare agent performance: 7 days before coaching vs. 7 days after</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;Before Coaching&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">period</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversion_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="n">STDDEV</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">stddev_talk_sec</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;AGENT_ID&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-04&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s1">&#39;2026-03-11&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+
+<span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;After Coaching&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">period</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">conversion_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="n">STDDEV</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">stddev_talk_sec</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;AGENT_ID&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-11&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s1">&#39;2026-03-18&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>What to look for:</strong>
+- <strong>Conversion rate increase:</strong> Direct measure of coaching impact on the target skill
+- <strong>Talk time change:</strong> If coaching focused on building rapport, talk time should increase slightly. If it focused on efficiency, it might decrease.
+- <strong>Standard deviation decrease:</strong> If coaching focused on consistency, the spread in talk times should narrow
+- <strong>Call volume change:</strong> Did coaching affect the agent's pace? (Sometimes fixing one issue temporarily slows agents down as they focus on the new behavior)</p>
+<h3 id="team-wide-coaching-impact">Team-Wide Coaching Impact<a class="headerlink" href="#team-wide-coaching-impact" title="Permanent link">&para;</a></h3>
+<p>Track the aggregate impact of your coaching program across all agents:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Monthly coaching effectiveness: compare team metrics month-over-month</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">call_date</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">month</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">user</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">active_agents</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_conversions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">team_conversion_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="n">STDDEV</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">team_stddev_talk</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="n">STDDEV</span><span class="p">(</span>
+<span class="w">            </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">THEN</span>
+<span class="w">                </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl2</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;SET&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">                       </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">                 </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl2</span>
+<span class="w">                 </span><span class="k">WHERE</span><span class="w"> </span><span class="n">vl2</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">.</span><span class="k">user</span>
+<span class="w">                   </span><span class="k">AND</span><span class="w"> </span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">vl2</span><span class="p">.</span><span class="n">call_date</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">vicidial_log</span><span class="p">.</span><span class="n">call_date</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">))</span>
+<span class="w">            </span><span class="k">END</span>
+<span class="w">        </span><span class="p">),</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">agent_performance_spread</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="k">MONTH</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">call_date</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">month</span><span class="p">;</span>
+</code></pre></div>
+
+<p>A good coaching program should show two trends over time:</p>
+<ol>
+<li><strong>Team conversion rate increasing</strong> — the overall average goes up</li>
+<li><strong>Performance spread decreasing</strong> — the gap between top and bottom performers narrows (bottom performers improve, bringing the floor up)</li>
+</ol>
+<p>If you see the average increasing but the spread staying the same, your coaching is only reaching agents who would have improved anyway. If the spread is decreasing but the average isn't moving, your top performers are getting worse (possibly because supervisors are spending all their time on bottom performers and neglecting skill maintenance for the A-players).</p>
+<h3 id="roi-calculation">ROI Calculation<a class="headerlink" href="#roi-calculation" title="Permanent link">&para;</a></h3>
+<p>Coaching costs money — supervisor time is expensive. Calculate whether it's paying off:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Coaching</span><span class="w"> </span><span class="n">ROI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Revenue</span><span class="w"> </span><span class="n">gain</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">improved</span><span class="w"> </span><span class="n">conversions</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Cost</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">coaching</span><span class="w"> </span><span class="n">time</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Cost</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">coaching</span><span class="w"> </span><span class="n">time</span>
+
+<span class="n">Revenue</span><span class="w"> </span><span class="n">gain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Post</span><span class="o">-</span><span class="n">coaching</span><span class="w"> </span><span class="n">conversion</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Pre</span><span class="o">-</span><span class="n">coaching</span><span class="w"> </span><span class="n">conversion</span><span class="w"> </span><span class="n">rate</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Total</span><span class="w"> </span><span class="n">calls</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Revenue</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">conversion</span>
+
+<span class="n">Coaching</span><span class="w"> </span><span class="n">cost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Supervisor</span><span class="w"> </span><span class="n">hours</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Supervisor</span><span class="w"> </span><span class="n">hourly</span><span class="w"> </span><span class="n">cost</span><span class="w"> </span><span class="p">(</span><span class="n">fully</span><span class="w"> </span><span class="n">loaded</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Example:</strong> A supervisor spends 4 hours per week coaching 5 agents (45 minutes of prep + 15 minutes of session per agent). Those 5 agents collectively handle 2,000 calls per week. After coaching, their conversion rate improves from 3.5% to 4.2%. Revenue per conversion is $50.</p>
+<ul>
+<li>Revenue gain per week: (0.042 - 0.035) * 2,000 * $50 = $700</li>
+<li>Coaching cost per week: 4 hours * $35/hour = $140</li>
+<li>ROI: ($700 - $140) / $140 = 400%</li>
+</ul>
+<p>That's a 4x return. And this is conservative — it doesn't account for reduced agent turnover (coached agents stay longer), improved customer satisfaction, or the compounding effect of sustained improvement.</p>
+<hr />
+<h2 id="advanced-coaching-techniques">Advanced Coaching Techniques<a class="headerlink" href="#advanced-coaching-techniques" title="Permanent link">&para;</a></h2>
+<h3 id="peer-coaching-and-call-shadowing">Peer Coaching and Call Shadowing<a class="headerlink" href="#peer-coaching-and-call-shadowing" title="Permanent link">&para;</a></h3>
+<p>Not all coaching needs to come from supervisors. Pair high-performing agents with struggling agents and let them listen to each other's calls. VICIdial's silent monitor isn't limited to manager accounts — you can grant monitoring permissions to senior agents.</p>
+<p>Set up a peer coaching program:</p>
+<ol>
+<li>Create a user level (Level 6 or 7) with monitor permissions but not barge-in</li>
+<li>Assign top performers as "peer coaches" — 2-3 hours per week of monitoring time</li>
+<li>Peer coaches listen to their assigned agent's calls and provide feedback</li>
+<li>Supervisors review peer coach notes and spot-check the coaching quality</li>
+</ol>
+<p>This scales your coaching capacity dramatically. One supervisor can coach 5-8 agents per week. Add 4 peer coaches and you've doubled or tripled your coaching coverage.</p>
+<h3 id="ai-augmented-coaching">AI-Augmented Coaching<a class="headerlink" href="#ai-augmented-coaching" title="Permanent link">&para;</a></h3>
+<p>The future of call center coaching isn't replacing human coaches — it's giving them better data. AI tools can analyze every call automatically, flagging specific moments that need coaching attention. Instead of randomly sampling calls, supervisors can go straight to the calls and moments that matter.</p>
+<p>For details on how AI-powered quality analysis works with VICIdial, see our <a href="/blog/ai-call-center-quality-control/">AI quality control guide</a> and the <a href="/features/ai-coaching/">AI coaching feature page</a>. The key capabilities:</p>
+<ul>
+<li><strong>Automatic call scoring</strong> — every call gets a quality score based on script adherence, sentiment, and outcome</li>
+<li><strong>Keyword and phrase detection</strong> — flag calls where required disclosures were missed or prohibited language was used</li>
+<li><strong>Sentiment analysis</strong> — identify calls where the customer or agent became frustrated</li>
+<li><strong>Talk-to-listen ratio</strong> — automatically flag agents who are talking too much and not listening enough</li>
+</ul>
+<p>AI doesn't replace the coaching conversation. It replaces the hours of random call listening that supervisors do to find coaching opportunities. See our <a href="/features/ai-quality-control/">AI quality control feature</a> for implementation details.</p>
+<h3 id="calibration-sessions">Calibration Sessions<a class="headerlink" href="#calibration-sessions" title="Permanent link">&para;</a></h3>
+<p>Calibration ensures that all supervisors and coaches are evaluating calls consistently. Without calibration, one supervisor might rate a call as "excellent" while another rates the same call as "needs improvement."</p>
+<p>Run monthly calibration sessions:</p>
+<ol>
+<li>Select 3-5 recorded calls that represent a range of quality levels</li>
+<li>Have all supervisors and coaches independently score each call using your QA scorecard</li>
+<li>Compare scores and discuss discrepancies</li>
+<li>Agree on scoring standards and document edge cases</li>
+<li>Track inter-rater reliability over time — the goal is consistency, not perfection</li>
+</ol>
+<h3 id="coaching-documentation">Coaching Documentation<a class="headerlink" href="#coaching-documentation" title="Permanent link">&para;</a></h3>
+<p>Track every coaching session in a simple log. At minimum, record:</p>
+<ul>
+<li>Agent name and ID</li>
+<li>Date of coaching session</li>
+<li>Specific behavior addressed</li>
+<li>Pre-coaching metric (e.g., "conversion rate 2.8% over past 7 days")</li>
+<li>Action item assigned</li>
+<li>Follow-up date</li>
+<li>Post-coaching metric (filled in at follow-up)</li>
+<li>Outcome (improved / partially improved / no change)</li>
+</ul>
+<p>This documentation serves three purposes: it holds coaches accountable for follow-up, it provides data to evaluate the coaching program itself, and it creates a paper trail for HR purposes if performance issues escalate beyond coaching.</p>
+<blockquote>
+<p><strong>Want help building a coaching program that moves your numbers?</strong> <a href="/free-audit/">Schedule a free ViciStack audit</a> — we'll review your current agent performance data, identify your top coaching opportunities, and help you build a repeatable process that delivers measurable ROI.</p>
+</blockquote>
+<hr />
+<h2 id="common-coaching-pitfalls-and-how-to-avoid-them">Common Coaching Pitfalls and How to Avoid Them<a class="headerlink" href="#common-coaching-pitfalls-and-how-to-avoid-them" title="Permanent link">&para;</a></h2>
+<h3 id="pitfall-1-coaching-everyone-the-same-way">Pitfall 1: Coaching Everyone the Same Way<a class="headerlink" href="#pitfall-1-coaching-everyone-the-same-way" title="Permanent link">&para;</a></h3>
+<p>New agents need different coaching than tenured agents. Agents struggling with product knowledge need different coaching than agents struggling with call control. Don't run the same coaching playbook for everyone.</p>
+<p><strong>Fix:</strong> Categorize coaching needs into buckets — product knowledge, objection handling, call control, compliance, efficiency — and tailor your approach. Use the diagnostic queries above to identify which bucket each agent falls into.</p>
+<h3 id="pitfall-2-coaching-without-data">Pitfall 2: Coaching Without Data<a class="headerlink" href="#pitfall-2-coaching-without-data" title="Permanent link">&para;</a></h3>
+<p>"I listened to a call and it didn't sound great" is not a coaching plan. Without data, coaching becomes subjective, inconsistent, and impossible to measure.</p>
+<p><strong>Fix:</strong> Always start with metrics. Pull the numbers before you pull an agent off the floor. Use the z-score query to identify who actually needs coaching versus who's just having a bad day.</p>
+<h3 id="pitfall-3-trying-to-fix-everything-at-once">Pitfall 3: Trying to Fix Everything at Once<a class="headerlink" href="#pitfall-3-trying-to-fix-everything-at-once" title="Permanent link">&para;</a></h3>
+<p>Giving an agent a list of 10 things to improve guarantees they'll improve at none of them. Human behavior change works one habit at a time.</p>
+<p><strong>Fix:</strong> Pick the ONE behavior that will have the biggest impact on the target metric. Coach that until it sticks (usually 2-3 weeks). Then move to the next one.</p>
+<h3 id="pitfall-4-no-follow-up">Pitfall 4: No Follow-Up<a class="headerlink" href="#pitfall-4-no-follow-up" title="Permanent link">&para;</a></h3>
+<p>The coaching session is 10% of the work. The follow-up — monitoring, measuring, reinforcing — is 90%. Most coaching programs fail here.</p>
+<p><strong>Fix:</strong> Schedule the follow-up before ending the coaching session. Put it in the calendar. Run the before/after query. Close the loop.</p>
+<h3 id="pitfall-5-only-coaching-bottom-performers">Pitfall 5: Only Coaching Bottom Performers<a class="headerlink" href="#pitfall-5-only-coaching-bottom-performers" title="Permanent link">&para;</a></h3>
+<p>Your middle performers have the highest coaching ROI. Moving an agent from the 30th percentile to the 50th percentile is harder than moving an agent from the 50th to the 70th. Your mid-tier agents have the skills — they just need refinement.</p>
+<p><strong>Fix:</strong> Allocate coaching time proportionally: 40% to bottom performers, 40% to middle performers, 20% to top performers (for skill reinforcement and leadership development).</p>
+<h3 id="pitfall-6-using-barge-in-as-a-crutch">Pitfall 6: Using Barge-In as a Crutch<a class="headerlink" href="#pitfall-6-using-barge-in-as-a-crutch" title="Permanent link">&para;</a></h3>
+<p>If supervisors are barging into calls multiple times per shift, you have a training problem, not a coaching problem. Barge-in should be reserved for genuine escalations.</p>
+<p><strong>Fix:</strong> Track barge-in frequency. If a supervisor is barging into more than 2-3 calls per day, investigate why. If it's always the same agents, those agents need intensive nesting-style coaching (or a reassessment of their readiness for the floor).</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-do-i-enable-silent-monitoring-in-vicidial">How do I enable silent monitoring in VICIdial?<a class="headerlink" href="#how-do-i-enable-silent-monitoring-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>Silent monitoring is available by default for manager-level users (Level 7+). Verify the user has <code>monitor_allowed</code> set to Yes in their user profile (<strong>Admin → Users → [user]</strong>). The supervisor also needs a registered phone or softphone connected to VICIdial's Asterisk system. To start monitoring, go to the real-time report, find the agent, and click the MONITOR option. The supervisor's phone will ring — answer it to begin listening. If monitoring fails, check that the AMI (Asterisk Manager Interface) is running and accessible on port 5038, and that the ChanSpy application is available in your Asterisk dialplan.</p>
+<h3 id="can-agents-tell-when-theyre-being-monitored">Can agents tell when they're being monitored?<a class="headerlink" href="#can-agents-tell-when-theyre-being-monitored" title="Permanent link">&para;</a></h3>
+<p>Not if it's configured correctly. VICIdial uses Asterisk's ChanSpy in quiet mode, which suppresses the default beep that ChanSpy normally plays when entering a channel. If agents hear a beep, the <code>q</code> (quiet) flag is missing from the ChanSpy configuration — check your Asterisk dialplan. That said, experienced agents often know monitoring happens and may assume they're being listened to at any time. This is actually desirable — the possibility of monitoring improves compliance even when no one is actually listening.</p>
+<h3 id="whats-the-difference-between-whisper-and-barge-in">What's the difference between whisper and barge-in?<a class="headerlink" href="#whats-the-difference-between-whisper-and-barge-in" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/whisper-coaching/">Whisper</a> allows the supervisor to speak to the agent without the caller hearing. The caller has no idea a third party is involved. <a href="/glossary/barge-in/">Barge-in</a> puts the supervisor on the call as a full participant — all three parties can hear and speak to each other. Use whisper for real-time coaching during a call (feeding rebuttals, guidance). Use barge-in for escalations where the supervisor needs to interact directly with the caller (closing a deal, handling a complaint, delivering required disclosures).</p>
+<h3 id="how-often-should-i-coach-each-agent">How often should I coach each agent?<a class="headerlink" href="#how-often-should-i-coach-each-agent" title="Permanent link">&para;</a></h3>
+<p>New agents (first 30 days): daily monitoring, formal coaching sessions 2-3 times per week. Struggling agents (Priority 1): formal coaching session weekly with daily monitoring follow-up. Average agents: formal coaching session every 2-3 weeks, spot monitoring weekly. Top performers: monthly skill reinforcement sessions. Adjust frequency based on results — if an agent improves rapidly, reduce frequency. If improvement stalls, increase it. The key is consistent follow-up regardless of session frequency.</p>
+<h3 id="how-many-agents-can-one-supervisor-effectively-coach">How many agents can one supervisor effectively coach?<a class="headerlink" href="#how-many-agents-can-one-supervisor-effectively-coach" title="Permanent link">&para;</a></h3>
+<p>A full-time supervisor can typically maintain active coaching relationships with 12-15 agents. This assumes about 45 minutes of total time per agent per week (prep, monitoring, session, follow-up). For intensive coaching (new agents, Priority 1 performers), the ratio drops to 5-8 agents because each one needs more monitoring and more frequent sessions. Scale coaching capacity with peer coaching programs — train your top agents to monitor and provide feedback, and you can double your coverage without adding supervisory headcount.</p>
+<h3 id="can-i-monitor-remote-agents-with-vicidial">Can I monitor remote agents with VICIdial?<a class="headerlink" href="#can-i-monitor-remote-agents-with-vicidial" title="Permanent link">&para;</a></h3>
+<p>Yes. VICIdial's monitoring features work the same regardless of agent location — the monitoring happens at the Asterisk level, not the agent's physical location. As long as the remote agent is logged into VICIdial and their SIP phone is registered, you can silent monitor, whisper, and barge-in exactly as you would with an on-site agent. For screen monitoring of remote agents, use a web-based solution like Apache Guacamole or a VNC web viewer. The supervisor accesses everything through a browser — no VPN required if you configure it over HTTPS.</p>
+<h3 id="how-do-i-measure-whether-my-coaching-program-is-working">How do I measure whether my coaching program is working?<a class="headerlink" href="#how-do-i-measure-whether-my-coaching-program-is-working" title="Permanent link">&para;</a></h3>
+<p>Track three metrics over time: (1) <strong>Team conversion rate</strong> — should trend upward as coaching improves agent skills; (2) <strong>Performance spread</strong> — the standard deviation of agent conversion rates should decrease as bottom performers improve; (3) <strong>Coaching ROI</strong> — calculate the revenue gain from improved conversions minus the cost of supervisor time spent coaching. Run the before/after query from this guide for every coached agent and track the results in a coaching log. If you're not seeing measurable improvement after 60 days of consistent coaching, the problem is usually in the coaching method (too many behaviors at once, no follow-up) rather than the agents themselves.</p>
+<h3 id="what-metrics-should-i-show-agents-during-a-coaching-session">What metrics should I show agents during a coaching session?<a class="headerlink" href="#what-metrics-should-i-show-agents-during-a-coaching-session" title="Permanent link">&para;</a></h3>
+<p>Show them their own numbers compared to the team average — never compared to specific other agents by name. The key metrics to display: conversion rate, calls per hour, average talk time, and pause percentage. Keep it to 3-4 numbers maximum. Then show them the specific metric you're coaching on, with a clear target: "Your conversion rate is 3.2%, team average is 4.8%, your target for next week is 3.8%." Avoid overwhelming agents with data. The goal is to make the coaching concrete and measurable, not to drown them in dashboards. After the session, agents should be able to articulate exactly one thing they're going to do differently and exactly what number they're trying to move.</p>
+<h3 id="does-vicidial-support-recording-the-whisper-audio-during-coached-calls">Does VICIdial support recording the whisper audio during coached calls?<a class="headerlink" href="#does-vicidial-support-recording-the-whisper-audio-during-coached-calls" title="Permanent link">&para;</a></h3>
+<p>By default, VICIdial's call recordings capture the agent-caller audio stream. Whisper audio exists on a separate channel injected into the agent's earpiece, and it is not always included in the standard recording. Barge-in audio, however, is captured because the supervisor joins the actual call bridge. If you need to record whisper sessions for QA review of your coaching itself, configure server-side recording with MixMon and verify that the mixed audio includes all channels. Alternatively, have supervisors take timestamped notes during whisper sessions documenting what guidance was provided — this is often more useful than the audio anyway, since whisper coaching tends to be short phrases that lack context without the coaching plan.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-agent-coaching">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,3875 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-ivr-setup/">
+      
+      
+        <link rel="prev" href="../vicidial-inbound-setup/">
+      
+      
+        <link rel="next" href="../vicidial-kamailio-load-balancing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-ivr-setup-inbound-call-routing-auto-attendant" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicidial-inbound-call-routing-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Inbound Call Routing Actually Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How VICIdial Inbound Call Routing Actually Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-did-where-everything-starts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The DID: Where Everything Starts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#call-menus-the-heart-of-vicidials-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Menus: The Heart of VICIdial's IVR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Call Menus: The Heart of VICIdial&#39;s IVR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-your-first-call-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Your First Call Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-call-menu-option-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Call Menu Option Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu-prompt-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Menu Prompt Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audio-prompts-recording-formatting-and-uploading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Prompts: Recording, Formatting, and Uploading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audio Prompts: Recording, Formatting, and Uploading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-format-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Format Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-audio-with-sox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Converting Audio with SOX
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-via-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uploading via VICIdial Admin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-via-the-asterisk-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording via the Asterisk CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#professional-recording-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Professional Recording Tips
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inbound-groups-where-calls-meet-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inbound Groups: Where Calls Meet Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Inbound Groups: Where Calls Meet Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-an-inbound-group-for-ivr-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating an Inbound Group for IVR Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-assignment-closer-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Assignment: Closer Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hold-music-and-queue-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hold Music and Queue Announcements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-based-routing-business-hours-holidays-and-overflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-Based Routing: Business Hours, Holidays, and Overflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time-Based Routing: Business Hours, Holidays, and Overflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-call-times" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Call Times
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-menu-time-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Menu Time Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-zone-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Zone Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-level-ivr-building-complex-menu-trees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Level IVR: Building Complex Menu Trees
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Level IVR: Building Complex Menu Trees">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture-call-menu-chains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture: Call Menu Chains
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-three-level-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three-Level Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#language-selection-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Language Selection IVR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dtmf-routing-beyond-simple-key-presses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DTMF Routing: Beyond Simple Key Presses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DTMF Routing: Beyond Simple Key Presses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-digit-vs-multi-digit-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-Digit vs. Multi-Digit Input
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dtmf-mode-must-match-end-to-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DTMF Mode Must Match End-to-End
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-options-t-i-and" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special Options: t, i, and *
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-dialplan-integration-for-advanced-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Dialplan Integration for Advanced IVR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Dialplan Integration for Advanced IVR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-dialplan-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Dialplan Extensions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agi-scripts-for-dynamic-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AGI Scripts for Dynamic IVR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integrating-custom-dialplan-with-vicidial-call-menus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integrating Custom Dialplan with VICIdial Call Menus
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-to-ivr-mapping-managing-multiple-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID-to-IVR Mapping: Managing Multiple Numbers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID-to-IVR Mapping: Managing Multiple Numbers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-hub-and-spoke-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hub-and-Spoke Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#did-specific-greetings-with-shared-menus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID-Specific Greetings with Shared Menus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracking-did-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracking DID Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overflow-and-failover-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overflow and Failover Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overflow and Failover Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue-overflow-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue Overflow Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inter-site-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inter-Site Failover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-hours-failover-to-external-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Failover to External Numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-your-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Your IVR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Your IVR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-complete-test-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Complete Test Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-ivr-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring IVR Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-ivr-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World IVR Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World IVR Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-1-simple-auto-attendant-5-agent-shop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 1: Simple Auto-Attendant (5-Agent Shop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-2-bilingual-multi-department-50-agent-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 2: Bilingual Multi-Department (50-Agent Center)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-3-enterprise-multi-site-with-overflow-200-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 3: Enterprise Multi-Site with Overflow (200+ Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-ivr-mistakes-and-how-to-fix-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common IVR Mistakes and How to Fix Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common IVR Mistakes and How to Fix Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mistake-1-too-many-options-per-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 1: Too Many Options Per Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-2-no-timeout-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 2: No Timeout Handler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-3-wrong-audio-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 3: Wrong Audio Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-4-not-testing-after-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 4: Not Testing After Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-5-ignoring-the-caller-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 5: Ignoring the Caller Experience
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-call-menu-levels-can-i-create-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many Call Menu levels can I create in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-vicidials-ivr-for-outbound-call-transfers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use VICIdial's IVR for outbound call transfers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-arent-dtmf-key-presses-being-recognized-in-my-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why aren't DTMF key presses being recognized in my IVR?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-set-up-different-ivr-greetings-for-different-times-of-day" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I set up different IVR greetings for different times of day?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-route-calls-differently-based-on-the-callers-phone-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I route calls differently based on the caller's phone number?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-difference-between-a-call-menu-and-an-inbound-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the difference between a Call Menu and an Inbound Group?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-add-a-dial-by-name-directory-to-my-vicidial-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I add a dial-by-name directory to my VICIdial IVR?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-monitor-ivr-performance-and-identify-bottlenecks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I monitor IVR performance and identify bottlenecks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicidial-inbound-call-routing-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Inbound Call Routing Actually Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How VICIdial Inbound Call Routing Actually Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-did-where-everything-starts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The DID: Where Everything Starts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#call-menus-the-heart-of-vicidials-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Menus: The Heart of VICIdial's IVR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Call Menus: The Heart of VICIdial&#39;s IVR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-your-first-call-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Your First Call Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-call-menu-option-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Call Menu Option Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu-prompt-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Menu Prompt Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audio-prompts-recording-formatting-and-uploading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Prompts: Recording, Formatting, and Uploading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audio Prompts: Recording, Formatting, and Uploading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-format-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Format Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-audio-with-sox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Converting Audio with SOX
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-via-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uploading via VICIdial Admin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-via-the-asterisk-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording via the Asterisk CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#professional-recording-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Professional Recording Tips
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inbound-groups-where-calls-meet-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inbound Groups: Where Calls Meet Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Inbound Groups: Where Calls Meet Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-an-inbound-group-for-ivr-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating an Inbound Group for IVR Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-assignment-closer-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Assignment: Closer Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hold-music-and-queue-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hold Music and Queue Announcements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-based-routing-business-hours-holidays-and-overflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-Based Routing: Business Hours, Holidays, and Overflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time-Based Routing: Business Hours, Holidays, and Overflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-call-times" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Call Times
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-menu-time-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Menu Time Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-zone-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Zone Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-level-ivr-building-complex-menu-trees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Level IVR: Building Complex Menu Trees
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Level IVR: Building Complex Menu Trees">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture-call-menu-chains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture: Call Menu Chains
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-three-level-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three-Level Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#language-selection-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Language Selection IVR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dtmf-routing-beyond-simple-key-presses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DTMF Routing: Beyond Simple Key Presses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DTMF Routing: Beyond Simple Key Presses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-digit-vs-multi-digit-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-Digit vs. Multi-Digit Input
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dtmf-mode-must-match-end-to-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DTMF Mode Must Match End-to-End
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-options-t-i-and" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special Options: t, i, and *
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-dialplan-integration-for-advanced-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Dialplan Integration for Advanced IVR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Dialplan Integration for Advanced IVR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-dialplan-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Dialplan Extensions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agi-scripts-for-dynamic-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AGI Scripts for Dynamic IVR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integrating-custom-dialplan-with-vicidial-call-menus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integrating Custom Dialplan with VICIdial Call Menus
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-to-ivr-mapping-managing-multiple-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID-to-IVR Mapping: Managing Multiple Numbers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID-to-IVR Mapping: Managing Multiple Numbers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-hub-and-spoke-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hub-and-Spoke Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#did-specific-greetings-with-shared-menus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID-Specific Greetings with Shared Menus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracking-did-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracking DID Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overflow-and-failover-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overflow and Failover Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overflow and Failover Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue-overflow-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue Overflow Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inter-site-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inter-Site Failover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-hours-failover-to-external-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Failover to External Numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-your-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Your IVR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Your IVR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-complete-test-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Complete Test Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-ivr-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring IVR Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-ivr-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World IVR Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World IVR Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-1-simple-auto-attendant-5-agent-shop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 1: Simple Auto-Attendant (5-Agent Shop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-2-bilingual-multi-department-50-agent-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 2: Bilingual Multi-Department (50-Agent Center)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-3-enterprise-multi-site-with-overflow-200-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 3: Enterprise Multi-Site with Overflow (200+ Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-ivr-mistakes-and-how-to-fix-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common IVR Mistakes and How to Fix Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common IVR Mistakes and How to Fix Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mistake-1-too-many-options-per-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 1: Too Many Options Per Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-2-no-timeout-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 2: No Timeout Handler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-3-wrong-audio-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 3: Wrong Audio Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-4-not-testing-after-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 4: Not Testing After Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mistake-5-ignoring-the-caller-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mistake 5: Ignoring the Caller Experience
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-call-menu-levels-can-i-create-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many Call Menu levels can I create in VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-vicidials-ivr-for-outbound-call-transfers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use VICIdial's IVR for outbound call transfers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-arent-dtmf-key-presses-being-recognized-in-my-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why aren't DTMF key presses being recognized in my IVR?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-set-up-different-ivr-greetings-for-different-times-of-day" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I set up different IVR greetings for different times of day?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-route-calls-differently-based-on-the-callers-phone-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I route calls differently based on the caller's phone number?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-difference-between-a-call-menu-and-an-inbound-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the difference between a Call Menu and an Inbound Group?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-add-a-dial-by-name-directory-to-my-vicidial-ivr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I add a dial-by-name directory to my VICIdial IVR?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-monitor-ivr-performance-and-identify-bottlenecks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I monitor IVR performance and identify bottlenecks?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-ivr-setup-inbound-call-routing-auto-attendant">VICIdial IVR Setup: Inbound Call Routing &amp; Auto-Attendant<a class="headerlink" href="#vicidial-ivr-setup-inbound-call-routing-auto-attendant" title="Permanent link">&para;</a></h1>
+<p><em>Customers call your number. They hear silence for three seconds, then a robot voice says "please hold," then they wait in a queue for four minutes while a distorted MP3 loops, then they hang up. Your abandonment rate is 40% and your agents are asking why the phone never rings. Meanwhile, the guy who set up your IVR two years ago no longer works here and nobody knows which call menu routes where.</em></p>
+<p><em>This is the VICIdial IVR guide that fixes all of that.</em></p>
+<p>VICIdial's <a href="/glossary/ivr/">IVR</a> system is built around a feature called <strong>Call Menus</strong> — the admin-level configuration that controls what callers hear, which <a href="/glossary/dtmf/">DTMF</a> key presses route where, and how calls flow from a <a href="/glossary/did/">DID</a> to an agent's headset. It's powerful, flexible, and — if you've never set one up before — surprisingly unintuitive. The admin GUI gives you a blank form with 20+ fields, no tooltips, and documentation that assumes you already know how IVR routing works.</p>
+<p>We've built IVR systems on VICIdial for everything from 3-option auto-attendants to 6-level-deep menu trees with time-of-day routing, language selection, account number lookups, and overflow to external numbers. This guide covers the entire stack: DID configuration, <a href="/glossary/call-menu/">call menu</a> setup, DTMF routing, <a href="/glossary/inbound-group/">inbound group</a> integration, audio prompts, time-based routing, multi-level IVR architectures, Asterisk <a href="/glossary/dialplan/">dialplan</a> integration, and the mistakes that cause callers to end up in the wrong queue — or nowhere at all.</p>
+<hr />
+<h2 id="how-vicidial-inbound-call-routing-actually-works">How VICIdial Inbound Call Routing Actually Works<a class="headerlink" href="#how-vicidial-inbound-call-routing-actually-works" title="Permanent link">&para;</a></h2>
+<p>Before touching any configuration, you need to understand the chain of events that happens when someone dials your number. Every inbound call in VICIdial follows this path:</p>
+<ol>
+<li><strong>Carrier delivers the call</strong> to your Asterisk server via a SIP trunk</li>
+<li><strong>Asterisk receives the INVITE</strong> and matches the called number (DID) against the dialplan</li>
+<li><strong>VICIdial's dialplan routes the DID</strong> to the appropriate handler — either a Call Menu (IVR) or directly to an Inbound Group (queue)</li>
+<li><strong>If routed to a Call Menu</strong>, the caller hears a prompt, presses a key, and the call routes based on DTMF input</li>
+<li><strong>The call reaches an Inbound Group</strong>, which queues it and delivers it to an available agent based on priority, skill, and wait time</li>
+</ol>
+<p>The critical concept: <strong>DIDs, Call Menus, and Inbound Groups are three separate objects in VICIdial, and they connect like a chain.</strong> A DID points to a Call Menu OR an Inbound Group. A Call Menu's DTMF options point to other Call Menus OR Inbound Groups. Get one link wrong and calls either dead-end or route to the wrong place.</p>
+<h3 id="the-did-where-everything-starts">The DID: Where Everything Starts<a class="headerlink" href="#the-did-where-everything-starts" title="Permanent link">&para;</a></h3>
+<p>A DID (Direct Inward Dial) is the phone number your customers call. In VICIdial, you configure DIDs under Admin &gt; Inbound DID. Each DID entry tells VICIdial what to do when a call arrives for that number.</p>
+<p>When your carrier delivers an inbound call, Asterisk matches the dialed number against VICIdial's DID table. If it finds a match, it routes according to that DID's configuration. If it doesn't find a match, the call hits the default context and typically gets a "number not in service" treatment — or worse, dead air.</p>
+<p>Key fields when creating a DID:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DID Extension</td>
+<td>The phone number (E.164 or as delivered by carrier)</td>
+<td>15551234567</td>
+</tr>
+<tr>
+<td>DID Route</td>
+<td>Where to send the call</td>
+<td>CALLMENU, IN_GROUP, or AGENT</td>
+</tr>
+<tr>
+<td>Call Menu</td>
+<td>Which call menu to use (if DID Route = CALLMENU)</td>
+<td>MAIN_IVR</td>
+</tr>
+<tr>
+<td>In-Group</td>
+<td>Which inbound group (if DID Route = IN_GROUP)</td>
+<td>SALES_QUEUE</td>
+</tr>
+<tr>
+<td>Filter URL</td>
+<td>Optional URL for custom routing logic</td>
+<td>(blank for most setups)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The DID Extension must match exactly what your carrier sends.</strong> This trips up more people than any other IVR configuration issue. Some carriers send the full E.164 number with country code (15551234567). Others strip the country code (5551234567). Some send just the last 10 digits. Some prepend a "1". Run <code>asterisk -rx "sip set debug on"</code> and place a test call to see the exact string in the INVITE's To header — that's what you put in the DID Extension field.</p>
+<p>If your carrier sends different formats for different numbers, you can use DID pattern matching with wildcards, but the cleanest approach is to standardize your carrier's DID delivery format. Most SIP carriers let you configure this in their portal.</p>
+<hr />
+<h2 id="call-menus-the-heart-of-vicidials-ivr">Call Menus: The Heart of VICIdial's IVR<a class="headerlink" href="#call-menus-the-heart-of-vicidials-ivr" title="Permanent link">&para;</a></h2>
+<p>A <a href="/glossary/call-menu/">Call Menu</a> is VICIdial's IVR builder. It defines a prompt, a set of DTMF options, timeout behavior, and invalid-input handling. Navigate to Admin &gt; Call Menus to create one.</p>
+<h3 id="creating-your-first-call-menu">Creating Your First Call Menu<a class="headerlink" href="#creating-your-first-call-menu" title="Permanent link">&para;</a></h3>
+<p>Let's build a standard auto-attendant. The caller hears "Press 1 for Sales, Press 2 for Support, Press 3 for Billing." Each key routes to a different inbound group.</p>
+<p><strong>Step 1: Create the Call Menu</strong></p>
+<p>Navigate to Admin &gt; Call Menus &gt; Add A New Call Menu.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Menu ID</td>
+<td>MAIN_IVR</td>
+<td>Unique identifier. Alphanumeric, no spaces.</td>
+</tr>
+<tr>
+<td>Menu Name</td>
+<td>Main Auto-Attendant</td>
+<td>Descriptive name for the admin GUI.</td>
+</tr>
+<tr>
+<td>Menu Prompt</td>
+<td><code>main-greeting</code></td>
+<td>Asterisk audio file name (without extension).</td>
+</tr>
+<tr>
+<td>Menu Timeout</td>
+<td>10</td>
+<td>Seconds to wait for DTMF input.</td>
+</tr>
+<tr>
+<td>Menu Timeout Prompt</td>
+<td><code>sorry-try-again</code></td>
+<td>What to play if caller doesn't press anything.</td>
+</tr>
+<tr>
+<td>Menu Invalid Prompt</td>
+<td><code>invalid-option</code></td>
+<td>What to play if caller presses an unrecognized key.</td>
+</tr>
+<tr>
+<td>Menu Repeat</td>
+<td>3</td>
+<td>How many times to replay before timeout action.</td>
+</tr>
+<tr>
+<td>Menu Time Check</td>
+<td>DISABLED</td>
+<td>We'll cover time-based routing later.</td>
+</tr>
+<tr>
+<td>Tracking Group</td>
+<td>MAIN_IVR_TG</td>
+<td>For reporting on IVR traffic. (Optional)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 2: Define DTMF Options</strong></p>
+<p>In the Call Menu Options section, add one row per key:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Destination</th>
+<th>Route Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SALES_QUEUE</td>
+<td>CALLMENU or IN_GROUP</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SUPPORT_QUEUE</td>
+<td>IN_GROUP</td>
+</tr>
+<tr>
+<td>3</td>
+<td>BILLING_QUEUE</td>
+<td>IN_GROUP</td>
+</tr>
+<tr>
+<td>0</td>
+<td>OPERATOR_QUEUE</td>
+<td>IN_GROUP</td>
+</tr>
+<tr>
+<td>t</td>
+<td>SALES_QUEUE</td>
+<td>IN_GROUP</td>
+</tr>
+<tr>
+<td>i</td>
+<td>(replay menu)</td>
+<td>CALLMENU: MAIN_IVR</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>t</code> option handles timeout — if the caller doesn't press anything after all repeats, this is where they go. Most operations route timeouts to the default queue (usually Sales) rather than disconnecting. The <code>i</code> option handles invalid input — routing back to the same call menu replays the prompt.</p>
+<p><strong>Step 3: Link the DID to the Call Menu</strong></p>
+<p>Go to Admin &gt; Inbound DID, find your DID, set DID Route to <code>CALLMENU</code>, and select <code>MAIN_IVR</code> from the dropdown. Save.</p>
+<p>That's it. Callers to that number now hear your greeting and route based on their key press.</p>
+<h3 id="the-call-menu-option-types">The Call Menu Option Types<a class="headerlink" href="#the-call-menu-option-types" title="Permanent link">&para;</a></h3>
+<p>Each DTMF option in a Call Menu can route to one of several destination types:</p>
+<p><strong>IN_GROUP</strong> — Routes the call to a VICIdial <a href="/glossary/inbound-group/">Inbound Group</a> (agent queue). This is the most common destination for leaf-level menu options. The caller enters the queue and waits for an available agent.</p>
+<p><strong>CALLMENU</strong> — Routes to another Call Menu. This is how you build multi-level IVRs. "Press 1 for Sales" goes to the Sales sub-menu, which offers "Press 1 for New Accounts, Press 2 for Existing Accounts."</p>
+<p><strong>DID</strong> — Routes to another DID entry. Useful for forwarding to external numbers configured as DIDs with external routing.</p>
+<p><strong>EXTENSION</strong> — Routes to a specific Asterisk extension. Use this for direct-to-agent transfers, voicemail boxes, or custom dialplan destinations defined in <code>extensions_custom.conf</code>.</p>
+<p><strong>VOICEMAIL</strong> — Sends the caller directly to a voicemail box. Requires voicemail to be configured in Asterisk's <code>voicemail.conf</code>.</p>
+<p><strong>AGI</strong> — Executes an Asterisk AGI script. This is the advanced option for custom routing logic — database lookups, API calls, dynamic queue assignment. We cover this in the Asterisk integration section.</p>
+<p><strong>HANGUP</strong> — Disconnects the call. Use sparingly — after playing a final message on options where continuing the call doesn't make sense (like a "store hours" informational option).</p>
+<h3 id="menu-prompt-configuration">Menu Prompt Configuration<a class="headerlink" href="#menu-prompt-configuration" title="Permanent link">&para;</a></h3>
+<p>The Menu Prompt field takes either a single Asterisk audio file name or a pipe-delimited sequence:</p>
+<p><strong>Single prompt:</strong></p>
+<div class="codehilite"><pre><span></span><code>main-greeting
+</code></pre></div>
+
+<p>Asterisk looks for <code>main-greeting.wav</code> (or <code>.gsm</code>, <code>.sln</code>, etc.) in <code>/var/lib/asterisk/sounds/</code>.</p>
+<p><strong>Multi-file prompt sequence:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">welcome</span><span class="o">-</span><span class="nv">to</span><span class="o">-</span><span class="nv">company</span><span class="o">|</span><span class="nv">press</span><span class="o">-</span><span class="nv">one</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="nv">sales</span><span class="o">|</span><span class="nv">press</span><span class="o">-</span><span class="nv">two</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="nv">support</span><span class="o">|</span><span class="nv">press</span><span class="o">-</span><span class="nv">three</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="nv">billing</span>
+</code></pre></div>
+
+<p>Asterisk plays each file in order. This is useful because you can swap individual segments without re-recording the entire greeting. Changed your billing department's name? Replace <code>press-three-for-billing.wav</code> and leave everything else alone.</p>
+<p><strong>Inline TTS or silence:</strong></p>
+<div class="codehilite"><pre><span></span><code>main-greeting|silence/2|menu-options
+</code></pre></div>
+
+<p>The <code>silence/2</code> inserts 2 seconds of silence between the greeting and the options. This small touch makes the IVR sound more professional — a wall of unbroken speech is harder for callers to process.</p>
+<hr />
+<h2 id="audio-prompts-recording-formatting-and-uploading">Audio Prompts: Recording, Formatting, and Uploading<a class="headerlink" href="#audio-prompts-recording-formatting-and-uploading" title="Permanent link">&para;</a></h2>
+<p>Bad audio is the number one thing that makes an IVR sound amateur. A tinny recording with background noise and inconsistent volume tells callers they've reached a company that doesn't care about details. Get this right.</p>
+<h3 id="recording-format-requirements">Recording Format Requirements<a class="headerlink" href="#recording-format-requirements" title="Permanent link">&para;</a></h3>
+<p>Asterisk is flexible about audio formats, but for optimal performance and quality in VICIdial IVR prompts, use:</p>
+<ul>
+<li><strong>Format:</strong> WAV (PCM)</li>
+<li><strong>Sample rate:</strong> 8000 Hz (8 kHz)</li>
+<li><strong>Bit depth:</strong> 16-bit</li>
+<li><strong>Channels:</strong> Mono</li>
+<li><strong>Encoding:</strong> Linear PCM (signed, little-endian)</li>
+</ul>
+<p>Why 8 kHz mono? Because that's the native format for G.711 telephony audio. If you upload a 44.1 kHz stereo WAV, Asterisk transcodes it on every playback — wasting CPU and often introducing artifacts. Record at the target format and skip the runtime conversion.</p>
+<h3 id="converting-audio-with-sox">Converting Audio with SOX<a class="headerlink" href="#converting-audio-with-sox" title="Permanent link">&para;</a></h3>
+<p>If you have a professionally recorded prompt in studio format (44.1 kHz, stereo, 24-bit), convert it:</p>
+<div class="codehilite"><pre><span></span><code>sox<span class="w"> </span>original-recording.wav<span class="w"> </span>-r<span class="w"> </span><span class="m">8000</span><span class="w"> </span>-c<span class="w"> </span><span class="m">1</span><span class="w"> </span>-b<span class="w"> </span><span class="m">16</span><span class="w"> </span>main-greeting.wav
+</code></pre></div>
+
+<p>For batch conversion of an entire directory:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span>/path/to/originals/*.wav<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>sox<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">&quot;</span><span class="w"> </span>-r<span class="w"> </span><span class="m">8000</span><span class="w"> </span>-c<span class="w"> </span><span class="m">1</span><span class="w"> </span>-b<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="s2">&quot;/var/lib/asterisk/sounds/</span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$f</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<p>Verify the result:</p>
+<div class="codehilite"><pre><span></span><code>soxi<span class="w"> </span>/var/lib/asterisk/sounds/main-greeting.wav
+</code></pre></div>
+
+<p>You should see: <code>Sample Rate: 8000</code>, <code>Channels: 1</code>, <code>Precision: 16-bit</code>.</p>
+<h3 id="uploading-via-vicidial-admin">Uploading via VICIdial Admin<a class="headerlink" href="#uploading-via-vicidial-admin" title="Permanent link">&para;</a></h3>
+<p>VICIdial provides an audio upload interface under Admin &gt; Audio Store. Upload your WAV files here, and VICIdial copies them to the correct Asterisk sounds directory. The file name (minus extension) becomes the prompt name you reference in Call Menus.</p>
+<p>You can also upload directly via SCP:</p>
+<div class="codehilite"><pre><span></span><code>scp<span class="w"> </span>main-greeting.wav<span class="w"> </span>root@vicidial-server:/var/lib/asterisk/sounds/
+</code></pre></div>
+
+<p>Set ownership and permissions:</p>
+<div class="codehilite"><pre><span></span><code>chown<span class="w"> </span>asterisk:asterisk<span class="w"> </span>/var/lib/asterisk/sounds/main-greeting.wav
+chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>/var/lib/asterisk/sounds/main-greeting.wav
+</code></pre></div>
+
+<h3 id="recording-via-the-asterisk-cli">Recording via the Asterisk CLI<a class="headerlink" href="#recording-via-the-asterisk-cli" title="Permanent link">&para;</a></h3>
+<p>For quick test prompts, record directly from a phone connected to your system:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;originate SIP/100 application Record test-prompt.wav&quot;</span>
+</code></pre></div>
+
+<p>This calls extension 100 (an agent phone) and records whatever the person says into <code>test-prompt.wav</code>. Press <code>#</code> to stop recording. The file lands in <code>/var/lib/asterisk/sounds/</code>.</p>
+<h3 id="professional-recording-tips">Professional Recording Tips<a class="headerlink" href="#professional-recording-tips" title="Permanent link">&para;</a></h3>
+<p>If you're investing in professional voice talent (and you should for customer-facing IVRs):</p>
+<ol>
+<li><strong>Record all prompts in the same session</strong> with the same talent. Nothing sounds worse than mismatched voices across menu levels.</li>
+<li><strong>Record each option as a separate file.</strong> "Press 1 for Sales" is one file. "Press 2 for Support" is another. This modular approach lets you rearrange and update without re-recording everything.</li>
+<li><strong>Include 0.5 seconds of clean silence</strong> at the start and end of each file. This prevents audio clipping when Asterisk concatenates prompts.</li>
+<li><strong>Normalize volume</strong> across all files. If the greeting is loud and the options are quiet, callers miss the menu choices.</li>
+</ol>
+<hr />
+<h2 id="inbound-groups-where-calls-meet-agents">Inbound Groups: Where Calls Meet Agents<a class="headerlink" href="#inbound-groups-where-calls-meet-agents" title="Permanent link">&para;</a></h2>
+<p>Once a caller navigates the IVR and selects an option, they typically land in an <a href="/glossary/inbound-group/">Inbound Group</a>. This is VICIdial's inbound queue — the system that holds callers, plays hold music, and delivers calls to available agents.</p>
+<p>Understanding Inbound Groups is essential for IVR setup because they're the destination for most Call Menu options. You can read the deep dive in our <a href="/blog/vicidial-inbound-setup/">inbound configuration guide</a>, but here's what you need to know for IVR integration.</p>
+<h3 id="creating-an-inbound-group-for-ivr-routing">Creating an Inbound Group for IVR Routing<a class="headerlink" href="#creating-an-inbound-group-for-ivr-routing" title="Permanent link">&para;</a></h3>
+<p>Navigate to Admin &gt; Inbound Groups &gt; Add A New Group.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Group ID</td>
+<td>SALES_QUEUE</td>
+<td>Matches what you entered in the Call Menu option</td>
+</tr>
+<tr>
+<td>Group Name</td>
+<td>Sales Queue</td>
+<td>Descriptive name</td>
+</tr>
+<tr>
+<td>Group Color</td>
+<td>#0066CC</td>
+<td>Visual identifier in real-time reports</td>
+</tr>
+<tr>
+<td>Active</td>
+<td>Y</td>
+<td>Must be active to receive calls</td>
+</tr>
+<tr>
+<td>Queue Priority</td>
+<td>0</td>
+<td>Higher number = higher priority. See <a href="/settings/inbound-queue-priority/">Inbound Queue Priority</a>.</td>
+</tr>
+<tr>
+<td>Call Time ID</td>
+<td>24hours</td>
+<td>Which call time definition applies</td>
+</tr>
+<tr>
+<td>After Hours Action</td>
+<td>CALLMENU</td>
+<td>What happens outside business hours</td>
+</tr>
+<tr>
+<td>After Hours Call Menu</td>
+<td>AFTERHOURS_IVR</td>
+<td>Routes to an after-hours menu</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>After Hours Action</strong> is critical for IVR design. When an inbound group has a call time defined and a call arrives outside that window, the After Hours Action determines what happens. Setting it to CALLMENU lets you route to a separate IVR that plays "We're currently closed" and offers voicemail or callback options.</p>
+<h3 id="agent-assignment-closer-campaigns">Agent Assignment: Closer Campaigns<a class="headerlink" href="#agent-assignment-closer-campaigns" title="Permanent link">&para;</a></h3>
+<p>Agents receive inbound calls through <a href="/settings/closer-campaigns/">Closer Campaigns</a>. An agent logged into a closer campaign with the SALES_QUEUE group selected will receive calls from that queue.</p>
+<p>In VICIdial Admin &gt; Campaigns, your inbound-receiving campaign needs:</p>
+<ul>
+<li><strong>Campaign Type:</strong> Set to allow inbound (or create a dedicated CLOSER campaign type)</li>
+<li><strong>Allowed Inbound Groups:</strong> Select which inbound groups this campaign's agents can receive</li>
+<li><strong>Dial Method:</strong> For blended operations (outbound + inbound), agents take inbound calls between outbound attempts</li>
+</ul>
+<p>The priority system determines which agents get calls first:</p>
+<ol>
+<li><strong>Agent rank</strong> within the inbound group (set per-agent)</li>
+<li><strong>Longest wait time</strong> among equal-rank agents</li>
+<li><strong>Queue priority</strong> if multiple inbound groups are competing for the same agents</li>
+</ol>
+<h3 id="hold-music-and-queue-announcements">Hold Music and Queue Announcements<a class="headerlink" href="#hold-music-and-queue-announcements" title="Permanent link">&para;</a></h3>
+<p>When a caller enters an inbound group, they hear hold music until an agent is available. Configure this in the Inbound Group settings:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>On Hold Prompt</td>
+<td>Audio file or music-on-hold class to play while waiting</td>
+</tr>
+<tr>
+<td>Hold Time Announce</td>
+<td>Play estimated hold time ("Your call will be answered in approximately 3 minutes")</td>
+</tr>
+<tr>
+<td>Queue Position Announce</td>
+<td>Play queue position ("You are caller number 5 in the queue")</td>
+</tr>
+<tr>
+<td>Announce Frequency</td>
+<td>How often to repeat queue announcements (in seconds)</td>
+</tr>
+</tbody>
+</table>
+<p>For music-on-hold, you have two options. You can specify a single audio file name in the On Hold Prompt field, or you can use Asterisk's music-on-hold classes defined in <code>/etc/asterisk/musiconhold.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[sales-hold]</span>
+<span class="na">mode</span><span class="o">=</span><span class="s">files</span>
+<span class="na">directory</span><span class="o">=</span><span class="s">/var/lib/asterisk/moh/sales</span>
+<span class="na">sort</span><span class="o">=</span><span class="s">alpha</span>
+
+<span class="k">[support-hold]</span>
+<span class="na">mode</span><span class="o">=</span><span class="s">files</span>
+<span class="na">directory</span><span class="o">=</span><span class="s">/var/lib/asterisk/moh/support</span>
+<span class="na">sort</span><span class="o">=</span><span class="s">random</span>
+</code></pre></div>
+
+<p>Place your hold music files (8 kHz mono WAV) in the respective directories. Different hold music per queue is a simple way to reinforce branding and set caller expectations.</p>
+<blockquote>
+<p><strong>IVR Dropping Calls? Queues Overflowing?</strong>
+ViciStack builds and tests your entire inbound routing chain before go-live. Call menus, queue priorities, overflow rules, time-based routing — all configured and verified. <a href="/free-audit/">Get Your Free Assessment --&gt;</a></p>
+</blockquote>
+<hr />
+<h2 id="time-based-routing-business-hours-holidays-and-overflows">Time-Based Routing: Business Hours, Holidays, and Overflows<a class="headerlink" href="#time-based-routing-business-hours-holidays-and-overflows" title="Permanent link">&para;</a></h2>
+<p>A production IVR can't play the same menu 24/7. During business hours, "Press 1 for Sales" routes to a live queue. After hours, it should route to voicemail or an after-hours message. On holidays, you need a different greeting entirely. VICIdial handles this with Call Time definitions and Call Menu time checks.</p>
+<h3 id="setting-up-call-times">Setting Up Call Times<a class="headerlink" href="#setting-up-call-times" title="Permanent link">&para;</a></h3>
+<p>Navigate to Admin &gt; Call Times to define your business hours.</p>
+<p><strong>Example: Standard US business hours:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Call Time ID</td>
+<td>BUSINESS_HOURS</td>
+</tr>
+<tr>
+<td>Call Time Name</td>
+<td>Business Hours M-F 8-6</td>
+</tr>
+<tr>
+<td>Monday Start</td>
+<td>0800</td>
+</tr>
+<tr>
+<td>Monday End</td>
+<td>1800</td>
+</tr>
+<tr>
+<td>Tuesday Start</td>
+<td>0800</td>
+</tr>
+<tr>
+<td>Tuesday End</td>
+<td>1800</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>Saturday Start</td>
+<td>(blank)</td>
+</tr>
+<tr>
+<td>Saturday End</td>
+<td>(blank)</td>
+</tr>
+<tr>
+<td>Sunday Start</td>
+<td>(blank)</td>
+</tr>
+<tr>
+<td>Sunday End</td>
+<td>(blank)</td>
+</tr>
+</tbody>
+</table>
+<p>Leaving Saturday and Sunday blank means those days are considered "after hours" for the entire 24 hours.</p>
+<p><strong>Holiday handling:</strong></p>
+<p>VICIdial supports holiday definitions via Admin &gt; Call Time Holidays (sometimes listed under Call Times). Define each holiday with a specific date:</p>
+<table>
+<thead>
+<tr>
+<th>Holiday</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New Year's Day</td>
+<td>2026-01-01</td>
+</tr>
+<tr>
+<td>Memorial Day</td>
+<td>2026-05-25</td>
+</tr>
+<tr>
+<td>Independence Day</td>
+<td>2026-07-04</td>
+</tr>
+<tr>
+<td>Labor Day</td>
+<td>2026-09-07</td>
+</tr>
+<tr>
+<td>Thanksgiving</td>
+<td>2026-11-26</td>
+</tr>
+<tr>
+<td>Christmas</td>
+<td>2026-12-25</td>
+</tr>
+</tbody>
+</table>
+<p>When a holiday is defined and associated with a Call Time, that day is treated as after-hours regardless of the day-of-week schedule.</p>
+<h3 id="call-menu-time-check">Call Menu Time Check<a class="headerlink" href="#call-menu-time-check" title="Permanent link">&para;</a></h3>
+<p>In the Call Menu configuration, set <strong>Menu Time Check</strong> to the Call Time ID you created. Then configure two sets of DTMF options:</p>
+<p><strong>In-Hours Options:</strong> The normal menu. Press 1 for Sales, Press 2 for Support, etc.</p>
+<p><strong>After-Hours Options:</strong> A different set of destinations. Press 1 for Voicemail, Press 2 to hear store hours, etc.</p>
+<p>The Call Menu form gives you separate prompt and option fields for in-hours and after-hours routing. When the time check is enabled, VICIdial checks the current time against the Call Time definition before playing the prompt. If it's within business hours, callers get the in-hours treatment. Outside business hours (or on holidays), they get the after-hours treatment.</p>
+<p><strong>Configuration example:</strong></p>
+<div class="codehilite"><pre><span></span><code>Menu ID:          MAIN_IVR
+Menu Time Check:  BUSINESS_HOURS
+
+--- In-Hours ---
+Prompt:           business-hours-greeting
+Option 1:         IN_GROUP → SALES_QUEUE
+Option 2:         IN_GROUP → SUPPORT_QUEUE
+Option 3:         IN_GROUP → BILLING_QUEUE
+Timeout:          IN_GROUP → SALES_QUEUE
+
+--- After-Hours ---
+Prompt:           after-hours-greeting
+Option 1:         VOICEMAIL → 1000
+Option 2:         EXTENSION → hours-info
+Option 3:         CALLMENU → CALLBACK_MENU
+Timeout:          VOICEMAIL → 1000
+</code></pre></div>
+
+<p>This single Call Menu handles both business hours and after-hours routing without any external scripting or manual switching.</p>
+<h3 id="time-zone-considerations">Time Zone Considerations<a class="headerlink" href="#time-zone-considerations" title="Permanent link">&para;</a></h3>
+<p>VICIdial uses the server's system time for Call Time evaluations. If your server is in US Eastern but your business operates in US Pacific, your "9 AM open" will actually trigger at noon Eastern. Set the server timezone correctly:</p>
+<div class="codehilite"><pre><span></span><code>timedatectl<span class="w"> </span>set-timezone<span class="w"> </span>America/Los_Angeles
+</code></pre></div>
+
+<p>For operations spanning multiple time zones, you have two options: set the server to the timezone of your primary business location, or use custom AGI scripts that evaluate multiple time zones and route accordingly.</p>
+<hr />
+<h2 id="multi-level-ivr-building-complex-menu-trees">Multi-Level IVR: Building Complex Menu Trees<a class="headerlink" href="#multi-level-ivr-building-complex-menu-trees" title="Permanent link">&para;</a></h2>
+<p>Real-world IVR systems rarely stop at one level. A caller presses 1 for Sales, then hears "Press 1 for New Customers, Press 2 for Existing Accounts, Press 3 for Partner Inquiries." That's a two-level IVR. Some operations go three or four levels deep — language selection, then department, then sub-department, then product line.</p>
+<h3 id="architecture-call-menu-chains">Architecture: Call Menu Chains<a class="headerlink" href="#architecture-call-menu-chains" title="Permanent link">&para;</a></h3>
+<p>Multi-level IVRs in VICIdial are built by chaining Call Menus. Each DTMF option set to route type CALLMENU points to another Call Menu, which has its own prompt and options.</p>
+<p><strong>Example: Two-level IVR</strong></p>
+<div class="codehilite"><pre><span></span><code>MAIN_IVR (Level 1)
+├── Press 1 → SALES_MENU (Level 2)
+│   ├── Press 1 → NEW_CUSTOMERS_QUEUE (Inbound Group)
+│   ├── Press 2 → EXISTING_ACCOUNTS_QUEUE (Inbound Group)
+│   ├── Press 3 → PARTNERS_QUEUE (Inbound Group)
+│   └── Press 0 → MAIN_IVR (back to main menu)
+├── Press 2 → SUPPORT_MENU (Level 2)
+│   ├── Press 1 → TECH_SUPPORT_QUEUE (Inbound Group)
+│   ├── Press 2 → BILLING_SUPPORT_QUEUE (Inbound Group)
+│   └── Press 0 → MAIN_IVR (back to main menu)
+├── Press 3 → BILLING_QUEUE (Inbound Group — direct, no sub-menu)
+├── Press 9 → DIRECTORY_EXTENSION (Asterisk extension for dial-by-name)
+└── Press 0 → OPERATOR_QUEUE (Inbound Group)
+</code></pre></div>
+
+<p>Each box in this tree is a separate Call Menu in VICIdial Admin. To build this:</p>
+<ol>
+<li>Create the leaf-level Call Menus first (SALES_MENU, SUPPORT_MENU)</li>
+<li>Create the top-level Call Menu (MAIN_IVR) that references them</li>
+<li>Link the DID to MAIN_IVR</li>
+</ol>
+<p><strong>Always include a "return to previous menu" option.</strong> Press 0 or Press * to go back. Callers who land in the wrong sub-menu need an escape route. Without it, they hang up and call back, which wrecks your IVR completion metrics and frustrates customers.</p>
+<h3 id="the-three-level-trap">The Three-Level Trap<a class="headerlink" href="#the-three-level-trap" title="Permanent link">&para;</a></h3>
+<p>Three levels is the practical maximum for phone-based IVR. At four levels, callers have been pressing buttons for over a minute before they reach a human. Customer satisfaction drops sharply after 45 seconds of IVR navigation. If your routing logic requires four levels, you probably need to rethink the tree structure — consolidate options, use ANI-based routing to skip levels for known callers, or implement a speech-recognition front end.</p>
+<p>If you absolutely must go deeper, consider this pattern: collect the most critical routing decision at level 1 (language or department), then route to an inbound group with skill-based routing rather than adding more menu levels. Let the agent handle the sub-categorization. A skilled agent asks "Are you calling about a new account or an existing one?" faster than a caller can navigate two more IVR levels.</p>
+<h3 id="language-selection-ivr">Language Selection IVR<a class="headerlink" href="#language-selection-ivr" title="Permanent link">&para;</a></h3>
+<p>A common multi-level pattern for bilingual operations:</p>
+<div class="codehilite"><pre><span></span><code>LANGUAGE_SELECT (Level 1)
+├── Press 1 (or timeout) → MAIN_IVR_EN (English menus)
+│   ├── Press 1 → SALES_EN
+│   ├── Press 2 → SUPPORT_EN
+│   └── ...
+├── Press 2 → MAIN_IVR_ES (Spanish menus)
+│   ├── Press 1 → SALES_ES
+│   ├── Press 2 → SUPPORT_ES
+│   └── ...
+</code></pre></div>
+
+<p>Each language gets its own set of Call Menus with localized prompts and potentially different inbound groups (so Spanish-speaking agents are separate from English-speaking agents). The timeout on the language selection menu should default to the primary language — don't leave callers in limbo because they didn't understand the language prompt.</p>
+<hr />
+<h2 id="dtmf-routing-beyond-simple-key-presses">DTMF Routing: Beyond Simple Key Presses<a class="headerlink" href="#dtmf-routing-beyond-simple-key-presses" title="Permanent link">&para;</a></h2>
+<p>VICIdial's Call Menu options handle single DTMF digits (0-9, *, #) as well as multi-digit input. Understanding the nuances of <a href="/glossary/dtmf/">DTMF</a> handling prevents routing failures.</p>
+<h3 id="single-digit-vs-multi-digit-input">Single-Digit vs. Multi-Digit Input<a class="headerlink" href="#single-digit-vs-multi-digit-input" title="Permanent link">&para;</a></h3>
+<p>Most IVRs use single-digit options: Press 1, Press 2, etc. But VICIdial Call Menus also support multi-digit input for scenarios like:</p>
+<ul>
+<li><strong>Extension dialing:</strong> Caller enters a 3 or 4-digit extension number</li>
+<li><strong>Account lookup:</strong> Caller enters an account number followed by #</li>
+<li><strong>PIN verification:</strong> Caller enters a numeric code</li>
+</ul>
+<p>For multi-digit input, set the Menu Timeout appropriately — callers need enough time between digits. A timeout of 3-5 seconds per expected digit is reasonable. The <code>#</code> key typically serves as the "submit" delimiter.</p>
+<h3 id="dtmf-mode-must-match-end-to-end">DTMF Mode Must Match End-to-End<a class="headerlink" href="#dtmf-mode-must-match-end-to-end" title="Permanent link">&para;</a></h3>
+<p>If callers press keys but nothing happens, the problem is almost always a DTMF mode mismatch somewhere in the call chain. VICIdial's IVR relies on Asterisk receiving DTMF events. If the carrier sends DTMF in-band (as audio tones) but your trunk is configured for RFC 2833, Asterisk never registers the key press.</p>
+<p>Verify your trunk's DTMF mode matches your carrier's:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show peer your-carrier&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>dtmf
+</code></pre></div>
+
+<p>You should see <code>dtmfmode=rfc2833</code> for most modern carriers. If DTMF isn't working, test with:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core set verbose 5&quot;</span>
+</code></pre></div>
+
+<p>Then place a test call and press keys. In the CLI output, you should see lines like:</p>
+<div class="codehilite"><pre><span></span><code>DTMF/SIP-xxx-1 &#39;1&#39; received on SIP/trunk-00000001
+</code></pre></div>
+
+<p>If you don't see DTMF events, the issue is between the carrier and Asterisk. Check the DTMF mode setting in your carrier peer definition. Refer to the <a href="/blog/vicidial-asterisk-configuration/">DTMF section in our Asterisk configuration guide</a> for the full breakdown.</p>
+<h3 id="special-options-t-i-and">Special Options: t, i, and *<a class="headerlink" href="#special-options-t-i-and" title="Permanent link">&para;</a></h3>
+<p>Three Call Menu options have special meaning:</p>
+<ul>
+<li><strong><code>t</code> (timeout):</strong> Triggered when the caller doesn't press anything within the Menu Timeout period, after all repeats are exhausted. Always configure this. Never let callers sit in silence.</li>
+<li><strong><code>i</code> (invalid):</strong> Triggered when the caller presses a key that isn't defined as an option. Route this back to the same Call Menu to replay the prompt, or to a catch-all queue.</li>
+<li><strong><code>*</code> (star key):</strong> Often used as "go back" or "return to main menu" in multi-level IVRs. Callers intuitively try the star key when they want to start over.</li>
+</ul>
+<hr />
+<h2 id="asterisk-dialplan-integration-for-advanced-ivr">Asterisk Dialplan Integration for Advanced IVR<a class="headerlink" href="#asterisk-dialplan-integration-for-advanced-ivr" title="Permanent link">&para;</a></h2>
+<p>VICIdial's Call Menu system covers 90% of IVR needs through the admin GUI alone. But for advanced scenarios — database lookups, API-driven routing, dynamic prompt generation — you need to drop into Asterisk's <a href="/glossary/dialplan/">dialplan</a> and AGI.</p>
+<h3 id="custom-dialplan-extensions">Custom Dialplan Extensions<a class="headerlink" href="#custom-dialplan-extensions" title="Permanent link">&para;</a></h3>
+<p>As covered in the <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration guide</a>, custom dialplan logic goes in <code>extensions_custom.conf</code> — never in <code>extensions.conf</code>, which VICIdial overwrites.</p>
+<p><strong>Example: After-hours voicemail with custom greeting</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/extensions_custom.conf</span>
+<span class="k">[custom-afterhours-vm]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,1,Answer()</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Wait(1)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Playback(afterhours-message)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Playback(beep)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,VoiceMail(1000@default,u)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Hangup()</span>
+</code></pre></div>
+
+<p>Reference this from a Call Menu option by setting the route type to EXTENSION and the destination to <code>custom-afterhours-vm,s,1</code>.</p>
+<p><strong>Example: Dynamic routing based on caller ID</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[custom-vip-check]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,1,Set(CALLER=${CALLERID(num)})</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,AGI(vip-lookup.agi,${CALLER})</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,GotoIf($[&quot;${VIP}&quot; = &quot;yes&quot;]?vip:regular)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n(vip),Goto(default,8300,1)</span><span class="w">     </span><span class="c1">; Route to VIP inbound group</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n(regular),Goto(default,8301,1)</span><span class="w"> </span><span class="c1">; Route to standard queue</span>
+</code></pre></div>
+
+<p>This checks the caller's number against a VIP list (via AGI script) and routes high-value callers to a priority queue — skipping the IVR entirely.</p>
+<h3 id="agi-scripts-for-dynamic-ivr">AGI Scripts for Dynamic IVR<a class="headerlink" href="#agi-scripts-for-dynamic-ivr" title="Permanent link">&para;</a></h3>
+<p>Asterisk Gateway Interface (AGI) lets you execute external scripts (Perl, PHP, Python) during call processing. VICIdial itself is built on AGI — all its call routing logic runs through AGI scripts in <code>/var/lib/asterisk/agi-bin/</code>.</p>
+<p><strong>Example: Account number lookup AGI (Perl)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/perl</span>
+<span class="c1"># /var/lib/asterisk/agi-bin/account-lookup.agi</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">strict</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">DBI</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">Asterisk::AGI</span><span class="p">;</span>
+
+<span class="k">my</span><span class="w"> </span><span class="nv">$AGI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nn">Asterisk::</span><span class="n">AGI</span><span class="p">;</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">%input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$AGI</span><span class="o">-&gt;</span><span class="n">ReadParse</span><span class="p">();</span>
+
+<span class="c1"># Get DTMF input (account number) from the IVR</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">$account</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$input</span><span class="p">{</span><span class="s">&#39;arg_1&#39;</span><span class="p">};</span>
+
+<span class="c1"># Database lookup</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">$dbh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">DBI</span><span class="o">-&gt;</span><span class="nb">connect</span><span class="p">(</span><span class="s">&quot;DBI:mysql:your_crm_db:localhost&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pass&quot;</span><span class="p">);</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">$sth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$dbh</span><span class="o">-&gt;</span><span class="n">prepare</span><span class="p">(</span><span class="s">&quot;SELECT department FROM accounts WHERE account_num = ?&quot;</span><span class="p">);</span>
+<span class="nv">$sth</span><span class="o">-&gt;</span><span class="n">execute</span><span class="p">(</span><span class="nv">$account</span><span class="p">);</span>
+<span class="k">my</span><span class="w"> </span><span class="p">(</span><span class="nv">$dept</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$sth</span><span class="o">-&gt;</span><span class="n">fetchrow_array</span><span class="p">();</span>
+
+<span class="c1"># Set channel variable for dialplan routing</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nv">$dept</span><span class="w"> </span><span class="ow">eq</span><span class="w"> </span><span class="s">&#39;enterprise&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">$AGI</span><span class="o">-&gt;</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&#39;ROUTE_GROUP&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;ENTERPRISE_QUEUE&#39;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">$AGI</span><span class="o">-&gt;</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&#39;ROUTE_GROUP&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;STANDARD_QUEUE&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nv">$dbh</span><span class="o">-&gt;</span><span class="n">disconnect</span><span class="p">();</span>
+</code></pre></div>
+
+<p>Make it executable:</p>
+<div class="codehilite"><pre><span></span><code>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>/var/lib/asterisk/agi-bin/account-lookup.agi
+chown<span class="w"> </span>asterisk:asterisk<span class="w"> </span>/var/lib/asterisk/agi-bin/account-lookup.agi
+</code></pre></div>
+
+<p>Then reference it in the dialplan:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[custom-account-route]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,1,Answer()</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Playback(enter-account-number)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Read(ACCOUNT,,10,,2,10)</span><span class="w">   </span><span class="c1">; Read up to 10 digits, 2 attempts, 10s timeout</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,AGI(account-lookup.agi,${ACCOUNT})</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Goto(default,${ROUTE_GROUP},1)</span>
+</code></pre></div>
+
+<h3 id="integrating-custom-dialplan-with-vicidial-call-menus">Integrating Custom Dialplan with VICIdial Call Menus<a class="headerlink" href="#integrating-custom-dialplan-with-vicidial-call-menus" title="Permanent link">&para;</a></h3>
+<p>The cleanest way to blend VICIdial Call Menus with custom dialplan is:</p>
+<ol>
+<li>Build the standard IVR tree using Call Menus in the VICIdial admin</li>
+<li>For options that need custom logic, set the route type to EXTENSION</li>
+<li>Point the extension to a context and extension in <code>extensions_custom.conf</code></li>
+<li>Have the custom dialplan do its work, then route back to a VICIdial inbound group using <code>Goto(default,INGROUP_DID,1)</code></li>
+</ol>
+<p>This keeps VICIdial's call tracking intact. If you route calls entirely through custom dialplan without going through VICIdial's normal inbound handling, the calls won't show up correctly in real-time reports or historical reporting.</p>
+<hr />
+<h2 id="did-to-ivr-mapping-managing-multiple-numbers">DID-to-IVR Mapping: Managing Multiple Numbers<a class="headerlink" href="#did-to-ivr-mapping-managing-multiple-numbers" title="Permanent link">&para;</a></h2>
+<p>Operations with dozens or hundreds of DIDs need a strategy for mapping numbers to IVR trees. You don't want to create a unique Call Menu for every phone number — that's unmaintainable.</p>
+<h3 id="the-hub-and-spoke-model">The Hub-and-Spoke Model<a class="headerlink" href="#the-hub-and-spoke-model" title="Permanent link">&para;</a></h3>
+<p>Use a small number of Call Menus as "hubs" and map multiple DIDs to the same menu:</p>
+<div class="codehilite"><pre><span></span><code>DID 15551001000 → MAIN_IVR
+DID 15551001001 → MAIN_IVR
+DID 15551001002 → MAIN_IVR
+DID 18001234567 → SALES_DIRECT (skips menu, goes straight to Sales queue)
+DID 18007654321 → SUPPORT_DIRECT (skips menu, goes straight to Support queue)
+</code></pre></div>
+
+<p>The first three DIDs are general numbers that all hit the same IVR. The toll-free numbers are campaign-specific DIDs that skip the IVR entirely and route straight to the relevant queue. This is common for marketing campaigns where you want to track which ad generated the call — each campaign gets its own DID, all routed to the same queue, with the DID visible in VICIdial's reporting.</p>
+<h3 id="did-specific-greetings-with-shared-menus">DID-Specific Greetings with Shared Menus<a class="headerlink" href="#did-specific-greetings-with-shared-menus" title="Permanent link">&para;</a></h3>
+<p>Sometimes you want different greetings for different numbers but the same routing logic. Options:</p>
+<p><strong>Option A: Separate Call Menus with identical options.</strong> Create MAIN_IVR_BRAND_A and MAIN_IVR_BRAND_B with different prompts but the same DTMF destinations. Simple but creates duplication you need to maintain.</p>
+<p><strong>Option B: Custom dialplan greeting + shared menu.</strong> Route the DID to custom dialplan that plays a DID-specific greeting, then transfers to the shared Call Menu:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[custom-branded-greeting]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; 15551001000,1,Answer()</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Playback(greeting-brand-a)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Goto(default,MAIN_IVR,1)</span>
+
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; 15551001001,1,Answer()</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Playback(greeting-brand-b)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Goto(default,MAIN_IVR,1)</span>
+</code></pre></div>
+
+<p>Option B is cleaner when you have many brands/campaigns sharing the same routing structure.</p>
+<h3 id="tracking-did-performance">Tracking DID Performance<a class="headerlink" href="#tracking-did-performance" title="Permanent link">&para;</a></h3>
+<p>Every DID in VICIdial can be associated with a campaign or custom field for reporting purposes. In the DID configuration:</p>
+<ul>
+<li><strong>DID Description:</strong> Use a naming convention like <code>BRAND-A_GOOGLE_ADS_2026Q1</code> so you can identify the source in reports</li>
+<li><strong>Custom Fields:</strong> VICIdial 3.14+ supports custom DID fields that flow into call records</li>
+</ul>
+<p>Use VICIdial's inbound reporting (Reports &gt; Inbound Report) filtered by DID to see which numbers drive the most calls, best conversion rates, and lowest abandonment. This data feeds directly into marketing ROI analysis.</p>
+<hr />
+<h2 id="overflow-and-failover-routing">Overflow and Failover Routing<a class="headerlink" href="#overflow-and-failover-routing" title="Permanent link">&para;</a></h2>
+<p>What happens when all agents are busy, the queue is full, or your primary site goes down? Without overflow routing, callers either wait forever or get disconnected. Both options destroy customer satisfaction.</p>
+<h3 id="queue-overflow-settings">Queue Overflow Settings<a class="headerlink" href="#queue-overflow-settings" title="Permanent link">&para;</a></h3>
+<p>In the Inbound Group configuration:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Recommended Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Max Queue Size</td>
+<td>Maximum callers waiting</td>
+<td>20-50 depending on agent count</td>
+</tr>
+<tr>
+<td>Max Queue Time</td>
+<td>Maximum wait time (seconds)</td>
+<td>300-600 (5-10 minutes)</td>
+</tr>
+<tr>
+<td>Overflow Action</td>
+<td>What to do when max is reached</td>
+<td>CALLMENU or EXTENSION</td>
+</tr>
+<tr>
+<td>Overflow Destination</td>
+<td>Where to send overflow calls</td>
+<td>OVERFLOW_IVR or voicemail</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Overflow Call Menu example:</strong></p>
+<div class="codehilite"><pre><span></span><code>Menu ID:    OVERFLOW_IVR
+Prompt:     all-agents-busy|please-leave-message-or-call-back
+
+Option 1:   VOICEMAIL → 2000 (leave voicemail)
+Option 2:   CALLMENU → CALLBACK_MENU (schedule callback)
+Option *:   CALLMENU → MAIN_IVR (return to main menu)
+Timeout:    VOICEMAIL → 2000
+</code></pre></div>
+
+<h3 id="inter-site-failover">Inter-Site Failover<a class="headerlink" href="#inter-site-failover" title="Permanent link">&para;</a></h3>
+<p>For operations with multiple VICIdial servers or sites, configure failover at the carrier level. If your primary site's trunk goes down, the carrier routes calls to a backup number that hits a secondary VICIdial installation with its own IVR.</p>
+<p>In your carrier portal, set up failover forwarding:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Primary</span><span class="o">:</span><span class="w">  </span><span class="n">SIP</span><span class="w"> </span><span class="n">trunk</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mf">203.0</span><span class="o">.</span><span class="mf">113.50</span><span class="w"> </span><span class="o">(</span><span class="n">main</span><span class="w"> </span><span class="n">VICIdial</span><span class="o">)</span>
+<span class="n">Failover</span><span class="o">:</span><span class="w"> </span><span class="n">SIP</span><span class="w"> </span><span class="n">trunk</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mf">203.0</span><span class="o">.</span><span class="mf">113.60</span><span class="w"> </span><span class="o">(</span><span class="n">backup</span><span class="w"> </span><span class="n">VICIdial</span><span class="o">)</span>
+<span class="n">Timeout</span><span class="o">:</span><span class="w">  </span><span class="mi">5</span><span class="w"> </span><span class="n">seconds</span><span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span><span class="n">primary</span><span class="w"> </span><span class="n">doesn</span><span class="err">&#39;</span><span class="n">t</span><span class="w"> </span><span class="n">answer</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">5</span><span class="n">s</span><span class="o">,</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">backup</span><span class="o">)</span>
+</code></pre></div>
+
+<p>On the backup VICIdial, configure the same DIDs and IVR structure. The backup system can be a smaller deployment — it just needs to handle the overflow, not your full capacity.</p>
+<h3 id="after-hours-failover-to-external-numbers">After-Hours Failover to External Numbers<a class="headerlink" href="#after-hours-failover-to-external-numbers" title="Permanent link">&para;</a></h3>
+<p>For after-hours emergency support, route IVR options to external numbers:</p>
+<p>In <code>extensions_custom.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[custom-oncall-forward]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,1,Dial(SIP/carrier-trunk/15559876543,30)</span><span class="w">   </span><span class="c1">; On-call manager&#39;s cell</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,GotoIf($[&quot;${DIALSTATUS}&quot; = &quot;ANSWER&quot;]?done)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Dial(SIP/carrier-trunk/15559876544,30)</span><span class="w">      </span><span class="c1">; Backup on-call</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n(done),Hangup()</span>
+</code></pre></div>
+
+<p>Set a Call Menu option to route to this extension for after-hours urgent calls.</p>
+<hr />
+<h2 id="testing-your-ivr">Testing Your IVR<a class="headerlink" href="#testing-your-ivr" title="Permanent link">&para;</a></h2>
+<p>Never deploy an IVR without testing every path. "I set it up and it should work" is how you lose calls in production.</p>
+<h3 id="the-complete-test-checklist">The Complete Test Checklist<a class="headerlink" href="#the-complete-test-checklist" title="Permanent link">&para;</a></h3>
+<p>For every Call Menu in your IVR tree:</p>
+<ol>
+<li><strong>Call in and test every DTMF option.</strong> Press 1, verify it routes correctly. Press 2. Press 3. All of them.</li>
+<li><strong>Test timeout behavior.</strong> Call in and don't press anything. Verify the prompt repeats the correct number of times, then routes to the timeout destination.</li>
+<li><strong>Test invalid input.</strong> Press 7 when only 1-3 are valid. Verify the invalid prompt plays and the caller gets another chance.</li>
+<li><strong>Test the * and # keys</strong> if they're assigned.</li>
+<li><strong>Test time-based routing.</strong> Temporarily change your Call Time definition to make the current time "after hours." Call in and verify the after-hours path works. Then change it back.</li>
+<li><strong>Test from a cell phone.</strong> DTMF behavior differs between VoIP phones and cellular networks. Some cell carriers send DTMF slightly differently — test to make sure key presses register.</li>
+<li><strong>Test multi-level navigation.</strong> Go through the full tree. Press 1 at level 1, then 2 at level 2, then 0 to go back, then 3 at level 1. Verify every path.</li>
+<li><strong>Test overflow.</strong> If you have queue overflow configured, fill the queue and verify overflow routing works.</li>
+<li><strong>Verify reporting.</strong> After test calls, check VICIdial's inbound reports. Make sure calls show the correct DID, inbound group, and call menu path.</li>
+</ol>
+<h3 id="monitoring-ivr-performance">Monitoring IVR Performance<a class="headerlink" href="#monitoring-ivr-performance" title="Permanent link">&para;</a></h3>
+<p>After deployment, track these metrics:</p>
+<ul>
+<li><strong>IVR completion rate:</strong> What percentage of callers successfully navigate to an agent queue? Low completion means confusing menus.</li>
+<li><strong>Option distribution:</strong> Which options do callers press most? If 80% press 1, consider making that the default (timeout) option.</li>
+<li><strong>Average IVR time:</strong> How long do callers spend in the IVR before reaching a queue? Under 30 seconds is the target.</li>
+<li><strong>Abandonment by menu level:</strong> Where in the IVR tree do callers hang up? That level has a problem — unclear prompt, too many options, or too long.</li>
+</ul>
+<p>VICIdial's built-in reporting shows inbound call flow data. For detailed IVR path analysis, you can query the <code>vicidial_closer_log</code> and <code>vicidial_did_log</code> tables directly:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">vid</span><span class="p">.</span><span class="n">did_pattern</span><span class="p">,</span><span class="w"> </span><span class="n">vdl</span><span class="p">.</span><span class="n">did_route</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">calls</span><span class="p">,</span>
+<span class="w">       </span><span class="k">AVG</span><span class="p">(</span><span class="n">vcl</span><span class="p">.</span><span class="n">queue_seconds</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">avg_queue_time</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_did_log</span><span class="w"> </span><span class="n">vdl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_inbound_dids</span><span class="w"> </span><span class="n">vid</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vdl</span><span class="p">.</span><span class="n">did_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vid</span><span class="p">.</span><span class="n">did_id</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_closer_log</span><span class="w"> </span><span class="n">vcl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vdl</span><span class="p">.</span><span class="n">uniqueid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vcl</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vdl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vid</span><span class="p">.</span><span class="n">did_pattern</span><span class="p">,</span><span class="w"> </span><span class="n">vdl</span><span class="p">.</span><span class="n">did_route</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">calls</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>Want an IVR That Actually Works on Day One?</strong>
+ViciStack designs, builds, and tests your complete IVR system — call menus, routing logic, audio prompts, time-based rules, overflow handling — as part of every deployment. No guesswork. <a href="/free-audit/">Schedule Your Free Audit --&gt;</a></p>
+</blockquote>
+<hr />
+<h2 id="real-world-ivr-configurations">Real-World IVR Configurations<a class="headerlink" href="#real-world-ivr-configurations" title="Permanent link">&para;</a></h2>
+<p>Theory is useful. Working configs are better. Here are three IVR architectures we deploy regularly.</p>
+<h3 id="configuration-1-simple-auto-attendant-5-agent-shop">Configuration 1: Simple Auto-Attendant (5-Agent Shop)<a class="headerlink" href="#configuration-1-simple-auto-attendant-5-agent-shop" title="Permanent link">&para;</a></h3>
+<p>One DID, one menu level, three options.</p>
+<div class="codehilite"><pre><span></span><code><span class="nl">DID</span><span class="p">:</span><span class="w"> </span><span class="mi">15551234567</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nl">CALLMENU</span><span class="p">:</span><span class="w"> </span><span class="n">MAIN_MENU</span>
+
+<span class="nl">MAIN_MENU</span><span class="p">:</span>
+<span class="w">  </span><span class="nl">Prompt</span><span class="p">:</span><span class="w">     </span><span class="ss">&quot;Thank you for calling [Company]. Press 1 for Sales,</span>
+<span class="ss">               Press 2 for Support, or press 0 for the operator.&quot;</span>
+<span class="w">  </span><span class="k">Option</span><span class="w"> </span><span class="mi">1</span><span class="err">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES</span>
+<span class="w">  </span><span class="k">Option</span><span class="w"> </span><span class="mi">2</span><span class="err">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SUPPORT</span>
+<span class="w">  </span><span class="k">Option</span><span class="w"> </span><span class="mi">0</span><span class="err">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">OPERATOR</span>
+<span class="w">  </span><span class="nl">Timeout</span><span class="p">:</span><span class="w">    </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES</span>
+<span class="w">  </span><span class="nl">Invalid</span><span class="p">:</span><span class="w">    </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">MAIN_MENU</span><span class="w"> </span><span class="p">(</span><span class="n">replay</span><span class="p">)</span>
+<span class="w">  </span><span class="nl">Repeat</span><span class="p">:</span><span class="w">     </span><span class="mi">2</span>
+<span class="w">  </span><span class="nc">Time</span><span class="w"> </span><span class="k">Check</span><span class="err">:</span><span class="w"> </span><span class="n">BUSINESS_HOURS</span>
+
+<span class="w">  </span><span class="k">After</span><span class="o">-</span><span class="n">Hours</span><span class="w"> </span><span class="nl">Prompt</span><span class="p">:</span><span class="w"> </span><span class="ss">&quot;Our offices are currently closed. Please leave a</span>
+<span class="ss">                       message after the tone and we will return your</span>
+<span class="ss">                       call on the next business day.&quot;</span>
+<span class="w">  </span><span class="k">After</span><span class="o">-</span><span class="n">Hours</span><span class="w"> </span><span class="nl">Timeout</span><span class="p">:</span><span class="w"> </span><span class="n">VOICEMAIL</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="mi">1000</span>
+</code></pre></div>
+
+<p>Total Call Menus: 1. Total Inbound Groups: 3. Setup time: 20 minutes.</p>
+<h3 id="configuration-2-bilingual-multi-department-50-agent-center">Configuration 2: Bilingual Multi-Department (50-Agent Center)<a class="headerlink" href="#configuration-2-bilingual-multi-department-50-agent-center" title="Permanent link">&para;</a></h3>
+<p>Two languages, three departments, sub-menus for each.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">DID</span><span class="o">:</span><span class="w"> </span><span class="mi">18001234567</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">CALLMENU</span><span class="o">:</span><span class="w"> </span><span class="n">LANG_SELECT</span>
+
+<span class="n">LANG_SELECT</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Prompt</span><span class="o">:</span><span class="w">     </span><span class="s2">&quot;For English, press 1. Para espanol, oprima el 2.&quot;</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w">   </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">MAIN_EN</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w">   </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">MAIN_ES</span>
+<span class="w">  </span><span class="n">Timeout</span><span class="o">:</span><span class="w">    </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">MAIN_EN</span><span class="w"> </span><span class="o">(</span><span class="k">default</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">English</span><span class="o">)</span>
+
+<span class="n">MAIN_EN</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Prompt</span><span class="o">:</span><span class="w">     </span><span class="s2">&quot;Press 1 for Sales... Press 2 for Customer Service...</span>
+<span class="s2">               Press 3 for Billing... Press 0 for operator.&quot;</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w">   </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_EN_MENU</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">CUSTSERV_EN</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">BILLING_EN</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">OPERATOR_EN</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="o">*:</span><span class="w">   </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">LANG_SELECT</span>
+
+<span class="n">SALES_EN_MENU</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Prompt</span><span class="o">:</span><span class="w">     </span><span class="s2">&quot;For new accounts, press 1. For existing accounts, press 2.</span>
+<span class="s2">               For partner inquiries, press 3.&quot;</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_NEW_EN</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_EXISTING_EN</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SALES_PARTNERS_EN</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="w">   </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">MAIN_EN</span><span class="w"> </span><span class="o">(</span><span class="n">go</span><span class="w"> </span><span class="n">back</span><span class="o">)</span>
+
+<span class="n">MAIN_ES</span><span class="o">:</span>
+<span class="w">  </span><span class="o">(</span><span class="n">Mirror</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">MAIN_EN</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">Spanish</span><span class="w"> </span><span class="n">prompts</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">Spanish</span><span class="w"> </span><span class="n">agent</span><span class="w"> </span><span class="n">queues</span><span class="o">)</span>
+
+<span class="n">SALES_ES_MENU</span><span class="o">:</span>
+<span class="w">  </span><span class="o">(</span><span class="n">Mirror</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">SALES_EN_MENU</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">Spanish</span><span class="w"> </span><span class="n">prompts</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">Spanish</span><span class="w"> </span><span class="n">agent</span><span class="w"> </span><span class="n">queues</span><span class="o">)</span>
+</code></pre></div>
+
+<p>Total Call Menus: 6. Total Inbound Groups: 10. Setup time: 2-3 hours including audio recording.</p>
+<h3 id="configuration-3-enterprise-multi-site-with-overflow-200-agents">Configuration 3: Enterprise Multi-Site with Overflow (200+ Agents)<a class="headerlink" href="#configuration-3-enterprise-multi-site-with-overflow-200-agents" title="Permanent link">&para;</a></h3>
+<p>Multiple DIDs, time-based routing, overflow between sites, VIP detection.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">DID</span><span class="o">:</span><span class="w"> </span><span class="mi">18005551000</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Custom</span><span class="w"> </span><span class="n">Dialplan</span><span class="w"> </span><span class="o">(</span><span class="n">VIP</span><span class="w"> </span><span class="n">check</span><span class="o">)</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">CALLMENU</span><span class="o">:</span><span class="w"> </span><span class="n">MAIN_IVR</span>
+<span class="n">DID</span><span class="o">:</span><span class="w"> </span><span class="mi">18005552000</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">CALLMENU</span><span class="o">:</span><span class="w"> </span><span class="n">MAIN_IVR</span><span class="w"> </span><span class="o">(</span><span class="n">standard</span><span class="w"> </span><span class="n">callers</span><span class="o">)</span>
+<span class="n">DID</span><span class="o">:</span><span class="w"> </span><span class="mi">18005553000</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">IN_GROUP</span><span class="o">:</span><span class="w"> </span><span class="n">RETENTION</span><span class="w"> </span><span class="o">(</span><span class="n">direct</span><span class="o">,</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="n">IVR</span><span class="o">)</span>
+
+<span class="n">Custom</span><span class="w"> </span><span class="n">VIP</span><span class="w"> </span><span class="n">Check</span><span class="o">:</span>
+<span class="w">  </span><span class="n">AGI</span><span class="o">:</span><span class="w"> </span><span class="n">vip</span><span class="o">-</span><span class="n">lookup</span><span class="o">.</span><span class="na">agi</span>
+<span class="w">  </span><span class="n">If</span><span class="w"> </span><span class="n">VIP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">IN_GROUP</span><span class="o">:</span><span class="w"> </span><span class="n">VIP_QUEUE</span><span class="w"> </span><span class="o">(</span><span class="n">skip</span><span class="w"> </span><span class="n">IVR</span><span class="o">,</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="n">routing</span><span class="o">)</span>
+<span class="w">  </span><span class="n">If</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">VIP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">CALLMENU</span><span class="o">:</span><span class="w"> </span><span class="n">MAIN_IVR</span>
+
+<span class="n">MAIN_IVR</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Time</span><span class="w"> </span><span class="n">Check</span><span class="o">:</span><span class="w"> </span><span class="n">MULTI_SITE_HOURS</span>
+<span class="w">  </span><span class="n">In</span><span class="o">-</span><span class="n">Hours</span><span class="o">:</span><span class="w"> </span><span class="n">Standard</span><span class="w"> </span><span class="mi">4</span><span class="o">-</span><span class="n">option</span><span class="w"> </span><span class="n">menu</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Department</span><span class="w"> </span><span class="n">queues</span>
+<span class="w">  </span><span class="n">After</span><span class="o">-</span><span class="n">Hours</span><span class="o">:</span><span class="w"> </span><span class="n">Overflow</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">offshore</span><span class="w"> </span><span class="n">partner</span><span class="w"> </span><span class="n">via</span><span class="w"> </span><span class="n">external</span><span class="w"> </span><span class="n">SIP</span><span class="w"> </span><span class="n">trunk</span>
+
+<span class="n">Department</span><span class="w"> </span><span class="n">Queues</span><span class="w"> </span><span class="o">(</span><span class="k">each</span><span class="o">):</span>
+<span class="w">  </span><span class="n">Max</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="n">Time</span><span class="o">:</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="n">seconds</span>
+<span class="w">  </span><span class="n">Overflow</span><span class="o">:</span><span class="w"> </span><span class="n">CALLMENU</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">OVERFLOW_MENU</span>
+
+<span class="n">OVERFLOW_MENU</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Prompt</span><span class="o">:</span><span class="w">     </span><span class="s2">&quot;All agents are currently assisting other callers.</span>
+<span class="s2">               Press 1 to leave a callback number.</span>
+<span class="s2">               Press 2 to continue holding.</span>
+<span class="s2">               Press 3 to leave a voicemail.&quot;</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w">   </span><span class="n">AGI</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">callback</span><span class="o">-</span><span class="n">scheduler</span><span class="o">.</span><span class="na">agi</span><span class="w"> </span><span class="o">(</span><span class="n">writes</span><span class="w"> </span><span class="n">callback</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">VICIdial</span><span class="o">)</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w">   </span><span class="n">IN_GROUP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">SAME_QUEUE</span><span class="w"> </span><span class="o">(</span><span class="n">re</span><span class="o">-</span><span class="n">enter</span><span class="w"> </span><span class="n">queue</span><span class="o">)</span>
+<span class="w">  </span><span class="n">Option</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w">   </span><span class="n">VOICEMAIL</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">department</span><span class="w"> </span><span class="n">mailbox</span>
+</code></pre></div>
+
+<p>Total Call Menus: 8+. Total Inbound Groups: 12+. AGI scripts: 2. Setup time: 1-2 days including testing.</p>
+<hr />
+<h2 id="common-ivr-mistakes-and-how-to-fix-them">Common IVR Mistakes and How to Fix Them<a class="headerlink" href="#common-ivr-mistakes-and-how-to-fix-them" title="Permanent link">&para;</a></h2>
+<p>After building hundreds of VICIdial IVR systems, these are the errors we see operators make most frequently.</p>
+<h3 id="mistake-1-too-many-options-per-menu">Mistake 1: Too Many Options Per Menu<a class="headerlink" href="#mistake-1-too-many-options-per-menu" title="Permanent link">&para;</a></h3>
+<p>"Press 1 for Sales, Press 2 for Support, Press 3 for Billing, Press 4 for Shipping, Press 5 for Returns, Press 6 for Technical Support, Press 7 for Hours and Directions, Press 8 for the Company Directory, Press 9 to hear this message again."</p>
+<p>Nine options. The caller stopped listening at option 4. Research consistently shows callers retain a maximum of 4-5 options. Beyond that, they either mash 0 for the operator or hang up.</p>
+<p><strong>Fix:</strong> Limit each menu to 4-5 options maximum. Use sub-menus for additional routing. Group related options ("Press 2 for Customer Service" covers both Support and Billing, with a sub-menu to differentiate).</p>
+<h3 id="mistake-2-no-timeout-handler">Mistake 2: No Timeout Handler<a class="headerlink" href="#mistake-2-no-timeout-handler" title="Permanent link">&para;</a></h3>
+<p>The caller is driving and can't press a key immediately. The menu plays once, silence, call drops. Or the menu plays once, silence forever — caller eventually hangs up.</p>
+<p><strong>Fix:</strong> Always configure the <code>t</code> (timeout) option. Set Menu Repeat to 2-3 so the prompt plays multiple times. Route the final timeout to the most common destination (usually Sales or a general queue).</p>
+<h3 id="mistake-3-wrong-audio-format">Mistake 3: Wrong Audio Format<a class="headerlink" href="#mistake-3-wrong-audio-format" title="Permanent link">&para;</a></h3>
+<p>The prompt sounds like it's being played underwater. Or there's a pop at the beginning. Or the volume is dramatically different from the hold music.</p>
+<p><strong>Fix:</strong> Convert all audio to 8 kHz, 16-bit, mono WAV. Normalize levels across all prompt files. Test by calling in, not just by listening to the files on your computer — speakers and phone earpieces have very different frequency responses.</p>
+<h3 id="mistake-4-not-testing-after-changes">Mistake 4: Not Testing After Changes<a class="headerlink" href="#mistake-4-not-testing-after-changes" title="Permanent link">&para;</a></h3>
+<p>You change one Call Menu option and don't test. Two weeks later, a customer complains that "Press 2 for Support" has been going to the Sales queue since you made that change.</p>
+<p><strong>Fix:</strong> Test every path after every change. Log changes in a changelog. Better yet, have a second person verify the routing after you modify it.</p>
+<h3 id="mistake-5-ignoring-the-caller-experience">Mistake 5: Ignoring the Caller Experience<a class="headerlink" href="#mistake-5-ignoring-the-caller-experience" title="Permanent link">&para;</a></h3>
+<p>Your IVR works perfectly from a routing perspective — every call reaches the right queue. But callers hate it because the greeting is 45 seconds of legal disclaimers before they hear the first option, or the hold music is a 10-second loop that drives people insane after 2 minutes.</p>
+<p><strong>Fix:</strong> Front-load the useful information. "Press 1 for Sales, Press 2 for Support" should be the first thing callers hear, within 5 seconds. Move legal disclaimers to the queue hold message if required. Use real hold music, not a 10-second loop — and for the love of your callers, don't use a hold message that starts with "Your call is important to us" because nobody believes that anymore.</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>VICIdial's IVR system is powerful, but power without proper configuration means callers routing into dead ends, agents getting calls meant for another department, and after-hours calls going nowhere. The difference between a working IVR and a good IVR is testing, refinement, and operational experience.</p>
+<p><strong>ViciStack builds your IVR as part of every deployment.</strong> We design the call flow with you, record or source professional audio, configure every Call Menu and Inbound Group, set up time-based routing and overflow, and test every DTMF path before your first live call. When your business changes — new department, new hours, new overflow rules — we update the IVR and re-test.</p>
+<p>Your customers' first impression of your company is your IVR. Make it count.</p>
+<p><a href="/free-audit/">Get a free IVR design consultation --&gt;</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial, Asterisk, and best practices evolve. Last updated: March 2026.</em></p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-many-call-menu-levels-can-i-create-in-vicidial">How many Call Menu levels can I create in VICIdial?<a class="headerlink" href="#how-many-call-menu-levels-can-i-create-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>There's no hard limit in VICIdial on Call Menu depth — you can chain as many as you want. But the practical limit is 2-3 levels. Every additional level adds 10-20 seconds to the caller's journey, and abandonment rates climb sharply after 45 seconds of IVR navigation. If your routing logic needs more than 3 levels, restructure: use broader top-level options, leverage skill-based routing within inbound groups, or use AGI scripts for intelligent routing that skips menu levels based on caller data.</p>
+<h3 id="can-i-use-vicidials-ivr-for-outbound-call-transfers">Can I use VICIdial's IVR for outbound call transfers?<a class="headerlink" href="#can-i-use-vicidials-ivr-for-outbound-call-transfers" title="Permanent link">&para;</a></h3>
+<p>Yes. When an agent transfers a call, the transfer destination can be a Call Menu. This is useful for scenarios like transferring a customer to a payment IVR, a survey system, or a different department's auto-attendant. In the campaign's Transfer settings, set up a preset with the Call Menu's extension. The transferred call enters the IVR just like an inbound call. Note that the original agent disconnects from the call at transfer — if you need the agent to stay on during the IVR (warm transfer into a menu), use a three-way call instead.</p>
+<h3 id="why-arent-dtmf-key-presses-being-recognized-in-my-ivr">Why aren't DTMF key presses being recognized in my IVR?<a class="headerlink" href="#why-arent-dtmf-key-presses-being-recognized-in-my-ivr" title="Permanent link">&para;</a></h3>
+<p>Nine times out of ten, this is a <a href="/glossary/dtmf/">DTMF</a> mode mismatch. Your carrier sends DTMF one way and your trunk is configured for another. Check your carrier peer's dtmfmode setting — it should almost always be <code>rfc2833</code>. Run <code>asterisk -rx "sip show peer your-carrier"</code> and verify. If DTMF works on some calls but not others, the issue might be codec-related — DTMF in-band detection fails with compressed codecs like G.729. Switch to RFC 2833 on both your trunk and your carrier's configuration. Also check that Asterisk's <code>features.conf</code> isn't intercepting DTMF meant for the IVR — if <code>*</code> or <code>#</code> are configured as transfer keys, they'll get consumed before reaching the Call Menu.</p>
+<h3 id="how-do-i-set-up-different-ivr-greetings-for-different-times-of-day">How do I set up different IVR greetings for different times of day?<a class="headerlink" href="#how-do-i-set-up-different-ivr-greetings-for-different-times-of-day" title="Permanent link">&para;</a></h3>
+<p>Use Call Menu Time Checks combined with Call Time definitions. Create a Call Time in Admin &gt; Call Times that defines your business hours schedule (including holidays). Then in your Call Menu, set the Menu Time Check to that Call Time ID. VICIdial gives you separate prompt and option fields for in-hours and after-hours. During business hours, callers hear the in-hours prompt and get routed to live agent queues. Outside business hours, they hear the after-hours prompt and route to voicemail, callback scheduling, or an after-hours team. You can get more granular by creating multiple Call Times (morning shift, evening shift, weekends) and nesting Call Menus that each check a different time window.</p>
+<h3 id="can-i-route-calls-differently-based-on-the-callers-phone-number">Can I route calls differently based on the caller's phone number?<a class="headerlink" href="#can-i-route-calls-differently-based-on-the-callers-phone-number" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports ANI-based (caller ID) routing at the DID level. In the DID configuration, you can set up Filter rules that match caller ID patterns and route to different destinations. For more sophisticated logic — like VIP detection, account lookups, or geographic routing based on area code — use AGI scripts in <code>extensions_custom.conf</code>. The AGI script checks the caller's number against your database and sets a channel variable that the <a href="/glossary/dialplan/">dialplan</a> uses for routing. This approach lets you skip the IVR entirely for known callers or route them to priority queues, significantly improving the experience for your best customers.</p>
+<h3 id="whats-the-difference-between-a-call-menu-and-an-inbound-group">What's the difference between a Call Menu and an Inbound Group?<a class="headerlink" href="#whats-the-difference-between-a-call-menu-and-an-inbound-group" title="Permanent link">&para;</a></h3>
+<p>A <a href="/glossary/call-menu/">Call Menu</a> is the IVR itself — it plays prompts, accepts DTMF input, and routes calls based on key presses. An <a href="/glossary/inbound-group/">Inbound Group</a> is a queue — it holds calls and delivers them to available agents. They serve fundamentally different purposes but connect in sequence: a DID routes to a Call Menu, the Call Menu routes to an Inbound Group, and the Inbound Group delivers to an agent. You can also skip the Call Menu entirely and route a DID straight to an Inbound Group if no IVR is needed for that number. Think of Call Menus as the decision layer and Inbound Groups as the delivery layer.</p>
+<h3 id="how-do-i-add-a-dial-by-name-directory-to-my-vicidial-ivr">How do I add a dial-by-name directory to my VICIdial IVR?<a class="headerlink" href="#how-do-i-add-a-dial-by-name-directory-to-my-vicidial-ivr" title="Permanent link">&para;</a></h3>
+<p>Asterisk has a built-in <code>Directory()</code> application that provides dial-by-name functionality. Add a custom dialplan extension in <code>extensions_custom.conf</code> that calls <code>Directory(default,default,bf)</code> — the <code>b</code> flag searches by first name and last name, and <code>f</code> reads the names using the first name first. Then point a Call Menu option (e.g., "Press 9 for our company directory") to that custom extension. For this to work, your Asterisk voicemail.conf must have entries for each user with their name recorded. Callers spell the name using the phone keypad, Asterisk matches it, and connects the call. This is best suited for smaller organizations — with 200+ employees, the directory becomes unwieldy and an operator queue is more practical.</p>
+<h3 id="how-do-i-monitor-ivr-performance-and-identify-bottlenecks">How do I monitor IVR performance and identify bottlenecks?<a class="headerlink" href="#how-do-i-monitor-ivr-performance-and-identify-bottlenecks" title="Permanent link">&para;</a></h3>
+<p>Start with VICIdial's built-in inbound reports. The Inbound Report shows call volume, handle time, and abandonment by inbound group — which tells you if specific queues (IVR destinations) have problems. For IVR-specific analysis, query the <code>vicidial_did_log</code> table to see which DIDs receive traffic and the <code>call_menu_log</code> entries to trace DTMF selections. Key metrics to watch: IVR completion rate (percentage of callers who reach a queue), option distribution (which keys are pressed most), and time-in-IVR (how long callers spend navigating menus before reaching a queue). If your IVR completion rate is below 85%, your menu is too complex, your prompts are unclear, or your timeout handling is broken. Check option distribution — if 60%+ of callers press the same key, consider making that option the default for timeout.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-ivr-setup">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

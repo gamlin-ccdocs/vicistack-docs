@@ -1,0 +1,3264 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/goautodial-to-vicidial-migration/">
+      
+      
+        <link rel="prev" href="../call-center-abandonment-rate/">
+      
+      
+        <link rel="next" href="../vicidial-agent-coaching/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Migrating from GoAutoDial to VICIdial: Step-by-Step - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#migrating-from-goautodial-to-vicidial-step-by-step" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migrating from GoAutoDial to VICIdial: Step-by-Step
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-goautodial-actually-is-technically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What GoAutoDial Actually Is (Technically)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What GoAutoDial Actually Is (Technically)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#goautodial-specific-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GoAutoDial-Specific Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-migrate-the-case-for-leaving-goautodial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Migrate: The Case for Leaving GoAutoDial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Migrate: The Case for Leaving GoAutoDial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-has-stalled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Has Stalled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-exposure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Exposure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gui-layer-adds-complexity-without-proportional-benefit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GUI Layer Adds Complexity Without Proportional Benefit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-svn-trunk-is-actively-developed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial SVN Trunk is Actively Developed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-migration-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Migration Assessment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pre-Migration Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-inventory-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Inventory Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-coordination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Coordination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-path-1-fresh-vicibox-install-data-import-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Path 1: Fresh ViciBox Install + Data Import (Recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Path 1: Fresh ViciBox Install + Data Import (Recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-build-the-new-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Build the New Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-export-data-from-goautodial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Export Data from GoAutoDial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-transfer-data-to-new-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Transfer Data to New Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-prepare-the-new-server-for-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Prepare the New Server for Import
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-import-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Import Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-post-import-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Post-Import Adjustments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-configure-carriers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Configure Carriers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-test-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Test Everything
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-path-2-in-place-upgrade-not-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Path 2: In-Place Upgrade (Not Recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Path 2: In-Place Upgrade (Not Recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-is-risky" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Is Risky
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-mapping-goautodial-gui-to-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Mapping: GoAutoDial GUI to VICIdial Admin
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Mapping: GoAutoDial GUI to VICIdial Admin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campaign-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-and-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List and Lead Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-and-agent-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User and Agent Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-and-trunk-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier and Trunk Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-transition-what-changes-for-your-team" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Transition: What Changes for Your Team
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Transition: What Changes for Your Team">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-looks-different" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Looks Different
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-stays-the-same" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Stays the Same
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#training-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customizing-the-vicidial-agent-screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing the VICIdial Agent Screen
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rollback-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rollback Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#before-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollback-procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback Procedure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-migration-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Migration Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-Migration Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#immediate-wins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Immediate Wins
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settings-to-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings to Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-long-does-the-migration-take" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How long does the migration take?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#will-i-lose-my-historical-cdr-and-reporting-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Will I lose my historical CDR and reporting data?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-migrate-leads-that-are-in-active-callback-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I migrate leads that are in active callback status?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-need-to-re-train-agents-on-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need to re-train agents on VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-goautodial-cloud-is-that-different-from-goautodial-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about GoAutoDial Cloud --- is that different from GoAutoDial CE?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-goautodials-gui-on-top-of-current-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run GoAutoDial's GUI on top of current VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-there-a-commercial-migration-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is there a commercial migration tool?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-if-i-have-custom-php-modifications-in-goautodial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What if I have custom PHP modifications in GoAutoDial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-goautodial-actually-is-technically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What GoAutoDial Actually Is (Technically)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What GoAutoDial Actually Is (Technically)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#goautodial-specific-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GoAutoDial-Specific Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-migrate-the-case-for-leaving-goautodial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Migrate: The Case for Leaving GoAutoDial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Migrate: The Case for Leaving GoAutoDial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-has-stalled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Has Stalled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-exposure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Exposure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gui-layer-adds-complexity-without-proportional-benefit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GUI Layer Adds Complexity Without Proportional Benefit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-svn-trunk-is-actively-developed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial SVN Trunk is Actively Developed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-migration-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Migration Assessment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pre-Migration Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-inventory-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Inventory Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-coordination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Coordination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-path-1-fresh-vicibox-install-data-import-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Path 1: Fresh ViciBox Install + Data Import (Recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Path 1: Fresh ViciBox Install + Data Import (Recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-build-the-new-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Build the New Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-export-data-from-goautodial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Export Data from GoAutoDial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-transfer-data-to-new-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Transfer Data to New Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-prepare-the-new-server-for-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Prepare the New Server for Import
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-import-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Import Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-post-import-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Post-Import Adjustments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-configure-carriers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Configure Carriers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-test-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Test Everything
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-path-2-in-place-upgrade-not-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Path 2: In-Place Upgrade (Not Recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Path 2: In-Place Upgrade (Not Recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-is-risky" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Is Risky
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-mapping-goautodial-gui-to-vicidial-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Mapping: GoAutoDial GUI to VICIdial Admin
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Mapping: GoAutoDial GUI to VICIdial Admin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campaign-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-and-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List and Lead Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-and-agent-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User and Agent Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-and-trunk-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier and Trunk Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-transition-what-changes-for-your-team" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Transition: What Changes for Your Team
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Transition: What Changes for Your Team">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-looks-different" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Looks Different
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-stays-the-same" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Stays the Same
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#training-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customizing-the-vicidial-agent-screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing the VICIdial Agent Screen
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rollback-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rollback Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#before-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollback-procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback Procedure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-migration-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Migration Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-Migration Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#immediate-wins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Immediate Wins
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settings-to-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings to Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-long-does-the-migration-take" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How long does the migration take?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#will-i-lose-my-historical-cdr-and-reporting-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Will I lose my historical CDR and reporting data?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-migrate-leads-that-are-in-active-callback-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I migrate leads that are in active callback status?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-need-to-re-train-agents-on-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need to re-train agents on VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-goautodial-cloud-is-that-different-from-goautodial-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about GoAutoDial Cloud --- is that different from GoAutoDial CE?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-goautodials-gui-on-top-of-current-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run GoAutoDial's GUI on top of current VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-there-a-commercial-migration-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is there a commercial migration tool?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-if-i-have-custom-php-modifications-in-goautodial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What if I have custom PHP modifications in GoAutoDial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="migrating-from-goautodial-to-vicidial-step-by-step">Migrating from GoAutoDial to VICIdial: Step-by-Step<a class="headerlink" href="#migrating-from-goautodial-to-vicidial-step-by-step" title="Permanent link">&para;</a></h1>
+<p><strong>Last updated: March 2026 | Reading time: ~16 minutes</strong></p>
+<p>You are running GoAutoDial and something is not right. Maybe the admin interface keeps throwing PHP errors after an update. Maybe you need a VICIdial feature that GoAutoDial's custom GUI does not expose. Maybe you just realized that GoAutoDial CE 4.0 shipped with VICIdial 2.14-something from 2019, and you are running a contact center on software that is six years behind the current SVN trunk.</p>
+<p>Whatever brought you here, the decision to migrate from GoAutoDial to VICIdial is almost always the correct one. GoAutoDial served a purpose --- it made VICIdial more approachable for people who were intimidated by the native admin interface. But that purpose has been overtaken by GoAutoDial's stagnating development, VICIdial's continuous improvement, and the operational reality that the extra GUI layer creates more problems than it solves.</p>
+<p>This guide covers the complete migration path: what GoAutoDial is at a technical level, why migration makes sense in 2026, how to inventory your existing system, step-by-step data migration, the fresh install path, configuration mapping between GoAutoDial and VICIdial, testing procedures, and the rollback plan you should have but hopefully will not need.</p>
+<p><strong>ViciStack migrates GoAutoDial operations to optimized VICIdial every month.</strong> We handle the data migration, carrier reconfiguration, and agent retraining. <a href="/free-audit/">Let us handle your migration.</a></p>
+<hr />
+<h2 id="what-goautodial-actually-is-technically">What GoAutoDial Actually Is (Technically)<a class="headerlink" href="#what-goautodial-actually-is-technically" title="Permanent link">&para;</a></h2>
+<p>This is important to understand because it determines what your migration actually involves.</p>
+<p>GoAutoDial is not a separate dialer. It is VICIdial with a custom PHP frontend bolted on top. Specifically:</p>
+<ul>
+<li><strong>GoAutoDial CE (Community Edition) 4.x</strong> runs VICIdial 2.14 underneath, typically SVN revision 2900-3200 (compared to the current trunk at 3939+)</li>
+<li><strong>The GoAutoDial GUI</strong> is a separate PHP application (usually at <code>/goautodial/</code> on the web server) that reads from and writes to the same MySQL <code>asterisk</code> database that VICIdial uses</li>
+<li><strong>The underlying <a href="/glossary/asterisk/">Asterisk</a> instance</strong>, cron jobs, screen processes, and telephony layer are all standard VICIdial</li>
+<li><strong>GoAutoDial-specific tables</strong> in the database (prefixed with <code>go_</code> or <code>goautodial_</code>) store GUI preferences, user sessions, and configuration that the GoAutoDial interface needs but VICIdial does not</li>
+</ul>
+<p>What this means for migration: <strong>your core dialer data (campaigns, lists, leads, agents, carriers, recordings, CDR) is already in VICIdial-format tables.</strong> The GoAutoDial GUI is a presentation layer on top of those tables. Migrating to VICIdial is primarily about (1) installing a current VICIdial build and (2) importing your existing data. You are not converting between two different systems --- you are upgrading the same system and removing a deprecated interface layer.</p>
+<h3 id="goautodial-specific-components">GoAutoDial-Specific Components<a class="headerlink" href="#goautodial-specific-components" title="Permanent link">&para;</a></h3>
+<p>These are the things GoAutoDial adds on top of VICIdial that you will leave behind:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>GoAutoDial</th>
+<th>VICIdial Equivalent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin GUI</td>
+<td>Custom PHP dashboard at <code>/goautodial/</code></td>
+<td>Native VICIdial admin at <code>/vicidial/admin.php</code></td>
+</tr>
+<tr>
+<td>Agent interface</td>
+<td>GoAutoDial agent panel</td>
+<td>VICIdial agent screen at <code>/agc/vicidial.php</code></td>
+</tr>
+<tr>
+<td>User management</td>
+<td>GoAutoDial user management with roles</td>
+<td>VICIdial <a href="/glossary/user-group/">User Groups</a> with permission levels</td>
+</tr>
+<tr>
+<td>Reports</td>
+<td>GoAutoDial report dashboard</td>
+<td>VICIdial built-in reports + custom SQL</td>
+</tr>
+<tr>
+<td>API layer</td>
+<td>GoAutoDial API wrapper</td>
+<td>VICIdial non-agent API (more capable)</td>
+</tr>
+<tr>
+<td>Branding</td>
+<td>GoAutoDial logos and styling</td>
+<td>VICIdial default or custom branding</td>
+</tr>
+</tbody>
+</table>
+<p>The GoAutoDial agent panel is worth discussing specifically. Many operations use GoAutoDial because agents find the GoAutoDial agent interface more visually appealing than VICIdial's default agent screen. This is a valid concern, but VICIdial's agent screen is highly customizable through CSS, custom scripts, and the <a href="/glossary/agent-screen/">agent screen</a> configuration options. The visual gap between GoAutoDial's agent panel and a properly customized VICIdial agent screen is minimal.</p>
+<hr />
+<h2 id="why-migrate-the-case-for-leaving-goautodial">Why Migrate: The Case for Leaving GoAutoDial<a class="headerlink" href="#why-migrate-the-case-for-leaving-goautodial" title="Permanent link">&para;</a></h2>
+<h3 id="development-has-stalled">Development Has Stalled<a class="headerlink" href="#development-has-stalled" title="Permanent link">&para;</a></h3>
+<p>GoAutoDial CE 4.0 was released in 2019. Since then:</p>
+<ul>
+<li>No major version releases</li>
+<li>Security patches lag months to years behind VICIdial SVN</li>
+<li>The community forums are largely inactive</li>
+<li>The development team has shifted focus to GoAutoDial Cloud (their hosted offering) and away from the self-hosted CE edition</li>
+</ul>
+<p>Meanwhile, VICIdial SVN trunk has received continuous updates. Between 2019 and 2026, VICIdial added <a href="/glossary/confbridge/">ConfBridge</a> support, <a href="/blog/vicidial-34-new-features/">PHP 8 compatibility</a>, two-factor authentication, ViciPhone v3.0 WebRTC, new API endpoints, AMD improvements, STIR/SHAKEN awareness, and dozens of bug fixes and performance improvements. None of these are available in GoAutoDial CE unless you manually update the VICIdial component underneath --- which risks breaking the GoAutoDial GUI layer.</p>
+<h3 id="security-exposure">Security Exposure<a class="headerlink" href="#security-exposure" title="Permanent link">&para;</a></h3>
+<p>Running GoAutoDial CE in 2026 means running:</p>
+<ul>
+<li><strong>An outdated VICIdial build</strong> with known security vulnerabilities that have been patched in newer SVN revisions</li>
+<li><strong>An additional PHP application</strong> (the GoAutoDial GUI) that increases your attack surface. The GoAutoDial GUI has its own authentication system, session management, and database access patterns that are separate from VICIdial's. More code means more potential vulnerabilities</li>
+<li><strong>CentOS 7</strong> in most cases --- GoAutoDial CE 4.0's installer targets CentOS 7, which reached end-of-life in June 2024. No security patches, no kernel updates, no TLS library updates</li>
+</ul>
+<p>If you are handling consumer financial data, healthcare information, or operating under any compliance framework that requires current security patches, GoAutoDial CE on CentOS 7 is a compliance violation waiting to happen.</p>
+<h3 id="the-gui-layer-adds-complexity-without-proportional-benefit">The GUI Layer Adds Complexity Without Proportional Benefit<a class="headerlink" href="#the-gui-layer-adds-complexity-without-proportional-benefit" title="Permanent link">&para;</a></h3>
+<p>The GoAutoDial GUI duplicates functionality that VICIdial already provides. This duplication creates confusion:</p>
+<ul>
+<li>Settings changed in the GoAutoDial GUI sometimes do not propagate correctly to the underlying VICIdial tables</li>
+<li>Settings changed directly in VICIdial's admin interface are not always reflected in the GoAutoDial GUI</li>
+<li>Troubleshooting requires checking two admin interfaces instead of one</li>
+<li>Documentation and community support for GoAutoDial is sparse compared to VICIdial, which has the vicidial.org forums, the EFLO wiki, and a global community of administrators</li>
+</ul>
+<h3 id="vicidial-svn-trunk-is-actively-developed">VICIdial SVN Trunk is Actively Developed<a class="headerlink" href="#vicidial-svn-trunk-is-actively-developed" title="Permanent link">&para;</a></h3>
+<p>Matt Florell and the VICIdial Group continue active development. The SVN trunk gets regular commits. The vicidial.org forums are active. The ViciBox distribution is maintained and updated. PoundTeam provides professional support. The ecosystem is healthy. Staying on GoAutoDial means opting out of this ecosystem.</p>
+<hr />
+<h2 id="pre-migration-assessment">Pre-Migration Assessment<a class="headerlink" href="#pre-migration-assessment" title="Permanent link">&para;</a></h2>
+<p>Before you touch anything, inventory your current GoAutoDial/VICIdial installation completely. This inventory determines your migration scope and identifies potential complications.</p>
+<h3 id="data-inventory-checklist">Data Inventory Checklist<a class="headerlink" href="#data-inventory-checklist" title="Permanent link">&para;</a></h3>
+<p>Run these queries on your GoAutoDial MySQL database to understand what you are working with:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Campaign count and configuration</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">campaign_name</span><span class="p">,</span><span class="w"> </span><span class="n">active</span><span class="p">,</span><span class="w"> </span><span class="n">dial_method</span><span class="p">,</span><span class="w"> </span><span class="n">auto_dial_level</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_campaigns</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+
+<span class="c1">-- List inventory with lead counts</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span><span class="p">,</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_name</span><span class="p">,</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">active</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="n">vll</span><span class="p">.</span><span class="n">lead_id</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">lead_count</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_lists</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">vll</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vll</span><span class="p">.</span><span class="n">list_id</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">lead_count</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+
+<span class="c1">-- Total leads by status</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">count</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">status</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">count</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+
+<span class="c1">-- User/agent inventory</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">user_group</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">user_count</span><span class="p">,</span><span class="w"> </span><span class="n">active</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_users</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">user_group</span><span class="p">,</span><span class="w"> </span><span class="n">active</span><span class="p">;</span>
+
+<span class="c1">-- Carrier/trunk configuration</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">carrier_id</span><span class="p">,</span><span class="w"> </span><span class="n">carrier_name</span><span class="p">,</span><span class="w"> </span><span class="n">active</span><span class="p">,</span><span class="w"> </span><span class="n">protocol</span><span class="p">,</span><span class="w"> </span><span class="n">server_ip</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_server_carriers</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+
+<span class="c1">-- Inbound groups</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="n">active</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_inbound_groups</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+
+<span class="c1">-- Recording volume</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">month</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">recordings</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span><span class="o">/</span><span class="mi">3600</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_hours</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">recording_log</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">month</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">month</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span>
+
+<span class="c1">-- GoAutoDial-specific tables (to understand what&#39;s GoAutoDial-only)</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;go_%&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;goautodial_%&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="what-to-document">What to Document<a class="headerlink" href="#what-to-document" title="Permanent link">&para;</a></h3>
+<p>Create a migration document (spreadsheet or document) with:</p>
+<ol>
+<li><strong>Campaigns:</strong> Name, ID, dial method, active/inactive, custom settings</li>
+<li><strong>Lists:</strong> List IDs, campaign assignments, lead counts, active status</li>
+<li><strong>Users:</strong> User IDs, user groups, permission levels, active agents vs. managers</li>
+<li><strong>Carriers:</strong> Carrier names, <a href="/glossary/sip/">SIP</a> credentials, IPs, <a href="/glossary/codec/">codec</a> settings, trunk count</li>
+<li><strong>DIDs:</strong> <a href="/glossary/did/">DID</a> numbers, routing destinations (inbound groups, agents, IVRs)</li>
+<li><strong>Custom scripts:</strong> Agent screen scripts, web form URLs, custom JavaScript</li>
+<li><strong>Recordings:</strong> Total volume, retention policy, storage location</li>
+<li><strong>Cron jobs:</strong> Any custom cron jobs beyond the default VICIdial set</li>
+<li><strong>Integrations:</strong> CRM connections, API consumers, webhook destinations, <a href="/settings/start-call-url/">Start Call URLs</a></li>
+<li><strong>Custom code:</strong> Any modifications to VICIdial or GoAutoDial PHP files</li>
+</ol>
+<h3 id="carrier-coordination">Carrier Coordination<a class="headerlink" href="#carrier-coordination" title="Permanent link">&para;</a></h3>
+<p>Contact your <a href="/glossary/carrier/">SIP carrier(s)</a> before migration day:</p>
+<ul>
+<li>Inform them you will be migrating to a new server</li>
+<li>Get the new server's IP whitelisted in advance (if you are moving to new hardware)</li>
+<li>Confirm SIP credentials are documented (username, password, registration server, codec preferences)</li>
+<li>Verify any IP-based authentication will work with your new server IP</li>
+<li>Ask about their SIP registration cooldown --- some carriers lock out rapid re-registrations, which can cause a 5-15 minute outage if you switch servers too quickly</li>
+</ul>
+<hr />
+<h2 id="migration-path-1-fresh-vicibox-install-data-import-recommended">Migration Path 1: Fresh ViciBox Install + Data Import (Recommended)<a class="headerlink" href="#migration-path-1-fresh-vicibox-install-data-import-recommended" title="Permanent link">&para;</a></h2>
+<p>This is the clean path. It gives you a modern OS, current VICIdial, and a fresh start. It requires a new server (or a reformatted existing server) and a maintenance window.</p>
+<h3 id="step-1-build-the-new-server">Step 1: Build the New Server<a class="headerlink" href="#step-1-build-the-new-server" title="Permanent link">&para;</a></h3>
+<p>Follow the <a href="/blog/vicidial-setup-guide/">VICIdial setup guide</a> to install ViciBox 12.0.2 on your new server. If you are deploying in the cloud, see the <a href="/blog/vicidial-cloud-deployment/">cloud deployment guide</a>.</p>
+<p>Key points:
+- ViciBox 12.0.2 runs on OpenSuSE Leap 15.6 with Asterisk 18 and MariaDB 10.11
+- Set a static IP and configure DNS
+- Run <code>vicibox-express</code> for a single-server setup
+- Verify the base installation works (login to admin with 6666/1234)</p>
+<h3 id="step-2-export-data-from-goautodial">Step 2: Export Data from GoAutoDial<a class="headerlink" href="#step-2-export-data-from-goautodial" title="Permanent link">&para;</a></h3>
+<p>On your GoAutoDial server, export the core VICIdial tables. These are the same tables on both systems:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># export_vicidial_data.sh - Run on GoAutoDial server</span>
+<span class="nv">EXPORT_DIR</span><span class="o">=</span><span class="s2">&quot;/root/migration_export&quot;</span>
+<span class="nv">MYSQL_PASS</span><span class="o">=</span><span class="s2">&quot;your_mysql_root_password&quot;</span>
+<span class="nv">DB</span><span class="o">=</span><span class="s2">&quot;asterisk&quot;</span>
+
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="si">${</span><span class="nv">EXPORT_DIR</span><span class="si">}</span>
+
+<span class="c1"># Core campaign and configuration tables</span>
+<span class="nv">TABLES</span><span class="o">=(</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_campaigns&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_campaign_stats&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_lists&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_list&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_users&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_user_groups&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_inbound_groups&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_server_carriers&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_call_menu&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_remote_agents&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_scripts&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_filters&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_lead_filters&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_statuses&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_campaign_statuses&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_phone_codes&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_dnc&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_campaign_dnc&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_inbound_dids&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_did_log&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_callbacks&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_closer_log&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_log&quot;</span>
+<span class="w">    </span><span class="s2">&quot;recording_log&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_list_alt_phones&quot;</span>
+<span class="o">)</span>
+
+<span class="k">for</span><span class="w"> </span>TABLE<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">TABLES</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Exporting </span><span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span><span class="s2">...&quot;</span>
+<span class="w">    </span>mysqldump<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="s2">&quot;</span><span class="si">${</span><span class="nv">MYSQL_PASS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--single-transaction<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--no-create-info<span class="w"> </span>--complete-insert<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span><span class="si">${</span><span class="nv">DB</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">EXPORT_DIR</span><span class="si">}</span>/<span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span>.sql
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  Rows: </span><span class="k">$(</span>wc<span class="w"> </span>-l<span class="w"> </span>&lt;<span class="w"> </span><span class="si">${</span><span class="nv">EXPORT_DIR</span><span class="si">}</span>/<span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span>.sql<span class="k">)</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+
+<span class="c1"># Also export table structures for reference</span>
+mysqldump<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="s2">&quot;</span><span class="si">${</span><span class="nv">MYSQL_PASS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--no-data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="si">${</span><span class="nv">DB</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">EXPORT_DIR</span><span class="si">}</span>/schema_only.sql
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Export complete. Files in </span><span class="si">${</span><span class="nv">EXPORT_DIR</span><span class="si">}</span><span class="s2">/&quot;</span>
+ls<span class="w"> </span>-lh<span class="w"> </span><span class="si">${</span><span class="nv">EXPORT_DIR</span><span class="si">}</span>/
+</code></pre></div>
+
+<p><strong>Important:</strong> We use <code>--no-create-info</code> because the new ViciBox installation already has the correct table schemas for the current VICIdial version. We only want the data rows. The schema on the new server may have additional columns that the old server does not have --- that is expected and the import will populate those new columns with defaults.</p>
+<h3 id="step-3-transfer-data-to-new-server">Step 3: Transfer Data to New Server<a class="headerlink" href="#step-3-transfer-data-to-new-server" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># From the GoAutoDial server</span>
+scp<span class="w"> </span>-r<span class="w"> </span>/root/migration_export<span class="w"> </span>root@NEW_SERVER_IP:/root/migration_import/
+
+<span class="c1"># Also transfer recordings if you want them on the new server</span>
+rsync<span class="w"> </span>-avz<span class="w"> </span>--progress<span class="w"> </span>/var/spool/asterisk/monitor/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>root@NEW_SERVER_IP:/var/spool/asterisk/monitor/
+</code></pre></div>
+
+<p>Recording transfer can take hours or days depending on volume. Start this well before your migration window. You can run rsync incrementally --- it will only transfer new/changed files on subsequent runs.</p>
+<h3 id="step-4-prepare-the-new-server-for-import">Step 4: Prepare the New Server for Import<a class="headerlink" href="#step-4-prepare-the-new-server-for-import" title="Permanent link">&para;</a></h3>
+<p>Before importing data, you need to handle potential conflicts with the default ViciBox data:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># prepare_import.sh - Run on NEW ViciBox server</span>
+<span class="nv">MYSQL_PASS</span><span class="o">=</span><span class="s2">&quot;your_new_mysql_root_password&quot;</span>
+<span class="nv">DB</span><span class="o">=</span><span class="s2">&quot;asterisk&quot;</span>
+
+<span class="c1"># Back up the default ViciBox data (just in case)</span>
+mysqldump<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="s2">&quot;</span><span class="si">${</span><span class="nv">MYSQL_PASS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="si">${</span><span class="nv">DB</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span>/root/vicibox_default_backup.sql
+
+<span class="c1"># Clear default sample data that would conflict with imports</span>
+mysql<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="s2">&quot;</span><span class="si">${</span><span class="nv">MYSQL_PASS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="si">${</span><span class="nv">DB</span><span class="si">}</span><span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">-- Remove default campaigns (keep the schema, remove rows)</span>
+<span class="s">DELETE FROM vicidial_campaigns WHERE campaign_id IN (&#39;TESTCAMP&#39;, &#39;SAMPLE&#39;);</span>
+
+<span class="s">-- Remove default users EXCEPT admin (6666) and API users you&#39;ll need</span>
+<span class="s">DELETE FROM vicidial_users WHERE user NOT IN (&#39;6666&#39;, &#39;VDAD&#39;, &#39;VDCL&#39;);</span>
+
+<span class="s">-- Remove default user groups EXCEPT ADMIN</span>
+<span class="s">DELETE FROM vicidial_user_groups WHERE user_group != &#39;ADMIN&#39;;</span>
+
+<span class="s">-- Clear default lists</span>
+<span class="s">DELETE FROM vicidial_lists WHERE list_id &lt; 200;</span>
+
+<span class="s">-- Clear default inbound groups</span>
+<span class="s">DELETE FROM vicidial_inbound_groups WHERE group_id IN (&#39;AGENTDIRECT&#39;, &#39;SALESLINE&#39;);</span>
+
+<span class="s">-- Note: Do NOT delete from system-level tables like servers, conferences, etc.</span>
+<span class="s">EOF</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Default data cleared. Ready for import.&quot;</span>
+</code></pre></div>
+
+<h3 id="step-5-import-data">Step 5: Import Data<a class="headerlink" href="#step-5-import-data" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># import_data.sh - Run on NEW ViciBox server</span>
+<span class="nv">IMPORT_DIR</span><span class="o">=</span><span class="s2">&quot;/root/migration_import&quot;</span>
+<span class="nv">MYSQL_PASS</span><span class="o">=</span><span class="s2">&quot;your_new_mysql_root_password&quot;</span>
+<span class="nv">DB</span><span class="o">=</span><span class="s2">&quot;asterisk&quot;</span>
+
+<span class="c1"># Import order matters - reference tables first, then data tables</span>
+<span class="nv">IMPORT_ORDER</span><span class="o">=(</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_user_groups&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_users&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_statuses&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_campaigns&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_campaign_statuses&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_lists&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_list&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_server_carriers&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_inbound_groups&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_call_menu&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_inbound_dids&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_scripts&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_filters&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_lead_filters&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_remote_agents&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_phone_codes&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_dnc&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_campaign_dnc&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_callbacks&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_list_alt_phones&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_log&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_closer_log&quot;</span>
+<span class="w">    </span><span class="s2">&quot;vicidial_did_log&quot;</span>
+<span class="w">    </span><span class="s2">&quot;recording_log&quot;</span>
+<span class="o">)</span>
+
+<span class="k">for</span><span class="w"> </span>TABLE<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">IMPORT_ORDER</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">IMPORT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span><span class="s2">.sql&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Importing </span><span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span><span class="s2">...&quot;</span>
+<span class="w">        </span>mysql<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="s2">&quot;</span><span class="si">${</span><span class="nv">MYSQL_PASS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="si">${</span><span class="nv">DB</span><span class="si">}</span><span class="w"> </span>&lt;<span class="w"> </span><span class="si">${</span><span class="nv">IMPORT_DIR</span><span class="si">}</span>/<span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span>.sql
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  Success&quot;</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  WARNING: Errors during import of </span><span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  SKIP: </span><span class="si">${</span><span class="nv">IMPORT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">TABLE</span><span class="si">}</span><span class="s2">.sql not found&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Import complete.&quot;</span>
+</code></pre></div>
+
+<h3 id="step-6-post-import-adjustments">Step 6: Post-Import Adjustments<a class="headerlink" href="#step-6-post-import-adjustments" title="Permanent link">&para;</a></h3>
+<p>After importing data, several things need updating:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Update server_ip references to point to the new server</span>
+<span class="c1">-- GoAutoDial had the old server&#39;s IP; VICIdial needs the new one</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_campaigns</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">server_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NEW_SERVER_IP&#39;</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">server_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OLD_SERVER_IP&#39;</span><span class="p">;</span>
+
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_server_carriers</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">server_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NEW_SERVER_IP&#39;</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">server_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OLD_SERVER_IP&#39;</span><span class="p">;</span>
+
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_servers</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">server_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NEW_SERVER_IP&#39;</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">server_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OLD_SERVER_IP&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Update any recording_log entries to reflect new file paths</span>
+<span class="c1">-- (only needed if recording directory structure changed)</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">recording_log</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">REPLACE</span><span class="p">(</span><span class="k">location</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/old/path/&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/var/spool/asterisk/monitor/MIXmonitor/&#39;</span><span class="p">)</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">location</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;/old/path/%&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Reset conference extensions (they&#39;re server-specific)</span>
+<span class="c1">-- The new ViciBox install already has these configured correctly</span>
+<span class="c1">-- Don&#39;t import vicidial_conferences from the old server</span>
+
+<span class="c1">-- Verify admin user still works</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">pass</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">user_level</span><span class="p">,</span><span class="w"> </span><span class="n">active</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_users</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">user_level</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="step-7-configure-carriers">Step 7: Configure Carriers<a class="headerlink" href="#step-7-configure-carriers" title="Permanent link">&para;</a></h3>
+<p>Carriers (SIP trunks) need manual reconfiguration because they involve both database entries and Asterisk configuration files:</p>
+<ol>
+<li>Navigate to <strong>Admin &gt; Carriers</strong> on the new ViciBox server</li>
+<li>For each carrier from your inventory document:</li>
+<li>If the carrier was imported correctly, verify the settings match your documentation</li>
+<li>Update the <code>Server IP</code> field to the new server's IP</li>
+<li>If using IP-based authentication, ensure your carrier has whitelisted the new server's IP</li>
+<li>If using registration-based authentication, verify credentials are correct</li>
+<li>Reload Asterisk: <code>asterisk -rx "sip reload"</code> or <code>asterisk -rx "pjsip reload"</code></li>
+<li>Verify registration: <code>asterisk -rx "sip show peers"</code> or <code>asterisk -rx "pjsip show endpoints"</code></li>
+</ol>
+<p>For <a href="/glossary/pjsip/">PJSIP</a> configurations (recommended for new installs), you may need to convert old <code>sip.conf</code> carrier entries to <code>pjsip.conf</code> format. This is a one-time effort but important for forward compatibility with <a href="/glossary/asterisk/">Asterisk 18</a>.</p>
+<h3 id="step-8-test-everything">Step 8: Test Everything<a class="headerlink" href="#step-8-test-everything" title="Permanent link">&para;</a></h3>
+<p>Before switching production traffic:</p>
+<ul>
+<li>[ ] Admin login works (with your existing admin credentials, not just 6666)</li>
+<li>[ ] Agent login works for at least 2-3 agents</li>
+<li>[ ] Outbound test call connects with two-way audio</li>
+<li>[ ] Inbound test call routes correctly to the right <a href="/glossary/inbound-group/">inbound group</a></li>
+<li>[ ] <a href="/blog/vicidial-call-recording/">Call recording</a> creates files and recording_log entries</li>
+<li>[ ] Lead data displays correctly on the agent screen</li>
+<li>[ ] <a href="/glossary/callback/">Callbacks</a> fire at scheduled times</li>
+<li>[ ] Reports generate correctly with historical data</li>
+<li>[ ] <a href="/glossary/dnc/">DNC</a> list is active (test by trying to dial a known DNC number)</li>
+<li>[ ] <a href="/glossary/hopper/">Hopper</a> fills correctly (<code>screen -r VDhopper</code> to watch)</li>
+<li>[ ] All custom web forms and scripts load from the agent screen</li>
+</ul>
+<blockquote>
+<p><strong>Migration Without the Guesswork.</strong>
+ViciStack has migrated dozens of GoAutoDial operations to current VICIdial builds. We handle the data, the carriers, and the testing. <a href="/free-audit/">Schedule Your Migration.</a></p>
+</blockquote>
+<hr />
+<h2 id="migration-path-2-in-place-upgrade-not-recommended">Migration Path 2: In-Place Upgrade (Not Recommended)<a class="headerlink" href="#migration-path-2-in-place-upgrade-not-recommended" title="Permanent link">&para;</a></h2>
+<p>It is technically possible to update VICIdial underneath GoAutoDial without a fresh install. We do not recommend this for several reasons, but documenting it for completeness.</p>
+<h3 id="the-process">The Process<a class="headerlink" href="#the-process" title="Permanent link">&para;</a></h3>
+<ol>
+<li>SSH into your GoAutoDial server</li>
+<li>Navigate to the VICIdial installation directory</li>
+<li>Run <code>svn update</code> to pull the latest VICIdial code from the SVN repository</li>
+<li>Run the database upgrade scripts to update the schema</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1"># This is what the process looks like (DO NOT run this blindly)</span>
+<span class="nb">cd</span><span class="w"> </span>/usr/share/astguiclient/
+svn<span class="w"> </span>update<span class="w"> </span>svn://svn.eflo.net:3690/agc_2-X/trunk
+perl<span class="w"> </span>install.pl<span class="w"> </span>--run-db-upgrade
+</code></pre></div>
+
+<h3 id="why-this-is-risky">Why This Is Risky<a class="headerlink" href="#why-this-is-risky" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>GoAutoDial's PHP files may conflict with updated VICIdial code.</strong> GoAutoDial modifies some VICIdial PHP files. An SVN update will overwrite those modifications.</li>
+<li><strong>CentOS 7 is end-of-life.</strong> Updating VICIdial does not fix the underlying OS problem. You are still running on an unpatched OS.</li>
+<li><strong>Asterisk version mismatch.</strong> GoAutoDial CE 4.0 typically runs Asterisk 13 or 16. Current VICIdial SVN expects Asterisk 18. Updating VICIdial without updating Asterisk will break things.</li>
+<li><strong>No clean rollback path.</strong> If the update breaks something, you cannot easily undo an SVN update + database schema change. You would need to restore from backup.</li>
+<li><strong>You are still left with GoAutoDial's GUI layer</strong> which serves no purpose if you are running current VICIdial.</li>
+</ol>
+<p>If you absolutely cannot do a fresh install (e.g., you have 500,000 leads and cannot afford the downtime), the in-place path exists. But plan for 2-3x the troubleshooting time compared to a fresh install, and have a full backup you have tested restoring from.</p>
+<hr />
+<h2 id="configuration-mapping-goautodial-gui-to-vicidial-admin">Configuration Mapping: GoAutoDial GUI to VICIdial Admin<a class="headerlink" href="#configuration-mapping-goautodial-gui-to-vicidial-admin" title="Permanent link">&para;</a></h2>
+<p>For administrators who learned VICIdial through GoAutoDial's interface, here is where to find things in the native VICIdial admin.</p>
+<h3 id="campaign-management">Campaign Management<a class="headerlink" href="#campaign-management" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>GoAutoDial Path</th>
+<th>VICIdial Admin Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telephony &gt; Campaigns &gt; Campaign List</td>
+<td>Admin &gt; Campaigns</td>
+</tr>
+<tr>
+<td>Campaign &gt; General Settings</td>
+<td>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail</td>
+</tr>
+<tr>
+<td>Campaign &gt; Dial Settings</td>
+<td>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail (same page, scroll down)</td>
+</tr>
+<tr>
+<td>Campaign &gt; Dispositions</td>
+<td>Admin &gt; Campaigns &gt; [Campaign] &gt; Statuses</td>
+</tr>
+<tr>
+<td>Campaign &gt; Recycle Rules</td>
+<td>Admin &gt; Campaigns &gt; [Campaign] &gt; <a href="/settings/lead-recycling/">Lead Recycling</a></td>
+</tr>
+<tr>
+<td>Campaign &gt; Callback Settings</td>
+<td>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail &gt; <a href="/settings/scheduled-callbacks/">Scheduled Callbacks</a> section</td>
+</tr>
+<tr>
+<td>Campaign &gt; Caller ID</td>
+<td>Admin &gt; Campaigns &gt; [Campaign] &gt; Detail &gt; <a href="/settings/outbound-cid/">Outbound CID</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="list-and-lead-management">List and Lead Management<a class="headerlink" href="#list-and-lead-management" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>GoAutoDial Path</th>
+<th>VICIdial Admin Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telephony &gt; Lists</td>
+<td>Admin &gt; Lists</td>
+</tr>
+<tr>
+<td>Lists &gt; Upload Leads</td>
+<td>Admin &gt; Lists &gt; [List] &gt; Load Leads</td>
+</tr>
+<tr>
+<td>Lists &gt; Lead Management</td>
+<td>Admin &gt; Lists &gt; [List] &gt; Leads (or direct SQL)</td>
+</tr>
+<tr>
+<td>DNC Management</td>
+<td>Admin &gt; DNC</td>
+</tr>
+<tr>
+<td>Lead Filters</td>
+<td>Admin &gt; Filters</td>
+</tr>
+</tbody>
+</table>
+<p>For a complete guide to list management in VICIdial, see <a href="/blog/vicidial-list-management/">VICIdial List Management Best Practices</a>.</p>
+<h3 id="user-and-agent-management">User and Agent Management<a class="headerlink" href="#user-and-agent-management" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>GoAutoDial Path</th>
+<th>VICIdial Admin Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Users &gt; User List</td>
+<td>Admin &gt; Users</td>
+</tr>
+<tr>
+<td>Users &gt; User Groups</td>
+<td>Admin &gt; User Groups</td>
+</tr>
+<tr>
+<td>Users &gt; Agent Phones</td>
+<td>Admin &gt; Phones</td>
+</tr>
+<tr>
+<td>User Permissions</td>
+<td>Admin &gt; User Groups &gt; [Group] &gt; Permissions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="carrier-and-trunk-configuration">Carrier and Trunk Configuration<a class="headerlink" href="#carrier-and-trunk-configuration" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>GoAutoDial Path</th>
+<th>VICIdial Admin Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telephony &gt; Carriers</td>
+<td>Admin &gt; Carriers</td>
+</tr>
+<tr>
+<td>Telephony &gt; DIDs</td>
+<td>Admin &gt; DIDs</td>
+</tr>
+<tr>
+<td>DID Routing</td>
+<td>Admin &gt; <a href="/glossary/inbound-group/">Inbound Groups</a> + Admin &gt; DIDs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="reports">Reports<a class="headerlink" href="#reports" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>GoAutoDial Report</th>
+<th>VICIdial Admin Report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent Performance</td>
+<td>Reports &gt; Agent Performance Detail</td>
+</tr>
+<tr>
+<td>Campaign Summary</td>
+<td>Reports &gt; Campaign Summary</td>
+</tr>
+<tr>
+<td>Call Detail Records</td>
+<td>Reports &gt; Outbound Calling Report (or CDR search)</td>
+</tr>
+<tr>
+<td>Inbound Report</td>
+<td>Reports &gt; Inbound Report</td>
+</tr>
+<tr>
+<td>Recording Search</td>
+<td>Reports &gt; Recording Lookup</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The biggest difference:</strong> GoAutoDial's reports had a visual dashboard with graphs. VICIdial's built-in reports are table-based. If you need graphical reporting, integrate with Grafana (free) or a commercial BI tool. The underlying data is all accessible via MySQL queries.</p>
+<hr />
+<h2 id="agent-transition-what-changes-for-your-team">Agent Transition: What Changes for Your Team<a class="headerlink" href="#agent-transition-what-changes-for-your-team" title="Permanent link">&para;</a></h2>
+<p>The most disruptive part of a GoAutoDial-to-VICIdial migration is not the technical work --- it is agent confusion. If your agents have only ever used GoAutoDial's agent panel, the VICIdial agent screen looks different. Here is how to manage the transition.</p>
+<h3 id="what-looks-different">What Looks Different<a class="headerlink" href="#what-looks-different" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Layout:</strong> VICIdial's agent screen uses a different layout than GoAutoDial's agent panel. The call controls, disposition buttons, and script area are in different positions.</li>
+<li><strong>Styling:</strong> VICIdial's default styling is more utilitarian. This is fixable with CSS customization.</li>
+<li><strong>Phone registration:</strong> If using softphones, agents may need to register to a new SIP server IP.</li>
+</ul>
+<h3 id="what-stays-the-same">What Stays the Same<a class="headerlink" href="#what-stays-the-same" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Core workflow:</strong> Login &gt; Wait for call &gt; Talk &gt; Disposition &gt; Repeat. This does not change.</li>
+<li><strong>Disposition codes:</strong> All your custom dispositions were imported with the data migration. Same codes, same meanings.</li>
+<li><strong>Callback scheduling:</strong> Same CALLBK/CBHOLD workflow.</li>
+<li><strong>Scripts:</strong> Agent scripts were imported and display the same content.</li>
+<li><strong>Transfer process:</strong> Same <a href="/glossary/transfer/">transfer</a> workflow with blind and consultative options.</li>
+</ul>
+<h3 id="training-approach">Training Approach<a class="headerlink" href="#training-approach" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Before migration day:</strong> Send agents a 1-page visual guide showing the VICIdial agent screen with annotations pointing out where familiar controls are located</li>
+<li><strong>Migration day:</strong> Have a team lead or admin available on a video call to walk agents through their first login</li>
+<li><strong>First hour:</strong> Run a practice campaign with test data so agents can click through dispositions, schedule callbacks, and transfer calls without affecting live leads</li>
+<li><strong>First day:</strong> Monitor agent performance metrics closely. Expect a 10-20% productivity dip on day one as agents adjust. This recovers by day 2-3.</li>
+</ol>
+<h3 id="customizing-the-vicidial-agent-screen">Customizing the VICIdial Agent Screen<a class="headerlink" href="#customizing-the-vicidial-agent-screen" title="Permanent link">&para;</a></h3>
+<p>If the default VICIdial agent screen is a problem for your team, customize it:</p>
+<ol>
+<li><strong>CSS overrides:</strong> Add a custom CSS file to restyle the agent screen. Colors, fonts, button sizes, layout adjustments.</li>
+<li><strong>Custom scripts with HTML/CSS:</strong> VICIdial's script system supports full HTML. Use it to create a custom layout within the script panel.</li>
+<li><strong>Custom web forms:</strong> The agent screen can load external web pages in an iframe. If you want a completely custom agent experience, build it as a web application that communicates with VICIdial via the agent API.</li>
+</ol>
+<hr />
+<h2 id="rollback-plan">Rollback Plan<a class="headerlink" href="#rollback-plan" title="Permanent link">&para;</a></h2>
+<p>Every migration needs a rollback plan. Here is yours.</p>
+<h3 id="before-migration">Before Migration<a class="headerlink" href="#before-migration" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Full backup of GoAutoDial server:</strong></li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Complete database dump</span>
+mysqldump<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>--all-databases<span class="w"> </span>&gt;<span class="w"> </span>/root/goautodial_full_backup_<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
+
+<span class="c1"># Full system backup (if you have space)</span>
+tar<span class="w"> </span>czf<span class="w"> </span>/root/goautodial_server_backup.tar.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/etc/asterisk/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/var/spool/asterisk/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/usr/share/astguiclient/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/var/www/html/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/etc/crontab
+</code></pre></div>
+
+<ol>
+<li>
+<p><strong>Do not decommission the GoAutoDial server</strong> until you have verified the new VICIdial server is stable for at least one full business week</p>
+</li>
+<li>
+<p><strong>Keep the GoAutoDial server's SIP registrations intact</strong> (just inactive). If you need to roll back, you can re-register with your carrier immediately</p>
+</li>
+</ol>
+<h3 id="rollback-procedure">Rollback Procedure<a class="headerlink" href="#rollback-procedure" title="Permanent link">&para;</a></h3>
+<p>If the new VICIdial server fails critically on migration day:</p>
+<ol>
+<li>Re-register your SIP trunks on the old GoAutoDial server: <code>asterisk -rx "sip reload"</code></li>
+<li>If your carrier needs to re-whitelist the old server's IP, call them immediately</li>
+<li>Point agents back to the GoAutoDial server URL</li>
+<li>Export any new leads or CDR from the VICIdial server that were created during the failed migration window</li>
+<li>Import those records into GoAutoDial to avoid data loss</li>
+</ol>
+<p><strong>The rollback window is practical for about 7 days</strong> after migration. After that, new data (leads, CDR, recordings, dispositions) accumulates on the VICIdial server and becomes increasingly difficult to merge back into GoAutoDial.</p>
+<hr />
+<h2 id="post-migration-optimization">Post-Migration Optimization<a class="headerlink" href="#post-migration-optimization" title="Permanent link">&para;</a></h2>
+<p>Once you are running on current VICIdial, take advantage of the features GoAutoDial never had access to:</p>
+<h3 id="immediate-wins">Immediate Wins<a class="headerlink" href="#immediate-wins" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><a href="/blog/vicidial-predictive-dialer-settings/">Predictive dialer optimization</a>:</strong> Current VICIdial's <a href="/glossary/adaptive-dialing/">adaptive dialing</a> algorithm is significantly improved over the 2019-era code in GoAutoDial. Retune your <a href="/settings/auto-dial-level/">dial levels</a> and <a href="/settings/abandon-rate-target/">abandon rate targets</a>.</li>
+<li><strong><a href="/glossary/webrtc/">WebRTC with ViciPhone 3.0</a>:</strong> Current VICIdial includes ViciPhone v3.0, a much more capable WebRTC softphone than what GoAutoDial offered. Remote agents can connect through the browser without external softphones.</li>
+<li><strong>Two-factor authentication:</strong> Secure your admin accounts with 2FA, a feature not available in GoAutoDial CE.</li>
+<li><strong><a href="/glossary/confbridge/">ConfBridge</a>:</strong> Replace the legacy MeetMe conferencing engine with ConfBridge for better performance and no DAHDI dependency for conference rooms.</li>
+</ul>
+<h3 id="settings-to-review">Settings to Review<a class="headerlink" href="#settings-to-review" title="Permanent link">&para;</a></h3>
+<p>After migration, walk through these settings that may have been configured for GoAutoDial's defaults rather than optimal VICIdial values:</p>
+<ul>
+<li><a href="/settings/hopper-level/">Hopper Level</a> --- GoAutoDial often set this low. Increase to 2-4x your agent count.</li>
+<li><a href="/settings/available-only-ratio-tally/">Available Only Ratio Tally</a> --- Set to Y for more accurate <a href="/glossary/predictive-dialing/">predictive dialing</a>.</li>
+<li><a href="/settings/wait-between-calls/">Wait Between Calls</a> --- Ensure this matches your desired agent workflow.</li>
+<li><a href="/settings/campaign-recording/">Campaign Recording</a> --- Verify recording settings migrated correctly.</li>
+<li><a href="/settings/amd-type/">AMD Type</a> --- If you are using <a href="/glossary/amd/">AMD</a>, current VICIdial supports CPD (Call Progress Detection) which is more accurate than the older AMD method. See our <a href="/blog/vicidial-amd-guide/">AMD tuning guide</a>.</li>
+</ul>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-long-does-the-migration-take">How long does the migration take?<a class="headerlink" href="#how-long-does-the-migration-take" title="Permanent link">&para;</a></h3>
+<p>For a typical operation (1-5 campaigns, 10-50 agents, under 1 million leads), the technical migration takes 4-8 hours including data export, fresh install, data import, carrier configuration, and testing. The total project including planning, agent training, and stabilization is 1-2 weeks. ViciStack can complete the technical migration overnight for most operations.</p>
+<h3 id="will-i-lose-my-historical-cdr-and-reporting-data">Will I lose my historical CDR and reporting data?<a class="headerlink" href="#will-i-lose-my-historical-cdr-and-reporting-data" title="Permanent link">&para;</a></h3>
+<p>No. The <code>vicidial_log</code>, <code>vicidial_closer_log</code>, and <code>recording_log</code> tables are all migrated. Your historical call data, recordings, and agent performance history will be available on the new VICIdial server. Reports will show the same historical data.</p>
+<h3 id="can-i-migrate-leads-that-are-in-active-callback-status">Can I migrate leads that are in active callback status?<a class="headerlink" href="#can-i-migrate-leads-that-are-in-active-callback-status" title="Permanent link">&para;</a></h3>
+<p>Yes. The <code>vicidial_callbacks</code> table is included in the standard migration. All LIVE callbacks will continue to fire on the new server at their scheduled times. Verify this by checking <code>SELECT * FROM vicidial_callbacks WHERE status = 'LIVE'</code> after migration.</p>
+<h3 id="do-i-need-to-re-train-agents-on-vicidial">Do I need to re-train agents on VICIdial?<a class="headerlink" href="#do-i-need-to-re-train-agents-on-vicidial" title="Permanent link">&para;</a></h3>
+<p>Minimally. The core agent workflow (login, take calls, disposition, callback) is functionally identical. The visual layout is different but navigable within a few calls. Plan for a 1-hour walkthrough and expect full productivity by day 2. The biggest adjustment is for managers who used GoAutoDial's admin dashboard --- VICIdial's admin interface has a steeper learning curve but is more powerful.</p>
+<h3 id="what-about-goautodial-cloud-is-that-different-from-goautodial-ce">What about GoAutoDial Cloud --- is that different from GoAutoDial CE?<a class="headerlink" href="#what-about-goautodial-cloud-is-that-different-from-goautodial-ce" title="Permanent link">&para;</a></h3>
+<p>Yes. GoAutoDial Cloud is the company's hosted SaaS offering. It may be running newer VICIdial code than CE 4.0, but you have no control over the underlying infrastructure, no SSH access, and limited customization. Migrating from GoAutoDial Cloud to self-hosted VICIdial requires requesting a data export from GoAutoDial (which they may or may not provide promptly) and then following the same import process described in this guide.</p>
+<h3 id="can-i-run-goautodials-gui-on-top-of-current-vicidial">Can I run GoAutoDial's GUI on top of current VICIdial?<a class="headerlink" href="#can-i-run-goautodials-gui-on-top-of-current-vicidial" title="Permanent link">&para;</a></h3>
+<p>Technically possible by installing the GoAutoDial PHP files on a current VICIdial server. Practically, this is a bad idea. GoAutoDial's PHP code was written for PHP 5.x/7.x and VICIdial 2.14 schema circa 2019. Running it against a PHP 8.2 environment with VICIdial 2.14b0.5 schema 1729 will produce errors, broken pages, and potentially data corruption. The whole point of migration is to leave the GoAutoDial layer behind.</p>
+<h3 id="is-there-a-commercial-migration-tool">Is there a commercial migration tool?<a class="headerlink" href="#is-there-a-commercial-migration-tool" title="Permanent link">&para;</a></h3>
+<p>No dedicated GoAutoDial-to-VICIdial migration tool exists because the data is fundamentally the same format --- it is all MySQL tables in the <code>asterisk</code> database. The migration is a standard MySQL export/import with some post-import cleanup. Tools like ViciStack's migration service handle this as part of a managed deployment.</p>
+<h3 id="what-if-i-have-custom-php-modifications-in-goautodial">What if I have custom PHP modifications in GoAutoDial?<a class="headerlink" href="#what-if-i-have-custom-php-modifications-in-goautodial" title="Permanent link">&para;</a></h3>
+<p>Document them before migration. If the customizations are in GoAutoDial-specific files (under <code>/goautodial/</code>), they will not carry over and you will need to reimplement them in VICIdial's framework. If the customizations are in VICIdial's core files (under <code>/agc/</code> or <code>/vicidial/</code>), they may work on the new server but should be reviewed for compatibility with the current VICIdial codebase. Any customizations that reference GoAutoDial-specific database tables (<code>go_*</code> tables) will need rewriting.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/goautodial-to-vicidial-migration">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

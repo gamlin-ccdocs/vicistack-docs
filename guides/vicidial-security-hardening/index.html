@@ -1,0 +1,3817 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-security-hardening/">
+      
+      
+        <link rel="prev" href="../vicidial-setup-guide/">
+      
+      
+        <link rel="next" href="../open-source-call-center-software/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Security Hardening: CVEs, Firewalls & Access Control - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-security-hardening-cves-firewalls-access-control" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Security Hardening: CVEs, Firewalls & Access Control
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-cve-history-you-need-to-know" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The CVE History You Need to Know
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The CVE History You Need to Know">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cve-2024-8503-sql-injection-in-authentication-critical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2024-8503 — SQL Injection in Authentication (Critical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cve-2024-8504-authenticated-remote-code-execution-critical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2024-8504 — Authenticated Remote Code Execution (Critical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cve-2021-28854-unauthenticated-command-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2021-28854 — Unauthenticated Command Injection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cve-2013-4467-cve-2013-4468-the-classics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2013-4467 / CVE-2013-4468 — The Classics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-pattern-is-clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Pattern Is Clear
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#firewall-configuration-the-foundation-of-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall Configuration: The Foundation of Everything
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Firewall Configuration: The Foundation of Everything">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-default-deny-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Default-Deny Principle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster-firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-sip-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk SIP Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk SIP Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lock-down-sip-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lock Down SIP Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pjsip-the-modern-alternative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PJSIP: The Modern Alternative
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fail2ban-for-sip-non-negotiable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fail2ban for SIP: Non-Negotiable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-acls-the-second-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP ACLs — The Second Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strong-sip-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strong SIP Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Access Control
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Access Control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restrict-mysql-binding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restrict MySQL Binding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eliminate-default-and-overprivileged-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eliminate Default and Overprivileged Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-database-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Database Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#https-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS Enforcement
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HTTPS Enforcement">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ssltls-certificate-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSL/TLS Certificate Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apache-https-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache HTTPS Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#admin-panel-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Panel Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Admin Panel Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip-restrict-the-admin-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP-Restrict the Admin Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-user-permission-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial User Permission Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web-server-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Server Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Web Server Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable-directory-listing-and-server-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Directory Listing and Server Info
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#php-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHP Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rate-limiting-with-mod_evasive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Limiting with mod_evasive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Access Control
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Access Control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restrict-recording-directory-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restrict Recording Directory Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filesystem-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filesystem Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-encryption-at-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Encryption at Rest
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ami-asterisk-manager-interface-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI (Asterisk Manager Interface) Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AMI (Asterisk Manager Interface) Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#never-expose-ami-to-the-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Never Expose AMI to the Network
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ami-in-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI in a Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SSH Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable-password-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Password Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fail2ban-for-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fail2ban for SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-the-default-ssh-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change the Default SSH Port
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operating-system-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operating System Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operating System Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keep-the-os-updated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keep the OS Updated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disable-unnecessary-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Unnecessary Services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-level-protections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network-Level Protections
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network-Level Protections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sip-specific-firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP-Specific Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpn-for-remote-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPN for Remote Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-deployment-security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud Deployment Security Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud Deployment Security Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#security-groups-are-not-firewalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Groups Are Not Firewalls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iam-and-instance-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IAM and Instance Roles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-22-point-vicidial-security-hardening-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 22-Point VICIdial Security Hardening Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ongoing-security-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ongoing Security Maintenance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#has-vicidial-been-hacked-before" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Has VICIdial been hacked before?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-vicidial-pci-dss-compliant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is VICIdial PCI-DSS compliant?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-run-vicidial-behind-a-vpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I run VICIdial behind a VPN?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-vicidial-server-has-been-compromised" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my VICIdial server has been compromised?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-vicidial-with-webrtc-securely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use VICIdial with WebRTC securely?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-biggest-security-risk-most-vicidial-admins-overlook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the biggest security risk most VICIdial admins overlook?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-update-vicidial-for-security-patches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I update VICIdial for security patches?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-fail2ban-enough-to-protect-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is fail2ban enough to protect Asterisk?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-cve-history-you-need-to-know" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The CVE History You Need to Know
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The CVE History You Need to Know">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cve-2024-8503-sql-injection-in-authentication-critical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2024-8503 — SQL Injection in Authentication (Critical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cve-2024-8504-authenticated-remote-code-execution-critical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2024-8504 — Authenticated Remote Code Execution (Critical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cve-2021-28854-unauthenticated-command-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2021-28854 — Unauthenticated Command Injection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cve-2013-4467-cve-2013-4468-the-classics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVE-2013-4467 / CVE-2013-4468 — The Classics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-pattern-is-clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Pattern Is Clear
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#firewall-configuration-the-foundation-of-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall Configuration: The Foundation of Everything
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Firewall Configuration: The Foundation of Everything">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-default-deny-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Default-Deny Principle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster-firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-sip-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk SIP Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk SIP Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lock-down-sip-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lock Down SIP Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pjsip-the-modern-alternative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PJSIP: The Modern Alternative
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fail2ban-for-sip-non-negotiable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fail2ban for SIP: Non-Negotiable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-acls-the-second-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP ACLs — The Second Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strong-sip-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strong SIP Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Access Control
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Access Control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restrict-mysql-binding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restrict MySQL Binding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eliminate-default-and-overprivileged-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eliminate Default and Overprivileged Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-database-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Database Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#https-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS Enforcement
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HTTPS Enforcement">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ssltls-certificate-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSL/TLS Certificate Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apache-https-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache HTTPS Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#admin-panel-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Panel Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Admin Panel Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip-restrict-the-admin-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP-Restrict the Admin Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-user-permission-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial User Permission Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web-server-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Server Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Web Server Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable-directory-listing-and-server-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Directory Listing and Server Info
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#php-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHP Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rate-limiting-with-mod_evasive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Limiting with mod_evasive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Access Control
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Access Control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restrict-recording-directory-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restrict Recording Directory Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filesystem-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filesystem Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-encryption-at-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Encryption at Rest
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ami-asterisk-manager-interface-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI (Asterisk Manager Interface) Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AMI (Asterisk Manager Interface) Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#never-expose-ami-to-the-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Never Expose AMI to the Network
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ami-in-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI in a Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SSH Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable-password-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Password Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fail2ban-for-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fail2ban for SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-the-default-ssh-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change the Default SSH Port
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operating-system-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operating System Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operating System Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keep-the-os-updated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keep the OS Updated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disable-unnecessary-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Unnecessary Services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-level-protections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network-Level Protections
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network-Level Protections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sip-specific-firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP-Specific Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpn-for-remote-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPN for Remote Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-deployment-security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud Deployment Security Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud Deployment Security Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#security-groups-are-not-firewalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Groups Are Not Firewalls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iam-and-instance-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IAM and Instance Roles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-22-point-vicidial-security-hardening-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 22-Point VICIdial Security Hardening Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ongoing-security-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ongoing Security Maintenance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#has-vicidial-been-hacked-before" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Has VICIdial been hacked before?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-vicidial-pci-dss-compliant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is VICIdial PCI-DSS compliant?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-run-vicidial-behind-a-vpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I run VICIdial behind a VPN?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-vicidial-server-has-been-compromised" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my VICIdial server has been compromised?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-vicidial-with-webrtc-securely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use VICIdial with WebRTC securely?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-biggest-security-risk-most-vicidial-admins-overlook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the biggest security risk most VICIdial admins overlook?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-update-vicidial-for-security-patches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I update VICIdial for security patches?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-fail2ban-enough-to-protect-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is fail2ban enough to protect Asterisk?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-security-hardening-cves-firewalls-access-control">VICIdial Security Hardening: CVEs, Firewalls &amp; Access Control<a class="headerlink" href="#vicidial-security-hardening-cves-firewalls-access-control" title="Permanent link">&para;</a></h1>
+<p><em>You deployed VICIdial. It's dialing. Agents are happy. Then your provider sends a nastygram about toll fraud running $14,000 in international calls over a weekend. Or worse — you wake up Monday morning to a defaced admin panel and a MySQL dump floating around a Telegram channel. You search the VICIdial forums for "security hardening" and find... a handful of threads from 2014 telling you to change the default AMI password.</em></p>
+<p><em>This is the security guide that should have existed from day one.</em></p>
+<p>We've audited, hardened, and incident-responded on more than 100 VICIdial deployments. We've read every CVE filing, tracked every exploit disclosed on the forums and in security advisories, and seen firsthand what happens when a contact center treats security as an afterthought. The damage is always the same: toll fraud, data exfiltration, regulatory fines, and a week of downtime nobody budgeted for.</p>
+<p>This isn't a theoretical checklist. This is what actually gets exploited, how it gets exploited, and the specific configurations that stop it. Every firewall rule, every config snippet, every permission change — pulled from production hardening playbooks we use on our own infrastructure.</p>
+<hr />
+<h2 id="the-cve-history-you-need-to-know">The CVE History You Need to Know<a class="headerlink" href="#the-cve-history-you-need-to-know" title="Permanent link">&para;</a></h2>
+<p>VICIdial has a documented history of critical vulnerabilities. Some have been patched upstream. Some require manual intervention. All of them are still being actively scanned for by automated exploit kits. If you're running an unpatched VICIdial installation exposed to the internet, the question isn't whether you'll be compromised — it's whether you already have been.</p>
+<h3 id="cve-2024-8503-sql-injection-in-authentication-critical">CVE-2024-8503 — SQL Injection in Authentication (Critical)<a class="headerlink" href="#cve-2024-8503-sql-injection-in-authentication-critical" title="Permanent link">&para;</a></h3>
+<p>This one made headlines. Discovered by Kali Linux's Offensive Security team in 2024, this SQL injection vulnerability exists in the <code>/vicidial/user_stats.php</code> endpoint. An unauthenticated attacker can inject arbitrary SQL through the <code>user</code> parameter, extract the entire <code>vicidial_users</code> table — including plaintext or weakly hashed passwords — and gain full administrative access.</p>
+<p>The attack is trivial. A single crafted HTTP request dumps credentials. Automated tools for this CVE were published within days of disclosure.</p>
+<p><strong>How to patch:</strong> Update to VICIdial SVN revision 3848 or later. If you can't update immediately, block direct internet access to <code>/vicidial/user_stats.php</code> and every other PHP file that accepts user input. This is a band-aid — update your code.</p>
+<h3 id="cve-2024-8504-authenticated-remote-code-execution-critical">CVE-2024-8504 — Authenticated Remote Code Execution (Critical)<a class="headerlink" href="#cve-2024-8504-authenticated-remote-code-execution-critical" title="Permanent link">&para;</a></h3>
+<p>Paired with CVE-2024-8503, this vulnerability allows an authenticated admin user to inject arbitrary OS commands through the admin interface. Combined, these two CVEs form a full attack chain: unauthenticated SQL injection to steal admin credentials, then authenticated RCE to own the server.</p>
+<p><strong>How to patch:</strong> Same fix — SVN revision 3848+. But this CVE is a reminder that VICIdial's admin panel should <strong>never</strong> be exposed to the public internet. Even after patching, defense-in-depth means the admin interface lives behind a VPN or IP whitelist.</p>
+<h3 id="cve-2021-28854-unauthenticated-command-injection">CVE-2021-28854 — Unauthenticated Command Injection<a class="headerlink" href="#cve-2021-28854-unauthenticated-command-injection" title="Permanent link">&para;</a></h3>
+<p>An older but still-relevant vulnerability allowing unauthenticated command injection through crafted input parameters. Affects VICIdial installations that haven't been updated since 2021. If you're running a "set it and forget it" VICIdial box from a few years ago, this is almost certainly exploitable on your system.</p>
+<h3 id="cve-2013-4467-cve-2013-4468-the-classics">CVE-2013-4467 / CVE-2013-4468 — The Classics<a class="headerlink" href="#cve-2013-4467-cve-2013-4468-the-classics" title="Permanent link">&para;</a></h3>
+<p>These SQL injection and command injection vulnerabilities are over a decade old. They've been patched for years. And we still find them in production. Why? Because someone installed VICIdial from a 2012 ISO, never updated it, and it's been dialing ever since. We've personally encountered these in active exploitation during audits as recently as 2025.</p>
+<h3 id="the-pattern-is-clear">The Pattern Is Clear<a class="headerlink" href="#the-pattern-is-clear" title="Permanent link">&para;</a></h3>
+<p>Every major VICIdial CVE follows the same template: <strong>unauthenticated access to a web-facing PHP script that accepts unsanitized input.</strong> The attack surface is the web layer. If you do nothing else from this guide, do these two things:</p>
+<ol>
+<li><strong>Keep your VICIdial code updated.</strong> Run <code>svn update</code> on your installation directory and review changelogs for security fixes.</li>
+<li><strong>Never expose the VICIdial web interface directly to the internet without access controls.</strong></li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check your current SVN revision</span>
+<span class="nb">cd</span><span class="w"> </span>/usr/share/astguiclient
+svn<span class="w"> </span>info<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Revision&quot;</span>
+
+<span class="c1"># Update to latest</span>
+svn<span class="w"> </span>update
+</code></pre></div>
+
+<hr />
+<h2 id="firewall-configuration-the-foundation-of-everything">Firewall Configuration: The Foundation of Everything<a class="headerlink" href="#firewall-configuration-the-foundation-of-everything" title="Permanent link">&para;</a></h2>
+<p>A properly configured firewall is the single highest-impact security measure you can implement. It costs nothing, takes 30 minutes, and eliminates entire categories of attack. Yet the majority of VICIdial installations we audit have either no firewall at all, or a firewall so permissive it might as well not exist.</p>
+<h3 id="the-default-deny-principle">The Default-Deny Principle<a class="headerlink" href="#the-default-deny-principle" title="Permanent link">&para;</a></h3>
+<p>Start from zero. Block everything. Open only what's needed. This is the opposite of VICIdial's default install, which assumes a trusted network and opens ports liberally.</p>
+<p>Here's the complete firewalld configuration for a single-server VICIdial installation:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Reset to default deny</span>
+firewall-cmd<span class="w"> </span>--set-default-zone<span class="o">=</span>drop
+
+<span class="c1"># Create a dedicated zone for VICIdial</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--new-zone<span class="o">=</span>vicidial
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--set-target<span class="o">=</span>DROP
+
+<span class="c1"># SSH — restrict to your management IPs only</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--add-rich-rule<span class="o">=</span><span class="s1">&#39;rule family=&quot;ipv4&quot; source address=&quot;YOUR.OFFICE.IP/32&quot; port port=&quot;22&quot; protocol=&quot;tcp&quot; accept&#39;</span>
+
+<span class="c1"># HTTP/HTTPS — agent access</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--add-rich-rule<span class="o">=</span><span class="s1">&#39;rule family=&quot;ipv4&quot; source address=&quot;YOUR.AGENT.SUBNET/24&quot; port port=&quot;443&quot; protocol=&quot;tcp&quot; accept&#39;</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--add-rich-rule<span class="o">=</span><span class="s1">&#39;rule family=&quot;ipv4&quot; source address=&quot;YOUR.AGENT.SUBNET/24&quot; port port=&quot;80&quot; protocol=&quot;tcp&quot; accept&#39;</span>
+
+<span class="c1"># SIP from carriers ONLY (not the whole internet)</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--add-rich-rule<span class="o">=</span><span class="s1">&#39;rule family=&quot;ipv4&quot; source address=&quot;CARRIER.SIP.IP/32&quot; port port=&quot;5060&quot; protocol=&quot;udp&quot; accept&#39;</span>
+
+<span class="c1"># RTP media ports — carrier IPs only</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--add-rich-rule<span class="o">=</span><span class="s1">&#39;rule family=&quot;ipv4&quot; source address=&quot;CARRIER.SIP.IP/32&quot; port port=&quot;10000-20000&quot; protocol=&quot;udp&quot; accept&#39;</span>
+
+<span class="c1"># WebRTC/ViciPhone (if used)</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--add-rich-rule<span class="o">=</span><span class="s1">&#39;rule family=&quot;ipv4&quot; source address=&quot;YOUR.AGENT.SUBNET/24&quot; port port=&quot;8089&quot; protocol=&quot;tcp&quot; accept&#39;</span>
+
+<span class="c1"># Apply the zone to your public interface</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--change-interface<span class="o">=</span>eth0
+firewall-cmd<span class="w"> </span>--reload
+</code></pre></div>
+
+<p>For <strong>iptables</strong> (CentOS 6 or custom setups), the equivalent:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Flush existing rules</span>
+iptables<span class="w"> </span>-F
+iptables<span class="w"> </span>-X
+
+<span class="c1"># Default deny</span>
+iptables<span class="w"> </span>-P<span class="w"> </span>INPUT<span class="w"> </span>DROP
+iptables<span class="w"> </span>-P<span class="w"> </span>FORWARD<span class="w"> </span>DROP
+iptables<span class="w"> </span>-P<span class="w"> </span>OUTPUT<span class="w"> </span>ACCEPT
+
+<span class="c1"># Allow established connections</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-m<span class="w"> </span>state<span class="w"> </span>--state<span class="w"> </span>ESTABLISHED,RELATED<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># Loopback</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-i<span class="w"> </span>lo<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># SSH from management IPs only</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">22</span><span class="w"> </span>-s<span class="w"> </span>YOUR.OFFICE.IP/32<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># HTTPS for agents</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">443</span><span class="w"> </span>-s<span class="w"> </span>YOUR.AGENT.SUBNET/24<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">80</span><span class="w"> </span>-s<span class="w"> </span>YOUR.AGENT.SUBNET/24<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># SIP from carriers</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-s<span class="w"> </span>CARRIER.SIP.IP/32<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># RTP from carriers</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">10000</span>:20000<span class="w"> </span>-s<span class="w"> </span>CARRIER.SIP.IP/32<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+
+<span class="c1"># AMI — localhost only (NEVER expose externally)</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5038</span><span class="w"> </span>-s<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5038</span><span class="w"> </span>-j<span class="w"> </span>DROP
+
+<span class="c1"># Save</span>
+iptables-save<span class="w"> </span>&gt;<span class="w"> </span>/etc/sysconfig/iptables
+</code></pre></div>
+
+<h3 id="cluster-firewall-rules">Cluster Firewall Rules<a class="headerlink" href="#cluster-firewall-rules" title="Permanent link">&para;</a></h3>
+<p>In a <a href="/blog/vicidial-cluster-guide/">multi-server cluster</a>, you need inter-server communication. The correct approach: <strong>dual NICs.</strong> Public NIC faces the internet with strict rules. Private NIC connects to an isolated VLAN with no firewall between cluster nodes.</p>
+<p>If dual NICs aren't possible (cloud deployments, budget constraints), here are the cluster-specific ports that must be open between nodes:</p>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Protocol</th>
+<th>Between</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3306</td>
+<td>TCP</td>
+<td>All nodes -&gt; DB server</td>
+<td>MySQL</td>
+</tr>
+<tr>
+<td>4569</td>
+<td>UDP</td>
+<td>Dialer &lt;-&gt; Dialer</td>
+<td>IAX2 inter-server</td>
+</tr>
+<tr>
+<td>5060</td>
+<td>UDP</td>
+<td>Carriers -&gt; Dialers</td>
+<td><a href="/glossary/sip/">SIP</a> signaling</td>
+</tr>
+<tr>
+<td>5038</td>
+<td>TCP</td>
+<td>Localhost only</td>
+<td>AMI (never cross-server)</td>
+</tr>
+<tr>
+<td>10000-20000</td>
+<td>UDP</td>
+<td>All nodes (bidirectional)</td>
+<td>RTP audio</td>
+</tr>
+<tr>
+<td>80/443</td>
+<td>TCP</td>
+<td>Agents -&gt; Web servers</td>
+<td>HTTP/HTTPS</td>
+</tr>
+<tr>
+<td>8089</td>
+<td>TCP</td>
+<td>Agents -&gt; Dialers</td>
+<td>WebSocket (<a href="/glossary/webrtc/">WebRTC</a>)</td>
+</tr>
+<tr>
+<td>21</td>
+<td>TCP</td>
+<td>Dialers -&gt; Archive</td>
+<td>FTP recordings</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The critical rule people forget:</strong> Port 5038 (AMI) must be <strong>localhost only.</strong> The Asterisk Manager Interface grants full control of Asterisk — originating calls, hanging up channels, reading configuration. If AMI is reachable from the network, an attacker with the credentials (which are often defaults) can make international calls, wipe voicemail, or crash the PBX. We've seen this exploited more than any other single misconfiguration.</p>
+<blockquote>
+<p><strong>Your Firewall Rules Shouldn't Be Guesswork.</strong>
+ViciStack clusters ship with dual-NIC isolation, carrier-specific SIP rules, and zero internet-exposed management ports. <a href="/free-audit/">Get Your Free Security Assessment --&gt;</a></p>
+</blockquote>
+<hr />
+<h2 id="asterisk-sip-security">Asterisk SIP Security<a class="headerlink" href="#asterisk-sip-security" title="Permanent link">&para;</a></h2>
+<p>Asterisk is the telephony engine underneath VICIdial, and it's the most directly exploitable component in your stack. A misconfigured Asterisk server exposed to the internet will be found and exploited within hours — not days, hours. SIP scanners run 24/7 across the entire IPv4 space, probing port 5060 for open registrations.</p>
+<h3 id="lock-down-sip-registration">Lock Down SIP Registration<a class="headerlink" href="#lock-down-sip-registration" title="Permanent link">&para;</a></h3>
+<p>The default <code>sip.conf</code> that ships with most VICIdial installations is far too permissive. Here are the changes that matter:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="c1">; Only allow connections from known IPs</span>
+<span class="na">allowguest</span><span class="o">=</span><span class="s">no</span>
+<span class="na">alwaysauthreject</span><span class="o">=</span><span class="s">yes</span>
+
+<span class="c1">; Bind to specific interface, not 0.0.0.0</span>
+<span class="na">bindaddr</span><span class="o">=</span><span class="s">YOUR.SERVER.IP</span>
+
+<span class="c1">; Disable DNS SRV lookups (prevents DNS rebinding attacks)</span>
+<span class="na">srvlookup</span><span class="o">=</span><span class="s">no</span>
+
+<span class="c1">; NAT settings — see /glossary/nat-traversal/</span>
+<span class="na">externip</span><span class="o">=</span><span class="s">YOUR.PUBLIC.IP</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">192.168.1.0/255.255.255.0</span>
+<span class="na">directmedia</span><span class="o">=</span><span class="s">no</span>
+</code></pre></div>
+
+<p><strong><code>allowguest=no</code></strong> prevents Asterisk from accepting calls from unregistered endpoints. Without this, anyone who can reach port 5060 can attempt to place calls through your system.</p>
+<p><strong><code>alwaysauthreject=yes</code></strong> is subtle but important. By default, Asterisk returns different error codes for "user exists but wrong password" vs. "user doesn't exist." Attackers use this to enumerate valid extensions. <code>alwaysauthreject</code> returns the same rejection regardless, eliminating the information leak.</p>
+<h3 id="pjsip-the-modern-alternative">PJSIP: The Modern Alternative<a class="headerlink" href="#pjsip-the-modern-alternative" title="Permanent link">&para;</a></h3>
+<p>If you're running VICIdial on Asterisk 16+ with <a href="/glossary/pjsip/">PJSIP</a>, the configuration is different but the principles are identical:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/pjsip.conf</span>
+
+<span class="k">[transport-udp]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">transport</span>
+<span class="na">protocol</span><span class="o">=</span><span class="s">udp</span>
+<span class="na">bind</span><span class="o">=</span><span class="s">YOUR.SERVER.IP:5060</span>
+<span class="na">external_media_address</span><span class="o">=</span><span class="s">YOUR.PUBLIC.IP</span>
+<span class="na">external_signaling_address</span><span class="o">=</span><span class="s">YOUR.PUBLIC.IP</span>
+<span class="na">local_net</span><span class="o">=</span><span class="s">192.168.1.0/24</span>
+
+<span class="k">[global]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">global</span>
+<span class="na">max_initial_qualify_time</span><span class="o">=</span><span class="s">4</span>
+<span class="na">unidentified_request_period</span><span class="o">=</span><span class="s">2</span>
+<span class="na">unidentified_request_count</span><span class="o">=</span><span class="s">3</span>
+</code></pre></div>
+
+<p>The <code>unidentified_request_period</code> and <code>unidentified_request_count</code> settings in PJSIP automatically throttle unauthenticated requests — a built-in defense against SIP scanners.</p>
+<h3 id="fail2ban-for-sip-non-negotiable">Fail2ban for SIP: Non-Negotiable<a class="headerlink" href="#fail2ban-for-sip-non-negotiable" title="Permanent link">&para;</a></h3>
+<p>Fail2ban monitors your Asterisk logs for authentication failures and automatically bans offending IPs via firewall rules. Without it, a brute-force attack against your SIP endpoints will eventually succeed — it's just a matter of time and password complexity.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/fail2ban/jail.local</span>
+
+<span class="k">[asterisk]</span>
+<span class="na">enabled</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">filter</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+<span class="na">action</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s">iptables-allports[name=ASTERISK, protocol=all]</span>
+<span class="na">logpath</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/asterisk/messages</span>
+<span class="na">maxretry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3</span>
+<span class="na">findtime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">600</span>
+<span class="na">bantime</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">86400</span>
+<span class="na">ignoreip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1/8 YOUR.OFFICE.IP/32</span>
+</code></pre></div>
+
+<p>The matching filter in <code>/etc/fail2ban/filter.d/asterisk.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[INCLUDES]</span>
+<span class="na">before</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">common.conf</span>
+
+<span class="k">[Definition]</span>
+<span class="na">failregex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">SECURITY.* SecurityEvent=&quot;FailedACL&quot;.*RemoteAddress=&quot;.+?/.+?/.*?/&lt;HOST&gt;/.*?&quot;</span>
+<span class="w">            </span><span class="na">SECURITY.* SecurityEvent</span><span class="o">=</span><span class="s">&quot;InvalidAccountID&quot;.*RemoteAddress=&quot;.+?/.+?/.*?/&lt;HOST&gt;/.*?&quot;</span>
+<span class="w">            </span><span class="na">SECURITY.* SecurityEvent</span><span class="o">=</span><span class="s">&quot;ChallengeResponseFailed&quot;.*RemoteAddress=&quot;.+?/.+?/.*?/&lt;HOST&gt;/.*?&quot;</span>
+<span class="w">            </span><span class="na">SECURITY.* SecurityEvent</span><span class="o">=</span><span class="s">&quot;InvalidPassword&quot;.*RemoteAddress=&quot;.+?/.+?/.*?/&lt;HOST&gt;/.*?&quot;</span>
+<span class="w">            </span><span class="na">NOTICE.* .*</span><span class="o">:</span><span class="w"> </span><span class="s">Registration from &#39;.*&#39; failed for &#39;&lt;HOST&gt;(:\d+)?&#39; - Wrong password</span>
+<span class="w">            </span><span class="na">NOTICE.* .*</span><span class="o">:</span><span class="w"> </span><span class="s">Registration from &#39;.*&#39; failed for &#39;&lt;HOST&gt;(:\d+)?&#39; - No matching peer found</span>
+<span class="w">            </span><span class="na">NOTICE.* .*</span><span class="o">:</span><span class="w"> </span><span class="s">Registration from &#39;.*&#39; failed for &#39;&lt;HOST&gt;(:\d+)?&#39; - Username/auth name mismatch</span>
+<span class="w">            </span><span class="na">NOTICE.* &lt;HOST&gt; failed to authenticate as &#39;.*&#39;</span>
+<span class="w">            </span><span class="na">NOTICE.* .*</span><span class="o">:</span><span class="w"> </span><span class="s">No registration for peer &#39;.*&#39; \(from &lt;HOST&gt;\)</span>
+<span class="w">            </span><span class="na">NOTICE.* .*</span><span class="o">:</span><span class="w"> </span><span class="s">Host &lt;HOST&gt; failed MD5 authentication for &#39;.*&#39; (.*)</span>
+<span class="w">            </span><span class="na">VERBOSE.* logger.c</span><span class="o">:</span><span class="w"> </span><span class="s">-- .*IP/&lt;HOST&gt;-.* Playing &#39;vm-incorrect-mailbox&#39; .*</span>
+
+<span class="na">ignoreregex</span><span class="w"> </span><span class="o">=</span>
+</code></pre></div>
+
+<p><strong>Set <code>bantime</code> to at least 86400 (24 hours).</strong> The default of 600 seconds is a joke — automated scanners simply wait 10 minutes and resume. We run 7-day bans on production systems. For repeat offenders, consider <code>bantime.increment = true</code> with <code>bantime.factor = 24</code> for exponential ban durations.</p>
+<p>After configuring fail2ban, verify it's working:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check fail2ban status</span>
+fail2ban-client<span class="w"> </span>status<span class="w"> </span>asterisk
+
+<span class="c1"># View currently banned IPs</span>
+fail2ban-client<span class="w"> </span>status<span class="w"> </span>asterisk<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Banned IP&quot;</span>
+
+<span class="c1"># Test the filter against your actual log</span>
+fail2ban-regex<span class="w"> </span>/var/log/asterisk/messages<span class="w"> </span>/etc/fail2ban/filter.d/asterisk.conf
+</code></pre></div>
+
+<p>If you're seeing <a href="/errors/sip-registration-failed/">SIP registration failures</a> from legitimate endpoints after enabling fail2ban, add those IPs to the <code>ignoreip</code> list. Don't disable fail2ban — whitelist the known-good sources.</p>
+<h3 id="sip-acls-the-second-layer">SIP ACLs — The Second Layer<a class="headerlink" href="#sip-acls-the-second-layer" title="Permanent link">&para;</a></h3>
+<p>Fail2ban is reactive. ACLs are proactive. Asterisk supports IP-based Access Control Lists that reject connections before authentication is even attempted:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/acl.conf</span>
+
+<span class="k">[carrier-acl]</span>
+<span class="na">deny</span><span class="o">=</span><span class="s">0.0.0.0/0.0.0.0</span>
+<span class="na">permit</span><span class="o">=</span><span class="s">CARRIER.PRIMARY.IP/255.255.255.255</span>
+<span class="na">permit</span><span class="o">=</span><span class="s">CARRIER.SECONDARY.IP/255.255.255.255</span>
+
+<span class="k">[internal-acl]</span>
+<span class="na">deny</span><span class="o">=</span><span class="s">0.0.0.0/0.0.0.0</span>
+<span class="na">permit</span><span class="o">=</span><span class="s">192.168.1.0/255.255.255.0</span>
+<span class="na">permit</span><span class="o">=</span><span class="s">10.0.0.0/255.0.0.0</span>
+</code></pre></div>
+
+<p>Then apply the ACL to your SIP trunk definitions:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[your-carrier]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">host</span><span class="o">=</span><span class="s">CARRIER.SIP.IP</span>
+<span class="na">acl</span><span class="o">=</span><span class="s">carrier-acl</span>
+<span class="c1">; ... rest of trunk config</span>
+</code></pre></div>
+
+<p>This means even if fail2ban hasn't caught an attacker yet, and even if your firewall has a gap, Asterisk itself will reject the connection at the application layer.</p>
+<h3 id="strong-sip-credentials">Strong SIP Credentials<a class="headerlink" href="#strong-sip-credentials" title="Permanent link">&para;</a></h3>
+<p>This shouldn't need to be said in 2026, but we still find VICIdial installations with SIP passwords like <code>1234</code> or <code>test123</code>. Every SIP endpoint — every phone, every trunk, every agent extension — needs a unique, randomly generated password of at least 20 characters.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Generate a strong SIP password</span>
+openssl<span class="w"> </span>rand<span class="w"> </span>-base64<span class="w"> </span><span class="m">24</span>
+</code></pre></div>
+
+<p>SIP authentication uses digest auth (MD5-based), which is not the strongest protocol. Long random passwords compensate for the protocol's limitations. Never reuse SIP passwords across endpoints.</p>
+<hr />
+<h2 id="mysql-access-control">MySQL Access Control<a class="headerlink" href="#mysql-access-control" title="Permanent link">&para;</a></h2>
+<p>VICIdial's MySQL database contains everything: agent credentials, call recordings metadata, lead data (names, phone numbers, addresses), campaign configurations, and API keys. A compromised database is a total compromise.</p>
+<h3 id="restrict-mysql-binding">Restrict MySQL Binding<a class="headerlink" href="#restrict-mysql-binding" title="Permanent link">&para;</a></h3>
+<p>By default, MySQL listens on all interfaces (<code>bind-address = 0.0.0.0</code>). On a single-server installation, there's zero reason for MySQL to be reachable from the network.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/my.cnf</span>
+<span class="k">[mysqld]</span>
+<span class="na">bind-address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1</span>
+</code></pre></div>
+
+<p>In a <a href="/blog/vicidial-cluster-guide/">cluster environment</a>, MySQL must be reachable from other servers — but only from other cluster nodes:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Bind to the private interface only</span>
+<span class="na">bind-address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">192.168.1.10</span>
+</code></pre></div>
+
+<p>Combined with firewall rules restricting port 3306 to cluster node IPs, this ensures the database is never accessible from the public internet.</p>
+<h3 id="eliminate-default-and-overprivileged-users">Eliminate Default and Overprivileged Users<a class="headerlink" href="#eliminate-default-and-overprivileged-users" title="Permanent link">&para;</a></h3>
+<p>Fresh VICIdial installations often create MySQL users with overly broad privileges. Audit yours:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- List all users and their hosts</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="p">;</span>
+
+<span class="c1">-- Check for wildcard hosts (dangerous)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;%&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Check for users with GRANT privileges</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">Grant_priv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>What you should find:</strong> A <code>cron</code> user for VICIdial's background processes, a <code>custom</code> user for the web interface, and a <code>root</code> user accessible only from localhost. What you often find instead: users with <code>%</code> host wildcards (accessible from anywhere) and <code>GRANT ALL</code> privileges.</p>
+<p>Fix it:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Remove wildcard access</span>
+<span class="k">DROP</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;cron&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;cron&#39;</span><span class="o">@</span><span class="s1">&#39;192.168.1.%&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;STRONG_RANDOM_PASSWORD&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="p">,</span><span class="w"> </span><span class="k">INSERT</span><span class="p">,</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">,</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">asterisk</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;cron&#39;</span><span class="o">@</span><span class="s1">&#39;192.168.1.%&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Separate read-only user for reporting</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;reports&#39;</span><span class="o">@</span><span class="s1">&#39;192.168.1.%&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;ANOTHER_STRONG_PASSWORD&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">asterisk</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;reports&#39;</span><span class="o">@</span><span class="s1">&#39;192.168.1.%&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Lock down root</span>
+<span class="k">DROP</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="p">;</span>
+<span class="c1">-- Ensure root only works from localhost</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;VERY_STRONG_PASSWORD&#39;</span><span class="p">;</span>
+
+<span class="n">FLUSH</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="vicidial-database-credentials">VICIdial Database Credentials<a class="headerlink" href="#vicidial-database-credentials" title="Permanent link">&para;</a></h3>
+<p>VICIdial stores its MySQL credentials in two places:</p>
+<ol>
+<li><strong><code>/etc/astguiclient.conf</code></strong> — Used by all Perl background processes</li>
+<li><strong>PHP configuration files in the web directory</strong> — Used by the admin and agent interfaces</li>
+</ol>
+<p>Both files must have restrictive permissions:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># astguiclient.conf — readable only by root and asterisk</span>
+chmod<span class="w"> </span><span class="m">640</span><span class="w"> </span>/etc/astguiclient.conf
+chown<span class="w"> </span>root:asterisk<span class="w"> </span>/etc/astguiclient.conf
+
+<span class="c1"># Web config files</span>
+chmod<span class="w"> </span><span class="m">640</span><span class="w"> </span>/var/www/html/vicidial/dbconnect_mysqli.php
+chown<span class="w"> </span>root:apache<span class="w"> </span>/var/www/html/vicidial/dbconnect_mysqli.php
+</code></pre></div>
+
+<p>If an attacker can read <code>dbconnect_mysqli.php</code> through a web server misconfiguration (directory traversal, exposed <code>.php</code> source via misconfigured mod_php), they have your database credentials. File permissions are the last line of defense.</p>
+<hr />
+<h2 id="https-enforcement">HTTPS Enforcement<a class="headerlink" href="#https-enforcement" title="Permanent link">&para;</a></h2>
+<p>Running VICIdial over plain HTTP in 2026 is negligent. Agent credentials, lead data, and session tokens traverse the network in cleartext. On a shared network or any network segment an attacker can sniff, every agent login is compromised.</p>
+<h3 id="ssltls-certificate-setup">SSL/TLS Certificate Setup<a class="headerlink" href="#ssltls-certificate-setup" title="Permanent link">&para;</a></h3>
+<p>Use Let's Encrypt for free, automated certificates. If your VICIdial server has a public FQDN:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install certbot</span>
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>certbot<span class="w"> </span>python3-certbot-apache
+
+<span class="c1"># Obtain certificate</span>
+certbot<span class="w"> </span>--apache<span class="w"> </span>-d<span class="w"> </span>dialer.yourdomain.com
+
+<span class="c1"># Verify auto-renewal</span>
+certbot<span class="w"> </span>renew<span class="w"> </span>--dry-run
+</code></pre></div>
+
+<p>For internal/private deployments without public DNS, use a private CA or self-signed certificates — but understand that <a href="/glossary/webrtc/">WebRTC</a> (ViciPhone) will not work with self-signed certificates in modern browsers.</p>
+<h3 id="apache-https-configuration">Apache HTTPS Configuration<a class="headerlink" href="#apache-https-configuration" title="Permanent link">&para;</a></h3>
+<p>Force all HTTP traffic to HTTPS and configure modern TLS settings:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># /etc/httpd/conf.d/ssl.conf</span>
+
+<span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:80</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">ServerName</span><span class="w"> </span>dialer.yourdomain.com
+<span class="w">    </span><span class="nb">Redirect</span><span class="w"> </span>permanent<span class="w"> </span>/<span class="w"> </span>https://dialer.yourdomain.com/
+<span class="nt">&lt;/VirtualHost&gt;</span>
+
+<span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:443</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">ServerName</span><span class="w"> </span>dialer.yourdomain.com
+<span class="w">    </span><span class="nb">DocumentRoot</span><span class="w"> </span><span class="sx">/var/www/html</span>
+
+<span class="w">    </span><span class="nb">SSLEngine</span><span class="w"> </span><span class="k">on</span>
+<span class="w">    </span><span class="nb">SSLCertificateFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/dialer.yourdomain.com/fullchain.pem</span>
+<span class="w">    </span><span class="nb">SSLCertificateKeyFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/dialer.yourdomain.com/privkey.pem</span>
+
+<span class="w">    </span><span class="c"># Modern TLS configuration</span>
+<span class="w">    </span><span class="nb">SSLProtocol</span><span class="w"> </span><span class="k">all</span><span class="w"> </span>-SSLv3<span class="w"> </span>-TLSv1<span class="w"> </span>-TLSv1.1
+<span class="w">    </span><span class="nb">SSLCipherSuite</span><span class="w"> </span>ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384
+<span class="w">    </span><span class="nb">SSLHonorCipherOrder</span><span class="w"> </span><span class="k">on</span>
+
+<span class="w">    </span><span class="c"># Security headers</span>
+<span class="w">    </span><span class="nb">Header</span><span class="w"> </span>always<span class="w"> </span>set<span class="w"> </span>Strict-Transport-Security<span class="w"> </span><span class="s2">&quot;max-age=63072000; includeSubDomains&quot;</span>
+<span class="w">    </span><span class="nb">Header</span><span class="w"> </span>always<span class="w"> </span>set<span class="w"> </span>X-Content-Type-Options<span class="w"> </span><span class="s2">&quot;nosniff&quot;</span>
+<span class="w">    </span><span class="nb">Header</span><span class="w"> </span>always<span class="w"> </span>set<span class="w"> </span>X-Frame-Options<span class="w"> </span><span class="s2">&quot;SAMEORIGIN&quot;</span>
+<span class="w">    </span><span class="nb">Header</span><span class="w"> </span>always<span class="w"> </span>set<span class="w"> </span>X-XSS-Protection<span class="w"> </span><span class="s2">&quot;1; mode=block&quot;</span>
+<span class="w">    </span><span class="nb">Header</span><span class="w"> </span>always<span class="w"> </span>set<span class="w"> </span>Referrer-Policy<span class="w"> </span><span class="s2">&quot;strict-origin-when-cross-origin&quot;</span>
+
+<span class="w">    </span><span class="c"># Disable server signature</span>
+<span class="w">    </span><span class="nb">ServerSignature</span><span class="w"> </span><span class="k">Off</span>
+<span class="w">    </span><span class="nb">ServerTokens</span><span class="w"> </span>Prod
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</code></pre></div>
+
+<p><strong>Disable TLSv1.0 and TLSv1.1.</strong> They're deprecated, they're insecure, and no modern browser needs them. If you have agents on Internet Explorer 10, you have bigger problems than TLS versions.</p>
+<hr />
+<h2 id="admin-panel-security">Admin Panel Security<a class="headerlink" href="#admin-panel-security" title="Permanent link">&para;</a></h2>
+<p>The VICIdial admin panel (<code>/vicidial/admin.php</code>) is the control plane for your entire operation. It manages campaigns, users, trunks, DID routes, system settings, and API access. A compromised admin panel means total control over your contact center.</p>
+<h3 id="ip-restrict-the-admin-interface">IP-Restrict the Admin Interface<a class="headerlink" href="#ip-restrict-the-admin-interface" title="Permanent link">&para;</a></h3>
+<p>The admin panel should never be accessible from the open internet. Period. Use Apache configuration to restrict access:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># /etc/httpd/conf.d/vicidial-admin.conf</span>
+
+<span class="nt">&lt;Directory</span><span class="w"> </span><span class="s">&quot;/var/www/html/vicidial&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="c"># Allow only from specific IPs/subnets</span>
+<span class="w">    </span><span class="nt">&lt;RequireAny&gt;</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span><span class="m">192.168.1.0/24</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span>YOUR.OFFICE.IP/32
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span>YOUR.VPN.SUBNET/24
+<span class="w">    </span><span class="nt">&lt;/RequireAny&gt;</span>
+<span class="nt">&lt;/Directory&gt;</span>
+
+<span class="c"># Completely block sensitive scripts from external access</span>
+<span class="nt">&lt;LocationMatch</span><span class="w"> </span><span class="s">&quot;/(agc|vicidial)/(admin|manager_send|AST_|user_stats|dbconnect)&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;RequireAny&gt;</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span><span class="m">192.168.1.0/24</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span>YOUR.OFFICE.IP/32
+<span class="w">    </span><span class="nt">&lt;/RequireAny&gt;</span>
+<span class="nt">&lt;/LocationMatch&gt;</span>
+</code></pre></div>
+
+<p>If your managers need remote access, the answer is a VPN — not opening the admin panel to the internet. WireGuard takes 10 minutes to set up and eliminates the entire class of web-application attacks against the admin interface.</p>
+<h3 id="vicidial-user-permission-model">VICIdial User Permission Model<a class="headerlink" href="#vicidial-user-permission-model" title="Permanent link">&para;</a></h3>
+<p>VICIdial has a granular permission system that almost nobody configures properly. The defaults give most users far more access than they need.</p>
+<p>In the admin panel under <strong>Admin &gt; User Groups</strong>, configure access levels:</p>
+<ul>
+<li><strong>Level 1 (Agent):</strong> Can only log in to the agent screen. No admin access. This is what 90% of your users should be.</li>
+<li><strong>Level 7 (Manager):</strong> Can view reports, manage lists and campaigns assigned to their user group. Cannot modify system settings, trunks, or server configurations.</li>
+<li><strong>Level 8 (Senior Manager):</strong> Full campaign management, user management within their group. Cannot modify global system settings.</li>
+<li><strong>Level 9 (Admin):</strong> Full access. Limit this to 2-3 people maximum.</li>
+</ul>
+<p><strong>Critical settings in User Groups:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">allowed_campaigns</span><span class="o">:</span><span class="w">  </span><span class="n">Restrict</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">specific</span><span class="w"> </span><span class="n">campaigns</span><span class="w"> </span><span class="o">(</span><span class="n">don</span><span class="err">&#39;</span><span class="n">t</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="s2">&quot;ALL&quot;</span><span class="o">)</span>
+<span class="n">admin_viewable_groups</span><span class="o">:</span><span class="w">  </span><span class="n">Restrict</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">relevant</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="n">only</span>
+<span class="n">admin_viewable_call_times</span><span class="o">:</span><span class="w">  </span><span class="n">Limit</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">business</span><span class="o">-</span><span class="n">relevant</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="n">times</span>
+<span class="n">qc_enabled</span><span class="o">:</span><span class="w">  </span><span class="n">Disable</span><span class="w"> </span><span class="n">unless</span><span class="w"> </span><span class="n">quality</span><span class="w"> </span><span class="n">control</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">actively</span><span class="w"> </span><span class="n">used</span>
+</code></pre></div>
+
+<p>Change the default admin credentials immediately after installation. The default username <code>6666</code> with password <code>1234</code> is the first thing any attacker tries. Create a new admin user with a strong password, then deactivate (not delete — VICIdial doesn't like deleted users) the default accounts.</p>
+<h3 id="api-authentication">API Authentication<a class="headerlink" href="#api-authentication" title="Permanent link">&para;</a></h3>
+<p>VICIdial's non-agent API (<code>/vicidial/non_agent_api.php</code>) is a powerful interface that can add leads, start campaigns, pull reports, and manage users programmatically. It authenticates via username, password, and an IP whitelist.</p>
+<p>If you're seeing <a href="/errors/api-authentication-failed/">API authentication failures</a>, verify the <code>api_allowed_functions</code> and <code>api_ip</code> fields for the user in question. But from a security perspective, the critical settings are:</p>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> In System Settings &gt; API Configuration
+api_only_user:  Create dedicated API users that CANNOT log in to the agent or admin interface
+api_ip:  Restrict to specific IPs. NEVER use 0.0.0.0/0
+</code></pre></div>
+
+<p>Create separate API users for each integration. If your CRM, your reporting tool, and your IVR all use the same API credentials, compromising one compromises all three. Separate users with separate IP restrictions and separate function permissions.</p>
+<blockquote>
+<p><strong>Security Isn't a Feature — It's a Foundation.</strong>
+Every ViciStack deployment ships with IP-restricted admin access, disabled default accounts, and per-integration API users. <a href="/free-audit/">Get Your Free Security Audit --&gt;</a></p>
+</blockquote>
+<hr />
+<h2 id="web-server-hardening">Web Server Hardening<a class="headerlink" href="#web-server-hardening" title="Permanent link">&para;</a></h2>
+<p>Apache is the web server that serves VICIdial's agent and admin interfaces. Out of the box, it exposes more information and accepts more requests than it should.</p>
+<h3 id="disable-directory-listing-and-server-info">Disable Directory Listing and Server Info<a class="headerlink" href="#disable-directory-listing-and-server-info" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c"># /etc/httpd/conf/httpd.conf</span>
+
+<span class="c"># Remove Indexes from Options (prevents directory browsing)</span>
+<span class="nt">&lt;Directory</span><span class="w"> </span><span class="s">&quot;/var/www/html&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">Options</span><span class="w"> </span>-Indexes<span class="w"> </span>-FollowSymLinks
+<span class="w">    </span><span class="nb">AllowOverride</span><span class="w"> </span><span class="k">None</span>
+<span class="nt">&lt;/Directory&gt;</span>
+
+<span class="c"># Disable mod_info and mod_status from external access</span>
+<span class="nt">&lt;Location</span><span class="w"> </span><span class="s">&quot;/server-info&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span><span class="m">127.0.0.1</span>
+<span class="nt">&lt;/Location&gt;</span>
+
+<span class="nt">&lt;Location</span><span class="w"> </span><span class="s">&quot;/server-status&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span><span class="m">127.0.0.1</span>
+<span class="nt">&lt;/Location&gt;</span>
+
+<span class="c"># Hide Apache version</span>
+<span class="nb">ServerTokens</span><span class="w"> </span>Prod
+<span class="nb">ServerSignature</span><span class="w"> </span><span class="k">Off</span>
+
+<span class="c"># Disable TRACE method (prevents cross-site tracing)</span>
+<span class="nb">TraceEnable</span><span class="w"> </span><span class="k">Off</span>
+</code></pre></div>
+
+<h3 id="php-hardening">PHP Hardening<a class="headerlink" href="#php-hardening" title="Permanent link">&para;</a></h3>
+<p>VICIdial's web interface runs on PHP. The default PHP configuration is designed for developer convenience, not production security.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/php.ini</span>
+
+<span class="c1">; Don&#39;t expose PHP version in headers</span>
+<span class="na">expose_php</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Off</span>
+
+<span class="c1">; Disable dangerous functions VICIdial doesn&#39;t need</span>
+<span class="na">disable_functions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">exec,passthru,shell_exec,system,proc_open,popen</span>
+
+<span class="c1">; Limit file uploads</span>
+<span class="na">file_uploads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">On</span>
+<span class="na">upload_max_filesize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">50M</span>
+<span class="na">max_file_uploads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10</span>
+
+<span class="c1">; Session security</span>
+<span class="na">session.cookie_httponly</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">session.cookie_secure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">session.use_strict_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="c1">; Error handling — NEVER show errors in production</span>
+<span class="na">display_errors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Off</span>
+<span class="na">log_errors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">On</span>
+<span class="na">error_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/php_errors.log</span>
+</code></pre></div>
+
+<p><strong>Important caveat:</strong> The <code>disable_functions</code> directive above may break some VICIdial admin functions that use <code>exec()</code> for system operations (like recording playback, server status checks, etc.). Test thoroughly in a staging environment. If specific admin functions break, selectively re-enable <code>exec</code> only, and compensate with stricter filesystem permissions and Apache access controls.</p>
+<h3 id="rate-limiting-with-mod_evasive">Rate Limiting with mod_evasive<a class="headerlink" href="#rate-limiting-with-mod_evasive" title="Permanent link">&para;</a></h3>
+<p>Brute-force attacks against the VICIdial login page are common. <code>mod_evasive</code> provides basic rate limiting:</p>
+<div class="codehilite"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>mod_evasive
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># /etc/httpd/conf.d/mod_evasive.conf</span>
+<span class="nt">&lt;IfModule</span><span class="w"> </span><span class="s">mod_evasive24.c</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">DOSHashTableSize</span><span class="w">    </span><span class="m">3097</span>
+<span class="w">    </span><span class="nb">DOSPageCount</span><span class="w">        </span><span class="m">5</span>
+<span class="w">    </span><span class="nb">DOSSiteCount</span><span class="w">        </span><span class="m">50</span>
+<span class="w">    </span><span class="nb">DOSPageInterval</span><span class="w">     </span><span class="m">1</span>
+<span class="w">    </span><span class="nb">DOSSiteInterval</span><span class="w">     </span><span class="m">1</span>
+<span class="w">    </span><span class="nb">DOSBlockingPeriod</span><span class="w">   </span><span class="m">300</span>
+<span class="w">    </span><span class="nb">DOSEmailNotify</span><span class="w">      </span>admin@yourdomain.com
+<span class="w">    </span><span class="nb">DOSLogDir</span><span class="w">           </span><span class="s2">&quot;/var/log/mod_evasive&quot;</span>
+<span class="nt">&lt;/IfModule&gt;</span>
+</code></pre></div>
+
+<p>This blocks any IP that hits the same page more than 5 times per second or generates more than 50 requests per second site-wide. Legitimate agent usage never triggers these thresholds.</p>
+<hr />
+<h2 id="recording-access-control">Recording Access Control<a class="headerlink" href="#recording-access-control" title="Permanent link">&para;</a></h2>
+<p>Call recordings are regulated data in most jurisdictions. PCI-DSS, HIPAA, GDPR, and state-level privacy laws all have specific requirements for how recordings are stored, accessed, and retained. A VICIdial installation with world-readable recordings on an unprotected HTTP path is a compliance violation waiting to become a lawsuit.</p>
+<h3 id="restrict-recording-directory-access">Restrict Recording Directory Access<a class="headerlink" href="#restrict-recording-directory-access" title="Permanent link">&para;</a></h3>
+<p>By default, VICIdial stores recordings in <code>/var/spool/asterisk/monitorDONE/</code> on telephony servers and serves them via HTTP for playback in the admin interface. The archive server typically serves recordings from a web-accessible directory.</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Block direct HTTP access to recording directories</span>
+<span class="nt">&lt;Directory</span><span class="w"> </span><span class="s">&quot;/var/www/html/RECORDINGS&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="c"># Only allow access from the admin interface (referrer check + IP restriction)</span>
+<span class="w">    </span><span class="nt">&lt;RequireAll&gt;</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span><span class="m">192.168.1.0/24</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span>ip<span class="w"> </span>YOUR.OFFICE.IP/32
+<span class="w">    </span><span class="nt">&lt;/RequireAll&gt;</span>
+<span class="nt">&lt;/Directory&gt;</span>
+</code></pre></div>
+
+<p>For enhanced security, VICIdial supports authenticated recording playback. In <strong>System Settings &gt; Recordings</strong>, configure:</p>
+<ul>
+<li><code>sounds_web_server</code>: Point to a dedicated recording server</li>
+<li><code>sounds_web_directory</code>: Use a non-obvious path (not <code>/RECORDINGS/</code>)</li>
+<li>Authentication: VICIdial can pass session tokens to validate recording access</li>
+</ul>
+<h3 id="filesystem-permissions">Filesystem Permissions<a class="headerlink" href="#filesystem-permissions" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Recording directories — readable only by apache and asterisk</span>
+chown<span class="w"> </span>-R<span class="w"> </span>asterisk:apache<span class="w"> </span>/var/spool/asterisk/monitorDONE/
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">750</span><span class="w"> </span>/var/spool/asterisk/monitorDONE/
+
+<span class="c1"># Archive server recordings</span>
+chown<span class="w"> </span>-R<span class="w"> </span>apache:apache<span class="w"> </span>/var/www/html/RECORDINGS/
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">750</span><span class="w"> </span>/var/www/html/RECORDINGS/
+</code></pre></div>
+
+<h3 id="recording-encryption-at-rest">Recording Encryption at Rest<a class="headerlink" href="#recording-encryption-at-rest" title="Permanent link">&para;</a></h3>
+<p>For PCI-DSS or HIPAA compliance, recordings should be encrypted at rest. The simplest approach is filesystem-level encryption using LUKS:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create encrypted partition for recordings</span>
+cryptsetup<span class="w"> </span>luksFormat<span class="w"> </span>/dev/sdb1
+cryptsetup<span class="w"> </span>luksOpen<span class="w"> </span>/dev/sdb1<span class="w"> </span>recordings
+mkfs.ext4<span class="w"> </span>/dev/mapper/recordings
+mount<span class="w"> </span>/dev/mapper/recordings<span class="w"> </span>/var/spool/asterisk/monitorDONE/
+</code></pre></div>
+
+<p>This way, if the physical drive is stolen or the server is decommissioned without proper disk wiping, the recordings are unreadable.</p>
+<hr />
+<h2 id="ami-asterisk-manager-interface-security">AMI (Asterisk Manager Interface) Security<a class="headerlink" href="#ami-asterisk-manager-interface-security" title="Permanent link">&para;</a></h2>
+<p>The AMI is Asterisk's remote control interface. Through AMI, you can originate calls, hang up channels, reload configuration, execute commands, and read real-time events. VICIdial's Perl scripts communicate with Asterisk exclusively through AMI on port 5038.</p>
+<h3 id="never-expose-ami-to-the-network">Never Expose AMI to the Network<a class="headerlink" href="#never-expose-ami-to-the-network" title="Permanent link">&para;</a></h3>
+<p>This cannot be stated forcefully enough. AMI on the network is equivalent to SSH with a known password. The default VICIdial AMI credentials (<code>cron</code>/<code>1234</code>) are documented in every install guide on the internet.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/manager.conf</span>
+
+<span class="k">[general]</span>
+<span class="na">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5038</span>
+<span class="c1">; CRITICAL: bind to localhost ONLY</span>
+<span class="na">bindaddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1</span>
+
+<span class="c1">; Change from defaults immediately</span>
+<span class="k">[cron]</span>
+<span class="na">secret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">USE_A_GENERATED_32_CHARACTER_PASSWORD_HERE</span>
+<span class="c1">; Restrict permissions to only what VICIdial needs</span>
+<span class="na">read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">system,call,log,verbose,agent,user,config,dtmf,reporting,cdr,dialplan</span>
+<span class="na">write</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">system,call,agent,user,command,reporting,originate,message</span>
+<span class="na">deny</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0/0.0.0.0</span>
+<span class="na">permit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1/255.255.255.0</span>
+</code></pre></div>
+
+<p><strong>After changing the AMI secret</strong>, you must update it in <code>/etc/astguiclient.conf</code> (the <code>VARserver_password</code> field). If these don't match, every VICIdial Perl script will fail to connect to Asterisk, and your system will stop dialing immediately. Test during a maintenance window.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># After changing AMI credentials, verify connectivity</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;manager show connected&quot;</span>
+</code></pre></div>
+
+<h3 id="ami-in-a-cluster">AMI in a Cluster<a class="headerlink" href="#ami-in-a-cluster" title="Permanent link">&para;</a></h3>
+<p>In a cluster, VICIdial's scripts on each telephony server communicate with their <strong>local</strong> Asterisk only via AMI. There is no legitimate reason for AMI traffic to traverse the network between servers. If you see port 5038 open in your cluster's firewall rules, that's a misconfiguration. Remove it.</p>
+<p>The one exception: if you've built custom integrations that use AMI remotely (wallboard applications, custom dialers), those integrations should be refactored to use VICIdial's API instead, which has proper authentication and doesn't expose the full Asterisk control plane.</p>
+<hr />
+<h2 id="ssh-hardening">SSH Hardening<a class="headerlink" href="#ssh-hardening" title="Permanent link">&para;</a></h2>
+<p>SSH is your server management access. Compromise SSH and everything else is moot. These changes take five minutes and dramatically reduce your attack surface.</p>
+<h3 id="disable-password-authentication">Disable Password Authentication<a class="headerlink" href="#disable-password-authentication" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/ssh/sshd_config</span>
+
+<span class="c1"># Key-based auth only</span>
+PasswordAuthentication<span class="w"> </span>no
+PubkeyAuthentication<span class="w"> </span>yes
+
+<span class="c1"># Disable root login</span>
+PermitRootLogin<span class="w"> </span>no
+
+<span class="c1"># Use SSH protocol 2 only</span>
+Protocol<span class="w"> </span><span class="m">2</span>
+
+<span class="c1"># Restrict to specific users</span>
+AllowUsers<span class="w"> </span>youradmin
+
+<span class="c1"># Rate limit connections</span>
+MaxAuthTries<span class="w"> </span><span class="m">3</span>
+LoginGraceTime<span class="w"> </span><span class="m">30</span>
+
+<span class="c1"># Disable unused features</span>
+X11Forwarding<span class="w"> </span>no
+AllowTcpForwarding<span class="w"> </span>no
+PermitTunnel<span class="w"> </span>no
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1"># Reload SSH (don&#39;t restart — you&#39;ll lose your current session if something&#39;s wrong)</span>
+systemctl<span class="w"> </span>reload<span class="w"> </span>sshd
+</code></pre></div>
+
+<p><strong>Before disabling password authentication</strong>, verify you can log in with your SSH key. Lock yourself out and you're calling the data center for KVM access.</p>
+<h3 id="fail2ban-for-ssh">Fail2ban for SSH<a class="headerlink" href="#fail2ban-for-ssh" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/fail2ban/jail.local</span>
+
+<span class="k">[sshd]</span>
+<span class="na">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ssh</span>
+<span class="na">filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">sshd</span>
+<span class="na">logpath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/secure</span>
+<span class="na">maxretry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3</span>
+<span class="na">findtime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">600</span>
+<span class="na">bantime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">86400</span>
+</code></pre></div>
+
+<h3 id="change-the-default-ssh-port">Change the Default SSH Port<a class="headerlink" href="#change-the-default-ssh-port" title="Permanent link">&para;</a></h3>
+<p>Security through obscurity alone is worthless. But changing SSH from port 22 to a non-standard port eliminates 99% of automated scanning noise, making your logs readable and your fail2ban bans meaningful.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/ssh/sshd_config</span>
+Port<span class="w"> </span><span class="m">2222</span>
+
+<span class="c1"># Update firewall rules BEFORE restarting SSH</span>
+firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>vicidial<span class="w"> </span>--add-rich-rule<span class="o">=</span><span class="s1">&#39;rule family=&quot;ipv4&quot; source address=&quot;YOUR.OFFICE.IP/32&quot; port port=&quot;2222&quot; protocol=&quot;tcp&quot; accept&#39;</span>
+firewall-cmd<span class="w"> </span>--reload
+systemctl<span class="w"> </span>reload<span class="w"> </span>sshd
+</code></pre></div>
+
+<hr />
+<h2 id="operating-system-hardening">Operating System Hardening<a class="headerlink" href="#operating-system-hardening" title="Permanent link">&para;</a></h2>
+<h3 id="keep-the-os-updated">Keep the OS Updated<a class="headerlink" href="#keep-the-os-updated" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Enable automatic security updates (RHEL/CentOS/AlmaLinux)</span>
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>dnf-automatic
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>dnf-automatic-install.timer
+
+<span class="c1"># Verify timer is active</span>
+systemctl<span class="w"> </span>status<span class="w"> </span>dnf-automatic-install.timer
+</code></pre></div>
+
+<p>For VICIdial-specific packages (Asterisk, DAHDI, Perl modules), update manually during maintenance windows. Automatic Asterisk updates on a production dialer are a recipe for unscheduled downtime.</p>
+<h3 id="disable-unnecessary-services">Disable Unnecessary Services<a class="headerlink" href="#disable-unnecessary-services" title="Permanent link">&para;</a></h3>
+<p>A VICIdial server should run VICIdial. Not Postfix (unless you need email functionality). Not Cups. Not Bluetooth services. Every unnecessary service is a potential attack vector.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Common unnecessary services on VICIdial servers</span>
+systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>cups
+systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>bluetooth
+systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>avahi-daemon
+systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>rpcbind
+
+<span class="c1"># List all active services and review</span>
+systemctl<span class="w"> </span>list-unit-files<span class="w"> </span>--type<span class="o">=</span>service<span class="w"> </span>--state<span class="o">=</span>enabled
+</code></pre></div>
+
+<h3 id="selinux">SELinux<a class="headerlink" href="#selinux" title="Permanent link">&para;</a></h3>
+<p>The VICIdial community's standard advice is "disable SELinux." We disagree — but we understand why they say it. SELinux in enforcing mode breaks VICIdial's web interface, Perl scripts, and Asterisk interactions unless you write custom policies.</p>
+<p>The pragmatic middle ground:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Set to permissive (logs violations but doesn&#39;t block)</span>
+setenforce<span class="w"> </span><span class="m">0</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=permissive/&#39;</span><span class="w"> </span>/etc/selinux/config
+</code></pre></div>
+
+<p>Permissive mode gives you an audit log of what SELinux would block, without breaking anything. On high-security deployments, use the audit log to create targeted policies:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Generate policy from audit log</span>
+audit2allow<span class="w"> </span>-a<span class="w"> </span>-M<span class="w"> </span>vicidial_custom
+semodule<span class="w"> </span>-i<span class="w"> </span>vicidial_custom.pp
+</code></pre></div>
+
+<hr />
+<h2 id="network-level-protections">Network-Level Protections<a class="headerlink" href="#network-level-protections" title="Permanent link">&para;</a></h2>
+<h3 id="sip-specific-firewall-rules">SIP-Specific Firewall Rules<a class="headerlink" href="#sip-specific-firewall-rules" title="Permanent link">&para;</a></h3>
+<p>Beyond basic port filtering, implement SIP-aware protections:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Rate-limit SIP REGISTER attempts (prevents registration floods)</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-m<span class="w"> </span>string<span class="w"> </span>--string<span class="w"> </span><span class="s2">&quot;REGISTER&quot;</span><span class="w"> </span>--algo<span class="w"> </span>bm<span class="w"> </span>-m<span class="w"> </span>recent<span class="w"> </span>--name<span class="w"> </span>sip_register<span class="w"> </span>--set
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-m<span class="w"> </span>string<span class="w"> </span>--string<span class="w"> </span><span class="s2">&quot;REGISTER&quot;</span><span class="w"> </span>--algo<span class="w"> </span>bm<span class="w"> </span>-m<span class="w"> </span>recent<span class="w"> </span>--name<span class="w"> </span>sip_register<span class="w"> </span>--update<span class="w"> </span>--seconds<span class="w"> </span><span class="m">60</span><span class="w"> </span>--hitcount<span class="w"> </span><span class="m">20</span><span class="w"> </span>-j<span class="w"> </span>DROP
+
+<span class="c1"># Rate-limit SIP INVITE (prevents call flooding)</span>
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-m<span class="w"> </span>string<span class="w"> </span>--string<span class="w"> </span><span class="s2">&quot;INVITE&quot;</span><span class="w"> </span>--algo<span class="w"> </span>bm<span class="w"> </span>-m<span class="w"> </span>recent<span class="w"> </span>--name<span class="w"> </span>sip_invite<span class="w"> </span>--set
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-m<span class="w"> </span>string<span class="w"> </span>--string<span class="w"> </span><span class="s2">&quot;INVITE&quot;</span><span class="w"> </span>--algo<span class="w"> </span>bm<span class="w"> </span>-m<span class="w"> </span>recent<span class="w"> </span>--name<span class="w"> </span>sip_invite<span class="w"> </span>--update<span class="w"> </span>--seconds<span class="w"> </span><span class="m">10</span><span class="w"> </span>--hitcount<span class="w"> </span><span class="m">30</span><span class="w"> </span>-j<span class="w"> </span>DROP
+</code></pre></div>
+
+<h3 id="vpn-for-remote-management">VPN for Remote Management<a class="headerlink" href="#vpn-for-remote-management" title="Permanent link">&para;</a></h3>
+<p>If your team manages VICIdial servers remotely, all management traffic should traverse a VPN. WireGuard is the simplest option:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install WireGuard</span>
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>wireguard-tools
+
+<span class="c1"># Generate server keys</span>
+wg<span class="w"> </span>genkey<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/etc/wireguard/server_private.key<span class="w"> </span><span class="p">|</span><span class="w"> </span>wg<span class="w"> </span>pubkey<span class="w"> </span>&gt;<span class="w"> </span>/etc/wireguard/server_public.key
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/wireguard/server_private.key
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/wireguard/wg0.conf</span>
+<span class="k">[Interface]</span>
+<span class="na">Address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10.200.0.1/24</span>
+<span class="na">ListenPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">51820</span>
+<span class="na">PrivateKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">SERVER_PRIVATE_KEY</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">CLIENT_PUBLIC_KEY</span>
+<span class="na">AllowedIPs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10.200.0.2/32</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>wg-quick@wg0
+</code></pre></div>
+
+<p>Then restrict SSH and admin panel access to the WireGuard subnet (<code>10.200.0.0/24</code>). Remote management without VPN simply does not exist.</p>
+<hr />
+<h2 id="cloud-deployment-security-considerations">Cloud Deployment Security Considerations<a class="headerlink" href="#cloud-deployment-security-considerations" title="Permanent link">&para;</a></h2>
+<p>If you're running VICIdial in <a href="/blog/vicidial-cloud-deployment/">AWS, GCP, or DigitalOcean</a>, the security model is different from bare metal. Cloud providers add their own layer — security groups, VPCs, IAM — but they also add new risks.</p>
+<h3 id="security-groups-are-not-firewalls">Security Groups Are Not Firewalls<a class="headerlink" href="#security-groups-are-not-firewalls" title="Permanent link">&para;</a></h3>
+<p>Cloud security groups are stateful packet filters, not application-aware firewalls. They don't inspect SIP traffic, they don't understand <a href="/glossary/nat-traversal/">NAT traversal</a>, and they don't rate-limit. You still need host-based firewalls (iptables/firewalld) and application-level protections (fail2ban, SIP ACLs) on every instance.</p>
+<h3 id="vpc-architecture">VPC Architecture<a class="headerlink" href="#vpc-architecture" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">Internet</span>
+<span class="w">    </span><span class="o">|</span>
+<span class="w">    </span><span class="n">v</span>
+<span class="p">[</span><span class="w"> </span><span class="n">NAT</span><span class="w"> </span><span class="n">Gateway</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Load</span><span class="w"> </span><span class="n">Balancer</span><span class="w"> </span><span class="p">]</span>
+<span class="w">    </span><span class="o">|</span>
+<span class="w">    </span><span class="n">v</span>
+<span class="p">[</span><span class="w"> </span><span class="n">Public</span><span class="w"> </span><span class="n">Subnet</span><span class="o">:</span><span class="w"> </span><span class="n">Web</span><span class="w"> </span><span class="n">Servers</span><span class="w"> </span><span class="n">Only</span><span class="w"> </span><span class="p">]</span>
+<span class="w">    </span><span class="o">|</span>
+<span class="w">    </span><span class="n">v</span>
+<span class="p">[</span><span class="w"> </span><span class="n">Private</span><span class="w"> </span><span class="n">Subnet</span><span class="o">:</span><span class="w"> </span><span class="n">DB</span><span class="p">,</span><span class="w"> </span><span class="n">Dialers</span><span class="p">,</span><span class="w"> </span><span class="n">Archive</span><span class="w"> </span><span class="p">]</span>
+</code></pre></div>
+
+<p>Database and telephony servers belong in a private subnet with no public IP. Web servers in the public subnet proxy all traffic. This mirrors the dual-NIC approach for bare metal deployments.</p>
+<h3 id="iam-and-instance-roles">IAM and Instance Roles<a class="headerlink" href="#iam-and-instance-roles" title="Permanent link">&para;</a></h3>
+<p>Never store AWS/GCP credentials on VICIdial servers. Use instance roles (IAM roles in AWS, service accounts in GCP) for any cloud service interaction (S3 for recording storage, SNS for notifications, etc.). Credentials on disk are credentials waiting to be exfiltrated.</p>
+<hr />
+<h2 id="the-22-point-vicidial-security-hardening-checklist">The 22-Point VICIdial Security Hardening Checklist<a class="headerlink" href="#the-22-point-vicidial-security-hardening-checklist" title="Permanent link">&para;</a></h2>
+<p>Here's everything above distilled into an actionable checklist. Print it. Tape it to the wall. Run through it on every deployment.</p>
+<p><strong>CVE and Patch Management:</strong>
+1. SVN revision is 3848+ (patches CVE-2024-8503, CVE-2024-8504)
+2. Automatic OS security updates enabled
+3. Asterisk version is current LTS (18.x or 20.x)</p>
+<p><strong>Firewall:</strong>
+4. Default-deny policy on all interfaces
+5. SIP (5060) restricted to carrier IPs only
+6. RTP (10000-20000) restricted to carrier IPs only
+7. AMI (5038) bound to 127.0.0.1 only
+8. MySQL (3306) restricted to cluster nodes or localhost
+9. SSH restricted to management IPs only</p>
+<p><strong>Asterisk/SIP:</strong>
+10. <code>allowguest=no</code> and <code>alwaysauthreject=yes</code> in sip.conf
+11. Fail2ban running with 24-hour bans for SIP brute force
+12. SIP ACLs configured for all trunks
+13. All SIP passwords are 20+ character random strings</p>
+<p><strong>MySQL:</strong>
+14. No MySQL users with <code>host='%'</code>
+15. Root accessible from localhost only
+16. Separate users for cron, web, and reporting with minimal privileges
+17. Database config files (<code>dbconnect_mysqli.php</code>, <code>astguiclient.conf</code>) have 640 permissions</p>
+<p><strong>Web/HTTPS:</strong>
+18. HTTPS enforced, TLSv1.0/1.1 disabled
+19. Admin panel IP-restricted (VPN or whitelist)
+20. Default admin accounts (6666) deactivated; strong passwords on all admin users
+21. Directory listing disabled; <code>ServerTokens Prod</code></p>
+<p><strong>Access Control:</strong>
+22. SSH key-only auth; root login disabled; non-standard port</p>
+<hr />
+<h2 id="ongoing-security-maintenance">Ongoing Security Maintenance<a class="headerlink" href="#ongoing-security-maintenance" title="Permanent link">&para;</a></h2>
+<p>Hardening isn't a one-time project. It's an ongoing discipline.</p>
+<p><strong>Weekly:</strong>
+- Review fail2ban logs for patterns (targeted attacks vs. background noise)
+- Check <code>svn log</code> for VICIdial security patches
+- Verify firewall rules haven't been modified</p>
+<p><strong>Monthly:</strong>
+- Rotate SIP trunk passwords with your carrier
+- Review VICIdial user accounts — deactivate departed staff immediately
+- Test recording access controls (try accessing recordings without authentication)
+- Review MySQL user privileges</p>
+<p><strong>Quarterly:</strong>
+- Full VICIdial SVN update and regression test
+- SSL certificate expiry check (automate this with certbot, but verify)
+- Review and update firewall IP whitelists
+- Penetration test the web interface from an external IP</p>
+<p><strong>Annually:</strong>
+- Full security audit of all VICIdial servers
+- Review compliance requirements (PCI-DSS, HIPAA, TCPA) against current configuration
+- Evaluate whether current Asterisk version still receives security patches
+- Update this checklist</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="has-vicidial-been-hacked-before">Has VICIdial been hacked before?<a class="headerlink" href="#has-vicidial-been-hacked-before" title="Permanent link">&para;</a></h3>
+<p>Yes. Multiple times, across multiple organizations. The CVE-2024-8503/8504 pair was particularly damaging because it allowed unauthenticated remote code execution through a two-step attack chain. Prior to that, CVE-2013-4467 and CVE-2013-4468 were exploited in the wild for years before many installations were patched. Toll fraud — where attackers use a compromised Asterisk server to route international calls — is the most common post-exploitation activity, followed by lead data exfiltration. The common thread in every incident we've investigated: internet-exposed VICIdial web interfaces with no IP restriction and outdated code.</p>
+<h3 id="is-vicidial-pci-dss-compliant">Is VICIdial PCI-DSS compliant?<a class="headerlink" href="#is-vicidial-pci-dss-compliant" title="Permanent link">&para;</a></h3>
+<p>Not out of the box. PCI-DSS compliance for a contact center handling payment card data requires encrypted recordings, restricted access to cardholder data, network segmentation, logging and monitoring, and regular vulnerability assessments. VICIdial can be configured to meet these requirements — encrypted storage via LUKS, recording access controls, network segmentation via VLANs, and the audit logging built into the admin interface. But it takes deliberate configuration. If you're processing payments over the phone, engage a PCI QSA (Qualified Security Assessor) who understands VoIP environments. Do not assume your VICIdial installation is compliant because someone told you "we set it up right."</p>
+<h3 id="should-i-run-vicidial-behind-a-vpn">Should I run VICIdial behind a VPN?<a class="headerlink" href="#should-i-run-vicidial-behind-a-vpn" title="Permanent link">&para;</a></h3>
+<p>For the admin panel and SSH access, absolutely. For agent access, it depends on your deployment model. If your agents are in a physical call center on a controlled network, IP whitelisting is sufficient. If agents work remotely, a VPN adds meaningful security but also adds latency and a point of failure — which matters for real-time voice. The compromise for remote agents: require VPN for admin functions, use HTTPS with strong authentication for the agent interface, and implement per-agent IP logging to detect compromised credentials.</p>
+<h3 id="how-do-i-know-if-my-vicidial-server-has-been-compromised">How do I know if my VICIdial server has been compromised?<a class="headerlink" href="#how-do-i-know-if-my-vicidial-server-has-been-compromised" title="Permanent link">&para;</a></h3>
+<p>Check for these indicators: unexpected cron jobs (<code>crontab -l</code> for all users), unknown processes listening on network ports (<code>ss -tlnp</code>), modified PHP files in the web directory (compare against SVN with <code>svn status</code>), new MySQL users you didn't create, and unexplained outbound SIP traffic (especially to international destinations). The most reliable indicator is your carrier bill — a sudden spike in international call volume over a weekend is almost always toll fraud from a compromised Asterisk instance. Set up carrier-side spending alerts as a safety net.</p>
+<h3 id="can-i-use-vicidial-with-webrtc-securely">Can I use VICIdial with WebRTC securely?<a class="headerlink" href="#can-i-use-vicidial-with-webrtc-securely" title="Permanent link">&para;</a></h3>
+<p>Yes, but WebRTC actually improves your security posture in some ways. <a href="/glossary/webrtc/">WebRTC</a> requires HTTPS (enforcing encrypted transport), uses DTLS-SRTP for media encryption (voice traffic is encrypted end-to-end), and doesn't require opening SIP ports to agent endpoints. The tradeoff is that each telephony server needs a valid SSL certificate and a publicly accessible WebSocket port (8089). Configure that port with a firewall rule restricting source IPs to your agent subnet, and you've got encrypted voice transport with a smaller attack surface than traditional <a href="/glossary/sip/">SIP</a> phones. See our <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration guide</a> for detailed <a href="/glossary/pjsip/">PJSIP</a> and WebRTC setup.</p>
+<h3 id="whats-the-biggest-security-risk-most-vicidial-admins-overlook">What's the biggest security risk most VICIdial admins overlook?<a class="headerlink" href="#whats-the-biggest-security-risk-most-vicidial-admins-overlook" title="Permanent link">&para;</a></h3>
+<p>Stale user accounts. When agents leave — and in contact centers, turnover is brutal — their VICIdial accounts stay active. Those credentials are known to the former employee and potentially to anyone they shared a workstation with. We audit environments with 500 active VICIdial user accounts and 40 actual agents. Each of those 460 dormant accounts is a potential entry point. Run a monthly audit: compare active VICIdial users against your HR headcount, and deactivate every account that doesn't have a warm body behind it. VICIdial doesn't support automatic account expiration, so this has to be a manual process or a cron job you write yourself.</p>
+<h3 id="how-often-should-i-update-vicidial-for-security-patches">How often should I update VICIdial for security patches?<a class="headerlink" href="#how-often-should-i-update-vicidial-for-security-patches" title="Permanent link">&para;</a></h3>
+<p>Monitor the VICIdial SVN changelog weekly. Security patches are released as they're developed — there's no fixed schedule. Critical CVE fixes (like the 2024 SQL injection patch) are committed to SVN and announced on the VICIdial community forums. Subscribe to the VICIdial community mailing list and check <code>svn log</code> for commits mentioning "security," "SQL injection," "XSS," or "CVE." For Asterisk, subscribe to the Asterisk security advisory mailing list at asterisk.org — critical Asterisk vulnerabilities affect VICIdial directly since Asterisk handles all call processing. Apply Asterisk security patches within 72 hours of release; apply VICIdial patches within a week, after testing in a non-production environment.</p>
+<h3 id="is-fail2ban-enough-to-protect-asterisk">Is fail2ban enough to protect Asterisk?<a class="headerlink" href="#is-fail2ban-enough-to-protect-asterisk" title="Permanent link">&para;</a></h3>
+<p>Fail2ban is necessary but not sufficient. It's a reactive measure — it bans IPs after they've already attempted attacks. A sophisticated attacker using a botnet rotates source IPs faster than fail2ban can ban them. The correct layered approach: firewall rules restricting <a href="/glossary/sip/">SIP</a> port access to carrier IPs only (prevents 99% of attacks from ever reaching Asterisk), SIP ACLs as a second layer within Asterisk itself, strong SIP authentication as a third layer, and fail2ban as a fourth layer catching anything that gets through. If you're relying on fail2ban alone with SIP open to the internet, you will get compromised. It's just a matter of volume and time.</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>Everything in this guide is exactly what we implement on every deployment. The firewall rules, the fail2ban configuration, the MySQL access controls, the SSL enforcement, the disabled default accounts — it's all baked into our standard build.</p>
+<p>But security isn't a set-and-forget exercise. Vulnerabilities get disclosed. Carrier IP ranges change. Agents join and leave. Asterisk releases patches. Someone adds a "temporary" firewall exception that becomes permanent. Maintaining a hardened VICIdial deployment is an ongoing operational commitment.</p>
+<p><strong>ViciStack handles the security lifecycle so you can focus on dialing.</strong> Continuous patching, proactive monitoring, carrier-side fraud alerts, and incident response when something goes sideways. Your agents dial. We make sure nobody else does.</p>
+<p><a href="/free-audit/">Get a free security assessment of your current deployment --&gt;</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as new vulnerabilities, patches, and best practices emerge. Last updated: March 2026.</em></p>
+<p><em>Found a VICIdial security issue this guide doesn't cover? Reach out directly — responsible disclosure keeps the whole community safer.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-security-hardening">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a></li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a></li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

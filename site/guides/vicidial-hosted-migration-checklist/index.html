@@ -1,0 +1,3008 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-hosted-migration-checklist/">
+      
+      
+        <link rel="prev" href="../vicidial-did-management/">
+      
+      
+        <link rel="next" href="../vicidial-inbound-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial to Hosted Migration Checklist: Step-by-Step Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-to-hosted-migration-checklist-step-by-step-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-pre-migration-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Pre-Migration Assessment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Pre-Migration Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-current-setup-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Current Setup Audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-campaign-configuration-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Campaign Configuration Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-integration-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Integration Inventory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-volume-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Volume Baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-data-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Data Export
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Data Export">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-lead-data-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Lead Data Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-campaign-and-configuration-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Campaign and Configuration Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-recording-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Recording Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-dnc-list-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 DNC List Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-disposition-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Disposition Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-carrier-and-did-migration-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Carrier and DID Migration Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Carrier and DID Migration Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-carrier-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Carrier Inventory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-did-inventory-and-porting-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 DID Inventory and Porting Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-sip-trunk-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 SIP Trunk Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-agent-training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Agent Training
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Agent Training">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-training-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Training Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-documentation-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Documentation Updates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-parallel-running-period" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Parallel Running Period
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Parallel Running Period">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-setup-parallel-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Setup Parallel Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-parallel-running-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Parallel Running Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-performance-comparison-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Performance Comparison Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-cutover-checklist-30-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Cutover Checklist (30 Items)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Cutover Checklist (30 Items)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-cutover-evening-before" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Cutover (Evening Before)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cutover-morning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cutover Morning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-cutover-verification-first-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Cutover Verification (First 2 Hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-post-migration-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Post-Migration Verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Post-Migration Verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-day-1-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Day 1 Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-week-1-daily-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Week 1 Daily Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-day-30-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Day 30 Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-8-common-migration-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Common Migration Pitfalls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 8: Common Migration Pitfalls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-1-forgetting-callback-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 1: Forgetting Callback Records
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-2-time-zone-mismatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 2: Time Zone Mismatches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-3-dns-propagation-delays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 3: DNS Propagation Delays
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-4-recording-codec-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 4: Recording Codec Mismatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-5-firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 5: Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-6-cron-job-differences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 6: Cron Job Differences
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-7-not-testing-under-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 7: Not Testing Under Load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-8-skipping-the-rollback-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 8: Skipping the Rollback Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-pre-migration-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Pre-Migration Assessment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Pre-Migration Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-current-setup-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Current Setup Audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-campaign-configuration-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Campaign Configuration Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-integration-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Integration Inventory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-volume-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Volume Baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-data-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Data Export
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Data Export">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-lead-data-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Lead Data Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-campaign-and-configuration-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Campaign and Configuration Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-recording-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Recording Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-dnc-list-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 DNC List Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-disposition-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Disposition Export
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-carrier-and-did-migration-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Carrier and DID Migration Planning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Carrier and DID Migration Planning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-carrier-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Carrier Inventory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-did-inventory-and-porting-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 DID Inventory and Porting Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-sip-trunk-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 SIP Trunk Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-agent-training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Agent Training
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Agent Training">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-training-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Training Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-documentation-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Documentation Updates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-parallel-running-period" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Parallel Running Period
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Parallel Running Period">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-setup-parallel-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Setup Parallel Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-parallel-running-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Parallel Running Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-performance-comparison-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Performance Comparison Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-cutover-checklist-30-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Cutover Checklist (30 Items)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6: Cutover Checklist (30 Items)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-cutover-evening-before" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Cutover (Evening Before)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cutover-morning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cutover Morning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-cutover-verification-first-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Cutover Verification (First 2 Hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-post-migration-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Post-Migration Verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7: Post-Migration Verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-day-1-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Day 1 Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-week-1-daily-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Week 1 Daily Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-day-30-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Day 30 Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-8-common-migration-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Common Migration Pitfalls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 8: Common Migration Pitfalls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-1-forgetting-callback-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 1: Forgetting Callback Records
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-2-time-zone-mismatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 2: Time Zone Mismatches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-3-dns-propagation-delays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 3: DNS Propagation Delays
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-4-recording-codec-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 4: Recording Codec Mismatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-5-firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 5: Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-6-cron-job-differences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 6: Cron Job Differences
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-7-not-testing-under-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 7: Not Testing Under Load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pitfall-8-skipping-the-rollback-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitfall 8: Skipping the Rollback Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-to-hosted-migration-checklist-step-by-step-guide">VICIdial to Hosted Migration Checklist: Step-by-Step Guide<a class="headerlink" href="#vicidial-to-hosted-migration-checklist-step-by-step-guide" title="Permanent link">&para;</a></h1>
+<p>Migrating a live call center is one of the highest-risk operations you'll undertake. Every minute of downtime costs real money -- agents sitting idle, leads going stale, clients asking questions you don't want to answer. Whether you're moving from self-hosted VICIdial to a managed provider, migrating from another dialer platform to VICIdial, or consolidating multiple VICIdial instances, the process demands careful planning.</p>
+<p>This guide provides a comprehensive, field-tested migration checklist covering every phase from initial assessment through post-migration verification. It's based on our experience migrating over 100 call centers to managed VICIdial environments. Every item on this list exists because someone, somewhere, learned the hard way what happens when you skip it.</p>
+<h2 id="phase-1-pre-migration-assessment">Phase 1: Pre-Migration Assessment<a class="headerlink" href="#phase-1-pre-migration-assessment" title="Permanent link">&para;</a></h2>
+<p>Before you touch a single configuration file, you need a complete picture of what you're working with. The assessment phase typically takes 3-5 business days.</p>
+<h3 id="11-current-setup-audit">1.1 Current Setup Audit<a class="headerlink" href="#11-current-setup-audit" title="Permanent link">&para;</a></h3>
+<p>Document every aspect of your current environment. This becomes your migration blueprint.</p>
+<p><strong>Server inventory:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># On your current VICIdial server(s), run:</span>
+<span class="c1"># System specs</span>
+cat<span class="w"> </span>/proc/cpuinfo<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;model name&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1
+free<span class="w"> </span>-h
+df<span class="w"> </span>-h
+cat<span class="w"> </span>/etc/os-release
+
+<span class="c1"># VICIdial version</span>
+cat<span class="w"> </span>/usr/src/astguiclient/trunk/bin/ADMIN_keepalive_ALL.pl<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;build&quot;</span>
+
+<span class="c1"># Asterisk version</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show version&quot;</span>
+
+<span class="c1"># MySQL version and database size</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT VERSION();&quot;</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT table_schema, ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS &#39;Size (MB)&#39; FROM information_schema.TABLES GROUP BY table_schema;&quot;</span>
+</code></pre></div>
+
+<p><strong>Configuration snapshot:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Export critical configs</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/migration-audit
+
+<span class="c1"># Asterisk configuration</span>
+cp<span class="w"> </span>-r<span class="w"> </span>/etc/asterisk/<span class="w"> </span>/tmp/migration-audit/asterisk-conf/
+
+<span class="c1"># VICIdial settings</span>
+mysqldump<span class="w"> </span>asterisk<span class="w"> </span>system_settings<span class="w"> </span>servers<span class="w"> </span>conferences<span class="w"> </span>phones<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_campaigns<span class="w"> </span>vicidial_inbound_groups<span class="w"> </span>vicidial_call_times<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_campaign_cid_areacodes<span class="w"> </span>vicidial_server_carriers<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/tmp/migration-audit/vicidial-settings.sql
+
+<span class="c1"># Crontab entries</span>
+crontab<span class="w"> </span>-l<span class="w"> </span>&gt;<span class="w"> </span>/tmp/migration-audit/crontab-root.txt
+su<span class="w"> </span>-<span class="w"> </span>asterisk<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;crontab -l&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/migration-audit/crontab-asterisk.txt
+</code></pre></div>
+
+<h3 id="12-campaign-configuration-documentation">1.2 Campaign Configuration Documentation<a class="headerlink" href="#12-campaign-configuration-documentation" title="Permanent link">&para;</a></h3>
+<p>For each active campaign, record:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Where to Find It</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dial method</td>
+<td>Campaign &gt; Dialing &gt; Dial Method</td>
+</tr>
+<tr>
+<td>Auto dial level</td>
+<td>Campaign &gt; Dialing &gt; Auto Dial Level</td>
+</tr>
+<tr>
+<td>Adaptive settings</td>
+<td>Campaign &gt; Dialing &gt; Adaptive section</td>
+</tr>
+<tr>
+<td>AMD settings</td>
+<td>Campaign &gt; AMD/CPD section</td>
+</tr>
+<tr>
+<td>Local caller ID</td>
+<td>Campaign &gt; Caller ID</td>
+</tr>
+<tr>
+<td>Transfer settings</td>
+<td>Campaign &gt; Transfers</td>
+</tr>
+<tr>
+<td>Call times</td>
+<td>Campaign &gt; Call Times</td>
+</tr>
+<tr>
+<td>DNC settings</td>
+<td>Campaign &gt; DNC section</td>
+</tr>
+<tr>
+<td>Drop action</td>
+<td>Campaign &gt; Drop Call settings</td>
+</tr>
+<tr>
+<td>Hopper level/priority</td>
+<td>Campaign &gt; Hopper section</td>
+</tr>
+</tbody>
+</table>
+<p>Export all campaigns via the admin API:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Export campaign list</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT campaign_id, campaign_name, dial_method, auto_dial_level,</span>
+<span class="s2">       adaptive_maximum_level, adaptive_dropped_percentage,</span>
+<span class="s2">       active, campaign_cid, amd_type</span>
+<span class="s2">FROM vicidial_campaigns</span>
+<span class="s2">ORDER BY campaign_id;&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/migration-audit/campaigns.tsv
+</code></pre></div>
+
+<h3 id="13-integration-inventory">1.3 Integration Inventory<a class="headerlink" href="#13-integration-inventory" title="Permanent link">&para;</a></h3>
+<p>Document every system that talks to VICIdial:</p>
+<ul>
+<li><strong>CRM integrations:</strong> Web form URLs, API connections, webhook endpoints</li>
+<li><strong>Lead sources:</strong> How leads get into VICIdial (API, FTP upload, manual, CRM push)</li>
+<li><strong>Reporting feeds:</strong> Any external systems pulling VICIdial data</li>
+<li><strong>Recording access:</strong> Who accesses recordings and how (web UI, API, direct file access)</li>
+<li><strong>IVR/routing:</strong> Custom AGI scripts, dialplan modifications</li>
+<li><strong>Monitoring:</strong> Any external monitoring (Nagios, Zabbix, Datadog)</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Find custom AGI scripts</span>
+find<span class="w"> </span>/var/lib/asterisk/agi-bin/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.php&quot;</span><span class="w"> </span>-o<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.pl&quot;</span><span class="w"> </span>-o<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.py&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
+
+<span class="c1"># Find custom VICIdial modifications</span>
+find<span class="w"> </span>/usr/share/astguiclient/www/<span class="w"> </span>-newer<span class="w"> </span>/usr/share/astguiclient/www/vicidial/welcome.php<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
+
+<span class="c1"># Find web form URLs in campaigns</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT campaign_id, web_form_address, web_form_address_two</span>
+<span class="s2">FROM vicidial_campaigns</span>
+<span class="s2">WHERE web_form_address != &#39;&#39; OR web_form_address_two != &#39;&#39;;&quot;</span>
+</code></pre></div>
+
+<h3 id="14-volume-baseline">1.4 Volume Baseline<a class="headerlink" href="#14-volume-baseline" title="Permanent link">&para;</a></h3>
+<p>Record current performance metrics to validate post-migration:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Daily call volumes for the past 30 days</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;NP&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;ADC&#39;</span><span class="p">,</span><span class="s1">&#39;DROP&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">contacts</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">,</span>
+<span class="w">       </span><span class="k">MAX</span><span class="p">(</span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">last_call_hour</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">;</span>
+
+<span class="c1">-- Agent count by day</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">event_time</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">user</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">unique_agents</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">event_time</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Save these numbers. You'll compare against them after migration to confirm everything is working correctly.</p>
+<h2 id="phase-2-data-export">Phase 2: Data Export<a class="headerlink" href="#phase-2-data-export" title="Permanent link">&para;</a></h2>
+<h3 id="21-lead-data-export">2.1 Lead Data Export<a class="headerlink" href="#21-lead-data-export" title="Permanent link">&para;</a></h3>
+<p>Export all lead data, not just active leads. Historical data is valuable for analytics and compliance.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Full lead export</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT * FROM vicidial_list</span>
+<span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/migration-export/leads_full.tsv
+
+<span class="c1"># Custom fields export (if using custom fields)</span>
+<span class="k">for</span><span class="w"> </span>table<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>mysql<span class="w"> </span>asterisk<span class="w"> </span>-N<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW TABLES LIKE &#39;custom_%&#39;&quot;</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT * FROM </span><span class="nv">$table</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span><span class="s2">&quot;/tmp/migration-export/</span><span class="si">${</span><span class="nv">table</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
+<span class="k">done</span>
+
+<span class="c1"># Lead count verification</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT list_id, COUNT(*) AS lead_count,</span>
+<span class="s2">       SUM(CASE WHEN status = &#39;NEW&#39; THEN 1 ELSE 0 END) AS new_leads,</span>
+<span class="s2">       SUM(CASE WHEN status IN (&#39;SALE&#39;,&#39;XFER&#39;) THEN 1 ELSE 0 END) AS converted</span>
+<span class="s2">FROM vicidial_list</span>
+<span class="s2">GROUP BY list_id</span>
+<span class="s2">ORDER BY list_id;&quot;</span>
+</code></pre></div>
+
+<p><strong>Verification step:</strong> Count rows in the export file and compare to the database count. They must match exactly.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Count exported rows (subtract 1 for header)</span>
+wc<span class="w"> </span>-l<span class="w"> </span>/tmp/migration-export/leads_full.tsv
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_list;&quot;</span>
+</code></pre></div>
+
+<h3 id="22-campaign-and-configuration-export">2.2 Campaign and Configuration Export<a class="headerlink" href="#22-campaign-and-configuration-export" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Full campaign configuration dump</span>
+mysqldump<span class="w"> </span>asterisk<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_campaigns<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_campaign_agents<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_campaign_statuses<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_campaign_hotkeys<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_campaign_cid_areacodes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_inbound_groups<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_inbound_group_agents<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_call_times<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_state_call_times<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_lists<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_statuses<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_pause_codes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_user_groups<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_users<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_scripts<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_filters<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_lead_filters<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>vicidial_lead_recycle<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>phones<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/tmp/migration-export/config-dump.sql
+</code></pre></div>
+
+<h3 id="23-recording-export">2.3 Recording Export<a class="headerlink" href="#23-recording-export" title="Permanent link">&para;</a></h3>
+<p>Call recordings are often the largest data set and the most commonly forgotten during migration.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Find recording storage location</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT recording_path FROM system_settings;&quot;</span>
+
+<span class="c1"># Calculate total recording storage</span>
+du<span class="w"> </span>-sh<span class="w"> </span>/var/spool/asterisk/monitor/
+du<span class="w"> </span>-sh<span class="w"> </span>/var/spool/asterisk/VDmonitor/
+
+<span class="c1"># Export recording database index</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT recording_id, channel, server_ip, extension,</span>
+<span class="s2">       start_time, end_time, length_in_sec, filename, location,</span>
+<span class="s2">       lead_id, user, vicidial_id</span>
+<span class="s2">FROM recording_log</span>
+<span class="s2">ORDER BY start_time;&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/migration-export/recording_index.tsv
+</code></pre></div>
+
+<p><strong>Recording transfer options:</strong></p>
+<ol>
+<li><strong>rsync</strong> (best for large archives):</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>rsync<span class="w"> </span>-avz<span class="w"> </span>--progress<span class="w"> </span>/var/spool/asterisk/monitor/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>user@new-server:/var/spool/asterisk/monitor/
+</code></pre></div>
+
+<ol>
+<li><strong>Compressed archive</strong> for smaller sets:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Compress by month for manageable file sizes</span>
+<span class="k">for</span><span class="w"> </span>month<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span>-w<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">12</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>tar<span class="w"> </span>czf<span class="w"> </span><span class="s2">&quot;recordings-2025-</span><span class="si">${</span><span class="nv">month</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>/var/spool/asterisk/monitor/2025/<span class="si">${</span><span class="nv">month</span><span class="si">}</span>/
+<span class="k">done</span>
+</code></pre></div>
+
+<ol>
+<li><strong>S3/object storage</strong> for long-term archive:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>aws<span class="w"> </span>s3<span class="w"> </span>sync<span class="w"> </span>/var/spool/asterisk/monitor/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>s3://your-bucket/vicidial-recordings/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--storage-class<span class="w"> </span>STANDARD_IA
+</code></pre></div>
+
+<h3 id="24-dnc-list-export">2.4 DNC List Export<a class="headerlink" href="#24-dnc-list-export" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT phone_number FROM vicidial_dnc</span>
+<span class="s2">ORDER BY phone_number;&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/migration-export/dnc_internal.tsv
+
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT phone_number FROM vicidial_campaign_dnc</span>
+<span class="s2">ORDER BY campaign_id, phone_number;&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/migration-export/dnc_campaign.tsv
+
+<span class="c1"># Count for verification</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Internal DNC count:&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_dnc;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Campaign DNC count:&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_campaign_dnc;&quot;</span>
+</code></pre></div>
+
+<h3 id="25-disposition-export">2.5 Disposition Export<a class="headerlink" href="#25-disposition-export" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># System dispositions</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT * FROM vicidial_statuses ORDER BY status;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/tmp/migration-export/system_dispos.tsv
+
+<span class="c1"># Campaign-specific dispositions</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT * FROM vicidial_campaign_statuses ORDER BY campaign_id, status;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/tmp/migration-export/campaign_dispos.tsv
+</code></pre></div>
+
+<h2 id="phase-3-carrier-and-did-migration-planning">Phase 3: Carrier and DID Migration Planning<a class="headerlink" href="#phase-3-carrier-and-did-migration-planning" title="Permanent link">&para;</a></h2>
+<p>Carrier migration is often the longest lead-time item. Start this process early.</p>
+<h3 id="31-carrier-inventory">3.1 Carrier Inventory<a class="headerlink" href="#31-carrier-inventory" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Current carrier configuration</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT carrier_id, carrier_name, registration_string,</span>
+<span class="s2">       account_entry, protocol, globals_string</span>
+<span class="s2">FROM vicidial_server_carriers</span>
+<span class="s2">ORDER BY carrier_id;&quot;</span>
+</code></pre></div>
+
+<p>Document for each carrier:
+- Carrier name and account number
+- Number of concurrent channels
+- Per-minute rates
+- DID inventory
+- Contract end date and porting authorization requirements</p>
+<h3 id="32-did-inventory-and-porting-plan">3.2 DID Inventory and Porting Plan<a class="headerlink" href="#32-did-inventory-and-porting-plan" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># All DIDs configured in VICIdial</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT did_id, did_pattern, did_description, did_route,</span>
+<span class="s2">       group_id, did_carrier_description</span>
+<span class="s2">FROM vicidial_inbound_dids</span>
+<span class="s2">ORDER BY did_pattern;&quot;</span>
+
+<span class="c1"># CID numbers used by campaigns</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT DISTINCT campaign_cid, campaign_id</span>
+<span class="s2">FROM vicidial_campaigns</span>
+<span class="s2">WHERE campaign_cid != &#39;&#39;</span>
+<span class="s2">UNION</span>
+<span class="s2">SELECT outbound_cid, campaign_id</span>
+<span class="s2">FROM vicidial_campaign_cid_areacodes</span>
+<span class="s2">ORDER BY 1;&quot;</span>
+</code></pre></div>
+
+<p><strong>Porting timeline:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Porting Type</th>
+<th>Typical Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Between major carriers</td>
+<td>5-10 business days</td>
+</tr>
+<tr>
+<td>Toll-free numbers</td>
+<td>5-15 business days</td>
+</tr>
+<tr>
+<td>Wireless to VOIP</td>
+<td>7-14 business days</td>
+</tr>
+<tr>
+<td>Between VOIP providers</td>
+<td>3-7 business days</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-sip-trunk-configuration">3.3 SIP Trunk Configuration<a class="headerlink" href="#33-sip-trunk-configuration" title="Permanent link">&para;</a></h3>
+<p>Prepare new SIP trunk configurations for the target environment:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">;</span><span class="w"> </span><span class="nx">Example</span><span class="w"> </span><span class="nx">SIP</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">new</span><span class="w"> </span><span class="nx">carrier</span>
+<span class="p">[</span><span class="nx">carrier</span><span class="o">-</span><span class="nx">new</span><span class="p">]</span>
+<span class="k">type</span><span class="p">=</span><span class="nx">peer</span>
+<span class="nx">host</span><span class="p">=</span><span class="nx">sip</span><span class="p">.</span><span class="nx">newcarrier</span><span class="p">.</span><span class="nx">com</span>
+<span class="nx">fromuser</span><span class="p">=</span><span class="nx">your_account</span>
+<span class="nx">secret</span><span class="p">=</span><span class="nx">your_password</span>
+<span class="nx">insecure</span><span class="p">=</span><span class="nx">port</span><span class="p">,</span><span class="nx">invite</span>
+<span class="nx">qualify</span><span class="p">=</span><span class="nx">yes</span>
+<span class="nx">context</span><span class="p">=</span><span class="nx">trunkinbound</span>
+<span class="nx">dtmfmode</span><span class="p">=</span><span class="nx">rfc2833</span>
+<span class="nx">disallow</span><span class="p">=</span><span class="nx">all</span>
+<span class="nx">allow</span><span class="p">=</span><span class="nx">ulaw</span>
+<span class="nx">allow</span><span class="p">=</span><span class="nx">alaw</span>
+</code></pre></div>
+
+<p>Test trunk connectivity before the migration day:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Register and test from the new server</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show peers&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>carrier-new
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip show registry&quot;</span>
+
+<span class="c1"># Place a test call</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;channel originate SIP/carrier-new/12125551234 application Playback hello-world&quot;</span>
+</code></pre></div>
+
+<h2 id="phase-4-agent-training">Phase 4: Agent Training<a class="headerlink" href="#phase-4-agent-training" title="Permanent link">&para;</a></h2>
+<h3 id="41-training-plan">4.1 Training Plan<a class="headerlink" href="#41-training-plan" title="Permanent link">&para;</a></h3>
+<p>Even if agents are moving between VICIdial versions, interface differences can cause confusion. Build a training plan:</p>
+<p><strong>For VICIdial-to-VICIdial migrations:</strong>
+- 30-minute session covering any UI differences
+- New login URLs and credentials
+- Changes in softphone configuration (if any)
+- Updated processes for recording access
+- Emergency procedures (who to call if the dialer is down)</p>
+<p><strong>For migrations from other platforms to VICIdial:</strong>
+- 2-4 hour initial training session
+- Cover: login, agent screen layout, call handling, disposition, transfers
+- Hands-on practice with test campaigns
+- Print quick-reference cards for the first week
+- Designate floor walkers for the first 2 days post-migration</p>
+<h3 id="42-documentation-updates">4.2 Documentation Updates<a class="headerlink" href="#42-documentation-updates" title="Permanent link">&para;</a></h3>
+<p>Prepare before migration day:</p>
+<ul>
+<li>[ ] New login URL documented and distributed</li>
+<li>[ ] New softphone configuration instructions (if applicable)</li>
+<li>[ ] Updated agent quick-reference guide</li>
+<li>[ ] Updated supervisor/manager guide</li>
+<li>[ ] Emergency contact list (new server admin, carrier support, ViciStack support)</li>
+<li>[ ] FAQ document addressing common questions</li>
+</ul>
+<h2 id="phase-5-parallel-running-period">Phase 5: Parallel Running Period<a class="headerlink" href="#phase-5-parallel-running-period" title="Permanent link">&para;</a></h2>
+<p>Never cut over cold. Run both systems simultaneously for at least one week.</p>
+<h3 id="51-setup-parallel-environment">5.1 Setup Parallel Environment<a class="headerlink" href="#51-setup-parallel-environment" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>Week 1: Build and configure new environment
+Week 2: Load data, configure campaigns, test internally
+Week 3: Run 5-10 agents on new system alongside old system
+Week 4: Expand to 50% of agents on new system
+Week 5: Full cutover
+</code></pre></div>
+
+<h3 id="52-parallel-running-checklist">5.2 Parallel Running Checklist<a class="headerlink" href="#52-parallel-running-checklist" title="Permanent link">&para;</a></h3>
+<p>During the parallel period, validate daily:</p>
+<ul>
+<li>[ ] Call volume on new system matches expected proportion</li>
+<li>[ ] Connect rates are within 10% of old system</li>
+<li>[ ] AMD accuracy is comparable or better</li>
+<li>[ ] Drop rates are within compliance limits</li>
+<li>[ ] Agent talk time and utilization are comparable</li>
+<li>[ ] All dispositions are recording correctly</li>
+<li>[ ] Recordings are being saved and accessible</li>
+<li>[ ] CRM integration is functioning</li>
+<li>[ ] Lead loading is working</li>
+<li>[ ] Callbacks are firing correctly</li>
+<li>[ ] DNC checks are working</li>
+<li>[ ] Caller ID is displaying correctly</li>
+<li>[ ] Transfer destinations are connecting</li>
+</ul>
+<h3 id="53-performance-comparison-query">5.3 Performance Comparison Query<a class="headerlink" href="#53-performance-comparison-query" title="Permanent link">&para;</a></h3>
+<p>Run this daily during parallel operation to compare old vs new:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Run on each system</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;NEW_SYSTEM&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">system</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;NP&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;ADC&#39;</span><span class="p">,</span><span class="s1">&#39;DROP&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">contacts</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;NP&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;ADC&#39;</span><span class="p">,</span><span class="s1">&#39;DROP&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">contact_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drop_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_duration</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">);</span>
+</code></pre></div>
+
+<h2 id="phase-6-cutover-checklist-30-items">Phase 6: Cutover Checklist (30 Items)<a class="headerlink" href="#phase-6-cutover-checklist-30-items" title="Permanent link">&para;</a></h2>
+<p>This is the full cutover checklist. Execute items in order on migration day.</p>
+<h3 id="pre-cutover-evening-before">Pre-Cutover (Evening Before)<a class="headerlink" href="#pre-cutover-evening-before" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>1.</strong> Confirm all DIDs have been ported to new carrier and are routing correctly</li>
+<li>[ ] <strong>2.</strong> Verify all SIP trunks are registered on new server (<code>asterisk -rx "sip show registry"</code>)</li>
+<li>[ ] <strong>3.</strong> Run final lead data sync from old to new system</li>
+<li>[ ] <strong>4.</strong> Verify lead counts match between old and new (<code>SELECT COUNT(*) FROM vicidial_list</code>)</li>
+<li>[ ] <strong>5.</strong> Confirm all campaigns are configured and paused on new system</li>
+<li>[ ] <strong>6.</strong> Test outbound calling on each carrier with test numbers</li>
+<li>[ ] <strong>7.</strong> Test inbound routing on each DID with test calls</li>
+<li>[ ] <strong>8.</strong> Verify recording is working (place test call, confirm file exists)</li>
+<li>[ ] <strong>9.</strong> Confirm CRM integration URLs are updated for new server</li>
+<li>[ ] <strong>10.</strong> Distribute new login credentials to all agents</li>
+</ul>
+<h3 id="cutover-morning">Cutover Morning<a class="headerlink" href="#cutover-morning" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>11.</strong> Stop dialing on old system (pause all campaigns)</li>
+<li>[ ] <strong>12.</strong> Wait for all active calls to complete on old system</li>
+<li>[ ] <strong>13.</strong> Run final disposition sync (any calls completed after last sync)</li>
+<li>[ ] <strong>14.</strong> Export callback records from old system and import to new</li>
+<li>[ ] <strong>15.</strong> Verify callback import (<code>SELECT COUNT(*) FROM vicidial_callbacks WHERE status = 'ACTIVE'</code>)</li>
+<li>[ ] <strong>16.</strong> Start agent logins on new system</li>
+<li>[ ] <strong>17.</strong> Activate campaigns on new system one at a time</li>
+<li>[ ] <strong>18.</strong> Monitor first 10 calls per campaign for correct behavior</li>
+<li>[ ] <strong>19.</strong> Verify agents are connecting to live humans (not all AMD)</li>
+<li>[ ] <strong>20.</strong> Check drop rate is under 3% after first 100 calls</li>
+</ul>
+<h3 id="post-cutover-verification-first-2-hours">Post-Cutover Verification (First 2 Hours)<a class="headerlink" href="#post-cutover-verification-first-2-hours" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>21.</strong> Verify real-time reporting is populating on new system</li>
+<li>[ ] <strong>22.</strong> Confirm recordings are being saved (<code>ls -lt /var/spool/asterisk/monitor/$(date +%Y/%m/%d)/</code>)</li>
+<li>[ ] <strong>23.</strong> Test transfer functionality (blind and warm)</li>
+<li>[ ] <strong>24.</strong> Verify caller ID display is correct on test callbacks</li>
+<li>[ ] <strong>25.</strong> Confirm DNC checking is working (attempt to dial a DNC number, verify block)</li>
+<li>[ ] <strong>26.</strong> Test lead API loading (push a test lead, verify it appears in hopper)</li>
+<li>[ ] <strong>27.</strong> Verify cron jobs are running (<code>grep -i vicidial /var/log/cron</code>)</li>
+<li>[ ] <strong>28.</strong> Check server load (<code>top</code>, <code>iostat</code>, <code>asterisk -rx "core show channels"</code>)</li>
+<li>[ ] <strong>29.</strong> Confirm old system is fully stopped (no stray calls)</li>
+<li>[ ] <strong>30.</strong> Send migration-complete notification to all stakeholders</li>
+</ul>
+<h2 id="phase-7-post-migration-verification">Phase 7: Post-Migration Verification<a class="headerlink" href="#phase-7-post-migration-verification" title="Permanent link">&para;</a></h2>
+<h3 id="71-day-1-verification">7.1 Day 1 Verification<a class="headerlink" href="#71-day-1-verification" title="Permanent link">&para;</a></h3>
+<p>At end of first full day, compare to baseline:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Compare to pre-migration baseline</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;NP&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;ADC&#39;</span><span class="p">,</span><span class="s1">&#39;DROP&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">contacts</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;NP&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;ADC&#39;</span><span class="p">,</span><span class="s1">&#39;DROP&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">contact_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drop_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">user</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">agents_active</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">();</span>
+</code></pre></div>
+
+<p><strong>Acceptable variances on Day 1:</strong>
+- Total calls: within 15% of baseline (agents are adjusting)
+- Contact rate: within 20% of baseline
+- Drop rate: must be under 3% (compliance requirement)
+- Agent count: should match expected staffing</p>
+<h3 id="72-week-1-daily-checks">7.2 Week 1 Daily Checks<a class="headerlink" href="#72-week-1-daily-checks" title="Permanent link">&para;</a></h3>
+<p>Run daily for the first week:</p>
+<ul>
+<li>[ ] Call volumes trending toward baseline</li>
+<li>[ ] Connect rates stabilizing</li>
+<li>[ ] AMD accuracy verified (check for short-duration non-machine dispositions)</li>
+<li>[ ] Recording storage growing at expected rate</li>
+<li>[ ] No carrier issues (check <code>vicidial_carrier_log</code> for error patterns)</li>
+<li>[ ] Agent feedback collected and addressed</li>
+<li>[ ] CRM integration confirmed working end-to-end</li>
+</ul>
+<h3 id="73-day-30-review">7.3 Day 30 Review<a class="headerlink" href="#73-day-30-review" title="Permanent link">&para;</a></h3>
+<p>After one month, conduct a formal review:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- 30-day post-migration summary</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;NP&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;DNC&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;ADC&#39;</span><span class="p">,</span><span class="s1">&#39;DROP&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">contact_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drop_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_duration</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Compare this to the pre-migration baseline captured in Phase 1. Post-migration performance should meet or exceed pre-migration levels.</p>
+<h2 id="phase-8-common-migration-pitfalls">Phase 8: Common Migration Pitfalls<a class="headerlink" href="#phase-8-common-migration-pitfalls" title="Permanent link">&para;</a></h2>
+<h3 id="pitfall-1-forgetting-callback-records">Pitfall 1: Forgetting Callback Records<a class="headerlink" href="#pitfall-1-forgetting-callback-records" title="Permanent link">&para;</a></h3>
+<p>Agents schedule callbacks on the old system. If you don't migrate callback records, those leads get abandoned. Always export and import active callbacks as part of cutover.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Export active callbacks from old system</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_callbacks</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ACTIVE&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">callback_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">NOW</span><span class="p">();</span>
+</code></pre></div>
+
+<h3 id="pitfall-2-time-zone-mismatches">Pitfall 2: Time Zone Mismatches<a class="headerlink" href="#pitfall-2-time-zone-mismatches" title="Permanent link">&para;</a></h3>
+<p>If the new server is in a different time zone, call times, callbacks, and scheduled reports all shift. Set the server timezone to match your operation:</p>
+<div class="codehilite"><pre><span></span><code>timedatectl<span class="w"> </span>set-timezone<span class="w"> </span>America/New_York
+
+<span class="c1"># Verify MySQL timezone</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT @@global.time_zone, @@session.time_zone, NOW();&quot;</span>
+</code></pre></div>
+
+<h3 id="pitfall-3-dns-propagation-delays">Pitfall 3: DNS Propagation Delays<a class="headerlink" href="#pitfall-3-dns-propagation-delays" title="Permanent link">&para;</a></h3>
+<p>If agents access the dialer via a hostname (e.g., <code>dialer.yourcenter.com</code>), updating DNS to point to the new server takes time to propagate. Options:</p>
+<ul>
+<li>Update DNS 48 hours before cutover with a low TTL (60 seconds)</li>
+<li>Have agents use the new IP directly during transition</li>
+<li>Use <code>/etc/hosts</code> overrides on agent workstations</li>
+</ul>
+<h3 id="pitfall-4-recording-codec-mismatch">Pitfall 4: Recording Codec Mismatch<a class="headerlink" href="#pitfall-4-recording-codec-mismatch" title="Permanent link">&para;</a></h3>
+<p>If the new server uses a different audio codec than the old one, recordings may not play back correctly. Ensure codec consistency:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check recording format</span>
+grep<span class="w"> </span><span class="s2">&quot;MIXMON_FORMAT&quot;</span><span class="w"> </span>/etc/astguiclient.conf
+<span class="c1"># Should output: MIXMON_FORMAT=wav (or whatever you&#39;re using)</span>
+</code></pre></div>
+
+<h3 id="pitfall-5-firewall-rules">Pitfall 5: Firewall Rules<a class="headerlink" href="#pitfall-5-firewall-rules" title="Permanent link">&para;</a></h3>
+<p>VICIdial requires specific ports to be open. On the new server, verify:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Required ports</span>
+<span class="c1"># 80/443 - Web interface</span>
+<span class="c1"># 5060 - SIP signaling</span>
+<span class="c1"># 10000-20000 - RTP media (Asterisk)</span>
+<span class="c1"># 8089 - WebSocket (if using WebRTC)</span>
+<span class="c1"># 3306 - MySQL (if remote access needed)</span>
+
+<span class="c1"># Check firewall</span>
+firewall-cmd<span class="w"> </span>--list-ports
+<span class="c1"># Or: iptables -L -n</span>
+</code></pre></div>
+
+<h3 id="pitfall-6-cron-job-differences">Pitfall 6: Cron Job Differences<a class="headerlink" href="#pitfall-6-cron-job-differences" title="Permanent link">&para;</a></h3>
+<p>VICIdial relies heavily on cron jobs for keepalive processes, call logging, and cleanup. Verify all cron entries are present on the new server:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Critical VICIdial cron entries that must exist</span>
+crontab<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;(AST_manager_send|ADMIN_keepalive|AST_cleanup|AST_DB_dead)&quot;</span>
+
+<span class="c1"># Missing any? Check the official VICIdial cron template:</span>
+cat<span class="w"> </span>/usr/src/astguiclient/trunk/extras/cron/crontab-asterisk
+</code></pre></div>
+
+<h3 id="pitfall-7-not-testing-under-load">Pitfall 7: Not Testing Under Load<a class="headerlink" href="#pitfall-7-not-testing-under-load" title="Permanent link">&para;</a></h3>
+<p>A system that works with 5 test agents may crumble with 50 production agents. Before cutover, simulate production load:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check Asterisk channel capacity</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show channels count&quot;</span>
+
+<span class="c1"># Monitor during peak</span>
+watch<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">&#39;asterisk -rx &quot;core show channels count&quot; &amp;&amp; echo &quot;---&quot; &amp;&amp; uptime&#39;</span>
+</code></pre></div>
+
+<h3 id="pitfall-8-skipping-the-rollback-plan">Pitfall 8: Skipping the Rollback Plan<a class="headerlink" href="#pitfall-8-skipping-the-rollback-plan" title="Permanent link">&para;</a></h3>
+<p>Always have a way to roll back to the old system within 30 minutes. This means:</p>
+<ul>
+<li>Keep the old system running (paused) for at least 48 hours post-cutover</li>
+<li>Don't delete old server data for at least 30 days</li>
+<li>Document the rollback procedure: re-point DNS, activate old campaigns, re-sync leads</li>
+</ul>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>Migration is where ViciStack's managed service delivers the most obvious value. We've handled over 100 VICIdial migrations and have the process refined to minimize risk and downtime.</p>
+<p><strong>What ViciStack migration includes:</strong></p>
+<ul>
+<li><strong>Full pre-migration audit</strong> of your current environment</li>
+<li><strong>Data migration</strong> with verified lead counts, recordings, callbacks, DNC lists, and custom configurations</li>
+<li><strong>Carrier coordination</strong> including DID porting management and SIP trunk setup</li>
+<li><strong>Parallel running support</strong> with daily performance comparisons</li>
+<li><strong>Cutover management</strong> by experienced engineers who've done this 100+ times</li>
+<li><strong>Post-migration optimization</strong> that typically produces connect rates 50-100% higher than your pre-migration baseline</li>
+<li><strong>Zero-downtime guarantee</strong> -- we schedule cutover during off-hours and maintain rollback capability throughout</li>
+</ul>
+<p>Most migrations are completed in 2-3 weeks with zero production downtime. Agent training is typically a single 1-hour session because the VICIdial interface they know isn't changing -- just getting faster and better optimized.</p>
+<p><strong>Planning a migration?</strong> Start with a free analysis of your current setup. We'll assess your environment, identify optimization opportunities, and provide a detailed migration timeline specific to your operation.</p>
+<p><a href="https://vicistack.com/proof/">Get Your Free Migration Assessment at vicistack.com/proof/</a> -- we respond within 5 minutes during business hours.</p>
+<h2 id="related-articles">Related Articles<a class="headerlink" href="#related-articles" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-vs-calltools">VICIdial vs CallTools: Detailed Comparison</a></li>
+<li><a href="/blog/vicidial-vs-xencall">VICIdial vs XenCall: Which Dialer Is Right?</a></li>
+<li><a href="/blog/vicidial-performance-tuning">VICIdial Performance Tuning Guide</a></li>
+<li><a href="/blog/vicidial-server-sizing">VICIdial Server Sizing and Architecture</a></li>
+<li><a href="/blog/vicidial-custom-mysql-reports">VICIdial Custom MySQL Reports Guide</a></li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-hosted-migration-checklist">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

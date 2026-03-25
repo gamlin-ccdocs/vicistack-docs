@@ -1,0 +1,2391 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-auto-dial-level-tuning/">
+      
+      
+        <link rel="prev" href="../vicidial-asterisk-configuration/">
+      
+      
+        <link rel="next" href="../vicidial-call-recording/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Auto-Dial Level Tuning by Campaign Type - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-auto-dial-level-tuning-by-campaign-type" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Auto-Dial Level Tuning by Campaign Type
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-auto_dial_level-interacts-with-pacing-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How auto_dial_level Interacts with Pacing Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How auto_dial_level Interacts with Pacing Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ratio-dialing-manual-dial-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ratio Dialing (Manual Dial Level)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptive-dialing-predictive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive Dialing (Predictive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-adaptive-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Adaptive Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#b2b-vs-b2c-optimal-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2B vs. B2C Optimal Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B2B vs. B2C Optimal Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#b2b-campaign-characteristics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2B Campaign Characteristics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2b-recommended-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2B Recommended Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2c-campaign-characteristics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2C Campaign Characteristics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2c-recommended-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2C Recommended Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-type-tuning-insurance-solar-political" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Type Tuning: Insurance, Solar, Political
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Type Tuning: Insurance, Solar, Political">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#insurance-lead-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Insurance Lead Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solar-home-improvement-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solar / Home Improvement Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#political-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Political Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drop-rate-management-and-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drop Rate Management and TCPA Compliance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Drop Rate Management and TCPA Compliance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-3-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 3% Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-drop-rate-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Drop Rate Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-safe-message-requirement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Safe Message Requirement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adapt_intensity-and-related-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        adapt_intensity and Related Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="adapt_intensity and Related Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-adaptive-intensity-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Adaptive Intensity Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-methodology-for-finding-optimal-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Methodology for Finding Optimal Levels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Methodology for Finding Optimal Levels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-baseline-measurement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Baseline Measurement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-incremental-adjustment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Incremental Adjustment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-time-of-day-profiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Time-of-Day Profiling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-week-over-week-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Week-Over-Week Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-auto_dial_level-interacts-with-pacing-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How auto_dial_level Interacts with Pacing Modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How auto_dial_level Interacts with Pacing Modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ratio-dialing-manual-dial-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ratio Dialing (Manual Dial Level)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptive-dialing-predictive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive Dialing (Predictive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-adaptive-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Adaptive Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#b2b-vs-b2c-optimal-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2B vs. B2C Optimal Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B2B vs. B2C Optimal Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#b2b-campaign-characteristics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2B Campaign Characteristics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2b-recommended-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2B Recommended Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2c-campaign-characteristics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2C Campaign Characteristics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2c-recommended-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B2C Recommended Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-type-tuning-insurance-solar-political" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Type Tuning: Insurance, Solar, Political
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Type Tuning: Insurance, Solar, Political">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#insurance-lead-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Insurance Lead Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solar-home-improvement-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solar / Home Improvement Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#political-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Political Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drop-rate-management-and-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drop Rate Management and TCPA Compliance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Drop Rate Management and TCPA Compliance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-3-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 3% Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-drop-rate-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Drop Rate Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-safe-message-requirement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Safe Message Requirement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adapt_intensity-and-related-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        adapt_intensity and Related Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="adapt_intensity and Related Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-adaptive-intensity-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Adaptive Intensity Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-methodology-for-finding-optimal-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Methodology for Finding Optimal Levels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Methodology for Finding Optimal Levels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-baseline-measurement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Baseline Measurement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-incremental-adjustment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Incremental Adjustment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-time-of-day-profiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Time-of-Day Profiling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-week-over-week-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Week-Over-Week Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-auto-dial-level-tuning-by-campaign-type">VICIdial Auto-Dial Level Tuning by Campaign Type<a class="headerlink" href="#vicidial-auto-dial-level-tuning-by-campaign-type" title="Permanent link">&para;</a></h1>
+<p>The <code>auto_dial_level</code> setting is the single most impactful parameter in VICIdial for outbound campaigns. Set it too low and your agents sit idle, burning payroll while waiting for calls. Set it too high and you drop calls, violating FTC regulations and burning through your list. The right level depends on your campaign type, list quality, agent count, and connect rate — and it changes throughout the day.</p>
+<p>This guide covers how auto_dial_level interacts with VICIdial's pacing system, provides specific tuning recommendations for different campaign verticals, and lays out a testing methodology to find your sweet spot.</p>
+<h2 id="how-auto_dial_level-interacts-with-pacing-modes">How auto_dial_level Interacts with Pacing Modes<a class="headerlink" href="#how-auto_dial_level-interacts-with-pacing-modes" title="Permanent link">&para;</a></h2>
+<p>VICIdial supports several dialing modes, and <code>auto_dial_level</code> behaves differently in each.</p>
+<h3 id="ratio-dialing-manual-dial-level">Ratio Dialing (Manual Dial Level)<a class="headerlink" href="#ratio-dialing-manual-dial-level" title="Permanent link">&para;</a></h3>
+<p>When <code>dial_method</code> is set to <code>RATIO</code>, the <code>auto_dial_level</code> is a fixed multiplier. A level of 3.0 means the system dials 3 lines for every agent in READY or INCALL status. This is the simplest mode but also the crudest — it doesn't adapt to changing connect rates.</p>
+<div class="codehilite"><pre><span></span><code>Calls placed = auto_dial_level × available_agents
+</code></pre></div>
+
+<p>If you have 30 agents and a dial level of 3.0, the system maintains approximately 90 active call attempts. If your connect rate is 33%, you'll land roughly 30 live calls — one per agent. If the connect rate drops to 20%, you'll only get 18 connections, and 12 agents sit idle.</p>
+<h3 id="adaptive-dialing-predictive">Adaptive Dialing (Predictive)<a class="headerlink" href="#adaptive-dialing-predictive" title="Permanent link">&para;</a></h3>
+<p>When <code>dial_method</code> is set to <code>ADAPT_TAPERED</code>, <code>ADAPT_AVERAGE</code>, or <code>ADAPT_HARD_LIMIT</code>, VICIdial automatically adjusts the dial level based on real-time metrics. The <code>auto_dial_level</code> setting becomes the <strong>maximum</strong> level the system can reach.</p>
+<p>In adaptive mode, VICIdial calculates a target dial level using:</p>
+<ul>
+<li>Current drop rate percentage</li>
+<li>Average agent wait time</li>
+<li>Average talk time</li>
+<li>Number of available agents</li>
+<li>The <code>adaptive_intensity</code> modifier</li>
+</ul>
+<p>The system then adjusts the actual dial level up or down within the bounds of 1.0 (minimum) and <code>auto_dial_level</code> (maximum).</p>
+<h3 id="key-adaptive-settings">Key Adaptive Settings<a class="headerlink" href="#key-adaptive-settings" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">          </span><span class="n">ADAPT_HARD_LIMIT</span><span class="w">  </span><span class="o">(</span><span class="n">or</span><span class="w"> </span><span class="n">ADAPT_TAPERED</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ADAPT_AVERAGE</span><span class="o">)</span>
+<span class="n">auto_dial_level</span><span class="o">:</span><span class="w">      </span><span class="mf">5.0</span><span class="w">               </span><span class="o">(</span><span class="n">maximum</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">system</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">reach</span><span class="o">)</span>
+<span class="n">adaptive_intensity</span><span class="o">:</span><span class="w">   </span><span class="mi">0</span><span class="w">                 </span><span class="o">(</span><span class="n">adjustment</span><span class="w"> </span><span class="n">factor</span><span class="o">,</span><span class="w"> </span><span class="n">see</span><span class="w"> </span><span class="n">below</span><span class="o">)</span>
+<span class="n">adaptive_dl_diff_target</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="w">             </span><span class="o">(</span><span class="n">target</span><span class="w"> </span><span class="n">difference</span><span class="w"> </span><span class="n">between</span><span class="w"> </span><span class="n">dropped</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">threshold</span><span class="o">)</span>
+<span class="n">available_only_ratio_tally</span><span class="o">:</span><span class="w"> </span><span class="n">Y</span><span class="w">          </span><span class="o">(</span><span class="n">count</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">READY</span><span class="w"> </span><span class="n">agents</span><span class="o">,</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">INCALL</span><span class="o">)</span>
+<span class="n">drop_rate_group</span><span class="o">:</span><span class="w">      </span><span class="n">CAMPAIGN_ONLY</span><span class="w">    </span><span class="o">(</span><span class="n">calculate</span><span class="w"> </span><span class="n">drop</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">campaign</span><span class="o">)</span>
+</code></pre></div>
+
+<p>The difference between adaptive modes:</p>
+<ul>
+<li><strong>ADAPT_HARD_LIMIT:</strong> Never exceeds the drop rate threshold, even momentarily. Most conservative.</li>
+<li><strong>ADAPT_AVERAGE:</strong> Targets the drop rate threshold as an average. May briefly exceed it.</li>
+<li><strong>ADAPT_TAPERED:</strong> Gradually reduces aggressiveness as drop rate approaches the threshold. Best balance for most operations.</li>
+</ul>
+<h2 id="b2b-vs-b2c-optimal-settings">B2B vs. B2C Optimal Settings<a class="headerlink" href="#b2b-vs-b2c-optimal-settings" title="Permanent link">&para;</a></h2>
+<p>Business-to-business and business-to-consumer campaigns have fundamentally different calling dynamics.</p>
+<h3 id="b2b-campaign-characteristics">B2B Campaign Characteristics<a class="headerlink" href="#b2b-campaign-characteristics" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lower connect rates</strong> (10-20%) — gatekeepers, voicemail systems, IVRs</li>
+<li><strong>Longer talk times</strong> when connected (3-10 minutes for qualifying conversations)</li>
+<li><strong>Smaller lists</strong> — fewer total records, each one more valuable</li>
+<li><strong>Calling windows</strong> restricted to business hours (9 AM - 5 PM)</li>
+<li><strong>Higher cost per lead</strong> — burning a record through a dropped call is expensive</li>
+</ul>
+<h3 id="b2b-recommended-settings">B2B Recommended Settings<a class="headerlink" href="#b2b-recommended-settings" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">              </span><span class="n">ADAPT_TAPERED</span>
+<span class="n">auto_dial_level</span><span class="o">:</span><span class="w">          </span><span class="mf">3.5</span>
+<span class="n">adaptive_intensity</span><span class="o">:</span><span class="w">       </span><span class="o">-</span><span class="mi">1</span>
+<span class="n">available_only_ratio_tally</span><span class="o">:</span><span class="w"> </span><span class="n">Y</span>
+<span class="n">drop_rate_group</span><span class="o">:</span><span class="w">          </span><span class="n">CAMPAIGN_ONLY</span>
+<span class="n">dial_timeout</span><span class="o">:</span><span class="w">             </span><span class="mi">26</span>
+</code></pre></div>
+
+<p>Why these values:
+- <strong>Max level 3.5:</strong> B2B connect rates are low enough that you need moderate overdial, but not aggressive — each contact is valuable.
+- <strong>Intensity -1:</strong> Slightly conservative bias. B2B lists are expensive to replace, so protecting records matters more than minimizing agent wait time.
+- <strong>Dial timeout 26:</strong> Business phones often route through PBX systems that add ring delay. Give them time to answer.</p>
+<h3 id="b2c-campaign-characteristics">B2C Campaign Characteristics<a class="headerlink" href="#b2c-campaign-characteristics" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Higher connect rates</strong> (25-45%) — direct consumer phones, mobile numbers</li>
+<li><strong>Shorter initial talk times</strong> (30 seconds to 3 minutes for the pitch)</li>
+<li><strong>Larger lists</strong> — higher volume, more replaceable records</li>
+<li><strong>Extended calling hours</strong> (8 AM - 9 PM in many jurisdictions)</li>
+<li><strong>Lower cost per record</strong> — volume matters more than individual preservation</li>
+</ul>
+<h3 id="b2c-recommended-settings">B2C Recommended Settings<a class="headerlink" href="#b2c-recommended-settings" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">              </span><span class="n">ADAPT_TAPERED</span>
+<span class="n">auto_dial_level</span><span class="o">:</span><span class="w">          </span><span class="mf">6.0</span>
+<span class="n">adaptive_intensity</span><span class="o">:</span><span class="w">       </span><span class="mi">0</span>
+<span class="n">available_only_ratio_tally</span><span class="o">:</span><span class="w"> </span><span class="n">Y</span>
+<span class="n">drop_rate_group</span><span class="o">:</span><span class="w">          </span><span class="n">CAMPAIGN_ONLY</span>
+<span class="n">dial_timeout</span><span class="o">:</span><span class="w">             </span><span class="mi">22</span>
+</code></pre></div>
+
+<p>Why these values:
+- <strong>Max level 6.0:</strong> Higher connect rates need more headroom for the adaptive algorithm. During peak hours you may only need 3.0, but during off-peak the system needs room to compensate.
+- <strong>Intensity 0:</strong> Neutral — let the algorithm find the balance.
+- <strong>Dial timeout 22:</strong> Consumer phones answer quickly or go to voicemail. A 22-second timeout captures most live answers while avoiding voicemail pickup.</p>
+<h2 id="campaign-type-tuning-insurance-solar-political">Campaign Type Tuning: Insurance, Solar, Political<a class="headerlink" href="#campaign-type-tuning-insurance-solar-political" title="Permanent link">&para;</a></h2>
+<h3 id="insurance-lead-campaigns">Insurance Lead Campaigns<a class="headerlink" href="#insurance-lead-campaigns" title="Permanent link">&para;</a></h3>
+<p>Insurance leads (Medicare, ACA, final expense, auto) have specific characteristics:</p>
+<ul>
+<li>Leads are often pre-qualified through web forms — higher connect expectation</li>
+<li>Compliance requirements vary by state — some require specific disclosures before pitch</li>
+<li>Talk times range widely: 2 minutes for a quick disqualification to 20+ minutes for a full quote</li>
+<li>Lead freshness matters enormously — a 5-minute-old lead has a 400% higher connect rate than a 24-hour-old one</li>
+</ul>
+<p><strong>Insurance Settings:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">              </span><span class="n">ADAPT_TAPERED</span>
+<span class="n">auto_dial_level</span><span class="o">:</span><span class="w">          </span><span class="mf">5.0</span>
+<span class="n">adaptive_intensity</span><span class="o">:</span><span class="w">       </span><span class="mi">0</span>
+<span class="n">dial_timeout</span><span class="o">:</span><span class="w">             </span><span class="mi">24</span>
+<span class="n">hopper_level</span><span class="o">:</span><span class="w">             </span><span class="mi">200</span>
+<span class="n">available_only_ratio_tally</span><span class="o">:</span><span class="w"> </span><span class="n">Y</span>
+</code></pre></div>
+
+<p>For fresh lead campaigns (leads under 1 hour old), consider a lower max dial level (3.0-4.0) with higher priority. These leads are too valuable to risk dropping. For aged leads (7+ days), you can be more aggressive (6.0-7.0) since connect rates drop dramatically and agent wait becomes the bigger cost.</p>
+<p><strong>Pro tip:</strong> Create separate campaigns for fresh vs. aged leads within the same vertical. In the VICIdial admin under Campaigns &gt; Campaign Detail, set each campaign differently:</p>
+<div class="codehilite"><pre><span></span><code>Fresh leads campaign (&lt; 24 hours):
+  Auto Dial Level:      4.0
+  Adaptive Intensity:   -1
+
+Aged leads campaign (7+ days):
+  Auto Dial Level:      7.0
+  Adaptive Intensity:   1
+</code></pre></div>
+
+<h3 id="solar-home-improvement-campaigns">Solar / Home Improvement Campaigns<a class="headerlink" href="#solar-home-improvement-campaigns" title="Permanent link">&para;</a></h3>
+<p>Solar and home improvement campaigns typically involve:</p>
+<ul>
+<li>Cold or semi-warm lists (homeowner data, not inbound leads)</li>
+<li>Moderate connect rates (15-30%)</li>
+<li>Qualification-heavy conversations (homeowner? roof age? electric bill? credit score?)</li>
+<li>High appointment set value ($100-300+ per qualified appointment)</li>
+<li>Aggressive competition — the same homeowner is being called by multiple companies</li>
+</ul>
+<p><strong>Solar Settings:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">              </span><span class="n">ADAPT_TAPERED</span>
+<span class="n">auto_dial_level</span><span class="o">:</span><span class="w">          </span><span class="mf">5.5</span>
+<span class="n">adaptive_intensity</span><span class="o">:</span><span class="w">       </span><span class="mi">0</span>
+<span class="n">dial_timeout</span><span class="o">:</span><span class="w">             </span><span class="mi">24</span>
+<span class="n">available_only_ratio_tally</span><span class="o">:</span><span class="w"> </span><span class="n">Y</span>
+</code></pre></div>
+
+<p>Solar campaigns benefit from slightly aggressive dialing because the qualification process itself weeds out most calls quickly. An agent who determines the prospect is a renter will disposition in 20-30 seconds and be back in the queue. This rapid turnover of short calls means agents become available faster than the algorithm predicts based on average talk time.</p>
+<p>Consider setting <code>available_only_ratio_tally</code> to <code>N</code> for solar campaigns with very short average talk times (under 90 seconds). This tells the dialer to count INCALL agents as partially available, which prevents over-dialing during periods of rapid agent turnover.</p>
+<h3 id="political-campaigns">Political Campaigns<a class="headerlink" href="#political-campaigns" title="Permanent link">&para;</a></h3>
+<p>Political calling (voter ID, GOTV, fundraising, survey) has unique requirements:</p>
+<ul>
+<li>Massive lists (entire voter files for a district or state)</li>
+<li>Very high volume needs (millions of attempts in days/weeks before an election)</li>
+<li>Moderate connect rates (20-35% for voter files)</li>
+<li>Short conversations for voter ID/survey (30-90 seconds)</li>
+<li>Longer conversations for fundraising (2-5 minutes)</li>
+<li>TCPA considerations for cell phones (which is most of the file now)</li>
+</ul>
+<p><strong>Political Voter ID Settings:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">              </span><span class="n">ADAPT_HARD_LIMIT</span>
+<span class="n">auto_dial_level</span><span class="o">:</span><span class="w">          </span><span class="mf">8.0</span>
+<span class="n">adaptive_intensity</span><span class="o">:</span><span class="w">       </span><span class="mi">1</span>
+<span class="n">dial_timeout</span><span class="o">:</span><span class="w">             </span><span class="mi">20</span>
+<span class="n">hopper_level</span><span class="o">:</span><span class="w">             </span><span class="mi">500</span>
+<span class="n">available_only_ratio_tally</span><span class="o">:</span><span class="w"> </span><span class="n">N</span>
+</code></pre></div>
+
+<p>Note the ADAPT_HARD_LIMIT — political campaigns face intense scrutiny from regulators and opponents. A dropped call to a voter is not just a lost contact; it's a potential news story. The hard limit ensures the system never exceeds the FTC's 3% drop rate threshold, even momentarily.</p>
+<p>The high max dial level (8.0) is appropriate because voter ID calls are extremely short. With 60-second average talk times and 20-25% connect rates, agents cycle fast and the dialer needs room to keep up.</p>
+<p><strong>Political Fundraising Settings:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">              </span><span class="n">ADAPT_TAPERED</span>
+<span class="n">auto_dial_level</span><span class="o">:</span><span class="w">          </span><span class="mf">5.0</span>
+<span class="n">adaptive_intensity</span><span class="o">:</span><span class="w">       </span><span class="mi">0</span>
+<span class="n">dial_timeout</span><span class="o">:</span><span class="w">             </span><span class="mi">24</span>
+<span class="n">available_only_ratio_tally</span><span class="o">:</span><span class="w"> </span><span class="n">Y</span>
+</code></pre></div>
+
+<p>Fundraising calls last longer (agents are making an ask and potentially processing a donation), so the dialing profile looks more like B2C sales than voter ID.</p>
+<h2 id="drop-rate-management-and-tcpa-compliance">Drop Rate Management and TCPA Compliance<a class="headerlink" href="#drop-rate-management-and-tcpa-compliance" title="Permanent link">&para;</a></h2>
+<h3 id="the-3-rule">The 3% Rule<a class="headerlink" href="#the-3-rule" title="Permanent link">&para;</a></h3>
+<p>The FTC's Telemarketing Sales Rule (TSR) establishes a 3% maximum abandoned (dropped) call rate, measured per campaign per 30-day rolling period. VICIdial tracks drop rate in real time and through the <code>vicidial_drop_rate_groups</code> system.</p>
+<p>Check your current drop rate:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">dropped</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">,</span><span class="s1">&#39;CALLBK&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;NI&#39;</span><span class="p">,</span><span class="s1">&#39;NP&#39;</span><span class="p">,</span><span class="s1">&#39;DNCL&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">        </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drop_rate_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Important: The TSR calculates drop rate as abandoned calls divided by calls answered by a person (not total attempts). This means your denominator should exclude no-answers, busies, and machine-answered calls.</p>
+<h3 id="vicidial-drop-rate-settings">VICIdial Drop Rate Settings<a class="headerlink" href="#vicidial-drop-rate-settings" title="Permanent link">&para;</a></h3>
+<p>Key campaign-level settings for drop rate management:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">dial_method</span><span class="o">:</span><span class="w">              </span><span class="n">ADAPT_HARD_LIMIT</span><span class="w">    </span><span class="o">(</span><span class="n">strictest</span><span class="w"> </span><span class="n">enforcement</span><span class="o">)</span>
+<span class="n">adaptive_dropped_percentage</span><span class="o">:</span><span class="w"> </span><span class="mf">3.0</span><span class="w">              </span><span class="o">(</span><span class="n">target</span><span class="w"> </span><span class="n">threshold</span><span class="o">)</span>
+<span class="n">adaptive_maximum_level</span><span class="o">:</span><span class="w">   </span><span class="mf">5.0</span><span class="w">                 </span><span class="o">(</span><span class="n">absolute</span><span class="w"> </span><span class="n">ceiling</span><span class="o">)</span>
+<span class="n">drop_rate_group</span><span class="o">:</span><span class="w">          </span><span class="n">CAMPAIGN_ONLY</span><span class="w">       </span><span class="o">(</span><span class="n">per</span><span class="o">-</span><span class="n">campaign</span><span class="w"> </span><span class="n">calculation</span><span class="o">)</span>
+</code></pre></div>
+
+<p>If your operation runs multiple campaigns, <code>drop_rate_group</code> determines whether VICIdial calculates drop rate per campaign or across all campaigns. Per-campaign is safer and is what the TSR expects.</p>
+<h3 id="the-safe-message-requirement">The Safe Message Requirement<a class="headerlink" href="#the-safe-message-requirement" title="Permanent link">&para;</a></h3>
+<p>When a call is dropped (no agent available when the person answers), the FTC requires that a pre-recorded message play within 2 seconds, including the caller's identity and a callback number. In the VICIdial admin, go to Campaigns &gt; Campaign Detail and set:</p>
+<div class="codehilite"><pre><span></span><code>Drop Action:           AUDIO
+Safe Harbor Audio:     safe_harbor_message_audio
+Safe Harbor Exten:     8300
+</code></pre></div>
+
+<p>Record your safe harbor message and place the audio file in <code>/var/lib/asterisk/sounds/</code>. The message should be brief: "Hello, this is [company name] calling. We apologize for the inconvenience. Please call us back at [number]. Thank you."</p>
+<h2 id="adapt_intensity-and-related-parameters">adapt_intensity and Related Parameters<a class="headerlink" href="#adapt_intensity-and-related-parameters" title="Permanent link">&para;</a></h2>
+<p>The <code>adaptive_intensity</code> parameter modifies how aggressively the adaptive algorithm adjusts the dial level. Understanding it requires knowing what the base algorithm does.</p>
+<h3 id="how-adaptive-intensity-works">How Adaptive Intensity Works<a class="headerlink" href="#how-adaptive-intensity-works" title="Permanent link">&para;</a></h3>
+<p>VICIdial's adaptive algorithm calculates an "ideal" dial level based on:</p>
+<div class="codehilite"><pre><span></span><code>ideal_level = agents_waiting / (connect_rate × agent_availability_factor)
+</code></pre></div>
+
+<p>The <code>adaptive_intensity</code> then shifts this calculation:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Effect</th>
+<th>Use When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-3 to -1</td>
+<td>Conservative — dials fewer lines</td>
+<td>Expensive lists, compliance-sensitive, B2B</td>
+</tr>
+<tr>
+<td>0</td>
+<td>Neutral — trusts the algorithm</td>
+<td>Default, good starting point</td>
+</tr>
+<tr>
+<td>+1 to +3</td>
+<td>Aggressive — dials more lines</td>
+<td>Cheap lists, high volume needed, short talks</td>
+</tr>
+</tbody>
+</table>
+<p>Each unit of intensity roughly corresponds to a 10-15% shift in dialing aggressiveness. An intensity of +2 might push a calculated dial level of 3.0 up to approximately 3.5-3.6.</p>
+<h3 id="related-parameters">Related Parameters<a class="headerlink" href="#related-parameters" title="Permanent link">&para;</a></h3>
+<p><strong>adaptive_dl_diff_target:</strong> The target difference between your actual drop rate and the threshold. Set to <code>0</code> to target the exact threshold. Set to <code>-1</code> to maintain a 1% buffer (if threshold is 3%, target 2%). For a conservative approach, go to Campaigns &gt; Campaign Detail and set <code>Adaptive DL Diff Target</code> to <code>-1</code>.</p>
+<p><strong>available_only_ratio_tally:</strong> Controls which agents are counted when calculating dial ratios.</p>
+<ul>
+<li><code>Y</code> — Only count agents in READY status (waiting for a call). More conservative.</li>
+<li><code>N</code> — Count READY and INCALL agents. More aggressive, assumes INCALL agents will become available soon.</li>
+</ul>
+<p>For campaigns with average talk times under 90 seconds, <code>N</code> can improve efficiency. For campaigns with 3+ minute average talks, use <code>Y</code>.</p>
+<p><strong>hopper_level:</strong> How many leads to keep pre-loaded in the hopper. Low hopper means the dialer can stall while waiting for leads to load. Rule of thumb: <code>hopper_level &gt;= auto_dial_level x agent_count x 2</code>. For aggressive dialing with 50 agents at a max dial level of 4.0, set Hopper Level to at least 400 in Campaigns &gt; Campaign Detail.</p>
+<h2 id="testing-methodology-for-finding-optimal-levels">Testing Methodology for Finding Optimal Levels<a class="headerlink" href="#testing-methodology-for-finding-optimal-levels" title="Permanent link">&para;</a></h2>
+<p>Don't guess at dial levels. Use a structured testing approach.</p>
+<h3 id="step-1-baseline-measurement">Step 1: Baseline Measurement<a class="headerlink" href="#step-1-baseline-measurement" title="Permanent link">&para;</a></h3>
+<p>Run your current settings for a full day and record:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">HOUR</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">hour</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">attempts</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drops</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drop_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">al</span><span class="p">.</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">al</span><span class="p">.</span><span class="n">talk_sec</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">al</span><span class="p">.</span><span class="n">wait_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">al</span><span class="p">.</span><span class="n">wait_sec</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_wait</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">al</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">uniqueid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">al</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALESCAMP&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">HOUR</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">hour</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Record the average agent wait time, drop rate, and calls per hour per agent. These are your baselines.</p>
+<h3 id="step-2-incremental-adjustment">Step 2: Incremental Adjustment<a class="headerlink" href="#step-2-incremental-adjustment" title="Permanent link">&para;</a></h3>
+<p>Change one parameter at a time. Start with <code>auto_dial_level</code>:</p>
+<ul>
+<li>If agent wait time &gt; 15 seconds average: Increase max dial level by 0.5</li>
+<li>If drop rate &gt; 2%: Decrease max dial level by 0.5</li>
+<li>If both are fine: Increase intensity by 1</li>
+</ul>
+<p>Run each new setting for at least 2 hours (ideally a full day) before evaluating.</p>
+<h3 id="step-3-time-of-day-profiling">Step 3: Time-of-Day Profiling<a class="headerlink" href="#step-3-time-of-day-profiling" title="Permanent link">&para;</a></h3>
+<p>Connect rates change throughout the day. The optimal dial level at 9 AM is not the same as at 2 PM. In adaptive mode, the system adjusts automatically — but you should verify it's doing so effectively:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">HOUR</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">hour</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="k">user</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">active_agents</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drop_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">al</span><span class="p">.</span><span class="n">wait_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_wait_sec</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">al</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">uniqueid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">al</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALESCAMP&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">HOUR</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">hour</span><span class="p">;</span>
+</code></pre></div>
+
+<p>If you see hours where the dial level is pegged at the max and wait time is still high, your max level is too low. If you see hours where the dial level is at the max and drops are high, the adaptive algorithm is struggling — lower the max or decrease intensity.</p>
+<h3 id="step-4-week-over-week-comparison">Step 4: Week-Over-Week Comparison<a class="headerlink" href="#step-4-week-over-week-comparison" title="Permanent link">&para;</a></h3>
+<p>After a week of the new settings, compare against your baseline:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- This week vs. last week, same campaign</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;This Week&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">period</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">drop_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="k">user</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls_per_agent_per_day</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALESCAMP&#39;</span>
+<span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;Last Week&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="mi">2</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="k">user</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALESCAMP&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The key metrics to improve are:
+- <strong>Calls per agent per day</strong> — more calls means more opportunities
+- <strong>Average wait time</strong> — lower means less wasted payroll
+- <strong>Drop rate</strong> — must stay below 3% (target 2% or lower)</p>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>Dial level tuning is not a set-it-and-forget-it task. Connect rates shift as lists age, seasonal patterns change caller behavior, and carrier performance fluctuates. An operation running 25+ agents at $150/agent/month can't afford the productivity loss of even a slightly mis-tuned dialer.</p>
+<p>ViciStack provides:</p>
+<ul>
+<li><strong>Continuous adaptive tuning</strong> — We monitor your dial level performance hourly and adjust parameters based on live data, not monthly reviews</li>
+<li><strong>Campaign-specific profiles</strong> — Different verticals need different approaches. We build and maintain dial profiles for your specific campaign mix.</li>
+<li><strong>Drop rate compliance monitoring</strong> — Real-time alerts if any campaign approaches the 2.5% warning threshold, with automatic intensity reduction</li>
+<li><strong>A/B testing of dial parameters</strong> — We systematically test intensity, timeout, and hopper settings to find your optimal configuration</li>
+<li><strong>Time-of-day scheduling</strong> — Automatic parameter adjustments based on your historical connect rate patterns by hour</li>
+</ul>
+<p>All for $150/agent/month, flat. No per-minute. No per-call. No surprise invoices.</p>
+<p><strong>Get a free analysis of your current dial level configuration</strong> — we'll show you exactly where you're leaving agent productivity on the table: <a href="https://vicistack.com/proof/">Request Your Free ViciStack Analysis</a></p>
+<h2 id="related-resources">Related Resources<a class="headerlink" href="#related-resources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-asterisk-cdr-analysis">VICIdial Asterisk CDR Analysis for Connect Rate Optimization</a> — CDR data drives dial level decisions with hard connect rate numbers</li>
+<li><a href="/blog/vicidial-pause-codes-accountability">VICIdial Pause Codes and Agent Accountability Systems</a> — Agent availability directly impacts how the adaptive dialer performs</li>
+<li><a href="/blog/vicidial-voicemail-drop">VICIdial Voicemail Drop Configuration and Compliance Guide</a> — AMD settings interact with dial level and connect rate calculations</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-auto-dial-level-tuning">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

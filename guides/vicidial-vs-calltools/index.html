@@ -1,0 +1,2703 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-vs-calltools/">
+      
+      
+        <link rel="prev" href="../vicidial-support/">
+      
+      
+        <link rel="next" href="../vicidial-setup-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial vs CallTools: Detailed Comparison for Call Centers - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-vs-calltools-detailed-comparison-for-call-centers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial vs CallTools: Detailed Comparison for Call Centers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating from GoAutoDial to VICIdial: Step-by-Step
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Coaching Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Efficiency Metrics: Stop Guessing Who's Actually Working
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk Configuration: SIP, Codecs & NAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Auto-Dial Level Tuning by Campaign Type
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Call Recording: Storage, Compliance & Archival
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Callback Automation: Setup & Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Carrier Selection: SIP Trunks, Rates & Quality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CNAM Lookup Integration for Inbound Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Custom Report Building with MySQL Views and Queries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DID Management: How to Stop Your Numbers From Getting Flagged as Spam
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial to Hosted Migration Checklist: Step-by-Step Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Queue & Inbound Group Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial IVR Setup: Inbound Call Routing & Auto-Attendant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Kamailio Load Balancing for 100+ Agent Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Lead Recycling Strategies That Actually Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Outbound Sales: The Complete Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Pause Codes and Agent Accountability Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Quality Assurance Scoring with Call Recordings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Real-Time Agent Dashboard Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs CallTools: Detailed Comparison for Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-comparison-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Comparison Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pricing-the-real-cost-breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pricing: The Real Cost Breakdown
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pricing: The Real Cost Breakdown">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calltools-pricing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools Pricing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-pricing-self-hosted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Pricing (Self-Hosted)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-with-vicistack-managed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial with ViciStack (Managed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#predictive-dialing-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Dialing Capabilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Predictive Dialing Capabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-dialing-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Dialing Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-dialing-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools' Dialing Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-dialing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Dialing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#amd-accuracy-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD Accuracy Comparison
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AMD Accuracy Comparison">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-amd-cpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's AMD (CPD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools' AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crm-integration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM Integration Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CRM Integration Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Lead Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools' CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalability
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scalability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reporting-and-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reporting and Analytics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reporting and Analytics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-and-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance and Recording
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance and Recording">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-choose-each-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Choose Each Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When to Choose Each Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-calltools-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose CallTools When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-vicidial-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose VICIdial When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-vicistack-managed-vicidial-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose ViciStack (Managed VICIdial) When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-vicistack-gives-you-the-best-of-both-worlds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why ViciStack Gives You the Best of Both Worlds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Complete VICIdial Setup Guide (2026)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Security Hardening: CVEs, Firewalls & Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-comparison-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Comparison Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pricing-the-real-cost-breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pricing: The Real Cost Breakdown
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pricing: The Real Cost Breakdown">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calltools-pricing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools Pricing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-pricing-self-hosted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Pricing (Self-Hosted)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-with-vicistack-managed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial with ViciStack (Managed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#predictive-dialing-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Dialing Capabilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Predictive Dialing Capabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-dialing-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Dialing Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-dialing-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools' Dialing Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-dialing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Dialing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#amd-accuracy-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD Accuracy Comparison
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AMD Accuracy Comparison">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-amd-cpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's AMD (CPD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools' AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crm-integration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM Integration Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CRM Integration Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Lead Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools' CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalability
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scalability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reporting-and-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reporting and Analytics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reporting and Analytics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-and-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance and Recording
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance and Recording">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-choose-each-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Choose Each Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When to Choose Each Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-calltools-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose CallTools When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-vicidial-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose VICIdial When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-vicistack-managed-vicidial-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose ViciStack (Managed VICIdial) When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-vicistack-gives-you-the-best-of-both-worlds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why ViciStack Gives You the Best of Both Worlds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-vs-calltools-detailed-comparison-for-call-centers">VICIdial vs CallTools: Detailed Comparison for Call Centers<a class="headerlink" href="#vicidial-vs-calltools-detailed-comparison-for-call-centers" title="Permanent link">&para;</a></h1>
+<p>Choosing the right dialer platform is one of the highest-stakes decisions a call center operator makes. Get it wrong and you're locked into a platform that bleeds money through per-minute charges, limits your growth, or simply can't keep up with your volume.</p>
+<p>VICIdial and CallTools are two of the most discussed options in outbound call center circles, but they serve very different philosophies. VICIdial is open-source, self-hosted, and infinitely customizable. CallTools is a hosted SaaS platform designed for ease of use with a corresponding price tag.</p>
+<p>This article breaks down the real differences between the two platforms across every dimension that matters to a call center running 25+ agents: pricing, features, dialing algorithms, AMD accuracy, integrations, scalability, and total cost of ownership.</p>
+<h2 id="quick-comparison-overview">Quick Comparison Overview<a class="headerlink" href="#quick-comparison-overview" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>VICIdial</th>
+<th>CallTools</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>License</strong></td>
+<td>Open-source (AGPLv2)</td>
+<td>Proprietary SaaS</td>
+</tr>
+<tr>
+<td><strong>Hosting</strong></td>
+<td>Self-hosted / managed</td>
+<td>Cloud-hosted only</td>
+</tr>
+<tr>
+<td><strong>Base Price</strong></td>
+<td>Free (self-hosted)</td>
+<td>~$89-99/agent/month</td>
+</tr>
+<tr>
+<td><strong>Per-Minute Charges</strong></td>
+<td>Carrier rates only</td>
+<td>Included (bundled)</td>
+</tr>
+<tr>
+<td><strong>Dialing Modes</strong></td>
+<td>Predictive, progressive, manual, ratio, adapt</td>
+<td>Predictive, power, preview</td>
+</tr>
+<tr>
+<td><strong>AMD</strong></td>
+<td>Built-in (CPD) with tuning</td>
+<td>Built-in, limited tuning</td>
+</tr>
+<tr>
+<td><strong>CRM</strong></td>
+<td>Built-in lead management</td>
+<td>Built-in CRM</td>
+</tr>
+<tr>
+<td><strong>API</strong></td>
+<td>Full API (non-agent, agent)</td>
+<td>REST API</td>
+</tr>
+<tr>
+<td><strong>Customization</strong></td>
+<td>Unlimited (source code access)</td>
+<td>Limited to platform features</td>
+</tr>
+<tr>
+<td><strong>Max Agents</strong></td>
+<td>Unlimited (hardware-dependent)</td>
+<td>Plan-dependent</td>
+</tr>
+<tr>
+<td><strong>Recordings</strong></td>
+<td>Self-hosted storage</td>
+<td>Cloud storage (limits apply)</td>
+</tr>
+<tr>
+<td><strong>Contract</strong></td>
+<td>None</td>
+<td>Monthly/annual</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pricing-the-real-cost-breakdown">Pricing: The Real Cost Breakdown<a class="headerlink" href="#pricing-the-real-cost-breakdown" title="Permanent link">&para;</a></h2>
+<h3 id="calltools-pricing">CallTools Pricing<a class="headerlink" href="#calltools-pricing" title="Permanent link">&para;</a></h3>
+<p>CallTools typically charges $89-99 per agent per month, though pricing varies based on contract length and agent count. This includes:</p>
+<ul>
+<li>Platform access</li>
+<li>Predictive dialing</li>
+<li>Built-in CRM</li>
+<li>Basic reporting</li>
+<li>Cloud recording storage</li>
+<li>Phone support</li>
+</ul>
+<p>What it does NOT typically include:
+- Phone numbers (DIDs): $1-3/month each
+- Outbound minutes: bundled with limits, overages apply
+- Premium features: advanced reporting, API access may cost extra
+- Onboarding fees: $500-2,000 for setup and training</p>
+<p>For a 50-agent center, the monthly CallTools bill looks something like:</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50 agents x $95/agent</td>
+<td>$4,750</td>
+</tr>
+<tr>
+<td>200 DIDs x $2/DID</td>
+<td>$400</td>
+</tr>
+<tr>
+<td>Minute overages (typical)</td>
+<td>$300-800</td>
+</tr>
+<tr>
+<td>Premium reporting add-on</td>
+<td>$200</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>$5,650-6,150</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vicidial-pricing-self-hosted">VICIdial Pricing (Self-Hosted)<a class="headerlink" href="#vicidial-pricing-self-hosted" title="Permanent link">&para;</a></h3>
+<p>VICIdial itself is free. Your costs are infrastructure and expertise:</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dedicated server (2x for HA)</td>
+<td>$400-800</td>
+</tr>
+<tr>
+<td>SIP trunking (50 concurrent)</td>
+<td>$200-500</td>
+</tr>
+<tr>
+<td>200 DIDs</td>
+<td>$100-200</td>
+</tr>
+<tr>
+<td>System administration (if in-house)</td>
+<td>$2,000-4,000 (partial FTE)</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>$2,700-5,500</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The catch: self-hosted VICIdial requires a Linux admin who understands Asterisk, MySQL, and the VICIdial codebase. If you don't have that person, you're either paying a consultant or things break at 2 AM with nobody to fix them.</p>
+<h3 id="vicidial-with-vicistack-managed">VICIdial with ViciStack (Managed)<a class="headerlink" href="#vicidial-with-vicistack-managed" title="Permanent link">&para;</a></h3>
+<p>With ViciStack's managed optimization:</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ViciStack optimization: 50 agents x $150/agent</td>
+<td>$7,500</td>
+</tr>
+<tr>
+<td>Infrastructure (included in management)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>SIP trunking</td>
+<td>$200-500</td>
+</tr>
+<tr>
+<td>DIDs</td>
+<td>$100-200</td>
+</tr>
+<tr>
+<td>System admin (handled by ViciStack)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>$7,800-8,200</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Higher than raw self-hosted, but you get expert optimization that typically doubles connect rates. When your revenue per connect is $50+, the math works decisively in ViciStack's favor. More on ROI later.</p>
+<h2 id="predictive-dialing-capabilities">Predictive Dialing Capabilities<a class="headerlink" href="#predictive-dialing-capabilities" title="Permanent link">&para;</a></h2>
+<h3 id="vicidials-dialing-engine">VICIdial's Dialing Engine<a class="headerlink" href="#vicidials-dialing-engine" title="Permanent link">&para;</a></h3>
+<p>VICIdial offers the most flexible dialing engine in the industry. It supports:</p>
+<p><strong>Predictive Dialing (ADAPT):</strong> VICIdial's adaptive predictive algorithm adjusts dial rate based on:
+- Current agent availability
+- Average talk time
+- Average wrap-up time
+- Target drop rate percentage
+- Available lines per agent</p>
+<p>The key settings that control predictive behavior:</p>
+<div class="codehilite"><pre><span></span><code>Dial Method: ADAPT_TAPERED
+Auto Dial Level: 3.0 (starting ratio)
+Adaptive Maximum Level: 10.0
+Adaptive Dropped Percentage: 3.00
+Adaptive Target Drop Rate: 2.50
+Adaptive Intensity: 35
+</code></pre></div>
+
+<p>VICIdial's <code>ADAPT_TAPERED</code> mode is particularly sophisticated -- it gradually ramps up dial ratio as agents warm up at shift start, preventing the early-shift drop rate spikes that plague simpler algorithms.</p>
+<p><strong>Additional Dialing Modes:</strong></p>
+<ul>
+<li><strong>RATIO:</strong> Fixed lines-per-agent ratio. Good for compliance-sensitive campaigns.</li>
+<li><strong>INBOUND_MAN:</strong> Manual dialing for inbound-first blended campaigns.</li>
+<li><strong>Progressive (1-to-1):</strong> Dials one call per available agent. Zero drops but lower throughput.</li>
+</ul>
+<h3 id="calltools-dialing-engine">CallTools' Dialing Engine<a class="headerlink" href="#calltools-dialing-engine" title="Permanent link">&para;</a></h3>
+<p>CallTools offers three dialing modes:</p>
+<ul>
+<li><strong>Predictive:</strong> Automatic pacing based on agent availability. Less granular control than VICIdial -- you can't tune intensity, tapering, or per-campaign maximum levels the same way.</li>
+<li><strong>Power (Fixed Ratio):</strong> Dials a set number of lines per agent. Similar to VICIdial's RATIO mode.</li>
+<li><strong>Preview:</strong> Shows the lead to the agent before dialing. Good for B2B or complex sales.</li>
+</ul>
+<p>CallTools' predictive algorithm works reasonably well for smaller operations (10-30 agents). Where it starts to struggle is at scale: when you're running 100+ agents across multiple campaigns with blended inbound/outbound, VICIdial's granular control becomes a significant advantage.</p>
+<h3 id="verdict-dialing">Verdict: Dialing<a class="headerlink" href="#verdict-dialing" title="Permanent link">&para;</a></h3>
+<p>VICIdial wins on flexibility and control. CallTools wins on simplicity -- you don't need to understand dial ratios and intensity settings to get started. For centers running 25+ agents where efficiency directly impacts revenue, VICIdial's tuning capabilities are a clear advantage.</p>
+<h2 id="amd-accuracy-comparison">AMD Accuracy Comparison<a class="headerlink" href="#amd-accuracy-comparison" title="Permanent link">&para;</a></h2>
+<p>Answering Machine Detection is where call center profits are made or lost. A bad AMD system either sends live humans to voicemail (lost sales) or connects agents to answering machines (wasted time).</p>
+<h3 id="vicidials-amd-cpd">VICIdial's AMD (CPD)<a class="headerlink" href="#vicidials-amd-cpd" title="Permanent link">&para;</a></h3>
+<p>VICIdial uses its own Call Progress Detection engine built into the Asterisk layer. The key configuration parameters:</p>
+<div class="codehilite"><pre><span></span><code>Campaign &gt; AMD Settings:
+  AMD Type: CPD
+  CPD AMD Action: DISPO
+
+CPD Parameters (asterisk conf):
+  initial_silence: 2600
+  greeting: 1500
+  after_greeting_silence: 800
+  total_analysis_time: 5000
+  minimum_word_length: 100
+  between_words_silence: 50
+  maximum_number_of_words: 3
+  silence_threshold: 256
+</code></pre></div>
+
+<p>With proper tuning, VICIdial's CPD achieves 92-96% AMD accuracy. The key is adjusting the parameters for your specific carrier mix and the populations you're calling. Different demographics have different greeting patterns -- an elderly population in the South has longer greetings than young professionals in New York.</p>
+<p>VICIdial also supports AMD-free strategies using message detection and human-only connect approaches, which some compliance-focused operations prefer.</p>
+<h3 id="calltools-amd">CallTools' AMD<a class="headerlink" href="#calltools-amd" title="Permanent link">&para;</a></h3>
+<p>CallTools provides built-in AMD with limited user-facing configuration. You can typically:
+- Toggle AMD on/off
+- Choose between "Accurate" and "Fast" detection modes
+- Set the action for detected machines (hang up, leave message)</p>
+<p>What you can't do is tune the underlying detection parameters. CallTools uses a one-size-fits-all algorithm. In our experience, it achieves approximately 85-90% accuracy out of the box, which is acceptable but leaves significant room for improvement.</p>
+<p>The problem with locked-down AMD becomes acute when you're dialing specific populations or regions where call patterns differ from the average. You can't compensate because you can't adjust the detection parameters.</p>
+<h3 id="verdict-amd">Verdict: AMD<a class="headerlink" href="#verdict-amd" title="Permanent link">&para;</a></h3>
+<p>VICIdial wins decisively. The ability to tune CPD parameters campaign by campaign, combined with higher peak accuracy, means fewer false positives (live calls killed) and fewer false negatives (agents connected to machines). For a 50-agent center, even a 3% improvement in AMD accuracy translates to 15-25 more live connections per day.</p>
+<p>For a deep dive on VICIdial AMD tuning, see our <a href="/blog/vicidial-amd-optimization">VICIdial AMD Optimization Guide</a>.</p>
+<h2 id="crm-integration-options">CRM Integration Options<a class="headerlink" href="#crm-integration-options" title="Permanent link">&para;</a></h2>
+<h3 id="vicidials-lead-management">VICIdial's Lead Management<a class="headerlink" href="#vicidials-lead-management" title="Permanent link">&para;</a></h3>
+<p>VICIdial has a built-in lead management system, not a full CRM. It handles:</p>
+<ul>
+<li>Lead storage (vicidial_list table)</li>
+<li>Custom fields per list</li>
+<li>Disposition tracking</li>
+<li>Callback scheduling</li>
+<li>DNC list management</li>
+<li>Lead recycling</li>
+</ul>
+<p>For CRM integration, VICIdial provides:</p>
+<p><strong>Non-Agent API:</strong> A comprehensive REST API for programmatic lead loading, campaign management, and reporting. Example:</p>
+<div class="codehilite"><pre><span></span><code>https://your-server/vicidial/non_agent_api.php
+?source=api
+&amp;user=apiuser
+&amp;pass=apipass
+&amp;function=add_lead
+&amp;phone_number=3125551234
+&amp;first_name=John
+&amp;last_name=Smith
+&amp;list_id=1001
+&amp;campaign_id=CAMPAIGN1
+</code></pre></div>
+
+<p><strong>Agent API:</strong> Real-time agent control, screen pops, and disposition posting.</p>
+<p><strong>Custom CRM Integration (iframe/popup):</strong> VICIdial can launch external CRM pages with lead data passed via URL parameters. This is how most centers integrate with Salesforce, Zoho, HubSpot, and custom CRMs.</p>
+<p>The downside: VICIdial CRM integration requires technical implementation. There's no "click to connect Salesforce" button. You need someone who understands the API and can build the integration.</p>
+<h3 id="calltools-crm">CallTools' CRM<a class="headerlink" href="#calltools-crm" title="Permanent link">&para;</a></h3>
+<p>CallTools includes a built-in CRM that covers:</p>
+<ul>
+<li>Contact management with custom fields</li>
+<li>Pipeline/deal tracking</li>
+<li>Activity history</li>
+<li>Task management</li>
+<li>Email and SMS integration</li>
+<li>Native integrations with popular CRMs (Salesforce, HubSpot, Zoho)</li>
+</ul>
+<p>CallTools' built-in CRM is adequate for smaller operations that don't have an existing CRM. The native integrations are genuinely easier to set up than VICIdial's API-based approach. However, the built-in CRM lacks the depth of a dedicated CRM platform, and the native integrations sometimes lag behind the latest CRM API versions.</p>
+<h3 id="verdict-crm">Verdict: CRM<a class="headerlink" href="#verdict-crm" title="Permanent link">&para;</a></h3>
+<p>CallTools wins on ease of integration for common CRMs. VICIdial wins on flexibility -- its API lets you integrate with literally anything, including custom internal systems. For centers that already have a CRM and need deep custom integration, VICIdial is more capable. For centers that want a simple out-of-the-box CRM experience, CallTools is easier.</p>
+<p>Read more in our <a href="/blog/vicidial-crm-integration">VICIdial CRM Integration Guide</a>.</p>
+<h2 id="scalability">Scalability<a class="headerlink" href="#scalability" title="Permanent link">&para;</a></h2>
+<h3 id="vicidial-scalability">VICIdial Scalability<a class="headerlink" href="#vicidial-scalability" title="Permanent link">&para;</a></h3>
+<p>VICIdial scales horizontally. A single server typically handles:
+- 50-100 agents for outbound predictive
+- 100-200 agents for manual/progressive
+- 200+ concurrent calls</p>
+<p>For larger operations, VICIdial supports multi-server clusters:
+- Dedicated dialing servers
+- Dedicated web/database servers
+- Dedicated recording servers
+- Load-balanced agent interface</p>
+<p>The largest VICIdial installations run 1,000+ simultaneous agents across server clusters. There's no per-agent licensing cap -- your limit is hardware.</p>
+<p>Scaling VICIdial properly requires expertise in:
+- MySQL replication and optimization
+- Asterisk server sizing
+- Network architecture for multi-server setups
+- Load balancing and failover</p>
+<h3 id="calltools-scalability">CallTools Scalability<a class="headerlink" href="#calltools-scalability" title="Permanent link">&para;</a></h3>
+<p>CallTools handles scaling for you -- that's the SaaS advantage. You add agents to your account and they work. No servers to provision, no databases to optimize.</p>
+<p>However, there are practical limits:
+- <strong>Agent caps</strong> based on your plan tier
+- <strong>Concurrent call limits</strong> that may throttle high-volume campaigns
+- <strong>Storage limits</strong> for recordings that can become expensive at scale
+- <strong>API rate limits</strong> that constrain integration throughput</p>
+<p>For centers in the 25-100 agent range, CallTools scaling is typically sufficient. Above 100 agents, some operators report hitting platform limitations that require plan upgrades or architectural workarounds.</p>
+<h3 id="verdict-scalability">Verdict: Scalability<a class="headerlink" href="#verdict-scalability" title="Permanent link">&para;</a></h3>
+<p>VICIdial wins on raw scalability and cost at scale. CallTools wins on operational simplicity. The break-even point is roughly 50 agents -- below that, the convenience of CallTools' managed scaling outweighs VICIdial's infrastructure complexity. Above 50 agents, VICIdial's unlimited scaling and lack of per-agent licensing becomes increasingly advantageous.</p>
+<h2 id="reporting-and-analytics">Reporting and Analytics<a class="headerlink" href="#reporting-and-analytics" title="Permanent link">&para;</a></h2>
+<h3 id="vicidial-reporting">VICIdial Reporting<a class="headerlink" href="#vicidial-reporting" title="Permanent link">&para;</a></h3>
+<p>VICIdial's built-in reporting includes:</p>
+<ul>
+<li>Real-time agent status (agent monitor screen)</li>
+<li>Campaign stats (calls, drops, contacts, talk time)</li>
+<li>Agent time detail (login, pause, talk breakdowns)</li>
+<li>DID report</li>
+<li>Outbound calling report</li>
+<li>Closer (inbound) report</li>
+<li>Export to CSV</li>
+</ul>
+<p>The strengths: VICIdial reports against live MySQL data, so you can build any custom report you need using SQL. The weaknesses: the built-in report UI is dated and slow for large date ranges.</p>
+<p>Smart operators bypass the UI entirely and build custom dashboards using the MySQL views approach we cover in our <a href="/blog/vicidial-custom-mysql-reports">Custom MySQL Reports Guide</a>.</p>
+<h3 id="calltools-reporting">CallTools Reporting<a class="headerlink" href="#calltools-reporting" title="Permanent link">&para;</a></h3>
+<p>CallTools provides:</p>
+<ul>
+<li>Real-time dashboards with visual charts</li>
+<li>Agent performance scorecards</li>
+<li>Campaign analytics</li>
+<li>Call disposition reports</li>
+<li>Recording search and playback</li>
+<li>Scheduled email reports</li>
+<li>API access for custom reporting</li>
+</ul>
+<p>CallTools' reporting UI is modern and user-friendly. For managers who want to click a button and see a chart, it's superior to VICIdial's admin panel. However, the underlying data is less accessible for custom analysis -- you're limited to what CallTools chooses to expose.</p>
+<h3 id="verdict-reporting">Verdict: Reporting<a class="headerlink" href="#verdict-reporting" title="Permanent link">&para;</a></h3>
+<p>CallTools wins on out-of-the-box reporting experience. VICIdial wins on depth and customizability. If you have (or hire) someone who can write SQL, VICIdial's reporting potential is effectively unlimited. If you need polished reports without technical investment, CallTools delivers better.</p>
+<h2 id="compliance-and-recording">Compliance and Recording<a class="headerlink" href="#compliance-and-recording" title="Permanent link">&para;</a></h2>
+<h3 id="vicidial">VICIdial<a class="headerlink" href="#vicidial" title="Permanent link">&para;</a></h3>
+<ul>
+<li>On-premise recording storage (no third-party data exposure)</li>
+<li>Configurable recording triggers (all calls, agent-initiated, per campaign)</li>
+<li>TCPA-compliant dialing modes</li>
+<li>Built-in DNC list management</li>
+<li>Full audit logging</li>
+<li>PCI-compliant configurations possible with proper setup</li>
+</ul>
+<h3 id="calltools">CallTools<a class="headerlink" href="#calltools" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Cloud-based recording storage</li>
+<li>Automatic recording with playback</li>
+<li>TCPA compliance tools</li>
+<li>National DNC scrubbing integration</li>
+<li>SOC 2 compliance (cloud infrastructure)</li>
+</ul>
+<p>For highly regulated industries (healthcare, financial services), VICIdial's on-premise storage can be an advantage -- your recordings never leave your servers. For organizations that prefer managed compliance, CallTools' cloud infrastructure handles the basics.</p>
+<h2 id="when-to-choose-each-platform">When to Choose Each Platform<a class="headerlink" href="#when-to-choose-each-platform" title="Permanent link">&para;</a></h2>
+<h3 id="choose-calltools-when">Choose CallTools When:<a class="headerlink" href="#choose-calltools-when" title="Permanent link">&para;</a></h3>
+<ul>
+<li>You have fewer than 25 agents</li>
+<li>You need to be operational within days, not weeks</li>
+<li>Your team lacks Linux/Asterisk/MySQL expertise</li>
+<li>You prefer predictable monthly billing (even if higher)</li>
+<li>You need built-in CRM and don't have one</li>
+<li>Reporting simplicity matters more than depth</li>
+</ul>
+<h3 id="choose-vicidial-when">Choose VICIdial When:<a class="headerlink" href="#choose-vicidial-when" title="Permanent link">&para;</a></h3>
+<ul>
+<li>You run 25+ agents and plan to grow</li>
+<li>You need granular control over dialing algorithms and AMD</li>
+<li>You have custom integration requirements</li>
+<li>Cost efficiency at scale is a priority</li>
+<li>You need unlimited customization</li>
+<li>You want full data ownership and on-premise control</li>
+<li>You require specialized compliance configurations</li>
+</ul>
+<h3 id="choose-vicistack-managed-vicidial-when">Choose ViciStack (Managed VICIdial) When:<a class="headerlink" href="#choose-vicistack-managed-vicidial-when" title="Permanent link">&para;</a></h3>
+<ul>
+<li>You want VICIdial's power without the operational burden</li>
+<li>You're currently on CallTools and frustrated by limitations or cost</li>
+<li>You need expert AMD tuning, not one-size-fits-all</li>
+<li>You want to maximize connect rates and agent productivity</li>
+<li>You're spending $4,000+/month on CallTools and want better results</li>
+</ul>
+<h2 id="why-vicistack-gives-you-the-best-of-both-worlds">Why ViciStack Gives You the Best of Both Worlds<a class="headerlink" href="#why-vicistack-gives-you-the-best-of-both-worlds" title="Permanent link">&para;</a></h2>
+<p>The honest truth about VICIdial is that its power is only as good as the person configuring it. A poorly configured VICIdial instance will underperform CallTools every time. A well-configured one will demolish it.</p>
+<p>That's where ViciStack comes in. We give you:</p>
+<p><strong>CallTools-level simplicity:</strong>
+- We handle all server management, updates, and monitoring
+- Your team focuses on selling, not sysadmin
+- 24/7 support from people who actually know VICIdial (not tier-1 script readers)</p>
+<p><strong>VICIdial-level power:</strong>
+- Full AMD tuning optimized for your specific campaigns
+- Predictive algorithm optimization that adapts to your data
+- Custom reporting dashboards tailored to your KPIs
+- Unlimited API integrations with your existing tools</p>
+<p><strong>Better economics:</strong>
+- $150/agent/month flat -- no per-minute surprises
+- No DID markups
+- No recording storage fees
+- No feature tier upselling</p>
+<p>For a 50-agent center switching from CallTools to ViciStack, the typical result is:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>CallTools</th>
+<th>ViciStack</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monthly cost</td>
+<td>$5,650-6,150</td>
+<td>$7,800-8,200</td>
+</tr>
+<tr>
+<td>Connect rate</td>
+<td>3-4%</td>
+<td>6-8%</td>
+</tr>
+<tr>
+<td>Connects per agent/day</td>
+<td>12-16</td>
+<td>24-32</td>
+</tr>
+<tr>
+<td>Revenue per agent/day</td>
+<td>$240-480</td>
+<td>$480-960</td>
+</tr>
+<tr>
+<td><strong>Monthly revenue (50 agents)</strong></td>
+<td><strong>$264,000-528,000</strong></td>
+<td><strong>$528,000-1,056,000</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The cost is slightly higher. The revenue is typically double. That's the ViciStack difference.</p>
+<p><strong>Ready to see what ViciStack can do for your center?</strong> Get a free, no-obligation analysis of your current dialer setup. We'll show you exactly where you're losing connects and what optimized VICIdial performance looks like for your specific operation.</p>
+<p><a href="https://vicistack.com/proof/">Get Your Free Analysis at vicistack.com/proof/</a> -- we respond within 5 minutes during business hours.</p>
+<h2 id="related-articles">Related Articles<a class="headerlink" href="#related-articles" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-amd-optimization">VICIdial AMD Optimization: Eliminating False Positives</a></li>
+<li><a href="/blog/vicidial-vs-xencall">VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?</a></li>
+<li><a href="/blog/vicidial-predictive-dialer-optimization">VICIdial Predictive Dialer Optimization</a></li>
+<li><a href="/blog/vicidial-roi-case-study">VICIdial ROI Case Study: How One Center Doubled Connects</a></li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-vs-calltools">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
