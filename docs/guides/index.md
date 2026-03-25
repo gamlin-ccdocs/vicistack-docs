@@ -3,6 +3,10 @@
 Browse our collection of production-tested guides. Each guide is based on real-world
 experience managing VICIdial systems.
 
+## Available Guides
+
+- [VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time](vicidial-amd-guide.md)
+
 ## More Resources
 
 For the complete collection of 70+ articles, visit [vicistack.com/blog/](https://vicistack.com/blog/).
