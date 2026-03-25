@@ -15,6 +15,7 @@ experience managing VICIdial systems.
 - [Vicidial Agent Coaching](vicidial-agent-coaching.md)
 - [Vicidial Agent Efficiency Metrics](vicidial-agent-efficiency-metrics.md)
 - [Vicidial Amd Guide](vicidial-amd-guide.md)
+- [VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?](vicidial-amd-vs-ai-amd.md)
 - [VICIdial API Integration: Custom Workflows & Automation](vicidial-api-integration.md)
 - [Vicidial Asterisk Configuration](vicidial-asterisk-configuration.md)
 - [Vicidial Auto Dial Level Tuning](vicidial-auto-dial-level-tuning.md)
