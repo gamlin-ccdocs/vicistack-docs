@@ -17,6 +17,7 @@ experience managing VICIdial systems.
 - [Vicidial Amd Guide](vicidial-amd-guide.md)
 - [VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?](vicidial-amd-vs-ai-amd.md)
 - [VICIdial API Integration: Custom Workflows & Automation](vicidial-api-integration.md)
+- [VICIdial Asterisk CDR Analysis for Connect Rate Optimization](vicidial-asterisk-cdr-analysis.md)
 - [Vicidial Asterisk Configuration](vicidial-asterisk-configuration.md)
 - [Vicidial Auto Dial Level Tuning](vicidial-auto-dial-level-tuning.md)
 - [Vicidial Call Recording](vicidial-call-recording.md)
