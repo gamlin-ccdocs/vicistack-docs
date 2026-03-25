@@ -17,6 +17,7 @@ experience managing VICIdial systems.
 - [VICIdial Custom Report Building with MySQL Views and Queries](vicidial-custom-mysql-reports.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Lead Recycling Strategies That Actually Work](vicidial-lead-recycling.md)
+- [VICIdial for Outbound Sales: The Complete Playbook](vicidial-outbound-sales.md)
 - [VICIdial Pause Codes and Agent Accountability Systems](vicidial-pause-codes-accountability.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
 - [VICIdial Quality Assurance Scoring with Call Recordings](vicidial-qa-scoring.md)
