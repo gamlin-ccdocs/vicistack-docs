@@ -21,6 +21,7 @@ experience managing VICIdial systems.
 - [Vicidial Callback Automation](vicidial-callback-automation.md)
 - [VICIdial Caller ID Reputation Monitoring and Recovery Guide](vicidial-caller-id-reputation.md)
 - [Vicidial Carrier Selection](vicidial-carrier-selection.md)
+- [VICIdial Cloud Deployment: AWS, GCP & DigitalOcean](vicidial-cloud-deployment.md)
 - [VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]](vicidial-cluster-guide.md)
 - [Vicidial Cnam Lookup Inbound](vicidial-cnam-lookup-inbound.md)
 - [VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom](vicidial-crm-integration.md)
