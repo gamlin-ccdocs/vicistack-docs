@@ -14,6 +14,7 @@ experience managing VICIdial systems.
 - [VICIdial Call Recording: Storage, Compliance & Archival](vicidial-call-recording.md)
 - [VICIdial Callback Automation: Setup & Best Practices](vicidial-callback-automation.md)
 - [VICIdial Carrier Selection: SIP Trunks, Rates & Quality](vicidial-carrier-selection.md)
+- [VICIdial Custom Report Building with MySQL Views and Queries](vicidial-custom-mysql-reports.md)
 - [VICIdial Kamailio Load Balancing for 100+ Agent Call Centers](vicidial-kamailio-load-balancing.md)
 - [VICIdial Pause Codes and Agent Accountability Systems](vicidial-pause-codes-accountability.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
