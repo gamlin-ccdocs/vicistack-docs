@@ -6,6 +6,7 @@ experience managing VICIdial systems.
 ## Available Guides
 
 - [Call Center Abandonment Rate](call-center-abandonment-rate.md)
+- [Call Center ROI Formula: How to Calculate and Improve](call-center-roi-formula.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [Open Source Call Center Software](open-source-call-center-software.md)
 - [Vicidial Agent Coaching](vicidial-agent-coaching.md)
