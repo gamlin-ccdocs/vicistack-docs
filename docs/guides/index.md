@@ -38,6 +38,7 @@ experience managing VICIdial systems.
 - [Vicidial Sip Trunk Failover](vicidial-sip-trunk-failover.md)
 - [VICIdial for Solar Lead Generation: The Complete Guide](vicidial-solar-lead-generation.md)
 - [Vicidial Support](vicidial-support.md)
+- [VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance](vicidial-timezone-dialing-tcpa.md)
 - [Vicidial Vs Calltools](vicidial-vs-calltools.md)
 
 ## More Resources
