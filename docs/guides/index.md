@@ -21,6 +21,7 @@ experience managing VICIdial systems.
 - [VICIdial New Features: Everything You Need to Know](vicidial-34-new-features.md)
 - [Vicidial Agent Coaching](vicidial-agent-coaching.md)
 - [Vicidial Agent Efficiency Metrics](vicidial-agent-efficiency-metrics.md)
+- [VICIdial Agent Screen Customization Guide](vicidial-agent-screen-customization.md)
 - [How to Reduce VICIdial AMD False Positives from 20% to Under 5%](vicidial-amd-false-positive-reduction.md)
 - [Vicidial Amd Guide](vicidial-amd-guide.md)
 - [VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?](vicidial-amd-vs-ai-amd.md)
