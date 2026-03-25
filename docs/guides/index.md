@@ -6,6 +6,7 @@ experience managing VICIdial systems.
 ## Available Guides
 
 - [VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time](vicidial-amd-guide.md)
+- [VICIdial Asterisk Configuration: SIP, Codecs & NAT](vicidial-asterisk-configuration.md)
 
 ## More Resources
 
