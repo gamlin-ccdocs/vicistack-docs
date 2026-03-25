@@ -19,6 +19,7 @@ experience managing VICIdial systems.
 - [Vicidial Callback Automation](vicidial-callback-automation.md)
 - [VICIdial Caller ID Reputation Monitoring and Recovery Guide](vicidial-caller-id-reputation.md)
 - [Vicidial Carrier Selection](vicidial-carrier-selection.md)
+- [VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]](vicidial-cluster-guide.md)
 - [Vicidial Cnam Lookup Inbound](vicidial-cnam-lookup-inbound.md)
 - [Vicidial Custom Mysql Reports](vicidial-custom-mysql-reports.md)
 - [VICIdial Database Partitioning for High-Volume Call Centers](vicidial-database-partitioning.md)
