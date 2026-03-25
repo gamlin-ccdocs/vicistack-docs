@@ -20,6 +20,7 @@ experience managing VICIdial systems.
 - [Vicidial Custom Mysql Reports](vicidial-custom-mysql-reports.md)
 - [VICIdial Database Partitioning for High-Volume Call Centers](vicidial-database-partitioning.md)
 - [Vicidial Did Management](vicidial-did-management.md)
+- [VICIdial Disaster Recovery & High Availability Guide](vicidial-disaster-recovery.md)
 - [VICIdial DNC List Management: Federal, State & Internal](vicidial-dnc-management.md)
 - [Vicidial Hosted Migration Checklist](vicidial-hosted-migration-checklist.md)
 - [Vicidial Inbound Setup](vicidial-inbound-setup.md)
