@@ -39,6 +39,7 @@ experience managing VICIdial systems.
 - [VICIdial for Solar Lead Generation: The Complete Guide](vicidial-solar-lead-generation.md)
 - [Vicidial Support](vicidial-support.md)
 - [VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance](vicidial-timezone-dialing-tcpa.md)
+- [VICIdial Training Guide: From Beginner to Expert](vicidial-training-guide.md)
 - [Vicidial Vs Calltools](vicidial-vs-calltools.md)
 
 ## More Resources
