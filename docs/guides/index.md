@@ -53,6 +53,7 @@ experience managing VICIdial systems.
 - [VICIdial Training Guide: From Beginner to Expert](vicidial-training-guide.md)
 - [VICIdial Voicemail Drop Configuration and Compliance Guide](vicidial-voicemail-drop.md)
 - [Vicidial Vs Calltools](vicidial-vs-calltools.md)
+- [VICIdial WebRTC Setup Guide for Remote Agents](vicidial-webrtc-setup.md)
 
 ## More Resources
 
