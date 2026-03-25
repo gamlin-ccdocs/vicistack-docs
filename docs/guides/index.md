@@ -5,6 +5,7 @@ experience managing VICIdial systems.
 
 ## Available Guides
 
+- [Call Center Abandonment Rate: Why Your Callers Hang Up and How to Fix It](call-center-abandonment-rate.md)
 - [VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time](vicidial-amd-guide.md)
 - [VICIdial Asterisk Configuration: SIP, Codecs & NAT](vicidial-asterisk-configuration.md)
 - [VICIdial Auto-Dial Level Tuning by Campaign Type](vicidial-auto-dial-level-tuning.md)
