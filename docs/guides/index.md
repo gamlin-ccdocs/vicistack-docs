@@ -47,7 +47,7 @@ experience managing VICIdial systems.
 - [Vicidial Pause Codes Accountability](vicidial-pause-codes-accountability.md)
 - [VICIdial Performance Tuning: Server Optimization for 500+ Agents](vicidial-performance-tuning.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
-- [Vicidial Predictive Dialer Settings](vicidial-predictive-dialer-settings.md)
+- [VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter](vicidial-predictive-dialer-settings.md)
 - [Vicidial Qa Scoring](vicidial-qa-scoring.md)
 - [Vicidial Realtime Agent Dashboard](vicidial-realtime-agent-dashboard.md)
 - [VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration](vicidial-remote-agent-setup.md)
