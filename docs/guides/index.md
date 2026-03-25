@@ -7,6 +7,7 @@ experience managing VICIdial systems.
 
 - [VICIdial AMD Configuration: The Only Guide That Doesn't Waste Your Time](vicidial-amd-guide.md)
 - [VICIdial Asterisk Configuration: SIP, Codecs & NAT](vicidial-asterisk-configuration.md)
+- [VICIdial Auto-Dial Level Tuning by Campaign Type](vicidial-auto-dial-level-tuning.md)
 
 ## More Resources
 
