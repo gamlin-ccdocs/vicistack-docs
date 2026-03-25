@@ -40,6 +40,7 @@ experience managing VICIdial systems.
 - [VICIdial MySQL Optimization: Queries, Indexes & Tuning](vicidial-mysql-optimization.md)
 - [Vicidial Outbound Sales](vicidial-outbound-sales.md)
 - [Vicidial Pause Codes Accountability](vicidial-pause-codes-accountability.md)
+- [VICIdial Performance Tuning: Server Optimization for 500+ Agents](vicidial-performance-tuning.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
 - [Vicidial Predictive Dialer Settings](vicidial-predictive-dialer-settings.md)
 - [Vicidial Qa Scoring](vicidial-qa-scoring.md)
