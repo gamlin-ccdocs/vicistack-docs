@@ -12,6 +12,7 @@ experience managing VICIdial systems.
 - [Call Center Abandonment Rate](call-center-abandonment-rate.md)
 - [After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?](call-center-after-hours.md)
 - [Call Center Agent Onboarding Checklist [2026]](call-center-agent-onboarding.md)
+- [How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)](call-center-ai-voice-agents.md)
 - [Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026](call-center-compliance-checklist-2026.md)
 - [Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?](call-center-cost-per-lead-benchmarks.md)
 - [Call Center ROI Formula: How to Calculate and Improve](call-center-roi-formula.md)
