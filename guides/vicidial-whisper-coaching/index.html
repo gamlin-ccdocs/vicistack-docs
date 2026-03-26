@@ -1,0 +1,4083 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-whisper-coaching/">
+      
+      
+        <link rel="prev" href="../vicidial-webrtc-setup/">
+      
+      
+        <link rel="next" href="../../about/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-whisper-and-barge-real-time-agent-coaching-that-actually-works" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-scoring-ml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Machine Learning Lead Scoring for VICIdial: Prioritize Your Best Leads
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-readymode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs ReadyMode: Which Predictive Dialer Wins at Scale?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-actually-works-under-the-hood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Actually Works Under the Hood
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How It Actually Works Under the Hood">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-audio-path-in-detail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Audio Path in Detail
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-the-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up the Permissions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Up the Permissions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-user-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required User Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisor-phone-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supervisor Phone Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initiating-a-monitor-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initiating a Monitor Session
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initiating a Monitor Session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-real-time-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the Real-Time Report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalating-during-a-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Escalating During a Session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-the-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audio-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audio Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-the-beep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 1: The Beep
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 2: One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-echo-on-the-supervisors-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 3: Echo on the Supervisor's End
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 4: Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-5-monitoring-drops-after-60-seconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 5: Monitoring Drops After 60 Seconds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-whisper-coaching-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Whisper Coaching Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Whisper Coaching Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#daily-monitoring-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daily Monitoring Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-whisper-playbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Whisper Playbook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalation-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Escalation Protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-coaching-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring Coaching Impact
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring Coaching Impact">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prepost-agent-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre/Post Agent Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-level-trends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team-Level Trends
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-session-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Session Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-automated-monitoring-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced: Automated Monitoring Alerts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-coaching-culture-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Coaching Culture Problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-actually-works-under-the-hood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Actually Works Under the Hood
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How It Actually Works Under the Hood">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-audio-path-in-detail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Audio Path in Detail
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-the-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up the Permissions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Up the Permissions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-user-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required User Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisor-phone-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supervisor Phone Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initiating-a-monitor-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initiating a Monitor Session
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initiating a Monitor Session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-real-time-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the Real-Time Report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalating-during-a-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Escalating During a Session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-the-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audio-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audio Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audio Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-the-beep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 1: The Beep
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 2: One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-echo-on-the-supervisors-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 3: Echo on the Supervisor's End
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 4: Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-5-monitoring-drops-after-60-seconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 5: Monitoring Drops After 60 Seconds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-whisper-coaching-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Whisper Coaching Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Whisper Coaching Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#daily-monitoring-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daily Monitoring Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-whisper-playbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Whisper Playbook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalation-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Escalation Protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-coaching-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring Coaching Impact
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring Coaching Impact">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prepost-agent-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre/Post Agent Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-level-trends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team-Level Trends
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-session-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Session Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-automated-monitoring-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced: Automated Monitoring Alerts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-coaching-culture-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Coaching Culture Problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-whisper-and-barge-real-time-agent-coaching-that-actually-works">VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works<a class="headerlink" href="#vicidial-whisper-and-barge-real-time-agent-coaching-that-actually-works" title="Permanent link">&para;</a></h1>
+<p><strong>The deep-dive technical guide to VICIdial's real-time coaching features. ChanSpy under the hood, whisper audio routing, barge-in conference bridging, every audio bug you'll hit, and how to build a coaching workflow that supervisors will actually use instead of just talking about using.</strong></p>
+<hr />
+<h2 id="how-it-actually-works-under-the-hood">How It Actually Works Under the Hood<a class="headerlink" href="#how-it-actually-works-under-the-hood" title="Permanent link">&para;</a></h2>
+<p>Every time a supervisor clicks "Monitor" in VICIdial's real-time report, a specific chain of events fires inside Asterisk. Understanding this chain is the difference between "it works" and "I can fix it when it doesn't."</p>
+<p>VICIdial uses Asterisk's <code>ChanSpy()</code> application for all three coaching modes — <a href="/blog/vicidial-agent-coaching/">silent monitor</a>, whisper, and barge-in. ChanSpy was designed to let one channel listen to (and optionally speak into) another channel. VICIdial wraps it with its own logic through the manager API, but the audio plumbing is pure Asterisk.</p>
+<p>Here's what happens when a supervisor initiates monitoring:</p>
+<ol>
+<li>The supervisor clicks an agent row in <code>realtime_report.php</code> and selects a monitoring mode</li>
+<li>VICIdial's PHP layer makes an AGI/Manager API call to originate a new channel to the supervisor's phone</li>
+<li>The supervisor's phone rings; they answer</li>
+<li>VICIdial bridges the supervisor's channel into a <code>ChanSpy()</code> application targeting the agent's active channel</li>
+<li>ChanSpy handles the audio mixing based on the mode flags</li>
+</ol>
+<p>The ChanSpy invocation varies by mode:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">; Silent Monitor — supervisor hears both sides, nobody hears supervisor</span>
+ChanSpy(SIP/agent_phone,qw)
+
+<span class="c">; Whisper — supervisor audio goes to agent only, not caller</span>
+ChanSpy(SIP/agent_phone,qwW)
+
+<span class="c">; Barge-In — supervisor joins as 3-way conference, all parties hear each other</span>
+ChanSpy(SIP/agent_phone,qwB)
+</code></pre></div>
+
+<p>The flags:
+- <code>q</code> — quiet mode, no beep when spy connects
+- <code>w</code> — whisper mode, spy audio goes to spied channel only
+- <code>W</code> — private whisper, supervisor audio goes to agent only (not bridged caller)
+- <code>B</code> — barge mode, supervisor joins the bridge</p>
+<p>Here's the thing most documentation gets wrong: the <code>w</code> and <code>W</code> flags have different behavior depending on the Asterisk version. In Asterisk 16+ (which VICIdial 3.14+ runs on), <code>W</code> is what you want for whisper — it sends the supervisor's audio only to the agent's earpiece. The <code>w</code> flag alone may leak audio to the caller in some bridge configurations.</p>
+<h3 id="the-audio-path-in-detail">The Audio Path in Detail<a class="headerlink" href="#the-audio-path-in-detail" title="Permanent link">&para;</a></h3>
+<p>For a typical VICIdial call with SIP trunking:</p>
+<div class="codehilite"><pre><span></span><code>Caller → SIP Trunk → Asterisk → Agent Phone
+                         ↑
+                    ChanSpy Channel → Supervisor Phone
+</code></pre></div>
+
+<p>In silent monitor mode, ChanSpy taps the audio stream from the agent's channel. Both directions of audio (caller→agent and agent→caller) are mixed and sent to the supervisor. The supervisor's microphone audio goes nowhere.</p>
+<p>In whisper mode, the supervisor's audio is injected into the agent's receive path only. The caller's bridge leg never sees it. This is possible because Asterisk maintains separate audio streams for each leg of a bridged call.</p>
+<p>In barge-in mode, Asterisk creates a three-way conference bridge. The original two-party call is torn down and rebuilt as a ConfBridge with three legs. This is why barge-in sometimes has a brief audio interruption — the call is being rebridged.</p>
+<hr />
+<h2 id="setting-up-the-permissions">Setting Up the Permissions<a class="headerlink" href="#setting-up-the-permissions" title="Permanent link">&para;</a></h2>
+<p>Before anything works, the supervisor account needs the right flags. In the VICIdial admin panel, go to <strong>Admin &gt; Users</strong> and edit the supervisor's user record.</p>
+<h3 id="required-user-settings">Required User Settings<a class="headerlink" href="#required-user-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Required Value</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User Level</td>
+<td>7+ (Manager)</td>
+<td>Levels below 7 don't see the monitoring controls</td>
+</tr>
+<tr>
+<td>Agent API Access</td>
+<td>Enabled</td>
+<td>The monitoring functions use the agent API internally</td>
+</tr>
+<tr>
+<td>Monitor Allowed</td>
+<td>Y</td>
+<td>Enables silent monitor and whisper</td>
+</tr>
+<tr>
+<td>Barge-In Allowed</td>
+<td>Y</td>
+<td>Enables barge-in (separate permission from monitor)</td>
+</tr>
+<tr>
+<td>Manager Shift Enforcement</td>
+<td>Match to their actual schedule</td>
+<td>Prevents monitoring outside authorized hours</td>
+</tr>
+</tbody>
+</table>
+<p>You can verify the permissions are set correctly:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="n">full_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">user_level</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vdc_agent_api_access</span><span class="p">,</span>
+<span class="w">    </span><span class="n">monitor_allowed</span><span class="p">,</span>
+<span class="w">    </span><span class="n">barge_allowed</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_users</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">user_level</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">7</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">user_level</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="k">user</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="supervisor-phone-setup">Supervisor Phone Setup<a class="headerlink" href="#supervisor-phone-setup" title="Permanent link">&para;</a></h3>
+<p>The supervisor needs a registered phone in VICIdial. This can be:</p>
+<ul>
+<li><strong>Hardware SIP phone</strong> on the floor (Polycom, Yealink, etc.)</li>
+<li><strong>Softphone</strong> (MicroSIP, Zoiper, Bria) on the supervisor's workstation</li>
+<li><strong>WebRTC phone</strong> if you've set up <a href="https://vicistack.com/blog/vicidial-webrtc-setup/">WebRTC in VICIdial</a></li>
+</ul>
+<p>Register the phone under <strong>Admin &gt; Phones</strong>. The phone must be registered to the same Asterisk server that handles the agents being monitored. In a multi-server cluster, this means the supervisor's phone needs to register to the server where the target agent's calls are processed.</p>
+<p>For clustered deployments with multiple Asterisk servers:</p>
+<div class="codehilite"><pre><span></span><code>Server A: Agents 1-50, Supervisor Phone A
+Server B: Agents 51-100, Supervisor Phone B
+</code></pre></div>
+
+<p>If Supervisor A tries to monitor Agent 75 (on Server B), VICIdial handles the cross-server routing through its internal IAX trunks. But audio quality degrades because the monitor stream now traverses:</p>
+<div class="codehilite"><pre><span></span><code>Agent Phone → Server B → IAX Trunk → Server A → Supervisor Phone
+</code></pre></div>
+
+<p>That's an extra network hop, and IAX trunks add latency. For the best monitoring experience, keep supervisors on the same server as their agents. In VICIdial's admin, you can assign server affinity through the <strong>Server IP</strong> field in the phone configuration.</p>
+<hr />
+<h2 id="initiating-a-monitor-session">Initiating a Monitor Session<a class="headerlink" href="#initiating-a-monitor-session" title="Permanent link">&para;</a></h2>
+<h3 id="from-the-real-time-report">From the Real-Time Report<a class="headerlink" href="#from-the-real-time-report" title="Permanent link">&para;</a></h3>
+<p>The standard way: Open <code>realtime_report.php</code> in your browser, find the agent, click their row.</p>
+<p>You'll see options including:
+- <strong>MONITOR</strong> — silent monitor mode
+- <strong>WHISPER</strong> — whisper to agent only
+- <strong>BARGE</strong> — 3-way conference join</p>
+<p>Click one. Your supervisor phone rings. Answer it. You're in.</p>
+<h3 id="escalating-during-a-session">Escalating During a Session<a class="headerlink" href="#escalating-during-a-session" title="Permanent link">&para;</a></h3>
+<p>Here's the part most people don't know: you can escalate modes during an active session. Start in silent monitor, listen for a minute, decide the agent needs help, and escalate to whisper without hanging up and re-dialing.</p>
+<p>From the real-time report, while already monitoring, click the agent row again and select a different mode. VICIdial will modify the ChanSpy flags on the active channel. There might be a 1-2 second audio glitch during the transition, but the session continues.</p>
+<p>The escalation path should be:
+1. <strong>Silent Monitor</strong> → Listen, assess the situation
+2. <strong>Whisper</strong> → Feed the agent a rebuttal or instruction
+3. <strong>Barge</strong> → Only if the agent can't recover and you need to address the caller directly</p>
+<h3 id="from-the-api">From the API<a class="headerlink" href="#from-the-api" title="Permanent link">&para;</a></h3>
+<p>For operations that want to build monitoring into their own supervisor dashboards, VICIdial's non-agent API supports monitoring commands:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Initiate silent monitor</span>
+curl<span class="w"> </span><span class="s2">&quot;https://your-vicidial-server/vicidial/non_agent_api.php?\</span>
+<span class="s2">source=monitoring&amp;\</span>
+<span class="s2">user=supervisor1&amp;\</span>
+<span class="s2">pass=SuperPass123&amp;\</span>
+<span class="s2">function=blind_monitor&amp;\</span>
+<span class="s2">agent_user=agent42&amp;\</span>
+<span class="s2">stage=MONITOR&quot;</span>
+</code></pre></div>
+
+<p>API response:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">SUCCESS</span><span class="o">:</span><span class="w"> </span><span class="n">blind_monitor</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">MONITOR</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">initiated</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">agent</span><span class="w"> </span><span class="n">agent42</span>
+</code></pre></div>
+
+<p>You can also use <code>stage=WHISPER</code> or <code>stage=BARGE</code> to start directly in those modes.</p>
+<hr />
+<h2 id="audio-troubleshooting">Audio Troubleshooting<a class="headerlink" href="#audio-troubleshooting" title="Permanent link">&para;</a></h2>
+<p>This is where 80% of the pain lives. Monitoring works perfectly in theory. In practice, you'll hit audio issues that range from annoying to session-killing.</p>
+<h3 id="problem-1-the-beep">Problem 1: The Beep<a class="headerlink" href="#problem-1-the-beep" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Agent hears a beep when monitoring starts, immediately knows they're being watched.</p>
+<p><strong>Cause:</strong> The ChanSpy <code>q</code> (quiet) flag is missing or not being applied.</p>
+<p><strong>Fix:</strong> Check the VICIdial configuration for your server. In <code>/etc/astguiclient.conf</code>, verify:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; This should already be set correctly on a standard VICIdial install</span>
+<span class="na">VARserver_ip</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; 10.0.0.1</span>
+</code></pre></div>
+
+<p>The <code>q</code> flag is hardcoded in VICIdial's monitoring code, so if you're hearing beeps, something is overriding it. Check for custom dialplan entries in <code>/etc/asterisk/extensions_custom.conf</code> that might be invoking ChanSpy without the quiet flag:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check for any ChanSpy invocations in custom dialplan</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;dialplan show&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>chanspy
+</code></pre></div>
+
+<p>If you find a custom ChanSpy entry, make sure it includes the <code>q</code> flag.</p>
+<h3 id="problem-2-one-way-audio">Problem 2: One-Way Audio<a class="headerlink" href="#problem-2-one-way-audio" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Supervisor can hear the agent but not the caller (or vice versa).</p>
+<p><strong>Cause:</strong> <a href="/blog/vicidial-remote-agent-setup/">NAT traversal</a> issue. The ChanSpy channel's RTP stream is being sent to the wrong IP address.</p>
+<p><strong>Debug with <code>asterisk -r</code>:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="o">*</span><span class="n">CLI</span><span class="o">&gt;</span><span class="w"> </span><span class="n">core</span><span class="w"> </span><span class="n">show</span><span class="w"> </span><span class="n">channels</span>
+<span class="n">Channel</span><span class="w">              </span><span class="n">Location</span><span class="w">    </span><span class="n">State</span><span class="w">   </span><span class="nf">Application</span><span class="p">(</span><span class="n">Name</span><span class="p">)</span>
+<span class="n">SIP</span><span class="o">/</span><span class="n">agent42</span><span class="m">-000001</span><span class="w">   </span><span class="n">s</span><span class="o">@</span><span class="n">default</span><span class="w">   </span><span class="n">Up</span><span class="w">      </span><span class="nf">Dial</span><span class="p">(</span><span class="kc">...</span><span class="p">)</span>
+<span class="n">SIP</span><span class="o">/</span><span class="n">supervisor</span><span class="m">-0002</span><span class="w">  </span><span class="n">s</span><span class="o">@</span><span class="n">spy</span><span class="w">       </span><span class="n">Up</span><span class="w">      </span><span class="nf">ChanSpy</span><span class="p">(</span><span class="n">SIP</span><span class="o">/</span><span class="n">agent42</span><span class="p">,</span><span class="n">qw</span><span class="p">)</span>
+
+<span class="o">*</span><span class="n">CLI</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sip</span><span class="w"> </span><span class="n">show</span><span class="w"> </span><span class="n">channel</span><span class="w"> </span><span class="n">SIP</span><span class="o">/</span><span class="n">supervisor</span><span class="m">-0002</span>
+<span class="o">--</span><span class="w"> </span><span class="n">Audio</span><span class="o">:</span><span class="w">  </span><span class="m">192.168</span><span class="n">.</span><span class="m">1.50</span><span class="o">:</span><span class="m">10234</span><span class="w"> </span><span class="o">&lt;-&gt;</span><span class="w"> </span><span class="m">10.0</span><span class="n">.</span><span class="m">0.1</span><span class="o">:</span><span class="m">18456</span>
+</code></pre></div>
+
+<p>If the "Audio" line shows a private IP when it should show a public one (or vice versa), you have a NAT issue. The fix depends on your network topology:</p>
+<p>For supervisors behind NAT, ensure the SIP phone's STUN settings are correct, or configure <code>nat=force_rport,comedia</code> in the supervisor's SIP peer definition.</p>
+<p>For pjsip endpoints (Asterisk 16+):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; In /etc/asterisk/pjsip_custom.conf for the supervisor phone</span>
+<span class="k">[supervisor_transport]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">transport</span>
+<span class="na">protocol</span><span class="o">=</span><span class="s">udp</span>
+<span class="na">bind</span><span class="o">=</span><span class="s">0.0.0.0:5060</span>
+<span class="na">local_net</span><span class="o">=</span><span class="s">10.0.0.0/8</span>
+<span class="na">external_media_address</span><span class="o">=</span><span class="s">YOUR_PUBLIC_IP</span>
+<span class="na">external_signaling_address</span><span class="o">=</span><span class="s">YOUR_PUBLIC_IP</span>
+
+<span class="k">[supervisor1]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">endpoint</span>
+<span class="na">transport</span><span class="o">=</span><span class="s">supervisor_transport</span>
+<span class="na">context</span><span class="o">=</span><span class="s">from-internal</span>
+<span class="na">direct_media</span><span class="o">=</span><span class="s">no</span><span class="w">    </span><span class="c1">; CRITICAL for monitoring to work</span>
+</code></pre></div>
+
+<p>The <code>direct_media=no</code> setting is crucial. If direct media is enabled, Asterisk will try to route RTP directly between endpoints, bypassing the server. ChanSpy can't tap a stream that doesn't flow through Asterisk.</p>
+<h3 id="problem-3-echo-on-the-supervisors-end">Problem 3: Echo on the Supervisor's End<a class="headerlink" href="#problem-3-echo-on-the-supervisors-end" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Supervisor hears echo — their own voice coming back, or the agent's voice doubled.</p>
+<p><strong>Cause:</strong> Audio loopback in the mixing. Usually happens when the supervisor is using a speakerphone or a headset with poor acoustic isolation.</p>
+<p><strong>Fix:</strong> Use a quality headset. Seriously. Half the monitoring audio complaints we see at <a href="https://vicistack.com/">ViciStack</a> are a $15 headset with bad echo cancellation.</p>
+<p>If the echo persists with a good headset, check if DTMF mode is set to SIP INFO instead of RFC2833 on the supervisor's phone. SIP INFO DTMF processing can cause audio artifacts during ChanSpy sessions:</p>
+<div class="codehilite"><pre><span></span><code>*CLI&gt; sip show peer supervisor1
+  DTMF Mode:  rfc2833
+</code></pre></div>
+
+<p>If it shows <code>info</code>, switch to <code>rfc2833</code>.</p>
+<h3 id="problem-4-latency">Problem 4: Latency<a class="headerlink" href="#problem-4-latency" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> There's a 2-5 second delay between what happens on the call and what the supervisor hears.</p>
+<p><strong>Cause:</strong> Multiple hops. The audio is going Caller → Carrier → Asterisk → ChanSpy → Supervisor, and each hop adds latency. In a cluster, add another Asterisk server in the middle.</p>
+<p><strong>Fix:</strong> Minimize hops. Put the supervisor's phone on the same LAN as the Asterisk server handling the call. If you're in a cluster:</p>
+<div class="codehilite"><pre><span></span><code>#<span class="w"> </span><span class="nv">Check</span><span class="w"> </span><span class="nv">which</span><span class="w"> </span><span class="nv">server</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">handling</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">agent</span><span class="err">&#39;s call</span>
+<span class="err">asterisk -rx &quot;core show channels&quot; | grep agent42</span>
+</code></pre></div>
+
+<p>If the agent is on server B and the supervisor's phone is on server A, consider registering a second softphone on server B for monitoring purposes.</p>
+<p>Also check the jitter buffer settings on the supervisor's softphone. For monitoring, you want a shorter jitter buffer (20-40ms) because you're prioritizing low latency over perfect audio. You're listening to assess the call, not recording it for broadcast.</p>
+<h3 id="problem-5-monitoring-drops-after-60-seconds">Problem 5: Monitoring Drops After 60 Seconds<a class="headerlink" href="#problem-5-monitoring-drops-after-60-seconds" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Monitoring session disconnects after about a minute.</p>
+<p><strong>Cause:</strong> Asterisk's RTP timeout. If ChanSpy doesn't detect RTP activity for 60 seconds, it assumes the session is dead and tears it down.</p>
+<p><strong>Fix:</strong> Check <code>rtptimeout</code> and <code>rtpholdtimeout</code> in your SIP configuration:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/sip_general_custom.conf (chan_sip)</span>
+<span class="na">rtptimeout</span><span class="o">=</span><span class="s">300</span>
+<span class="na">rtpholdtimeout</span><span class="o">=</span><span class="s">600</span>
+
+<span class="c1">; Or for pjsip, in the endpoint section:</span>
+<span class="na">rtp_timeout</span><span class="o">=</span><span class="s">300</span>
+<span class="na">rtp_timeout_hold</span><span class="o">=</span><span class="s">600</span>
+</code></pre></div>
+
+<p>Set <code>rtptimeout</code> to 300 seconds (5 minutes) to prevent premature disconnection. Restart the SIP module after:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;sip reload&quot;</span>
+<span class="c1"># or for pjsip:</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module reload res_pjsip.so&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="building-a-whisper-coaching-workflow">Building a Whisper Coaching Workflow<a class="headerlink" href="#building-a-whisper-coaching-workflow" title="Permanent link">&para;</a></h2>
+<p>Technology without process is just expensive noise. Here's a coaching workflow that works with VICIdial's monitoring features.</p>
+<h3 id="daily-monitoring-schedule">Daily Monitoring Schedule<a class="headerlink" href="#daily-monitoring-schedule" title="Permanent link">&para;</a></h3>
+<p>For a team of 20 agents with 2 supervisors:</p>
+<table>
+<thead>
+<tr>
+<th>Time Block</th>
+<th>Supervisor Activity</th>
+<th>Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9:00-9:30</td>
+<td>Monitor bottom 3 agents by yesterday's conversion rate</td>
+<td>Silent</td>
+</tr>
+<tr>
+<td>9:30-10:00</td>
+<td>Monitor any new agents (&lt; 30 days)</td>
+<td>Whisper ready</td>
+</tr>
+<tr>
+<td>10:00-10:30</td>
+<td>Targeted coaching — listen for specific behavior from last coaching session</td>
+<td>Silent</td>
+</tr>
+<tr>
+<td>10:30-11:00</td>
+<td>Monitor random agents for <a href="/blog/vicidial-qa-scoring/">QA scoring</a></td>
+<td>Silent</td>
+</tr>
+<tr>
+<td>1:00-1:30</td>
+<td>Afternoon coaching round — bottom 3 agents again</td>
+<td>Silent/Whisper</td>
+</tr>
+<tr>
+<td>3:00-3:30</td>
+<td>Monitor top performers to identify techniques to teach others</td>
+<td>Silent</td>
+</tr>
+</tbody>
+</table>
+<p>That's 3 hours of monitoring per supervisor per day. It sounds like a lot. It's actually the minimum for a 20-agent team if you want coaching to move metrics. Most operations do 30 minutes a week and wonder why nothing changes.</p>
+<h3 id="the-whisper-playbook">The Whisper Playbook<a class="headerlink" href="#the-whisper-playbook" title="Permanent link">&para;</a></h3>
+<p>Whisper coaching is an art. Done well, it turns a losing call into a sale. Done badly, it confuses the agent, the caller hears a weird pause, and everyone loses. Here are the rules:</p>
+<p><strong>Rule 1: Keep instructions to 5 words or fewer.</strong> The agent is already talking to a real human. They cannot process a full sentence from you while maintaining a conversation. Good whispers:</p>
+<ul>
+<li>"Ask about the timeline"</li>
+<li>"Price objection — use ROI"</li>
+<li>"Slow down, you're rushing"</li>
+<li>"Compliance disclosure now"</li>
+<li>"Ask for the close"</li>
+</ul>
+<p>Bad whispers:</p>
+<ul>
+<li>"So what you want to do here is transition into the pricing discussion by first asking about their current solution costs and then framing our pricing as a comparison"</li>
+</ul>
+<p>That agent is now frozen, trying to remember what you said, while the caller wonders why they went silent for 8 seconds.</p>
+<p><strong>Rule 2: Timing matters more than content.</strong> Whisper during natural pauses — while the caller is talking, during a brief silence, after a question where the caller is thinking. Never whisper while the agent is mid-sentence. The agent will stumble, and the caller will hear it.</p>
+<p><strong>Rule 3: Pre-arrange signals.</strong> Before the first whisper session, tell the agent: "If you hear me say 'take a breath,' that means pause for 2 seconds and let the caller talk. If you hear me say 'close,' that means ask for the sale right now." Having pre-agreed short codes makes whisper coaching 10x more effective because the agent knows exactly what each instruction means.</p>
+<p><strong>Rule 4: Don't whisper-coach for more than 15 minutes per session.</strong> After 15 minutes, the agent's cognitive load is maxed. They stop hearing you. End the session, send a message with 2-3 specific things they did well, and one thing to work on.</p>
+<h3 id="escalation-protocol">Escalation Protocol<a class="headerlink" href="#escalation-protocol" title="Permanent link">&para;</a></h3>
+<p>When do you escalate from whisper to barge? Almost never. But here are the three legitimate reasons:</p>
+<ol>
+<li><strong>Compliance emergency.</strong> The agent made a statement that could create legal liability and you need to correct it immediately with the caller present.</li>
+<li><strong>Agent is completely lost.</strong> Not struggling — lost. Can't form sentences, caller is getting hostile, agent has gone silent for more than 10 seconds.</li>
+<li><strong>High-value save.</strong> The caller is about to hang up, the deal is worth $50K+, and you bringing your authority to the call is the only way to save it.</li>
+</ol>
+<p>If you're barging into more than one call per week across a 20-agent team, something else is broken — training, scripting, or hiring.</p>
+<hr />
+<h2 id="measuring-coaching-impact">Measuring Coaching Impact<a class="headerlink" href="#measuring-coaching-impact" title="Permanent link">&para;</a></h2>
+<p>Coaching without measurement is hope-based management. Here's how to track whether your whisper sessions are actually improving performance.</p>
+<h3 id="prepost-agent-metrics">Pre/Post Agent Metrics<a class="headerlink" href="#prepost-agent-metrics" title="Permanent link">&para;</a></h3>
+<p>For each agent who receives coaching, pull a before-and-after comparison:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;PRE-COACHING&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">period</span><span class="p">,</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">sales</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">conversion_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;agent42&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;2026-03-14&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+
+<span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;POST-COACHING&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">period</span><span class="p">,</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">sales</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">conversion_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;agent42&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">&#39;2026-03-15&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;2026-03-28&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Sample output:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">+---------------+--------+-------+----------+-------+----------+</span>
+<span class="c">| period        | user   | calls | avg_talk | sales | conv_pct |</span>
+<span class="nb">+---------------+--------+-------+----------+-------+----------+</span>
+<span class="c">| PRE</span><span class="nb">-</span><span class="c">COACHING  | agent42| 312   | 198</span><span class="nt">.</span><span class="c">4    | 14    | 4</span><span class="nt">.</span><span class="c">49     |</span>
+<span class="c">| POST</span><span class="nb">-</span><span class="c">COACHING | agent42| 298   | 215</span><span class="nt">.</span><span class="c">6    | 22    | 7</span><span class="nt">.</span><span class="c">38     |</span>
+<span class="nb">+---------------+--------+-------+----------+-------+----------+</span>
+</code></pre></div>
+
+<p>That's a 64% conversion improvement. The talk time went up by 17 seconds (which is expected — the agent is now handling objections instead of folding). More time on the phone, more closes. The numbers don't lie.</p>
+<h3 id="team-level-trends">Team-Level Trends<a class="headerlink" href="#team-level-trends" title="Permanent link">&para;</a></h3>
+<p>Track the overall team conversion rate over time and overlay coaching sessions:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">team_avg_talk</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">team_conversion</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OUTBOUND_B2B&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Plot this in Grafana (see our <a href="https://vicistack.com/blog/vicidial-grafana-dashboards/">Grafana dashboard guide</a> for setup) and annotate the chart with coaching session dates. After 4-6 weeks, you should see a trend line moving up. If you don't, either the coaching content needs adjustment or the agents aren't retaining the training.</p>
+<h3 id="monitoring-session-logging">Monitoring Session Logging<a class="headerlink" href="#monitoring-session-logging" title="Permanent link">&para;</a></h3>
+<p>VICIdial logs monitoring sessions, but the data is sparse. Augment it with your own tracking:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Create a coaching log table (run once)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">vicistack_coaching_log</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">coaching_date</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">supervisor_user</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">agent_user</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="k">mode</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">&#39;SILENT&#39;</span><span class="p">,</span><span class="s1">&#39;WHISPER&#39;</span><span class="p">,</span><span class="s1">&#39;BARGE&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">duration_minutes</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">focus_area</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+<span class="w">    </span><span class="n">notes</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pre_conversion</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_agent_date</span><span class="w"> </span><span class="p">(</span><span class="n">agent_user</span><span class="p">,</span><span class="w"> </span><span class="n">coaching_date</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_supervisor</span><span class="w"> </span><span class="p">(</span><span class="n">supervisor_user</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p>Have supervisors log each session. Yes, it's extra work. But without data on who was coached, when, and on what, you can't measure whether coaching works. You're just guessing.</p>
+<hr />
+<h2 id="advanced-automated-monitoring-alerts">Advanced: Automated Monitoring Alerts<a class="headerlink" href="#advanced-automated-monitoring-alerts" title="Permanent link">&para;</a></h2>
+<p>Instead of randomly picking agents to monitor, let VICIdial tell you who needs attention right now. Set up a cron job that identifies struggling agents in real time:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/coaching-alert.sh</span>
+<span class="c1"># Runs every 30 minutes during business hours</span>
+
+<span class="nv">THRESHOLD_CONVERSION</span><span class="o">=</span><span class="m">3</span>.0<span class="w">  </span><span class="c1"># % — flag agents below this</span>
+<span class="nv">MIN_CALLS</span><span class="o">=</span><span class="m">15</span><span class="w">              </span><span class="c1"># minimum calls to avoid noise</span>
+<span class="nv">HOURS_BACK</span><span class="o">=</span><span class="m">4</span><span class="w">              </span><span class="c1"># look at last 4 hours</span>
+
+mysql<span class="w"> </span>-u<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-pReadOnlyPass123<span class="w"> </span>asterisk<span class="w"> </span>-N<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT</span>
+<span class="s2">    user,</span>
+<span class="s2">    COUNT(*) AS calls,</span>
+<span class="s2">    ROUND(SUM(CASE WHEN status = &#39;SALE&#39; THEN 1 ELSE 0 END) /</span>
+<span class="s2">          COUNT(*) * 100, 2) AS conversion</span>
+<span class="s2">FROM vicidial_log</span>
+<span class="s2">WHERE call_date &gt;= DATE_SUB(NOW(), INTERVAL </span><span class="si">${</span><span class="nv">HOURS_BACK</span><span class="si">}</span><span class="s2"> HOUR)</span>
+<span class="s2">    AND campaign_id = &#39;OUTBOUND_B2B&#39;</span>
+<span class="s2">    AND length_in_sec &gt; 0</span>
+<span class="s2">GROUP BY user</span>
+<span class="s2">HAVING calls &gt;= </span><span class="si">${</span><span class="nv">MIN_CALLS</span><span class="si">}</span>
+<span class="s2">    AND conversion &lt; </span><span class="si">${</span><span class="nv">THRESHOLD_CONVERSION</span><span class="si">}</span>
+<span class="s2">ORDER BY conversion ASC;</span>
+<span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>user<span class="w"> </span>calls<span class="w"> </span>conv<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">] COACHING ALERT: </span><span class="nv">$user</span><span class="s2"> — </span><span class="nv">$conv</span><span class="s2">% conversion on </span><span class="nv">$calls</span><span class="s2"> calls (last </span><span class="si">${</span><span class="nv">HOURS_BACK</span><span class="si">}</span><span class="s2">h)&quot;</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<p>Add this to cron:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Run coaching alerts every 30 minutes, 9 AM to 5 PM, Mon-Fri</span>
+<span class="o">*/</span><span class="mi">30</span><span class="w"> </span><span class="mi">9</span><span class="o">-</span><span class="mi">17</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">coaching</span><span class="o">-</span><span class="n">alert</span><span class="o">.</span><span class="n">sh</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">coaching</span><span class="o">-</span><span class="n">alerts</span><span class="o">.</span><span class="n">log</span>
+</code></pre></div>
+
+<p>Now your supervisors get a list of who to monitor every 30 minutes, ranked by who's struggling most. No more random monitoring. Every session is targeted.</p>
+<hr />
+<h2 id="the-coaching-culture-problem">The Coaching Culture Problem<a class="headerlink" href="#the-coaching-culture-problem" title="Permanent link">&para;</a></h2>
+<p>The hardest part of whisper coaching isn't the technology. It's getting supervisors to actually do it. Every day. Consistently.</p>
+<p>Most call center supervisors were promoted from the agent floor because they were good on the phone. That doesn't make them good coaches. Many have never been trained on how to coach, feel awkward listening to live calls, and default to checking email instead of putting on a headset.</p>
+<p>Three things that fix this:</p>
+<ol>
+<li>
+<p><strong>Make monitoring time non-negotiable.</strong> Put it on the supervisor's calendar as a blocked 3-hour recurring appointment. If they have meetings during monitoring time, the meetings lose.</p>
+</li>
+<li>
+<p><strong>Tie supervisor bonuses to agent improvement, not just team averages.</strong> If the supervisor's bonus is based on the team hitting 6% conversion, they'll just rely on the top 3 agents to carry the number. If the bonus is based on the bottom quartile improving by 1 percentage point, they'll actually coach the agents who need it.</p>
+</li>
+<li>
+<p><strong>Coach the coaches.</strong> Have the operations manager listen to coaching sessions monthly. Not the calls — the coaching sessions themselves. Is the supervisor giving actionable feedback? Are they using whisper effectively or just telling agents to "do better"? The quality of the coaching matters more than the quantity.</p>
+</li>
+</ol>
+<p>VICIdial gives you every tool you need. <a href="https://vicistack.com/blog/vicidial-agent-coaching/">Silent monitor, whisper, barge-in</a> — they're all built in, they all work, and they cost nothing extra. The only investment is time and discipline. The call centers that make that investment convert 2-3x better than the ones that don't. That's not an exaggeration. We've seen it across dozens of operations.</p>
+<p>The agents who get coached stay longer, perform better, and cost less. The ones who don't get coached either plateau or leave. Pick your outcome and build the process to match.</p>
+<hr />
+<p><em>Need help setting up monitoring in a VICIdial cluster or troubleshooting audio issues? <a href="https://vicistack.com/contact/">Contact ViciStack</a> — we've debugged ChanSpy audio paths in every network topology imaginable.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-whisper-coaching">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
