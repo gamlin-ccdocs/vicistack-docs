@@ -16,6 +16,7 @@ experience managing VICIdial systems.
 - [Call Center Software Comparison: Buyer's Guide [2026]](call-center-software-comparison.md)
 - [Contact Center KPIs: The Complete Guide to Metrics That Matter](contact-center-kpis.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
+- [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
 - [Open Source Call Center Software](open-source-call-center-software.md)
 - [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
