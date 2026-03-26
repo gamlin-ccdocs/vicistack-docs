@@ -59,6 +59,7 @@ experience managing VICIdial systems.
 - [Vicidial Ivr Setup](vicidial-ivr-setup.md)
 - [Vicidial Kamailio Load Balancing](vicidial-kamailio-load-balancing.md)
 - [Vicidial Lead Recycling](vicidial-lead-recycling.md)
+- [Machine Learning Lead Scoring for VICIdial: Prioritize Your Best Leads](vicidial-lead-scoring-ml.md)
 - [Vicidial List Management](vicidial-list-management.md)
 - [Vicidial Multi Tenant](vicidial-multi-tenant.md)
 - [VICIdial MySQL Optimization: Queries, Indexes & Tuning](vicidial-mysql-optimization.md)
