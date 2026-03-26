@@ -24,6 +24,7 @@ experience managing VICIdial systems.
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
 - [Open Source Call Center Software](open-source-call-center-software.md)
 - [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
+- [Speed to Lead: Why Response Time Is the #1 Factor in Call Center Conversions](speed-to-lead-response-time.md)
 - [STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide](stir-shaken-vicidial-guide.md)
 - [VICIdial New Features: Everything You Need to Know](vicidial-34-new-features.md)
 - [Vicidial Agent Coaching](vicidial-agent-coaching.md)
