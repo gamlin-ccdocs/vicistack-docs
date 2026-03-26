@@ -1,0 +1,4932 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-disaster-recovery/">
+      
+      
+        <link rel="prev" href="../vicidial-did-management/">
+      
+      
+        <link rel="next" href="../vicidial-dnc-management/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Disaster Recovery & High Availability Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-disaster-recovery-high-availability-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Disaster Recovery & High Availability Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-vicidial-disaster-recovery-is-different-from-everything-else" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why VICIdial Disaster Recovery Is Different From Everything Else
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rto-and-rpo-setting-recovery-targets-that-actually-make-sense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RTO and RPO: Setting Recovery Targets That Actually Make Sense
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-replication-the-foundation-of-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Replication: The Foundation of Everything
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Replication: The Foundation of Everything">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#master-slave-replication-the-starting-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master-Slave Replication: The Starting Point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#master-master-replication-active-active-for-the-brave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master-Master Replication: Active-Active for the Brave
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-failover-with-keepalived" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Failover with Keepalived
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated Failover with Keepalived">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keepalived-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keepalived Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-mysql-health-check-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The MySQL Health Check Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-promotion-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Promotion Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-telephony-server-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Telephony Server Failover
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Telephony Server Failover">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-naturally-handles-dialer-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Naturally Handles Dialer Loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-critical-exception-the-primary-dialer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Critical Exception: The Primary Dialer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keeping-a-hot-spare-telephony-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keeping a Hot Spare Telephony Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-backup-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Backup Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Backup Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-three-tier-recording-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three-Tier Recording Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#database-backup-and-restore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database Backup and Restore
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Database Backup and Restore">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-daily-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Daily Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#point-in-time-recovery-pitr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point-in-Time Recovery (PITR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-back-up-beyond-mysql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Back Up Beyond MySQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-dr-runbook-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The DR Runbook Template
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The DR Runbook Template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-database-server-total-failure-automated-failover-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Database Server Total Failure (Automated Failover Active)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-database-server-failure-no-automated-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Database Server Failure (No Automated Failover)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-telephony-server-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Telephony Server Failure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-4-total-site-loss-fire-power-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Total Site Loss (Fire, Power, Network)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-your-dr-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Your DR Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Your DR Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-monthly-backup-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Monthly Backup Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-quarterly-failover-drill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Quarterly Failover Drill
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-for-dr-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring for DR Readiness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring for DR Readiness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#critical-alerts-page-someone-immediately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical Alerts (Page someone immediately)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warning-alerts-investigate-within-the-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warning Alerts (Investigate within the hour)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-dashboard-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Dashboard Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#geographic-redundancy-the-multi-site-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geographic Redundancy: The Multi-Site Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Geographic Redundancy: The Multi-Site Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-proven-approach-active-passive-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Proven Approach: Active-Passive Sites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-cluster-communication-ccc-for-active-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Cluster Communication (CCC) for Active-Active
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-specific-dr-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud-Specific DR Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud-Specific DR Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws-specific" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS-Specific
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#digitaloceanhetzner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DigitalOcean/Hetzner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-universal-cloud-dr-advantage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Universal Cloud DR Advantage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-dr-mistakes-and-weve-seen-every-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common DR Mistakes (And We've Seen Every One)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-much-does-a-vicidial-ha-setup-cost-compared-to-a-single-server-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much does a VICIdial HA setup cost compared to a single-server deployment?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-galera-cluster-or-innodb-cluster-instead-of-traditional-mysql-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use Galera Cluster or InnoDB Cluster instead of traditional MySQL replication?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-to-active-calls-during-a-database-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens to active calls during a database failover?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-mysql-replication-breaking-with-duplicate-key-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle MySQL replication breaking with "duplicate key" errors?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-replicate-the-vicidial_list-table-its-enormous" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I replicate the vicidial_list table? It's enormous.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-minimum-dr-setup-youd-recommend-for-a-50-agent-operation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the minimum DR setup you'd recommend for a 50-agent operation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-prevent-split-brain-in-a-master-master-replication-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I prevent split-brain in a master-master replication setup?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-run-a-full-dr-drill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I run a full DR drill?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-vicidial-disaster-recovery-is-different-from-everything-else" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why VICIdial Disaster Recovery Is Different From Everything Else
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rto-and-rpo-setting-recovery-targets-that-actually-make-sense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RTO and RPO: Setting Recovery Targets That Actually Make Sense
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-replication-the-foundation-of-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Replication: The Foundation of Everything
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Replication: The Foundation of Everything">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#master-slave-replication-the-starting-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master-Slave Replication: The Starting Point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#master-master-replication-active-active-for-the-brave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master-Master Replication: Active-Active for the Brave
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-failover-with-keepalived" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Failover with Keepalived
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated Failover with Keepalived">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keepalived-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keepalived Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-mysql-health-check-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The MySQL Health Check Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-promotion-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Promotion Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-telephony-server-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Telephony Server Failover
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Telephony Server Failover">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-naturally-handles-dialer-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Naturally Handles Dialer Loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-critical-exception-the-primary-dialer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Critical Exception: The Primary Dialer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keeping-a-hot-spare-telephony-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keeping a Hot Spare Telephony Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recording-backup-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Backup Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recording Backup Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-three-tier-recording-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three-Tier Recording Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#database-backup-and-restore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database Backup and Restore
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Database Backup and Restore">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-daily-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Daily Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#point-in-time-recovery-pitr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point-in-Time Recovery (PITR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-back-up-beyond-mysql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Back Up Beyond MySQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-dr-runbook-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The DR Runbook Template
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The DR Runbook Template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-database-server-total-failure-automated-failover-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Database Server Total Failure (Automated Failover Active)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-database-server-failure-no-automated-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Database Server Failure (No Automated Failover)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-telephony-server-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Telephony Server Failure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-4-total-site-loss-fire-power-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Total Site Loss (Fire, Power, Network)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-your-dr-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Your DR Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Your DR Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-monthly-backup-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Monthly Backup Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-quarterly-failover-drill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Quarterly Failover Drill
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-for-dr-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring for DR Readiness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring for DR Readiness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#critical-alerts-page-someone-immediately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical Alerts (Page someone immediately)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warning-alerts-investigate-within-the-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warning Alerts (Investigate within the hour)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-dashboard-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Dashboard Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#geographic-redundancy-the-multi-site-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geographic Redundancy: The Multi-Site Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Geographic Redundancy: The Multi-Site Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-proven-approach-active-passive-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Proven Approach: Active-Passive Sites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-cluster-communication-ccc-for-active-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Cluster Communication (CCC) for Active-Active
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-specific-dr-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud-Specific DR Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud-Specific DR Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws-specific" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS-Specific
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#digitaloceanhetzner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DigitalOcean/Hetzner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-universal-cloud-dr-advantage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Universal Cloud DR Advantage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-dr-mistakes-and-weve-seen-every-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common DR Mistakes (And We've Seen Every One)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-much-does-a-vicidial-ha-setup-cost-compared-to-a-single-server-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much does a VICIdial HA setup cost compared to a single-server deployment?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-galera-cluster-or-innodb-cluster-instead-of-traditional-mysql-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use Galera Cluster or InnoDB Cluster instead of traditional MySQL replication?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-to-active-calls-during-a-database-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens to active calls during a database failover?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-mysql-replication-breaking-with-duplicate-key-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle MySQL replication breaking with "duplicate key" errors?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-replicate-the-vicidial_list-table-its-enormous" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I replicate the vicidial_list table? It's enormous.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-minimum-dr-setup-youd-recommend-for-a-50-agent-operation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the minimum DR setup you'd recommend for a 50-agent operation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-prevent-split-brain-in-a-master-master-replication-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I prevent split-brain in a master-master replication setup?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-run-a-full-dr-drill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I run a full DR drill?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-disaster-recovery-high-availability-guide">VICIdial Disaster Recovery &amp; High Availability Guide<a class="headerlink" href="#vicidial-disaster-recovery-high-availability-guide" title="Permanent link">&para;</a></h1>
+<p><em>It's 2:14 AM. Your phone is buzzing. The database server just died — a failed RAID controller, a bad firmware update, doesn't matter. What matters is that 200 agents across three time zones are logging in at 8 AM, your dialer manager is already texting you, and every second of downtime is burning revenue. You open your laptop and realize you don't have a plan.</em></p>
+<p><em>This guide is that plan.</em></p>
+<p>We've been in that 2 AM scenario more times than we'd like to admit — both on our own infrastructure and rescuing other operators who called us in a panic. We've watched a $40 RAID battery destroy an entire day's production. We've seen a single <code>DROP TABLE</code> command typed into the wrong terminal wipe out a campaign mid-shift. And we've seen operators who had proper DR in place recover from a total server loss in under 15 minutes while their agents never even noticed.</p>
+<p>The difference between a minor hiccup and a catastrophic outage isn't luck. It's preparation. This guide covers everything: <a href="/glossary/database-replication/">MySQL replication</a> topologies, Asterisk failover with keepalived, recording backup strategies, RTO/RPO planning for call center operations, automated and manual failover procedures, and the DR runbook template we use in production.</p>
+<p>No theory. No "consult your vendor." Real configurations, real procedures, real timelines.</p>
+<hr />
+<h2 id="why-vicidial-disaster-recovery-is-different-from-everything-else">Why VICIdial Disaster Recovery Is Different From Everything Else<a class="headerlink" href="#why-vicidial-disaster-recovery-is-different-from-everything-else" title="Permanent link">&para;</a></h2>
+<p>VICIdial isn't a stateless web app you can just redeploy from a container image. It's a real-time telephony platform with a centralized MySQL database, multiple Asterisk processes maintaining live call state, recordings actively being written to disk, and agents whose sessions are tracked by timestamp updates every second. Standard IT disaster recovery playbooks don't account for any of this.</p>
+<p>Here's what makes VICIdial DR uniquely challenging:</p>
+<p><strong>The database is a single point of failure by design.</strong> As we covered in the <a href="/blog/vicidial-cluster-guide/">VICIdial Cluster Guide</a>, every server in a <a href="/glossary/vicidial-cluster/">VICIdial cluster</a> connects to one MySQL instance. There's no built-in clustering, no automatic failover, no Galera-style multi-master. If the database goes down, every agent screen freezes, every dial stops, and every call in progress gets orphaned.</p>
+<p><strong>Live call state is ephemeral.</strong> When Asterisk crashes or a telephony server reboots, every active call on that server drops instantly. There's no way to "resume" a call — the RTP streams, the channel state, the conference bridges are all gone. Your DR plan needs to account for this reality rather than pretending you can achieve zero-call-drop failover.</p>
+<p><strong>Recordings are write-once, read-forever.</strong> Call recordings have legal retention requirements (often 3-7 years depending on your industry and jurisdiction). Losing recordings isn't just an operational problem — it's a compliance liability that can result in fines.</p>
+<p><strong>Time sensitivity is extreme.</strong> A SaaS app can tolerate 30 minutes of downtime and nobody dies. A 200-agent call center losing 30 minutes of production at peak hours loses thousands of dollars in revenue and potentially hundreds of leads that will never be contactable again. Your recovery targets need to reflect this.</p>
+<hr />
+<h2 id="rto-and-rpo-setting-recovery-targets-that-actually-make-sense">RTO and RPO: Setting Recovery Targets That Actually Make Sense<a class="headerlink" href="#rto-and-rpo-setting-recovery-targets-that-actually-make-sense" title="Permanent link">&para;</a></h2>
+<p>Before you configure anything, you need two numbers. Everything else flows from them.</p>
+<p><strong>Recovery Time Objective (RTO):</strong> How long can your call center be completely down before the business impact becomes unacceptable? This isn't a technical question — it's a business question. Talk to your operations manager, not your sysadmin.</p>
+<p><strong>Recovery Point Objective (RPO):</strong> How much data can you afford to lose? If the database dies right now, what's the oldest acceptable backup? Losing the last 5 minutes of dispositions? The last hour? The last 24 hours?</p>
+<p>Here's the framework we use with our clients:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Typical RTO</th>
+<th>Typical RPO</th>
+<th>DR Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Small operation (&lt; 50 agents), single shift</td>
+<td>2-4 hours</td>
+<td>1 hour</td>
+<td>Nightly backups + manual restore</td>
+</tr>
+<tr>
+<td>Mid-size (50-200 agents), multi-shift</td>
+<td>15-30 minutes</td>
+<td>5 minutes</td>
+<td>MySQL replication + keepalived failover</td>
+</tr>
+<tr>
+<td>Large (200-500 agents), 16+ hours/day</td>
+<td>&lt; 5 minutes</td>
+<td>Near-zero</td>
+<td>Master-master replication + automated failover + hot standby</td>
+</tr>
+<tr>
+<td>Enterprise / 24x7 (500+ agents)</td>
+<td>&lt; 1 minute</td>
+<td>Zero</td>
+<td>Multi-cluster with CCC + geographic redundancy</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The money math that gets executives to fund DR:</strong> A 200-agent outbound operation running predictive at $15/hour/agent (blended cost) loses $3,000 for every hour of downtime. A 4-hour outage costs $12,000 in direct labor waste alone — not counting lost leads, missed SLAs, or the agents who quit because they sat around doing nothing. A proper DR setup costs $100-300/month in additional infrastructure. The payback period is literally one incident.</p>
+<hr />
+<h2 id="mysql-replication-the-foundation-of-everything">MySQL Replication: The Foundation of Everything<a class="headerlink" href="#mysql-replication-the-foundation-of-everything" title="Permanent link">&para;</a></h2>
+<p>Your database is the single most important component to protect. If you lose a telephony server, 20 agents have a bad day. If you lose the database without a replica, your entire operation stops and you're restoring from backup — assuming you have one.</p>
+<h3 id="master-slave-replication-the-starting-point">Master-Slave Replication: The Starting Point<a class="headerlink" href="#master-slave-replication-the-starting-point" title="Permanent link">&para;</a></h3>
+<p>Master-slave (or primary-replica, if you prefer) replication is the minimum viable DR strategy for any VICIdial deployment above 30 agents. One MySQL instance (the master) processes all writes and streams its binary log to one or more slave instances that replay those writes in near-real-time.</p>
+<p><strong>On the master (<code>/etc/my.cnf</code>):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">server-id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">log-bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/mysql-bin</span>
+<span class="na">binlog-format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">MIXED</span>
+<span class="na">expire_logs_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">7</span>
+<span class="na">max_binlog_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">sync_binlog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="c1"># Include all VICIdial databases</span>
+<span class="na">binlog-do-db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+</code></pre></div>
+
+<p><strong>On the slave (<code>/etc/my.cnf</code>):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">server-id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">relay-log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/mysql-relay</span>
+<span class="na">read_only</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">log-slave-updates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="c1"># Replicate all VICIdial tables</span>
+<span class="na">replicate-do-db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+</code></pre></div>
+
+<p><strong>Setting up replication from scratch:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># On the master — lock tables and grab position</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;FLUSH TABLES WITH READ LOCK;&quot;</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW MASTER STATUS\G&quot;</span>
+<span class="c1"># Note the File and Position values</span>
+
+<span class="c1"># Dump the database (with master data for position)</span>
+mysqldump<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>--master-data<span class="o">=</span><span class="m">2</span><span class="w"> </span>--single-transaction<span class="w"> </span>asterisk<span class="w"> </span>&gt;<span class="w"> </span>/tmp/vicidial_dump.sql
+
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;UNLOCK TABLES;&quot;</span>
+
+<span class="c1"># Transfer dump to slave</span>
+rsync<span class="w"> </span>-avz<span class="w"> </span>/tmp/vicidial_dump.sql<span class="w"> </span>slave_ip:/tmp/
+
+<span class="c1"># On the slave — import and configure</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;CREATE DATABASE IF NOT EXISTS asterisk;&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>&lt;<span class="w"> </span>/tmp/vicidial_dump.sql
+
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;CHANGE MASTER TO</span>
+<span class="s2">  MASTER_HOST=&#39;master_ip&#39;,</span>
+<span class="s2">  MASTER_USER=&#39;repl_user&#39;,</span>
+<span class="s2">  MASTER_PASSWORD=&#39;strong_password_here&#39;,</span>
+<span class="s2">  MASTER_LOG_FILE=&#39;mysql-bin.000001&#39;,</span>
+<span class="s2">  MASTER_LOG_POS=12345;&quot;</span>
+
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;START SLAVE;&quot;</span>
+
+<span class="c1"># Verify it&#39;s working</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW SLAVE STATUS\G&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Slave_IO_Running|Slave_SQL_Running|Seconds_Behind_Master&quot;</span>
+</code></pre></div>
+
+<p>You want to see <code>Slave_IO_Running: Yes</code>, <code>Slave_SQL_Running: Yes</code>, and <code>Seconds_Behind_Master: 0</code> (or close to it). If <code>Seconds_Behind_Master</code> is climbing, your slave hardware can't keep up with write volume — usually a disk I/O bottleneck.</p>
+<p><strong>The replication user setup (do this on the master):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;repl_user&#39;</span><span class="o">@</span><span class="s1">&#39;slave_ip&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;strong_password_here&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="n">REPLICATION</span><span class="w"> </span><span class="n">SLAVE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;repl_user&#39;</span><span class="o">@</span><span class="s1">&#39;slave_ip&#39;</span><span class="p">;</span>
+<span class="n">FLUSH</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>What master-slave gives you:</strong> A warm standby database that's seconds behind production. If the master dies, you promote the slave to master, repoint your cluster's <code>$VARDB_server</code> in every server's <code>astguiclient.conf</code>, and restart services. Total downtime: 5-15 minutes with a practiced procedure, 30-60 minutes if you're fumbling through it for the first time.</p>
+<p><strong>What master-slave doesn't give you:</strong> Automatic failover. Someone (or something) has to detect the failure, promote the slave, and reconfigure every cluster node. During that window, everything is dead.</p>
+<h3 id="master-master-replication-active-active-for-the-brave">Master-Master Replication: Active-Active for the Brave<a class="headerlink" href="#master-master-replication-active-active-for-the-brave" title="Permanent link">&para;</a></h3>
+<p>Master-master replication means both MySQL instances accept writes simultaneously. Each server is both a master and a slave of the other. This enables automated failover because either server can serve as the primary at any time.</p>
+<p><strong>This is significantly more dangerous than master-slave.</strong> Write conflicts, auto-increment collisions, and split-brain scenarios are all real risks. VICIdial's MyISAM tables don't support transactions, which means there's no rollback safety net if replication breaks.</p>
+<p>That said, master-master with proper configuration is the standard approach for production VICIdial HA deployments. The key is ensuring only one master receives writes at any given time — the second master is a hot standby that can accept writes instantly if the primary fails.</p>
+<p><strong>Master 1 (<code>/etc/my.cnf</code>):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">server-id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">log-bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/mysql-bin</span>
+<span class="na">binlog-format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">MIXED</span>
+<span class="na">relay-log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/mysql-relay</span>
+<span class="na">log-slave-updates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">expire_logs_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">7</span>
+
+<span class="c1"># Prevent auto-increment collisions</span>
+<span class="na">auto_increment_increment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">auto_increment_offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="na">binlog-do-db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+<span class="na">replicate-do-db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+</code></pre></div>
+
+<p><strong>Master 2 (<code>/etc/my.cnf</code>):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">server-id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">log-bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/mysql-bin</span>
+<span class="na">binlog-format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">MIXED</span>
+<span class="na">relay-log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/mysql-relay</span>
+<span class="na">log-slave-updates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">expire_logs_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">7</span>
+
+<span class="c1"># Offset auto-increments to avoid collisions</span>
+<span class="na">auto_increment_increment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">auto_increment_offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+
+<span class="na">binlog-do-db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+<span class="na">replicate-do-db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span>
+</code></pre></div>
+
+<p>The <code>auto_increment_increment</code> and <code>auto_increment_offset</code> settings ensure Master 1 generates odd-numbered IDs (1, 3, 5...) and Master 2 generates even-numbered IDs (2, 4, 6...). This eliminates the most common source of replication conflicts in VICIdial — <code>vicidial_log</code>, <code>call_log</code>, and other auto-increment tables.</p>
+<p><strong>Critical: Configure both servers as slaves of each other.</strong> Run the <code>CHANGE MASTER TO</code> command on each server pointing to the other, using the same procedure as master-slave but in both directions.</p>
+<hr />
+<h2 id="automated-failover-with-keepalived">Automated Failover with Keepalived<a class="headerlink" href="#automated-failover-with-keepalived" title="Permanent link">&para;</a></h2>
+<p>Manual failover means waking someone up at 2 AM, SSH-ing into servers, running commands, and hoping they don't fat-finger something critical. Automated failover with keepalived means the system detects the failure, promotes the standby, and repoints the cluster — all within seconds.</p>
+<p><a href="http://www.keepalived.org/">Keepalived</a> uses VRRP (Virtual Router Redundancy Protocol) to manage a floating IP address — a <a href="/glossary/load-balancing/">virtual IP (VIP)</a> that automatically moves from the primary server to the backup if the primary becomes unreachable.</p>
+<p>Here's how it works in a VICIdial context: your cluster nodes don't connect to the database server's real IP. They connect to a VIP. Keepalived runs on both the primary and standby database servers. If the primary dies, the VIP moves to the standby within 1-3 seconds. Every cluster node's existing MySQL connections fail and reconnect — to the same VIP, which now resolves to the standby. Total interruption: under 10 seconds.</p>
+<h3 id="keepalived-configuration">Keepalived Configuration<a class="headerlink" href="#keepalived-configuration" title="Permanent link">&para;</a></h3>
+<p><strong>On the primary database server (<code>/etc/keepalived/keepalived.conf</code>):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">vrrp_script</span><span class="w"> </span><span class="nx">chk_mysql</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">script</span><span class="w"> </span><span class="s">&quot;/usr/local/bin/check_mysql.sh&quot;</span>
+<span class="w">    </span><span class="nx">interval</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="nx">weight</span><span class="w"> </span><span class="o">-</span><span class="mi">20</span>
+<span class="w">    </span><span class="nx">fall</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="nx">rise</span><span class="w"> </span><span class="mi">2</span>
+<span class="p">}</span>
+
+<span class="nx">vrrp_instance</span><span class="w"> </span><span class="nx">VI_MYSQL</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">state</span><span class="w"> </span><span class="nx">MASTER</span>
+<span class="w">    </span><span class="kd">interface</span><span class="w"> </span><span class="nx">eth0</span>
+<span class="w">    </span><span class="nx">virtual_router_id</span><span class="w"> </span><span class="mi">51</span>
+<span class="w">    </span><span class="nx">priority</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">    </span><span class="nx">advert_int</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="w">    </span><span class="nx">authentication</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">auth_type</span><span class="w"> </span><span class="nx">PASS</span>
+<span class="w">        </span><span class="nx">auth_pass</span><span class="w"> </span><span class="nx">your_secret_here</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">virtual_ipaddress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="m m-Double">192.168.1.100</span><span class="o">/</span><span class="mi">24</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">track_script</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">chk_mysql</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">notify_master</span><span class="w"> </span><span class="s">&quot;/usr/local/bin/failover_promote.sh&quot;</span>
+<span class="w">    </span><span class="nx">notify_backup</span><span class="w"> </span><span class="s">&quot;/usr/local/bin/failover_demote.sh&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>On the standby database server — same config but:</strong></p>
+<div class="codehilite"><pre><span></span><code>    state BACKUP
+    priority 90
+</code></pre></div>
+
+<h3 id="the-mysql-health-check-script">The MySQL Health Check Script<a class="headerlink" href="#the-mysql-health-check-script" title="Permanent link">&para;</a></h3>
+<p>This is what keepalived runs every 2 seconds to determine if MySQL is alive and healthy:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/check_mysql.sh</span>
+
+<span class="c1"># Check if MySQL process is running</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span>systemctl<span class="w"> </span>is-active<span class="w"> </span>--quiet<span class="w"> </span>mariadb<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check if MySQL is accepting connections and responding</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span>mysqladmin<span class="w"> </span>ping<span class="w"> </span>--connect-timeout<span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="p">&amp;</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check if replication is healthy (on slave/standby)</span>
+<span class="nv">SLAVE_STATUS</span><span class="o">=</span><span class="k">$(</span>mysql<span class="w"> </span>-N<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW SLAVE STATUS\G&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SLAVE_STATUS</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">SQL_RUNNING</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SLAVE_STATUS</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Slave_SQL_Running:&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SQL_RUNNING</span><span class="s2">&quot;</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="s2">&quot;Yes&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">fi</span>
+
+<span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<p>Make it executable: <code>chmod +x /usr/local/bin/check_mysql.sh</code></p>
+<p>The <code>fall 3</code> parameter means the primary must fail three consecutive checks (6 seconds) before failover triggers. This prevents false positives from momentary MySQL stalls during heavy queries or table locks — something that happens regularly in VICIdial during report generation and log archiving.</p>
+<h3 id="the-promotion-script">The Promotion Script<a class="headerlink" href="#the-promotion-script" title="Permanent link">&para;</a></h3>
+<p>When the standby takes over the VIP, it needs to stop replication and prepare to accept writes:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/failover_promote.sh</span>
+<span class="c1"># Called by keepalived when this node becomes MASTER</span>
+
+<span class="nv">LOGFILE</span><span class="o">=</span><span class="s2">&quot;/var/log/vicidial_failover.log&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span><span class="s1">&#39;+%Y-%m-%d %H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> FAILOVER: Promoting to master&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="nv">$LOGFILE</span>
+
+<span class="c1"># Stop slave replication — this server is now the primary</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;STOP SLAVE;&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;RESET SLAVE ALL;&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+
+<span class="c1"># Remove read-only restriction if set</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SET GLOBAL read_only = 0;&quot;</span>
+
+<span class="c1"># Log the current binary log position for later resync</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW MASTER STATUS\G&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="nv">$LOGFILE</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span><span class="s1">&#39;+%Y-%m-%d %H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> FAILOVER: Promotion complete&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="nv">$LOGFILE</span>
+
+<span class="c1"># Send alert</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;VICIdial DB failover occurred at </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">. This server is now the primary.&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;CRITICAL: VICIdial Database Failover&quot;</span><span class="w"> </span>ops@yourdomain.com
+</code></pre></div>
+
+<p><strong>What your cluster nodes need:</strong> Every server's <code>/etc/astguiclient.conf</code> should have <code>$VARDB_server</code> set to the VIP address (<code>192.168.1.100</code> in this example), not the real IP of either database server. Same for any MySQL connection strings in custom scripts, API integrations, or cron jobs. Miss one and that component will break during failover while everything else works — maddening to debug under pressure.</p>
+<blockquote>
+<p><strong>Your 2 AM Failover Shouldn't Depend on Your Typing Accuracy.</strong>
+ViciStack clusters ship with keepalived, automated promotion, and alerting pre-configured. The database fails over before your phone finishes buzzing. <a href="/free-audit/">Get Your Free DR Assessment --&gt;</a></p>
+</blockquote>
+<hr />
+<h2 id="asterisk-telephony-server-failover">Asterisk Telephony Server Failover<a class="headerlink" href="#asterisk-telephony-server-failover" title="Permanent link">&para;</a></h2>
+<p>Database failover gets all the attention, but telephony server failures are actually more common. Hard drives die, kernel panics happen, and Asterisk has its own collection of segfaults and memory leaks that can take a server down mid-shift.</p>
+<p>The good news: VICIdial's architecture already handles telephony failover better than most people realize.</p>
+<h3 id="how-vicidial-naturally-handles-dialer-loss">How VICIdial Naturally Handles Dialer Loss<a class="headerlink" href="#how-vicidial-naturally-handles-dialer-loss" title="Permanent link">&para;</a></h3>
+<p>When a telephony server drops out of a <a href="/glossary/vicidial-cluster/">cluster</a>, here's what happens automatically:</p>
+<ol>
+<li>The keepalive processes on that server stop updating their timestamps in the <code>server_updater</code> table.</li>
+<li>Within 30-60 seconds, VICIdial's <code>AST_VDadapt.pl</code> (running on your primary dialer) notices the missing server and stops assigning new calls to it.</li>
+<li>Agents who were on that server get a "time synchronization" error and their calls drop.</li>
+<li>The adaptive algorithm redistributes dial capacity across remaining servers.</li>
+</ol>
+<p><strong>What this means practically:</strong> If you have 10 telephony servers and one dies, you lose 10% of your agent capacity until it comes back. The other 90% of agents continue dialing without interruption. This is inherent to VICIdial's cluster architecture — no additional configuration required.</p>
+<h3 id="the-critical-exception-the-primary-dialer">The Critical Exception: The Primary Dialer<a class="headerlink" href="#the-critical-exception-the-primary-dialer" title="Permanent link">&para;</a></h3>
+<p>As covered in the <a href="/blog/vicidial-cluster-guide/">cluster guide</a>, exactly one telephony server runs keepalive flags 5 and 7 — the adaptive predictive algorithm and the fill dialer. If that specific server dies, your entire cluster stops auto-dialing within minutes because there's nothing calculating dial levels.</p>
+<p><strong>The fix: A scripted primary dialer failover.</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/promote_primary_dialer.sh</span>
+<span class="c1"># Run this on the backup dialer when the primary dialer is confirmed down</span>
+
+<span class="nv">PRIMARY_IP</span><span class="o">=</span><span class="s2">&quot;10.0.0.11&quot;</span>
+<span class="nv">BACKUP_IP</span><span class="o">=</span><span class="s2">&quot;10.0.0.12&quot;</span>
+<span class="nv">DB_HOST</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="w">  </span><span class="c1"># The VIP</span>
+
+<span class="c1"># Verify the primary is actually down</span>
+<span class="k">if</span><span class="w"> </span>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span>-W<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="nv">$PRIMARY_IP</span><span class="w"> </span><span class="p">&amp;</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Primary dialer is still responding. Aborting.&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Update this server&#39;s keepalive flags to include 5, 7, and 9</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/^VARactive_keepalives.*/VARactive_keepalives =&gt; 123456789/&#39;</span><span class="w"> </span>/etc/astguiclient.conf
+
+<span class="c1"># Restart keepalive processes to pick up new flags</span>
+killall<span class="w"> </span>-9<span class="w"> </span>AST_VDadapt.pl<span class="w"> </span>AST_VDauto_dial_FILL.pl<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+/usr/share/astguiclient/ADMIN_keepalive_ALL.pl<span class="w"> </span>--force-run
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;This server is now the primary dialer. Flags 5/7/9 activated.&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;REMEMBER: When the original primary comes back, demote it to secondary flags (12368)&quot;</span>
+</code></pre></div>
+
+<p><strong>Do not automate this without a human check.</strong> Unlike database failover where a VIP makes the switch transparent, promoting a new primary dialer while the old one is still running (just unreachable from your monitoring point) creates the duplicate-dialing scenario described in the cluster guide. A network partition between your monitoring server and the primary dialer could trick automation into promoting a backup while the original is still actively dialing. That means two servers running flag 5 simultaneously — exactly the scenario that causes double-dialed leads and erratic dial levels.</p>
+<h3 id="keeping-a-hot-spare-telephony-server">Keeping a Hot Spare Telephony Server<a class="headerlink" href="#keeping-a-hot-spare-telephony-server" title="Permanent link">&para;</a></h3>
+<p>For operations where every agent-minute counts, keep one telephony server running with VICIdial installed, configured, and registered in the <code>servers</code> table — but with no agents assigned and keepalive flags set to <code>12368</code>. This server is warmed up and ready. If any telephony server fails, reassign its agents to the spare through the admin interface. Time to recovery: under 2 minutes.</p>
+<p>The spare doesn't need to be identical hardware. Even a modest 4-core server can absorb the 15-20 agents from one failed dialer while you bring the original back up.</p>
+<hr />
+<h2 id="recording-backup-strategies">Recording Backup Strategies<a class="headerlink" href="#recording-backup-strategies" title="Permanent link">&para;</a></h2>
+<p>Recordings are simultaneously the most storage-intensive and most legally sensitive data in your VICIdial environment. A 200-agent operation generates roughly 1-2 TB of recordings per month. Losing them can mean regulatory fines, lost evidence in disputes, and compliance audit failures.</p>
+<h3 id="the-three-tier-recording-strategy">The Three-Tier Recording Strategy<a class="headerlink" href="#the-three-tier-recording-strategy" title="Permanent link">&para;</a></h3>
+<p><strong>Tier 1: Local disk on telephony servers (hours)</strong></p>
+<p>Recordings start here. Asterisk writes raw audio to <code>/var/spool/asterisk/monitor/</code> on the telephony server handling the call. The VICIdial audio pipeline processes and compresses these files every 3 minutes and stages them for transfer. Local storage is a buffer, not a backup — treat anything sitting only on a telephony server's local disk as temporary.</p>
+<p><strong>Tier 2: Archive server or NFS share (weeks to months)</strong></p>
+<p>The FTP pipeline (as described in the <a href="/blog/vicidial-cluster-guide/">cluster guide</a>) moves processed recordings to the archive server. This is your primary working store — the web interface pulls recordings from here for playback. For clusters, use a dedicated archive server with large spinning disks (HDDs are fine for sequential read workloads). Mount an NFS share from the archive server to <code>/var/spool/asterisk/monitorDONE/RECORDINGS/</code> on each web server to simplify playback URL resolution.</p>
+<p><strong>NFS mount example (on each web server's <code>/etc/fstab</code>):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">archive_ip</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">recordings</span><span class="w">  </span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">asterisk</span><span class="o">/</span><span class="n">monitorDONE</span><span class="o">/</span><span class="n">RECORDINGS</span><span class="w">  </span><span class="n">nfs</span><span class="w">  </span><span class="n">defaults</span><span class="p">,</span><span class="n">soft</span><span class="p">,</span><span class="n">timeo</span><span class="o">=</span><span class="mi">15</span><span class="w">  </span><span class="mi">0</span><span class="w">  </span><span class="mi">0</span>
+</code></pre></div>
+
+<p><strong>Tier 3: Offsite/cloud storage (years)</strong></p>
+<p>This is your true backup — geographically separate, survives a total site failure. Options:</p>
+<p><strong>S3 or S3-compatible storage</strong> is the most cost-effective approach for long-term recording retention:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/sync_recordings_s3.sh</span>
+<span class="c1"># Cron: 0 3 * * * /usr/local/bin/sync_recordings_s3.sh</span>
+
+<span class="nv">RECORDING_DIR</span><span class="o">=</span><span class="s2">&quot;/var/recordings&quot;</span>
+<span class="nv">S3_BUCKET</span><span class="o">=</span><span class="s2">&quot;s3://your-vicidial-recordings&quot;</span>
+<span class="nv">DAYS_OLD</span><span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="c1"># Only sync recordings older than 1 day (fully processed)</span>
+
+find<span class="w"> </span><span class="nv">$RECORDING_DIR</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.mp3&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+<span class="nv">$DAYS_OLD</span><span class="w"> </span>-print0<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>xargs<span class="w"> </span>-0<span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="nv">$S3_BUCKET</span>/<span class="k">$(</span>date<span class="w"> </span>-r<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+%Y/%m/%d<span class="k">)</span>/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--storage-class<span class="w"> </span>STANDARD_IA<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--quiet
+
+<span class="c1"># Optional: delete local copies older than 90 days to free disk space</span>
+<span class="c1"># find $RECORDING_DIR -name &quot;*.mp3&quot; -mtime +90 -delete</span>
+</code></pre></div>
+
+<p>Using <code>STANDARD_IA</code> (Infrequent Access) storage class cuts costs roughly in half compared to standard S3 — recordings older than a day are rarely accessed but need to be retrievable. For recordings older than a year, consider S3 Glacier Deep Archive at ~$1/TB/month.</p>
+<p><strong>Cost reference for S3 recording backup:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Agent Count</th>
+<th>Monthly Recordings</th>
+<th>S3 Standard IA</th>
+<th>S3 Glacier Deep Archive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50 agents</td>
+<td>~250 GB</td>
+<td>~$3/month</td>
+<td>~$0.25/month</td>
+</tr>
+<tr>
+<td>200 agents</td>
+<td>~1.5 TB</td>
+<td>~$19/month</td>
+<td>~$1.50/month</td>
+</tr>
+<tr>
+<td>500 agents</td>
+<td>~4 TB</td>
+<td>~$50/month</td>
+<td>~$4/month</td>
+</tr>
+</tbody>
+</table>
+<p>That's the cost of insuring terabytes of legally required recordings against total data loss. There's no rational argument against it.</p>
+<p><strong>rsync to a remote server</strong> works if you have a second physical location or a cheap VPS:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Cron: 0 */6 * * * (every 6 hours)</span>
+rsync<span class="w"> </span>-avz<span class="w"> </span>--bwlimit<span class="o">=</span><span class="m">50000</span><span class="w"> </span>/var/recordings/<span class="w"> </span>backup_user@remote_ip:/backup/recordings/
+</code></pre></div>
+
+<p>The <code>--bwlimit=50000</code> caps transfer at 50 MB/s to prevent the backup from saturating your production network during business hours. Adjust based on your bandwidth.</p>
+<hr />
+<h2 id="database-backup-and-restore">Database Backup and Restore<a class="headerlink" href="#database-backup-and-restore" title="Permanent link">&para;</a></h2>
+<p>Replication protects you from hardware failure. Backups protect you from everything else — accidental deletes, corrupted tables, bad application upgrades, ransomware. Replication is not a backup. If someone runs <code>DELETE FROM vicidial_list WHERE 1=1</code> on the master, that delete replicates to the slave instantly. Both copies are now empty.</p>
+<h3 id="automated-daily-backups">Automated Daily Backups<a class="headerlink" href="#automated-daily-backups" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/vicidial_backup.sh</span>
+<span class="c1"># Cron: 0 2 * * * /usr/local/bin/vicidial_backup.sh</span>
+
+<span class="nv">BACKUP_DIR</span><span class="o">=</span><span class="s2">&quot;/backup/mysql&quot;</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M%S<span class="k">)</span>
+<span class="nv">RETENTION_DAYS</span><span class="o">=</span><span class="m">14</span>
+<span class="nv">DB_NAME</span><span class="o">=</span><span class="s2">&quot;asterisk&quot;</span>
+
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$BACKUP_DIR</span>
+
+<span class="c1"># Full dump with routines, triggers, and events</span>
+mysqldump<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--single-transaction<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--routines<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--triggers<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--events<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--master-data<span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--flush-logs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">$DB_NAME</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>gzip<span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$BACKUP_DIR</span>/vicidial_<span class="si">${</span><span class="nv">DATE</span><span class="si">}</span>.sql.gz
+
+<span class="c1"># Verify the backup isn&#39;t zero-size or corrupt</span>
+<span class="nv">BACKUP_SIZE</span><span class="o">=</span><span class="k">$(</span>stat<span class="w"> </span>-f%z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">/vicidial_</span><span class="si">${</span><span class="nv">DATE</span><span class="si">}</span><span class="s2">.sql.gz&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>stat<span class="w"> </span>-c%s<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">/vicidial_</span><span class="si">${</span><span class="nv">DATE</span><span class="si">}</span><span class="s2">.sql.gz&quot;</span><span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_SIZE</span><span class="s2">&quot;</span><span class="w"> </span>-lt<span class="w"> </span><span class="m">1000000</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WARNING: Backup file suspiciously small (</span><span class="nv">$BACKUP_SIZE</span><span class="s2"> bytes)&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;VICIdial Backup Warning&quot;</span><span class="w"> </span>ops@yourdomain.com
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Clean up backups older than retention period</span>
+find<span class="w"> </span><span class="nv">$BACKUP_DIR</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;vicidial_*.sql.gz&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+<span class="nv">$RETENTION_DAYS</span><span class="w"> </span>-delete
+
+<span class="c1"># Sync to offsite</span>
+rsync<span class="w"> </span>-az<span class="w"> </span><span class="nv">$BACKUP_DIR</span>/vicidial_<span class="si">${</span><span class="nv">DATE</span><span class="si">}</span>.sql.gz<span class="w"> </span>backup_user@remote_ip:/offsite_backup/mysql/
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Backup completed: vicidial_</span><span class="si">${</span><span class="nv">DATE</span><span class="si">}</span><span class="s2">.sql.gz (</span><span class="nv">$BACKUP_SIZE</span><span class="s2"> bytes)&quot;</span>
+</code></pre></div>
+
+<p><strong>The <code>--master-data=2</code> flag</strong> embeds the binary log position as a comment in the dump file. This is essential — if you need to restore from backup and then replay binary logs to a specific point in time, you need to know exactly where the backup's snapshot ends and the binary logs should begin.</p>
+<h3 id="point-in-time-recovery-pitr">Point-in-Time Recovery (PITR)<a class="headerlink" href="#point-in-time-recovery-pitr" title="Permanent link">&para;</a></h3>
+<p>This is what separates "we lost a day of data" from "we lost 30 seconds of data." PITR combines a full backup with binary log replay to restore the database to any specific moment.</p>
+<p><strong>Prerequisite:</strong> Binary logging must be enabled (it already is if you configured replication).</p>
+<p><strong>Recovery procedure:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Identify the disaster time (e.g., someone dropped the vicidial_list table at 14:32:15)</span>
+
+<span class="c1"># 2. Restore the most recent full backup</span>
+gunzip<span class="w"> </span>&lt;<span class="w"> </span>/backup/mysql/vicidial_20260318_020000.sql.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>mysql<span class="w"> </span>asterisk
+
+<span class="c1"># 3. Find which binary logs cover the gap between backup and disaster</span>
+mysqlbinlog<span class="w"> </span>--start-datetime<span class="o">=</span><span class="s2">&quot;2026-03-18 02:00:00&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>--stop-datetime<span class="o">=</span><span class="s2">&quot;2026-03-18 14:32:14&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>/var/log/mysql/mysql-bin.000042<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>/var/log/mysql/mysql-bin.000043<span class="w"> </span><span class="p">|</span><span class="w"> </span>mysql<span class="w"> </span>asterisk
+</code></pre></div>
+
+<p>The <code>--stop-datetime</code> is set to one second before the disaster. This replays every write that happened between the backup and the bad event, without replaying the bad event itself.</p>
+<p><strong>Store binary logs on a separate physical disk from your data directory.</strong> If the disk with your MySQL data fails, the binary logs survive, and you can do PITR from the last backup plus the surviving binary logs.</p>
+<h3 id="what-to-back-up-beyond-mysql">What to Back Up Beyond MySQL<a class="headerlink" href="#what-to-back-up-beyond-mysql" title="Permanent link">&para;</a></h3>
+<p>The database gets all the attention, but there are other critical files:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>What It Is</th>
+<th>Backup Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/etc/astguiclient.conf</code></td>
+<td>Per-server VICIdial config (server IP, DB credentials, keepalive flags)</td>
+<td>On change</td>
+</tr>
+<tr>
+<td><code>/etc/asterisk/</code></td>
+<td>Asterisk configuration (sip.conf, extensions.conf, etc.)</td>
+<td>On change</td>
+</tr>
+<tr>
+<td><code>/etc/my.cnf</code></td>
+<td>MySQL/MariaDB configuration</td>
+<td>On change</td>
+</tr>
+<tr>
+<td><code>/etc/keepalived/keepalived.conf</code></td>
+<td>Failover configuration</td>
+<td>On change</td>
+</tr>
+<tr>
+<td><code>/usr/share/astguiclient/</code></td>
+<td>VICIdial Perl scripts and custom modifications</td>
+<td>Weekly</td>
+</tr>
+<tr>
+<td><code>/var/www/html/agc/</code></td>
+<td>Agent interface customizations</td>
+<td>Weekly</td>
+</tr>
+<tr>
+<td>SSL certificates</td>
+<td>WebRTC / HTTPS</td>
+<td>On renewal</td>
+</tr>
+<tr>
+<td>Carrier trunk credentials</td>
+<td>SIP trunk authentication</td>
+<td>On change</td>
+</tr>
+</tbody>
+</table>
+<p>A simple approach: keep a Git repository with all configuration files. After any change, commit and push to a private remote. If you need to rebuild a server from scratch, the entire configuration history is versioned and available.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># One-time setup on each server</span>
+<span class="nb">cd</span><span class="w"> </span>/etc
+git<span class="w"> </span>init
+git<span class="w"> </span>add<span class="w"> </span>astguiclient.conf<span class="w"> </span>asterisk/<span class="w"> </span>my.cnf<span class="w"> </span>keepalived/
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Initial configuration snapshot&quot;</span>
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>git@your-git-server:vicidial-configs/server01.git
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>master
+
+<span class="c1"># After any config change</span>
+<span class="nb">cd</span><span class="w"> </span>/etc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>-A<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Updated sip.conf — added new carrier trunk&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>push
+</code></pre></div>
+
+<hr />
+<h2 id="the-dr-runbook-template">The DR Runbook Template<a class="headerlink" href="#the-dr-runbook-template" title="Permanent link">&para;</a></h2>
+<p>A runbook isn't documentation you read. It's a step-by-step procedure you execute under pressure at 2 AM when your brain is running at 40% capacity. Keep it simple, sequential, and tested.</p>
+<h3 id="scenario-1-database-server-total-failure-automated-failover-active">Scenario 1: Database Server Total Failure (Automated Failover Active)<a class="headerlink" href="#scenario-1-database-server-total-failure-automated-failover-active" title="Permanent link">&para;</a></h3>
+<p><strong>Expected RTO: &lt; 10 seconds (automated) + 5 minutes (verification)</strong></p>
+<ol>
+<li><strong>Keepalived detects failure</strong> — VIP migrates to standby automatically</li>
+<li><strong>Promotion script executes</strong> — Standby stops replication, accepts writes</li>
+<li><strong>Verify failover occurred:</strong>
+   <code>bash
+   # On the new primary
+   ip addr show | grep 192.168.1.100  # Confirm VIP is here
+   mysql -e "SHOW SLAVE STATUS\G"      # Should show empty (no longer a slave)
+   mysql -e "SELECT COUNT(*) FROM asterisk.vicidial_live_agents;"  # Agents reconnecting</code></li>
+<li><strong>Monitor agent reconnection</strong> — Agents will see brief "time synchronization" errors, then recover within 30-60 seconds as keepalive scripts reconnect</li>
+<li><strong>Notify operations</strong> — "DB failover occurred. Service restored. Investigating root cause."</li>
+<li><strong>Investigate and repair original primary</strong> — Do NOT bring it back online until replication is reconfigured. Plugging a stale master back into the cluster without resync causes data divergence.</li>
+</ol>
+<h3 id="scenario-2-database-server-failure-no-automated-failover">Scenario 2: Database Server Failure (No Automated Failover)<a class="headerlink" href="#scenario-2-database-server-failure-no-automated-failover" title="Permanent link">&para;</a></h3>
+<p><strong>Expected RTO: 15-30 minutes</strong></p>
+<ol>
+<li><strong>Confirm the failure is real</strong> — SSH to the DB server. Check if it's a MySQL crash (restart it) vs. hardware failure (proceed to failover).
+   <code>bash
+   systemctl status mariadb
+   # If MySQL is down but server is up:
+   systemctl restart mariadb
+   # If server is unreachable: proceed to step 2</code></li>
+<li><strong>Promote the slave:</strong>
+   <code>bash
+   # On the slave
+   mysql -e "STOP SLAVE;"
+   mysql -e "RESET SLAVE ALL;"
+   mysql -e "SET GLOBAL read_only = 0;"</code></li>
+<li><strong>Update the cluster to point to the new DB:</strong>
+   <code>bash
+   # On EVERY telephony server, web server, and archive server:
+   sed -i 's/VARDB_server.*/VARDB_server =&gt; NEW_DB_IP/' /etc/astguiclient.conf
+   # Restart all VICIdial processes
+   /usr/share/astguiclient/ADMIN_keepalive_ALL.pl --force-run</code></li>
+<li><strong>Restart Apache on web servers:</strong>
+   <code>bash
+   systemctl restart httpd</code></li>
+<li><strong>Verify agents can log in</strong> and calls are being placed.</li>
+</ol>
+<h3 id="scenario-3-telephony-server-failure">Scenario 3: Telephony Server Failure<a class="headerlink" href="#scenario-3-telephony-server-failure" title="Permanent link">&para;</a></h3>
+<p><strong>Expected RTO: 2-5 minutes</strong></p>
+<ol>
+<li><strong>Identify affected agents</strong> — Check which agents were assigned to the failed server in Admin &gt; Servers.</li>
+<li><strong>If hot spare is available:</strong> Reassign affected agents to the spare server via Admin &gt; Servers &gt; Server Assignment.</li>
+<li><strong>If no spare:</strong> Agents redistribute naturally if you have capacity on remaining servers. Temporarily reduce dial ratio to compensate for lost capacity.</li>
+<li><strong>If the failed server was the primary dialer (flags 5/7/9):</strong> Run the primary dialer promotion script on your designated backup dialer.</li>
+<li><strong>Repair and return:</strong> When the server comes back, start it with secondary flags (<code>12368</code>) only. Do NOT start it with the primary flags if another server has been promoted.</li>
+</ol>
+<h3 id="scenario-4-total-site-loss-fire-power-network">Scenario 4: Total Site Loss (Fire, Power, Network)<a class="headerlink" href="#scenario-4-total-site-loss-fire-power-network" title="Permanent link">&para;</a></h3>
+<p><strong>Expected RTO: 1-4 hours (with offsite backups)</strong></p>
+<ol>
+<li><strong>Activate DR site</strong> — If you have a standby environment at a different location, update DNS and carrier trunk routing.</li>
+<li><strong>If no DR site:</strong> Provision new servers (cloud dedicated instances for speed), restore database from offsite backup, restore configurations from Git, reconfigure carrier trunks, test and go live.</li>
+<li><strong>Recording recovery:</strong> Recordings in S3/offsite are safe. Recordings still in local pipeline on destroyed servers are lost — this is an accepted risk unless you're syncing in real-time.</li>
+</ol>
+<hr />
+<h2 id="testing-your-dr-plan">Testing Your DR Plan<a class="headerlink" href="#testing-your-dr-plan" title="Permanent link">&para;</a></h2>
+<p>A DR plan that hasn't been tested isn't a plan — it's a hypothesis. And hypotheses have a way of being wrong at the worst possible times.</p>
+<h3 id="testing-schedule">Testing Schedule<a class="headerlink" href="#testing-schedule" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Test Type</th>
+<th>Frequency</th>
+<th>Duration</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Backup restore verification</td>
+<td>Monthly</td>
+<td>30 min</td>
+<td>None (test on separate instance)</td>
+</tr>
+<tr>
+<td>Replication failover drill</td>
+<td>Quarterly</td>
+<td>15 min</td>
+<td>Brief agent interruption (5-10 sec)</td>
+</tr>
+<tr>
+<td>Full DR simulation</td>
+<td>Semi-annually</td>
+<td>2-4 hours</td>
+<td>Scheduled maintenance window</td>
+</tr>
+<tr>
+<td>Primary dialer failover</td>
+<td>Quarterly</td>
+<td>5 min</td>
+<td>Minor dial-level fluctuation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-monthly-backup-test">The Monthly Backup Test<a class="headerlink" href="#the-monthly-backup-test" title="Permanent link">&para;</a></h3>
+<p>This is non-negotiable. Every month, restore your latest backup to a separate MySQL instance and verify the data is intact:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Spin up a test instance (or use a dev server)</span>
+gunzip<span class="w"> </span>&lt;<span class="w"> </span>/backup/mysql/vicidial_latest.sql.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>mysql<span class="w"> </span>-h<span class="w"> </span>test_server<span class="w"> </span>asterisk_test
+
+<span class="c1"># Verify table counts match production</span>
+mysql<span class="w"> </span>-h<span class="w"> </span>test_server<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM asterisk_test.vicidial_list;&quot;</span>
+mysql<span class="w"> </span>-h<span class="w"> </span>production_vip<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM asterisk.vicidial_list;&quot;</span>
+
+<span class="c1"># Verify recent data exists (not a stale backup)</span>
+mysql<span class="w"> </span>-h<span class="w"> </span>test_server<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT MAX(call_date) FROM asterisk_test.vicidial_log;&quot;</span>
+</code></pre></div>
+
+<p>If the row counts are wildly different or the most recent <code>call_date</code> is from last week, your backup process is broken and you've been flying without a net.</p>
+<h3 id="the-quarterly-failover-drill">The Quarterly Failover Drill<a class="headerlink" href="#the-quarterly-failover-drill" title="Permanent link">&para;</a></h3>
+<p>Schedule this during a low-volume period. Inform your operations team. Then deliberately kill the primary database and let keepalived do its thing:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># On the primary DB server</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>mariadb
+<span class="c1"># Watch the VIP migrate (should take 3-6 seconds)</span>
+<span class="c1"># Monitor agent screens for recovery (should take &lt; 60 seconds)</span>
+<span class="c1"># After verification, restart MySQL and reconfigure replication</span>
+</code></pre></div>
+
+<p>Time every step. Write down what went wrong. The first drill always reveals something — a script with a hardcoded IP instead of the VIP, a cron job that doesn't reconnect, a monitoring check that fires false alerts.</p>
+<blockquote>
+<p><strong>When Was the Last Time You Tested Your Backups?</strong>
+If the answer is "never" or "I'm not sure," you're one bad drive away from a very bad week. ViciStack runs automated DR drills and backup verification as part of every managed cluster. <a href="/free-audit/">Talk to Us Before the Emergency --&gt;</a></p>
+</blockquote>
+<hr />
+<h2 id="monitoring-for-dr-readiness">Monitoring for DR Readiness<a class="headerlink" href="#monitoring-for-dr-readiness" title="Permanent link">&para;</a></h2>
+<p>Your DR plan is only as good as your ability to detect failures before agents start complaining. Here's what to monitor:</p>
+<h3 id="critical-alerts-page-someone-immediately">Critical Alerts (Page someone immediately)<a class="headerlink" href="#critical-alerts-page-someone-immediately" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># MySQL replication lag &gt; 30 seconds</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW SLAVE STATUS\G&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/Seconds_Behind_Master/{if($2&gt;30) print &quot;CRITICAL: Replication lag &quot;$2&quot;s&quot;}&#39;</span>
+
+<span class="c1"># Replication broken</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW SLAVE STATUS\G&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/Slave_SQL_Running:/{if($2!=&quot;Yes&quot;) print &quot;CRITICAL: SQL replication stopped&quot;}&#39;</span>
+
+<span class="c1"># Keepalived state change</span>
+<span class="c1"># (Monitor /var/log/messages or syslog for VRRP state transitions)</span>
+
+<span class="c1"># Backup age &gt; 36 hours</span>
+find<span class="w"> </span>/backup/mysql<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;vicidial_*.sql.gz&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>-1.5<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="c1"># If 0: backup hasn&#39;t run</span>
+</code></pre></div>
+
+<h3 id="warning-alerts-investigate-within-the-hour">Warning Alerts (Investigate within the hour)<a class="headerlink" href="#warning-alerts-investigate-within-the-hour" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Disk space on archive server &lt; 20%</span>
+df<span class="w"> </span>-h<span class="w"> </span>/var/recordings<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR==2{gsub(/%/,&quot;&quot;); if($5&gt;80) print &quot;WARNING: Recording disk &quot;$5&quot;% full&quot;}&#39;</span>
+
+<span class="c1"># Binary log disk space</span>
+du<span class="w"> </span>-sh<span class="w"> </span>/var/log/mysql/
+
+<span class="c1"># Failed recording FTP transfers (files accumulating on dialers)</span>
+find<span class="w"> </span>/var/spool/asterisk/monitorDONE/FTP/<span class="w"> </span>-mmin<span class="w"> </span>+60<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="c1"># If &gt; 0: FTP pipeline is backed up</span>
+</code></pre></div>
+
+<h3 id="the-dashboard-query">The Dashboard Query<a class="headerlink" href="#the-dashboard-query" title="Permanent link">&para;</a></h3>
+<p>Run this on your database to get a one-glance DR health check:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;Replication Status&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">metric</span><span class="p">,</span>
+<span class="w">    </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">VARIABLE_VALUE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">GLOBAL_STATUS</span>
+<span class="w">     </span><span class="k">WHERE</span><span class="w"> </span><span class="n">VARIABLE_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Slave_running&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">value</span>
+<span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;Seconds Behind Master&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">VARIABLE_VALUE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">GLOBAL_STATUS</span>
+<span class="w">     </span><span class="k">WHERE</span><span class="w"> </span><span class="n">VARIABLE_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Seconds_Behind_Master&#39;</span><span class="p">)</span>
+<span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;Last Backup Age (hours)&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">CAST</span><span class="p">(</span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="n">HOUR</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">),</span>
+<span class="w">        </span><span class="n">NOW</span><span class="p">())</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">)</span>
+<span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;Active Servers&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">CAST</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">server_updater</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">last_update</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">MINUTE</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="geographic-redundancy-the-multi-site-architecture">Geographic Redundancy: The Multi-Site Architecture<a class="headerlink" href="#geographic-redundancy-the-multi-site-architecture" title="Permanent link">&para;</a></h2>
+<p>For operations that genuinely cannot tolerate a site-level failure — 24/7 call centers, regulated industries, operations spanning multiple countries — geographic redundancy is the answer. This is the most complex and expensive DR strategy, but it's the only one that survives a datacenter fire, a regional ISP outage, or a natural disaster.</p>
+<h3 id="the-proven-approach-active-passive-sites">The Proven Approach: Active-Passive Sites<a class="headerlink" href="#the-proven-approach-active-passive-sites" title="Permanent link">&para;</a></h3>
+<p><strong>Site A (Primary):</strong> Full VICIdial cluster — database, telephony servers, web servers, archive.
+<strong>Site B (DR):</strong> Minimal cluster — one database slave (replicating from Site A over VPN), one or two pre-configured telephony servers, one web server.</p>
+<p>MySQL replication runs continuously over an encrypted VPN tunnel between sites. Site B's servers are installed, configured, and tested — but idle. Carrier trunks are pre-configured at both sites but only active at Site A.</p>
+<p><strong>Failover procedure:</strong>
+1. Promote Site B's database slave to master.
+2. Activate carrier trunks at Site B (or reroute via carrier portal).
+3. Update DNS for the agent web interface to point to Site B.
+4. Agents log in at Site B. Operations resume.</p>
+<p><strong>Expected RTO:</strong> 15-30 minutes, dominated by DNS propagation and carrier trunk activation. Use low-TTL DNS records (60-120 seconds) to minimize propagation delay.</p>
+<p><strong>Cost:</strong> Roughly 30-40% of your primary site cost for infrastructure that sits idle 99.9% of the time. For a 200-agent operation, that's an additional $300-500/month. Insurance against a total site loss that would otherwise cost you days of recovery time and tens of thousands in lost revenue.</p>
+<h3 id="cross-cluster-communication-ccc-for-active-active">Cross-Cluster Communication (CCC) for Active-Active<a class="headerlink" href="#cross-cluster-communication-ccc-for-active-active" title="Permanent link">&para;</a></h3>
+<p>For the largest operations, CCC allows multiple independent VICIdial clusters to operate simultaneously and transfer calls between them. Each cluster has its own database, its own telephony servers, and its own autonomy. If one cluster fails, the others continue operating independently.</p>
+<p>This is the architecture behind the largest confirmed VICIdial deployments — 1,000+ agents across multiple clusters. It's beyond the scope of a DR guide (it's an architectural pattern more than a failover mechanism), but understanding that it exists is important for long-term planning. See the <a href="/blog/vicidial-cluster-guide/">cluster guide</a> for more details on CCC.</p>
+<hr />
+<h2 id="cloud-specific-dr-considerations">Cloud-Specific DR Considerations<a class="headerlink" href="#cloud-specific-dr-considerations" title="Permanent link">&para;</a></h2>
+<p>If you're running VICIdial on <a href="/blog/vicidial-cloud-deployment/">cloud infrastructure</a>, you have additional tools available — but also additional pitfalls.</p>
+<h3 id="aws-specific">AWS-Specific<a class="headerlink" href="#aws-specific" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>RDS for MySQL:</strong> Don't use it for VICIdial's primary database. RDS doesn't support MyISAM MEMORY tables properly, and the latency overhead breaks real-time operations. Use RDS as a read replica for reporting only.</li>
+<li><strong>EBS Snapshots:</strong> Automate daily EBS snapshots of your database volume. They're incremental, cheap, and fast to restore. This is the easiest backup mechanism on AWS.</li>
+<li><strong>Cross-Region Replication:</strong> Replicate your database to a different AWS region using standard MySQL replication over VPN. AWS Transit Gateway simplifies the networking.</li>
+<li><strong>Route 53 Health Checks:</strong> Use Route 53 to automatically failover DNS from your primary site to your DR site based on health check endpoints.</li>
+</ul>
+<h3 id="digitaloceanhetzner">DigitalOcean/Hetzner<a class="headerlink" href="#digitaloceanhetzner" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Volume Snapshots:</strong> Both platforms support volume snapshots. Schedule them daily.</li>
+<li><strong>Server Images:</strong> Create a golden image of each server role (database, telephony, web) with VICIdial pre-installed and configured. Spinning up a replacement from an image takes 2-5 minutes vs. 2-5 hours for a from-scratch install.</li>
+<li><strong>Floating IPs:</strong> DigitalOcean's floating IPs work similarly to keepalived VIPs — they can be reassigned between servers via API in seconds. Use them as your cluster's database endpoint.</li>
+</ul>
+<h3 id="the-universal-cloud-dr-advantage">The Universal Cloud DR Advantage<a class="headerlink" href="#the-universal-cloud-dr-advantage" title="Permanent link">&para;</a></h3>
+<p>The single biggest advantage of cloud for DR: you can provision replacement servers in minutes. With bare metal, a failed server means ordering hardware, waiting for shipping, and racking it. With cloud, a failed dedicated instance gets replaced with an API call. Keep your server build automated (Ansible, bash scripts, golden images — whatever works) so that "provision a replacement" means running a script, not following a 50-step manual procedure.</p>
+<hr />
+<h2 id="common-dr-mistakes-and-weve-seen-every-one">Common DR Mistakes (And We've Seen Every One)<a class="headerlink" href="#common-dr-mistakes-and-weve-seen-every-one" title="Permanent link">&para;</a></h2>
+<p><strong>Mistake 1: Treating replication as backup.</strong> We said it above but it bears repeating. Replication protects against hardware failure. It does not protect against human error, software bugs, or malicious actions. A <code>DROP TABLE</code> replicates. A ransomware encryption replicates. You need both replication AND offline backups.</p>
+<p><strong>Mistake 2: Never testing the restore.</strong> Backups that can't be restored are worse than no backups — they give you false confidence. We've seen gzipped dump files that were silently truncated because the backup disk filled up mid-write. The file existed, had a reasonable size, and was completely useless.</p>
+<p><strong>Mistake 3: Hardcoding database IPs everywhere.</strong> Every custom script, API endpoint, and cron job should connect to the VIP, not the primary database's real IP. During a failover, you'll discover every place you forgot — each one is a separate outage you have to chase down while agents are waiting.</p>
+<p><strong>Mistake 4: No alerting on replication lag.</strong> Replication breaks silently. The slave just stops applying updates and sits there with stale data. If you don't monitor <code>Seconds_Behind_Master</code> and <code>Slave_SQL_Running</code>, you won't know your "hot standby" is actually 3 days behind until you need it.</p>
+<p><strong>Mistake 5: Forgetting about carrier trunks.</strong> Your DR database and telephony servers are ready. Great. But your SIP trunks are authenticated by IP address and only your primary site's IPs are whitelisted with the carrier. Calls can't go out. Add your DR site's IPs to every carrier trunk in advance.</p>
+<p><strong>Mistake 6: No documented runbook.</strong> The person who set up DR might not be the person executing the failover at 2 AM. If the procedure lives in one person's head, it dies when that person is on vacation, asleep, or has left the company. Write it down. Print it out. Keep a copy somewhere that doesn't depend on the infrastructure it's meant to recover.</p>
+<p><strong>Mistake 7: Ignoring the recordings.</strong> The database gets all the DR attention. Meanwhile, 3 TB of recordings are sitting on a single archive server with no backup, no RAID, and no offsite copy. When that disk fails, you lose years of legally required call recordings. The S3 sync script above costs literally dollars per month. Set it up.</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>Everything in this guide is exactly what we implement for our managed clusters. Keepalived with automated database failover. MySQL replication with point-in-time recovery. Recording backup to S3. Monitoring with alerting on replication lag, backup freshness, and disk utilization. Quarterly failover drills. Documented runbooks.</p>
+<p>The difference is we do it once, correctly, and maintain it permanently. You don't have to figure out why replication broke at 3 AM, why the promotion script didn't fire, or why the backup was silently failing for two weeks. We already know the answer because we've seen it before.</p>
+<p><strong>ViciStack exists for operators who want enterprise-grade DR without building an ops team to maintain it.</strong> Same architecture described in this guide. Fraction of the effort. Dramatically lower risk than hoping your one sysadmin remembers the failover procedure when the pager goes off.</p>
+<p><a href="/free-audit/">Get a free DR assessment for your VICIdial environment --&gt;</a></p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-much-does-a-vicidial-ha-setup-cost-compared-to-a-single-server-deployment">How much does a VICIdial HA setup cost compared to a single-server deployment?<a class="headerlink" href="#how-much-does-a-vicidial-ha-setup-cost-compared-to-a-single-server-deployment" title="Permanent link">&para;</a></h3>
+<p>For a mid-size operation (100-200 agents), adding proper HA adds roughly $150-300/month in infrastructure — primarily the standby database server and offsite backup storage. On Hetzner or OVH bare metal, a replica database server runs $50-85/month, S3 recording backup runs $20-50/month, and monitoring costs are negligible. Compare that to the cost of a single 4-hour outage ($12,000+ in lost productivity for a 200-agent operation) and the payback period is measured in days, not months. The expense of HA is trivial relative to the cost of not having it.</p>
+<h3 id="can-i-use-galera-cluster-or-innodb-cluster-instead-of-traditional-mysql-replication">Can I use Galera Cluster or InnoDB Cluster instead of traditional MySQL replication?<a class="headerlink" href="#can-i-use-galera-cluster-or-innodb-cluster-instead-of-traditional-mysql-replication" title="Permanent link">&para;</a></h3>
+<p>Not with VICIdial in its current form. VICIdial is built exclusively on MyISAM tables, and critical high-frequency tables like <code>vicidial_live_agents</code> often get converted to the MEMORY engine for performance. Galera Cluster requires InnoDB. InnoDB Cluster requires InnoDB. Both are fundamentally incompatible with VICIdial's storage engine requirements. Standard MySQL master-slave or master-master replication with MyISAM is the only supported approach. See the <a href="/blog/vicidial-mysql-optimization/">MySQL optimization guide</a> for more on VICIdial's storage engine constraints.</p>
+<h3 id="what-happens-to-active-calls-during-a-database-failover">What happens to active calls during a database failover?<a class="headerlink" href="#what-happens-to-active-calls-during-a-database-failover" title="Permanent link">&para;</a></h3>
+<p>Active calls in progress will experience a brief disruption — typically 5-15 seconds with keepalived-based automated failover. Here's the sequence: the database goes down, Asterisk continues handling existing audio streams (Asterisk doesn't need the database for active RTP), but VICIdial's Perl scripts lose their MySQL connection and stop updating agent state. When the VIP migrates and MySQL reconnects, the scripts resume. Agents may see a momentary freeze on their screens. Calls that were in the process of being connected (ringing but not yet answered) will likely fail. Calls already in conversation usually survive the brief interruption. New calls won't be placed during the failover window.</p>
+<h3 id="how-do-i-handle-mysql-replication-breaking-with-duplicate-key-errors">How do I handle MySQL replication breaking with "duplicate key" errors?<a class="headerlink" href="#how-do-i-handle-mysql-replication-breaking-with-duplicate-key-errors" title="Permanent link">&para;</a></h3>
+<p>This is the most common replication issue in VICIdial environments, usually caused by the <code>auto_increment_offset</code> settings being misconfigured or by a brief period where both masters accepted writes simultaneously during a split-brain event. The quick fix is <code>SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1; START SLAVE;</code> to skip the conflicting transaction — but this loses data. The correct fix is to identify the conflicting row, manually resolve it on the slave, and restart replication. For persistent conflicts, verify your <code>auto_increment_increment</code> and <code>auto_increment_offset</code> settings are correct on both masters. If you're seeing frequent duplicate key errors, you likely had a period of genuine dual-write that created divergent data — the safest recovery is to re-snapshot the master and rebuild the slave from scratch.</p>
+<h3 id="should-i-replicate-the-vicidial_list-table-its-enormous">Should I replicate the vicidial_list table? It's enormous.<a class="headerlink" href="#should-i-replicate-the-vicidial_list-table-its-enormous" title="Permanent link">&para;</a></h3>
+<p>Yes. <code>vicidial_list</code> contains your leads — the core revenue-generating data in your entire operation. Losing it means losing every lead, every disposition, every callback schedule, every DNC status. The table can be tens of millions of rows and many gigabytes, which means initial replication setup takes longer and replication lag may be higher during bulk imports, but excluding it from replication is not an acceptable tradeoff. If replication lag during lead imports is a problem, use <code>LOAD DATA INFILE</code> instead of row-by-row inserts — it generates far fewer binary log events. Also consider splitting your lead data across multiple lists and archiving old lists to <code>_archive</code> tables to keep the hot table manageable.</p>
+<h3 id="whats-the-minimum-dr-setup-youd-recommend-for-a-50-agent-operation">What's the minimum DR setup you'd recommend for a 50-agent operation?<a class="headerlink" href="#whats-the-minimum-dr-setup-youd-recommend-for-a-50-agent-operation" title="Permanent link">&para;</a></h3>
+<p>At 50 agents, you don't need the full automated failover stack. Here's the minimum viable DR plan: (1) MySQL master-slave replication to a second server — this can be a smaller/cheaper box since it only needs to handle reads and be promotable in an emergency. (2) Automated daily database backups with offsite copy (rsync to a remote server or upload to S3). (3) Monthly backup restore tests. (4) A written one-page runbook covering "slave promotion" and "who to call." (5) Recording sync to S3. Total additional cost: $60-100/month. This gets your RTO down to 15-30 minutes and your RPO down to seconds (replication lag). It won't auto-failover, but it gives a competent sysadmin everything they need to recover quickly.</p>
+<h3 id="how-do-i-prevent-split-brain-in-a-master-master-replication-setup">How do I prevent split-brain in a master-master replication setup?<a class="headerlink" href="#how-do-i-prevent-split-brain-in-a-master-master-replication-setup" title="Permanent link">&para;</a></h3>
+<p>Split-brain — where both masters accept writes simultaneously during a network partition — is the nightmare scenario. Prevention is entirely about the STONITH principle (Shoot The Other Node In The Head): when the standby takes over, it must ensure the old primary is truly dead, not just unreachable. Keepalived's VRRP handles this at the IP level (only one server holds the VIP at a time), but add a fencing mechanism for safety. The promotion script should attempt to shut down MySQL on the old primary via SSH before accepting writes. If that fails (because the old primary is truly unreachable), proceed with promotion but immediately investigate. Also: never set both servers to <code>state MASTER</code> in keepalived.conf — one must be <code>MASTER</code> with higher priority, the other <code>BACKUP</code> with lower priority. The <code>nopreempt</code> option prevents the original primary from automatically reclaiming the VIP when it comes back, giving you time to verify data consistency before resyncing.</p>
+<h3 id="how-often-should-i-run-a-full-dr-drill">How often should I run a full DR drill?<a class="headerlink" href="#how-often-should-i-run-a-full-dr-drill" title="Permanent link">&para;</a></h3>
+<p>Full DR drills (simulating a complete primary site failure and activating the DR site) should happen semi-annually at minimum, with smaller component tests more frequently. Run backup restore verification monthly — it takes 30 minutes and catches the most common failure mode (silent backup corruption). Run database failover drills quarterly during low-volume windows. Test the primary dialer promotion script quarterly. And every time you make a significant infrastructure change (new server, new carrier, new VICIdial version), run an unscheduled component test to verify DR still works with the new configuration. Document the results of every drill — what worked, what broke, how long each step took. The drill results become your most valuable DR asset because they tell you exactly what your real RTO is, not what you hope it is.</p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial, Asterisk, and best practices evolve. Last updated: March 2026.</em></p>
+<p><em>Running VICIdial without DR is running without a seatbelt. The crash might never come — but if it does, you'll wish you'd spent the 10 minutes it takes to buckle up. Questions this guide didn't cover? Reach out directly — we'll add it.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-disaster-recovery">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

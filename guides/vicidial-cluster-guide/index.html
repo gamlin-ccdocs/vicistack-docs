@@ -1,0 +1,3899 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-cluster-guide/">
+      
+      
+        <link rel="prev" href="../vicidial-cloud-deployment/">
+      
+      
+        <link rel="next" href="../vicidial-cnam-lookup-inbound/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026] - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-cluster-configuration-the-complete-multi-server-setup-guide-2026" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-your-single-server-has-a-ceiling-and-its-lower-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Your Single Server Has a Ceiling (And It's Lower Than You Think)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-four-server-roles-every-cluster-needs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Four Server Roles Every Cluster Needs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Four Server Roles Every Cluster Needs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-database-server-your-single-most-important-investment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Database Server — Your Single Most Important Investment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telephony-dialer-servers-where-calls-actually-happen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telephony (Dialer) Servers — Where Calls Actually Happen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-servers-stateless-and-scalable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Servers — Stateless and Scalable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#archiverecording-server-dont-skip-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archive/Recording Server — Don't Skip This
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-port-matrix-nobody-published-until-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Port Matrix Nobody Published Until Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keepalive-flags-the-configuration-that-breaks-every-new-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keepalive Flags: The Configuration That Breaks Every New Cluster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-tuning-that-actually-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Tuning That Actually Matters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Tuning That Actually Matters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-memory-table-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The MEMORY Table Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#archive-your-logs-or-die" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archive Your Logs or Die
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-recording-pipeline-nobody-explains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Recording Pipeline Nobody Explains
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-time-synchronization-problem-error-is-almost-never-about-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Time Synchronization Problem" Error Is Almost Never About Time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-audio-between-servers-the-cluster-problem-hall-of-fame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Audio Between Servers: The Cluster Problem Hall of Fame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capacity-planning-from-50-to-500-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capacity Planning: From 50 to 500+ Agents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-virtualization-question-answered-once-and-for-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Virtualization Question — Answered Once and For All
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webrtc-and-viciphone-in-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebRTC and ViciPhone in a Cluster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-asterisk-21-situation-what-you-need-to-know-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Asterisk 21 Situation: What You Need to Know Right Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-10-things-that-will-break-your-cluster-and-how-to-fix-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 10 Things That Will Break Your Cluster (And How to Fix Them)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-convosos-vicidial-breaks-at-scale-narrative-is-nonsense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Convoso's "VICIdial Breaks at Scale" Narrative Is Nonsense
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-your-single-server-has-a-ceiling-and-its-lower-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Your Single Server Has a Ceiling (And It's Lower Than You Think)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-four-server-roles-every-cluster-needs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Four Server Roles Every Cluster Needs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Four Server Roles Every Cluster Needs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-database-server-your-single-most-important-investment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Database Server — Your Single Most Important Investment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telephony-dialer-servers-where-calls-actually-happen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telephony (Dialer) Servers — Where Calls Actually Happen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-servers-stateless-and-scalable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Servers — Stateless and Scalable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#archiverecording-server-dont-skip-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archive/Recording Server — Don't Skip This
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-port-matrix-nobody-published-until-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Port Matrix Nobody Published Until Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keepalive-flags-the-configuration-that-breaks-every-new-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keepalive Flags: The Configuration That Breaks Every New Cluster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-tuning-that-actually-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Tuning That Actually Matters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Tuning That Actually Matters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-memory-table-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The MEMORY Table Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#archive-your-logs-or-die" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archive Your Logs or Die
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-recording-pipeline-nobody-explains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Recording Pipeline Nobody Explains
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-time-synchronization-problem-error-is-almost-never-about-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Time Synchronization Problem" Error Is Almost Never About Time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-audio-between-servers-the-cluster-problem-hall-of-fame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Audio Between Servers: The Cluster Problem Hall of Fame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capacity-planning-from-50-to-500-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capacity Planning: From 50 to 500+ Agents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-virtualization-question-answered-once-and-for-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Virtualization Question — Answered Once and For All
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webrtc-and-viciphone-in-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebRTC and ViciPhone in a Cluster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-asterisk-21-situation-what-you-need-to-know-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Asterisk 21 Situation: What You Need to Know Right Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-10-things-that-will-break-your-cluster-and-how-to-fix-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 10 Things That Will Break Your Cluster (And How to Fix Them)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-convosos-vicidial-breaks-at-scale-narrative-is-nonsense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Convoso's "VICIdial Breaks at Scale" Narrative Is Nonsense
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-cluster-configuration-the-complete-multi-server-setup-guide-2026">VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]<a class="headerlink" href="#vicidial-cluster-configuration-the-complete-multi-server-setup-guide-2026" title="Permanent link">&para;</a></h1>
+<p><em>Your single-server VICIdial box just hit a wall. Agents are getting "time synchronization" errors, the hopper keeps emptying, and your real-time report looks like it's running through molasses. You've Googled "VICIdial cluster setup" and found... nothing useful. A 15-year-old PDF, some AI-generated marketing fluff from offshore companies, and a dozen fragmented forum threads where the answer is always "search the forum."</em></p>
+<p><em>This is the guide that should have existed years ago.</em></p>
+<p>We've built, managed, and troubleshot over 100 VICIdial-based contact centers. We've read every relevant thread on vicidial.org, studied the PoundTeam manual (which still references Core2Duo processors), and consolidated thousands of hours of tribal knowledge from Matt Florell and the community into one place.</p>
+<p>This isn't a conceptual overview. This is the real thing — the architecture decisions, the exact configuration parameters, the mistakes that will cost you a weekend, and the optimizations that separate a cluster that handles 500 agents from one that melts down at 130.</p>
+<hr />
+<h2 id="why-your-single-server-has-a-ceiling-and-its-lower-than-you-think">Why Your Single Server Has a Ceiling (And It's Lower Than You Think)<a class="headerlink" href="#why-your-single-server-has-a-ceiling-and-its-lower-than-you-think" title="Permanent link">&para;</a></h2>
+<p>Here's the uncomfortable truth about VICIdial: <strong>Asterisk doesn't scale vertically.</strong> You can throw a 64-core monster at it and Asterisk will still choke at the same agent count as a quad-core. The VICIdial Group's Director of Engineering, Michael Cargile, said it plainly: "The biggest limiting factor is Asterisk itself. It has locking issues. Throwing monstrously powerful servers at it does not help."</p>
+<p>A single all-in-one VICIdial server maxes out around <strong>20-25 agents</strong> for predictive outbound dialing. That's not a hardware limitation — it's an architectural one. Each agent running predictive at a 5:1 dial ratio generates 4-6 simultaneous Asterisk channels. Twenty-five agents means 125+ live channels fighting for the same CPU, the same MySQL instance, the same Apache processes, and the same disk I/O.</p>
+<p>The solution isn't a bigger server. It's <strong>more servers, each doing one job well.</strong></p>
+<p>That's what a VICIdial cluster is: a group of purpose-built servers sharing a single database, each handling the specific workload it's optimized for. And it's the architecture behind every large-scale VICIdial deployment on the planet — including confirmed production environments running 1,000+ agents across 40 telephony servers processing 1.5 million calls per day.</p>
+<blockquote>
+<p><strong>Still Running Everything on One Box?</strong>
+That ceiling doesn't move — no matter how much RAM you throw at it. ViciStack deploys optimized clusters overnight. <a href="/free-audit/">Get Your Free Cluster Assessment →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-four-server-roles-every-cluster-needs">The Four Server Roles Every Cluster Needs<a class="headerlink" href="#the-four-server-roles-every-cluster-needs" title="Permanent link">&para;</a></h2>
+<p>Every VICIdial cluster is built from four core roles. You can combine some of them at smaller scales, but understanding what each one does is non-negotiable.</p>
+<h3 id="the-database-server-your-single-most-important-investment">The Database Server — Your Single Most Important Investment<a class="headerlink" href="#the-database-server-your-single-most-important-investment" title="Permanent link">&para;</a></h3>
+<p>This is the brain. Every agent login, every call disposition, every hopper query, every real-time report — all of it flows through one MySQL/MariaDB instance. The database server is both VICIdial's greatest strength (single source of truth, no sync issues) and its Achilles' heel (single point of failure, can't be clustered the way you'd cluster Postgres).</p>
+<p>VICIdial uses <strong>MyISAM exclusively</strong> — not InnoDB. Matt Florell has been unambiguous: "We do not recommend using InnoDB under any circumstances." MyISAM's table-level locking is a limitation, but VICIdial's architecture is designed around it, and switching breaks things in spectacular ways.</p>
+<p>Hardware guidelines based on real production deployments:</p>
+<table>
+<thead>
+<tr>
+<th>Agent Count</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>Storage</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Up to 50</td>
+<td>4 cores, 2.0+ GHz</td>
+<td>8 GB</td>
+<td>250 GB RAID-1 SSD</td>
+<td>1 Gbps</td>
+</tr>
+<tr>
+<td>Up to 150</td>
+<td>8 cores, 2.0+ GHz</td>
+<td>16 GB</td>
+<td>RAID-10 SSD (LSI MegaRAID)</td>
+<td>1 Gbps</td>
+</tr>
+<tr>
+<td>Up to 300</td>
+<td>16 cores</td>
+<td>32 GB</td>
+<td>NVMe RAID-10, dedicated controller</td>
+<td>1 Gbps</td>
+</tr>
+<tr>
+<td>Up to 600</td>
+<td>2× octal-core</td>
+<td>64 GB</td>
+<td>NVMe RAID-10, LSI MegaRAID</td>
+<td>10 Gbps</td>
+</tr>
+</tbody>
+</table>
+<p>The RAID controller matters more than you think. Use <strong>LSI Logic MegaRAID only.</strong> Not 3ware. Not Adaptec. Not Dell PERC. One forum user hired Percona for a $3,000 MySQL audit and the answer was the same: swap the RAID card. At 200+ agents, switch from SSD to NVMe — the latency difference becomes measurable.</p>
+<h3 id="telephony-dialer-servers-where-calls-actually-happen">Telephony (Dialer) Servers — Where Calls Actually Happen<a class="headerlink" href="#telephony-dialer-servers-where-calls-actually-happen" title="Permanent link">&para;</a></h3>
+<p>Each dialer runs Asterisk and handles outbound/inbound call processing for a slice of your agents. The golden rule: <strong>20 agents per telephony server</strong> for predictive outbound. You can push to 25 on a high-clock quad-core, maybe 35 on dual hex-core Xeons, but you're borrowing from your stability margin.</p>
+<p>The critical spec is <strong>single-thread CPU performance</strong>, not core count. Asterisk's internal locking means it can't efficiently parallelize across many cores. A 4-core chip running at 4.5 GHz will outperform an 8-core at 2.5 GHz every time.</p>
+<p>If you're running <a href="/blog/vicidial-amd-guide/">AMD (Answering Machine Detection)</a>, cut your per-server agent count nearly in half. AMD uses a loopback trunk architecture that effectively doubles the channel count on each call.</p>
+<h3 id="web-servers-stateless-and-scalable">Web Servers — Stateless and Scalable<a class="headerlink" href="#web-servers-stateless-and-scalable" title="Permanent link">&para;</a></h3>
+<p>Web servers run Apache and serve the agent interface, admin panels, and real-time reports. They're stateless — no server-side sessions — which means you can scale them horizontally behind a load balancer without any sticky-session complexity.</p>
+<p>One web server handles approximately <strong>150 agents</strong> on standard hardware, dropping to about 75 if you're running SSL/TLS (which you should be, especially with WebRTC). The web server is the one role where virtualization is genuinely acceptable. William Conley's take: "Web is the only server you can get away with running virtual."</p>
+<h3 id="archiverecording-server-dont-skip-this">Archive/Recording Server — Don't Skip This<a class="headerlink" href="#archiverecording-server-dont-skip-this" title="Permanent link">&para;</a></h3>
+<p>Every telephony server records calls locally. Those recordings need to get consolidated somewhere searchable. The archive server is just an FTP/HTTP target — it doesn't even need VICIdial installed. But without it, your recordings are scattered across every dialer, and the playback links in your reports will randomly return "Object not found" depending on which server handled the call.</p>
+<p>Budget <strong>1-2 TB per 100 agents per month</strong> for full call recording in MP3 format.</p>
+<hr />
+<h2 id="the-port-matrix-nobody-published-until-now">The Port Matrix Nobody Published Until Now<a class="headerlink" href="#the-port-matrix-nobody-published-until-now" title="Permanent link">&para;</a></h2>
+<p>Before you install anything, your firewall rules need to be correct. Getting one port wrong means you'll spend two days chasing phantom audio issues. Here's the complete inter-server port reference:</p>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Protocol</th>
+<th>Direction</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3306</td>
+<td>TCP</td>
+<td>All servers → DB</td>
+<td>MySQL/MariaDB</td>
+</tr>
+<tr>
+<td>4569</td>
+<td>UDP</td>
+<td>Dialer ↔ Dialer</td>
+<td>IAX2 inter-server calls</td>
+</tr>
+<tr>
+<td>5060</td>
+<td>UDP</td>
+<td>Carriers/phones → Dialers</td>
+<td>SIP signaling</td>
+</tr>
+<tr>
+<td>5038</td>
+<td>TCP</td>
+<td>Scripts → Local Asterisk</td>
+<td>AMI (Asterisk Manager Interface)</td>
+</tr>
+<tr>
+<td>4577</td>
+<td>TCP</td>
+<td>Dialers (local)</td>
+<td>FastAGI</td>
+</tr>
+<tr>
+<td>10000-20000</td>
+<td>UDP</td>
+<td>Bidirectional (all)</td>
+<td>RTP audio streams</td>
+</tr>
+<tr>
+<td>80/443</td>
+<td>TCP</td>
+<td>Agents → Web servers</td>
+<td>HTTP/HTTPS</td>
+</tr>
+<tr>
+<td>8089</td>
+<td>TCP</td>
+<td>Agents → Dialers</td>
+<td>WebSocket (ViciPhone/WebRTC)</td>
+</tr>
+<tr>
+<td>21</td>
+<td>TCP</td>
+<td>Dialers → Archive</td>
+<td>FTP recordings</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pro tip:</strong> Set up dual NICs on every telephony server. One NIC on the public network for carriers and agents, one on a <strong>private gigabit switch</strong> for inter-server communication. No firewall between cluster nodes on the private network. This eliminates 90% of the audio issues people spend weeks debugging.</p>
+<hr />
+<h2 id="keepalive-flags-the-configuration-that-breaks-every-new-cluster">Keepalive Flags: The Configuration That Breaks Every New Cluster<a class="headerlink" href="#keepalive-flags-the-configuration-that-breaks-every-new-cluster" title="Permanent link">&para;</a></h2>
+<p>Here's where most cluster deployments go sideways. VICIdial uses a set of numbered "keepalive flags" in <code>/etc/astguiclient.conf</code> to control which background processes run on each server. Set them wrong and you'll get duplicate calls, erratic dial levels, or a system that silently stops dialing.</p>
+<p>The <code>VARactive_keepalives</code> setting tells <code>ADMIN_keepalive_ALL.pl</code> which processes to babysit. Here's the cheat sheet:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Process</th>
+<th>Run Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>AST_update.pl</td>
+<td>ALL telephony servers</td>
+</tr>
+<tr>
+<td>2</td>
+<td>AST_send_listen.pl</td>
+<td>ALL telephony servers</td>
+</tr>
+<tr>
+<td>3</td>
+<td>AST_VDauto_dial.pl</td>
+<td>ALL telephony servers</td>
+</tr>
+<tr>
+<td>4</td>
+<td>AST_VDremote_agents.pl</td>
+<td>ALL telephony servers</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td><strong>AST_VDadapt.pl</strong></td>
+<td><strong>ONE telephony server ONLY</strong></td>
+</tr>
+<tr>
+<td>6</td>
+<td>FastAGI_log.pl</td>
+<td>ALL telephony servers</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td><strong>AST_VDauto_dial_FILL.pl</strong></td>
+<td><strong>ONE telephony server ONLY</strong></td>
+</tr>
+<tr>
+<td>8</td>
+<td>ip_relay</td>
+<td>ALL telephony servers</td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td><strong>Timeclock auto-logout</strong></td>
+<td><strong>ONE server ONLY</strong></td>
+</tr>
+<tr>
+<td>E</td>
+<td>Email inbound parser</td>
+<td>ONE server ONLY</td>
+</tr>
+<tr>
+<td>X</td>
+<td>No keepalives</td>
+<td>DB-only or web-only servers</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The single most dangerous misconfiguration:</strong> running flag 5 or 7 on more than one server. Flag 5 is the adaptive predictive algorithm — it calculates dial levels for the entire cluster. Flag 7 is the fill/balance dialer that redistributes calls across servers with spare capacity. Run either on two servers simultaneously and you'll get conflicting dial-level calculations, double-dialed leads, and erratic agent utilization that'll make you question your sanity.</p>
+<p>Your database server gets <code>VARactive_keepalives = X</code>. Your web servers get <code>X</code>. Your telephony servers get <code>1238</code> (or <code>12368</code> with FastAGI). Exactly ONE telephony server gets <code>123456789</code> — that's your "primary" dialer running the one-server-only processes.</p>
+<hr />
+<h2 id="mysql-tuning-that-actually-matters">MySQL Tuning That Actually Matters<a class="headerlink" href="#mysql-tuning-that-actually-matters" title="Permanent link">&para;</a></h2>
+<p>Out of the box, MySQL/MariaDB is configured for a general-purpose workload. VICIdial's access patterns — high-frequency writes to narrow tables, constant polling of MEMORY tables, bulk reads for reports — need specific tuning. Here are the parameters that make a measurable difference:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="c1"># THE most important single setting for VICIdial</span>
+<span class="na">skip-name-resolve</span>
+
+<span class="c1"># Connection capacity (default is often 100-151, way too low)</span>
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4000</span>
+
+<span class="c1"># MyISAM key buffer — VICIdial&#39;s primary cache</span>
+<span class="na">key_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">640M</span><span class="w">        </span><span class="c1"># Standard; 4096M for enterprise</span>
+
+<span class="c1"># Intentionally disabled — write invalidation overhead exceeds benefit</span>
+<span class="na">query_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+
+<span class="c1"># Table cache (VICIdial opens hundreds of tables)</span>
+<span class="na">table_open_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8192</span>
+
+<span class="c1"># MEMORY table ceiling</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+
+<span class="c1"># Allow concurrent inserts during reads (MyISAM-specific)</span>
+<span class="na">concurrent_insert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+</code></pre></div>
+
+<p><strong>The <code>skip-name-resolve</code> story deserves its own paragraph.</strong> Without this setting, MySQL performs a reverse DNS lookup on every single connection. In a cluster where telephony servers, web servers, and cron jobs are all hammering the database, those DNS lookups pile up and create a connection backlog that looks exactly like "too many connections" — except raising <code>max_connections</code> doesn't fix it. Add <code>skip-name-resolve</code> and the problem vanishes. This single line has probably saved more VICIdial clusters than any other configuration change.</p>
+<blockquote>
+<p><strong>Skip the 3 AM MySQL Tuning Sessions.</strong>
+Every ViciStack cluster ships with skip-name-resolve, MEMORY tables, and archive jobs pre-configured. <a href="/pricing/">See What Optimized Looks Like →</a></p>
+</blockquote>
+<h3 id="the-memory-table-optimization">The MEMORY Table Optimization<a class="headerlink" href="#the-memory-table-optimization" title="Permanent link">&para;</a></h3>
+<p>For clusters above 200 agents, converting high-traffic tables to the MEMORY engine is transformational. <code>vicidial_live_agents</code> — the table that tracks every agent's real-time state — gets hammered by every dialer, every web server, and every real-time report simultaneously. On MyISAM, table-level locks create contention that manifests as agents freezing and calls not being placed. Converting to MEMORY moves the entire table into RAM, and forum users consistently describe the difference as "night and day."</p>
+<p>The catch: MEMORY tables use fixed-width CHAR fields, so you need to shorten VARCHAR columns first. And the table loses all data on MySQL restart — but VICIdial repopulates it automatically when agents log in.</p>
+<h3 id="archive-your-logs-or-die">Archive Your Logs or Die<a class="headerlink" href="#archive-your-logs-or-die" title="Permanent link">&para;</a></h3>
+<p>This is the maintenance task nobody does until their cluster melts down. <code>vicidial_log</code>, <code>call_log</code>, <code>vicidial_log_extended</code>, <code>vicidial_carrier_log</code> — these tables grow indefinitely. On a high-volume cluster, they can reach hundreds of millions of rows within months.</p>
+<p>Run <code>ADMIN_archive_log_tables.pl --daily</code> in cron at 1 AM. It moves old records to <code>_archive</code> suffix tables, keeping only the last 24 hours in the hot tables. For high-volume systems (500+ agents), run it more aggressively and keep <code>vicidial_list</code> under 10 million leads. Un-archived tables are the #1 cause of the cascading failure pattern: slow queries → table locks → too many connections → cluster-wide outage.</p>
+<hr />
+<h2 id="the-recording-pipeline-nobody-explains">The Recording Pipeline Nobody Explains<a class="headerlink" href="#the-recording-pipeline-nobody-explains" title="Permanent link">&para;</a></h2>
+<p>Recordings in a cluster follow a three-stage FTP pipeline that runs every 3 minutes on each telephony server, staggered by 1-minute offsets:</p>
+<ol>
+<li><strong>Stage 1 (audio_1_move_mix):</strong> Converts raw recordings in <code>/var/spool/asterisk/monitor/</code> to the configured format and moves them to <code>monitorDONE/</code></li>
+<li><strong>Stage 2 (audio_2_compress):</strong> Compresses to MP3 (or configured format) and stages for transfer</li>
+<li><strong>Stage 3 (audio_3_ftp):</strong> FTPs completed recordings to the archive server</li>
+</ol>
+<p>When recordings go missing — and they will — check the <code>monitorDONE/FTP/</code> directory on each telephony server. If files are accumulating there, your FTP transfer to the archive server is failing. Common culprits: DNS resolution failure on a single dialer (the other dialers work fine, making it maddening to diagnose), special characters in the FTP password that need Perl escaping, or the archive server's disk filling up silently.</p>
+<p>The pipeline moves files regardless of transfer success. If the archive server is unreachable, recordings pile up in the FTP staging directory. They're not lost — but they're not where your web interface expects them, so playback links break.</p>
+<hr />
+<h2 id="the-time-synchronization-problem-error-is-almost-never-about-time">The "Time Synchronization Problem" Error Is Almost Never About Time<a class="headerlink" href="#the-time-synchronization-problem-error-is-almost-never-about-time" title="Permanent link">&para;</a></h2>
+<p>This is the most misunderstood error in VICIdial, and it drives new cluster operators crazy. The community's most experienced consultant, William Conley, put it definitively: "5% of the time this is the actual problem. The other 95% of the time, the agent's session timestamp simply isn't being updated."</p>
+<p>When you see "time synchronization problem" on an agent's screen, here's your actual diagnostic checklist:</p>
+<p><strong>Step 1: Check screen sessions.</strong> SSH into each telephony server and run <code>screen -ls</code>. You should see 7-9 active sessions. If any are missing, your keepalive scripts have crashed. This is the cause ~60% of the time.</p>
+<p><strong>Step 2: Check the AMI connection.</strong> Verify <code>/etc/asterisk/manager.conf</code> has the correct <code>bindaddr</code>, username, and secret. Port 5038 must be accessible on localhost. Wrong AMI credentials = scripts can't talk to Asterisk = stale timestamps.</p>
+<p><strong>Step 3: Check server load.</strong> If the system load exceeds the number of CPU cores, keepalive scripts can't update the <code>server_updater</code> table fast enough, and VICIdial interprets the stale timestamp as a time sync issue.</p>
+<p><strong>Step 4: Check DAHDI timing.</strong> Run <code>dahdi_test</code> — you should see 99.99%+ accuracy. Without a proper timing source, everything downstream breaks.</p>
+<p><strong>Step 5: THEN check NTP.</strong> And only then. Designate one server as the NTP master syncing to <code>pool.ntp.org</code>, point every other cluster node at that single internal master. Offsets should be under 1 millisecond.</p>
+<blockquote>
+<p><strong>"Time Synchronization Problem" Giving You PTSD?</strong>
+Our ops team monitors your cluster 24/7 so the only time you think about screen sessions is in your nightmares. <a href="/free-audit/">Let Us Handle It →</a></p>
+</blockquote>
+<hr />
+<h2 id="no-audio-between-servers-the-cluster-problem-hall-of-fame">No Audio Between Servers: The Cluster Problem Hall of Fame<a class="headerlink" href="#no-audio-between-servers-the-cluster-problem-hall-of-fame" title="Permanent link">&para;</a></h2>
+<p>This is the #1 reported cluster issue on the VICIdial forum, with 10+ threads and counting. The symptom is maddening: calls ring, the agent picks up, and... silence. Or one-way audio. But only on calls that cross servers. Same-server calls work perfectly.</p>
+<p>Here's the complete fix checklist, in order of likelihood:</p>
+<p><strong>1. Add externip and localnet to sip.conf on every dialer.</strong> Without these, Asterisk advertises its internal IP in SDP packets, and the remote party sends RTP audio to an unreachable address. This is the cause in roughly half of all cluster audio issues.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">externip</span><span class="o">=</span><span class="s">YOUR.PUBLIC.IP.HERE</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">192.168.1.0/255.255.255.0</span>
+</code></pre></div>
+
+<p><strong>2. Open UDP 10000-20000 bidirectionally between ALL nodes.</strong> SIP on port 5060 handles signaling (the phone rings), but the actual audio travels on a random high UDP port. Block those ports and you get a ringing phone with no voice.</p>
+<p><strong>3. Set canreinvite=no and directmedia=no.</strong> These settings tell Asterisk to keep media flowing through itself rather than negotiating direct paths between endpoints — essential when NAT is involved.</p>
+<p><strong>4. Use a private switch between servers with zero firewall.</strong> This is the nuclear option that eliminates the entire class of inter-server audio problems. Public NICs face carriers and agents. Private NICs face each other on an unfiltered gigabit switch. All inter-server SIP, IAX2, and RTP traffic uses the private network.</p>
+<blockquote>
+<p><strong>One-Way Audio Is a Rite of Passage. You've Passed.</strong>
+ViciStack clusters come with dual-NIC, proper externip, and every port rule pre-configured. <a href="/free-audit/">Skip the Pain →</a></p>
+</blockquote>
+<hr />
+<h2 id="capacity-planning-from-50-to-500-agents">Capacity Planning: From 50 to 500+ Agents<a class="headerlink" href="#capacity-planning-from-50-to-500-agents" title="Permanent link">&para;</a></h2>
+<p>Here are reference architectures based on real production deployments, not theoretical calculations:</p>
+<table>
+<thead>
+<tr>
+<th>Scale</th>
+<th>DB Servers</th>
+<th>Web Servers</th>
+<th>Telephony Servers</th>
+<th>Archive</th>
+<th>Total Servers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50 agents</td>
+<td>1</td>
+<td>1 (can share with DB)</td>
+<td>2-3</td>
+<td>1</td>
+<td>4-5</td>
+</tr>
+<tr>
+<td>100 agents</td>
+<td>1 (dedicated)</td>
+<td>1-2</td>
+<td>4-5</td>
+<td>1</td>
+<td>7-9</td>
+</tr>
+<tr>
+<td>200 agents</td>
+<td>1 (beefy)</td>
+<td>2-3</td>
+<td>8-10</td>
+<td>1</td>
+<td>12-15</td>
+</tr>
+<tr>
+<td>300 agents</td>
+<td>1 (enterprise) + 1 slave</td>
+<td>3-4</td>
+<td>12-15</td>
+<td>1-2</td>
+<td>18-22</td>
+</tr>
+<tr>
+<td>500 agents</td>
+<td>1 (maxed) + 1 slave</td>
+<td>4-5</td>
+<td>20-25</td>
+<td>2</td>
+<td>28-33</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The 125-agent threshold:</strong> William Conley warns that around 125 agents, "you will enter a new realm of 'why did THAT break?'" This is where MyISAM table-lock contention on <code>vicidial_live_agents</code> starts causing cascading performance issues. MEMORY table conversion becomes essential, database hardware needs to be serious, and your monitoring game needs to be tight.</p>
+<p><strong>The 300-agent decision point:</strong> Above 300 agents with aggressive dial ratios, consider splitting into <strong>multiple independent clusters</strong> rather than scaling one cluster further. The database is a single point of failure, and the math gets scary: one DB outage takes out 300+ agents for hours. Two clusters of 150 each means one failure only impacts half your operation.</p>
+<p><strong>The 500-agent ceiling:</strong> VICIdial's MEMORY tables use single-threaded operations capped at roughly the CPU's effective clock speed. Around 500 agents with predictive dialing, you're pushing the physical limits of a single MySQL instance. The proven path beyond this is <strong>Cross-Cluster Communication (CCC)</strong> — connecting multiple independent VICIdial clusters via IAX2 trunks and API lookups during transfers. The largest confirmed CCC deployment: 1,600+ agents across multiple clusters processing 6 million calls per day.</p>
+<blockquote>
+<p><strong>Planning a 200-Agent Cluster? We've Done It 100+ Times.</strong>
+Stop guessing at server counts. Get a custom architecture recommendation based on your actual workload. <a href="/free-audit/">Get Your Free Assessment →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-virtualization-question-answered-once-and-for-all">The Virtualization Question — Answered Once and For All<a class="headerlink" href="#the-virtualization-question-answered-once-and-for-all" title="Permanent link">&para;</a></h2>
+<p>This comes up on every single cluster planning thread, so let's settle it.</p>
+<p><strong>Matt Florell (VICIdial creator):</strong> "You will actually need more hardware and spend more money when you virtualize. Best case scenario is 50% of normal bare metal capacity."</p>
+<p><strong>William Conley (PoundTeam):</strong> "If you go Virtual, you're entering a war you cannot win."</p>
+<p><strong>But the nuance matters.</strong> Cloud hosting on <strong>dedicated instances</strong> works. Over 100 agents have been confirmed running outbound on AWS EC2 dedicated hosts. The key distinction: dedicated cloud instances give you actual hardware with no noisy neighbors and no CPU throttling. Shared/burstable instances (t3, t4g) will fail because DAHDI needs precise 1ms kernel timer ticks, and CPU stealing destroys timing accuracy.</p>
+<p>The practical rule:
+- <strong>Telephony servers:</strong> Bare metal or dedicated cloud instances. Period.
+- <strong>Database server:</strong> Bare metal strongly preferred. NVMe I/O matters too much.
+- <strong>Web servers:</strong> Virtualization is fine. They're stateless HTTP handlers.
+- <strong>Archive server:</strong> Anything with enough storage. Cloud object storage works.</p>
+<p>If you're choosing between hosting providers for bare metal, Hetzner's AX-series and OVH Rise servers run $50-85/month each — a fraction of what you'd pay for equivalent AWS instances. A full 500-agent cluster on Hetzner bare metal costs roughly <strong>$860/month for 14 servers</strong>. That's $1.72 per agent per month for compute. Compare that to <a href="/blog/vicidial-vs-convoso/">Convoso at $120-225 per agent per month</a>, or <a href="/blog/vicidial-vs-five9/">Five9 at $149-199</a>. The math isn't close.</p>
+<blockquote>
+<p><strong>Bare Metal. Pre-Configured. Ready to Dial.</strong>
+Hetzner AX-series + ViciStack optimization = cluster-grade performance at $1.72/agent/month in compute. <a href="/free-audit/">Get Your Custom Quote →</a></p>
+</blockquote>
+<hr />
+<h2 id="webrtc-and-viciphone-in-a-cluster">WebRTC and ViciPhone in a Cluster<a class="headerlink" href="#webrtc-and-viciphone-in-a-cluster" title="Permanent link">&para;</a></h2>
+<p>ViciPhone (VICIdial's built-in WebRTC softphone) adds a layer of complexity in clustered environments that catches people off guard.</p>
+<p>Each telephony server needs its own <strong>FQDN with a valid SSL certificate.</strong> WebRTC requires HTTPS — no exceptions, no self-signed certs in production. Every dialer needs its own WebSocket URL configured (<code>wss://dial1.yourdomain.com:8089</code>), its own webRTC phone template, and phones assigned to that specific server's template.</p>
+<p>The latest ViciPhone v3.0 (a complete rewrite using SIP.js) requires <code>rtcp_mux=yes</code> in your pjsip or SIP configuration. STUN configuration in <code>/etc/asterisk/rtp.conf</code> is required on every dialer. If you're running multiple web servers, they can sit behind HAProxy or a load balancer, but each agent's phone connection must route to their assigned telephony server — you can't load-balance WebSocket connections across dialers.</p>
+<hr />
+<h2 id="the-asterisk-21-situation-what-you-need-to-know-right-now">The Asterisk 21 Situation: What You Need to Know Right Now<a class="headerlink" href="#the-asterisk-21-situation-what-you-need-to-know-right-now" title="Permanent link">&para;</a></h2>
+<p>Asterisk 21+ removes three things VICIdial has depended on for two decades: <code>app_meetme</code> (the conferencing engine that makes every call work), <code>res_monitor</code> (call recording), and <code>chan_sip</code> (SIP channel driver). This isn't a "someday" problem — Asterisk 20 is the last LTS with these modules, with full support through 2026 and security patches through 2027.</p>
+<p>The good news: <strong>VICIdial already has ConfBridge support production-ready.</strong> As of SVN revision 3894 (January 2025), ConfBridge code is fully integrated and has been running in production at multiple companies for over a year. PJSIP support is also in the codebase. New cluster deployments should target Asterisk 18 with ConfBridge enabled.</p>
+<p>The performance caveat matters for cluster planning: MeetMe does audio mixing in DAHDI kernel space. ConfBridge does it in userspace. Michael Cargile's assessment: ConfBridge uses roughly <strong>20% more CPU</strong> for the same workload, and the performance gap widens significantly on virtual machines. This means your per-dialer agent capacity drops slightly with ConfBridge — plan for 18 agents per server instead of 20-25 if you're being conservative.</p>
+<p>Set <code>mixing_interval=20</code> in <code>confbridge.conf</code> to prevent out-of-order RTP packets, and use <code>res_timing_dahdi.so</code> instead of the default <code>res_timing_timerfd.so</code>.</p>
+<hr />
+<h2 id="the-10-things-that-will-break-your-cluster-and-how-to-fix-them">The 10 Things That Will Break Your Cluster (And How to Fix Them)<a class="headerlink" href="#the-10-things-that-will-break-your-cluster-and-how-to-fix-them" title="Permanent link">&para;</a></h2>
+<p>After mining every cluster-related thread on vicidial.org, these are the problems you'll actually hit:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Problem</th>
+<th>Real Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>No audio between servers</td>
+<td>Missing externip/localnet in sip.conf</td>
+<td>Add externip + localnet; open UDP 10000-20000</td>
+</tr>
+<tr>
+<td>2</td>
+<td>"Time synchronization" errors</td>
+<td>Screen sessions crashed (~60%)</td>
+<td><code>screen -ls</code>; verify keepalives running</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Recordings missing</td>
+<td>FTP pipeline broken on one dialer</td>
+<td>Check monitorDONE/FTP directory size</td>
+</tr>
+<tr>
+<td>4</td>
+<td>"Too many connections"</td>
+<td>Missing skip-name-resolve</td>
+<td>Add to my.cnf; set max_connections=4000</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Agents waiting, no calls placed</td>
+<td>Hopper empty or trunk exhaustion</td>
+<td>Check screen sessions; verify TRUNK SHORT/FILL</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Duplicate calls</td>
+<td>Flag 5 or 7 on multiple servers</td>
+<td>Only ONE server runs 5 and 7</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Agent screens freezing</td>
+<td>DB table locks from un-archived logs</td>
+<td>Run ADMIN_archive_log_tables.pl daily</td>
+</tr>
+<tr>
+<td>8</td>
+<td>New server won't join cluster</td>
+<td>IP not in servers table</td>
+<td>Run ADMIN_update_server_ip.pl</td>
+</tr>
+<tr>
+<td>9</td>
+<td>IAX2 between dialers not working</td>
+<td>Registration only works one direction</td>
+<td>Known bug; verify iax.conf on both ends</td>
+</tr>
+<tr>
+<td>10</td>
+<td>DB load at 100%</td>
+<td>RAID-5, missing key_buffer_size tuning</td>
+<td>Switch to RAID-10; tune MySQL per above</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>That's 10 Problems You Don't Have to Solve.</strong>
+ViciStack clusters ship with every fix in this table pre-applied. Zero debugging required. <a href="/pricing/">See Our Architecture →</a></p>
+</blockquote>
+<hr />
+<h2 id="why-convosos-vicidial-breaks-at-scale-narrative-is-nonsense">Why Convoso's "VICIdial Breaks at Scale" Narrative Is Nonsense<a class="headerlink" href="#why-convosos-vicidial-breaks-at-scale-narrative-is-nonsense" title="Permanent link">&para;</a></h2>
+<p>Let's address the elephant in the room. If you've researched VICIdial scaling, you've probably seen <a href="/blog/vicidial-vs-convoso/">Convoso's content claiming</a> the platform "breaks at scale" and "suffers dropped calls beyond 20-30 seats."</p>
+<p>Here's what they're actually saying: <strong>a single all-in-one server</strong> maxes out around 20-30 agents. That's true. It's also like saying "a single EC2 instance can't run Netflix" — technically correct about one server, deliberately misleading about the platform.</p>
+<p>Convoso's flagship blog post on VICIdial's "hidden costs" cites $400/server/month from VICIhost — the premium managed hosting tier — as if it's the only way to run VICIdial. They never mention that self-hosted bare metal runs <a href="/blog/vicidial-cost-2026/">$50-85/month per server</a>. At 500 agents, the annual cost difference between a VICIdial cluster and Convoso is over <strong>$400,000.</strong></p>
+<p>What Convoso conspicuously avoids mentioning in any of their anti-VICIdial content: the word "cluster." Their entire scaling argument depends on their audience not knowing that VICIdial's documented, proven multi-server architecture exists and is running 1,000+ agent operations right now.</p>
+<p>Fun fact: Convoso itself was built on VICIdial code for 11 years before pivoting to a proprietary platform. They know exactly how capable VICIdial clustering is. They just don't want you to know.</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>Look, we just handed you the keys to the kingdom. Everything above is exactly how we build production clusters for our own operation — 100 centers, ~600,000 monthly dials. We're not gatekeeping this knowledge behind a sales call.</p>
+<p>But here's the reality: building a cluster right takes time, expertise, and ongoing maintenance. Archiving logs, monitoring MySQL processlist, rotating SSL certs, patching Asterisk, replacing failed drives — it never stops.</p>
+<p><strong>ViciStack exists for operators who want cluster-grade VICIdial performance without becoming full-time sysadmins.</strong> We ship pre-configured bare metal clusters on dedicated hardware with every optimization in this guide already baked in. Your dials go up, your <a href="/blog/vicidial-amd-guide/">AMD accuracy</a> hits 92-96%, and you stop paying $150/agent/month to companies that built their platform on VICIdial's code.</p>
+<p>Same architecture. Fraction of the effort. Dramatically lower cost than the cloud dialers.</p>
+<p><a href="/free-audit/">Get a custom cluster assessment →</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial, Asterisk, and best practices evolve. Last updated: March 2026.</em></p>
+<p><em>Have a cluster question this guide didn't answer? Drop it in the comments or reach out directly — if it's good, we'll add it to the guide.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-cluster-guide">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

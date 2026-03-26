@@ -1,0 +1,3932 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/how-we-built-ai-voice-agents/">
+      
+      
+        <link rel="prev" href="../hosted-vs-self-hosted-dialer-cost/">
+      
+      
+        <link rel="next" href="../open-source-call-center-software/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>How We Built an AI Voice Agent from 500 Real Cold Calls - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-we-built-an-ai-voice-agent-from-500-real-cold-calls" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How We Built an AI Voice Agent from 500 Real Cold Calls
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-transcription-engine-that-actually-works-on-phone-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Transcription Engine That Actually Works on Phone Audio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Transcription Engine That Actually Works on Phone Audio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-the-right-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the Right Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-configuration-that-made-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Configuration That Made It Work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preprocessing-fix-the-audio-before-whisper-ever-sees-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessing: Fix the Audio Before Whisper Ever Sees It
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-processing-where-the-transcript-becomes-useful" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Processing: Where the Transcript Becomes Useful
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context-injection-matching-every-recording-to-its-lead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Injection: Matching Every Recording to Its Lead
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#winloss-analysis-what-makes-a-call-convert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Win/Loss Analysis: What Makes a Call Convert
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conversation-flow-mapping-finding-the-golden-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversation Flow Mapping: Finding the Golden Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timing-pacing-and-agent-performance-the-numbers-behind-the-best-closer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timing, Pacing, and Agent Performance: The Numbers Behind the Best Closer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Timing, Pacing, and Agent Performance: The Numbers Behind the Best Closer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-timing-metrics-that-actually-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Timing Metrics That Actually Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-first-15-seconds-decide-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The First 15 Seconds Decide Everything
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-duration-and-segment-breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Duration and Segment Breakdown
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-agent-scorecards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Agent Scorecards
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prospect-intelligence-and-the-real-objection-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prospect Intelligence and the Real Objection Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prospect Intelligence and the Real Objection Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-real-objection-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Real Objection Map
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#designing-the-ai-agent-from-data-to-a-digital-closer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Designing the AI Agent: From Data to a Digital Closer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Designing the AI Agent: From Data to a Digital Closer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#script-optimization-written-vs-spoken-reality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Optimization: Written vs. Spoken Reality
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-agent-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Agent Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-against-real-calls-and-the-roi-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Against Real Calls and the ROI Math
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Against Real Calls and the ROI Math">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-we-tested" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How We Tested
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-roi-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ROI Math
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-we-deliver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Deliver
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-calls-do-you-need-to-build-an-ai-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many calls do you need to build an AI agent?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-this-work-for-industries-other-than-roofing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does this work for industries other than roofing?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-the-ai-agent-integrate-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does the AI agent integrate with VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-compliance-and-tcpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about compliance and TCPA?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-you-still-use-human-agents-alongside-the-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can you still use human agents alongside the AI?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-long-does-the-whole-process-take" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How long does the whole process take?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-conversion-rate-compared-to-human-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the conversion rate compared to human agents?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-transcription-engine-that-actually-works-on-phone-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Transcription Engine That Actually Works on Phone Audio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Transcription Engine That Actually Works on Phone Audio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-the-right-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the Right Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-configuration-that-made-it-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Configuration That Made It Work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preprocessing-fix-the-audio-before-whisper-ever-sees-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessing: Fix the Audio Before Whisper Ever Sees It
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-processing-where-the-transcript-becomes-useful" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Processing: Where the Transcript Becomes Useful
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context-injection-matching-every-recording-to-its-lead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Injection: Matching Every Recording to Its Lead
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#winloss-analysis-what-makes-a-call-convert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Win/Loss Analysis: What Makes a Call Convert
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conversation-flow-mapping-finding-the-golden-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversation Flow Mapping: Finding the Golden Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timing-pacing-and-agent-performance-the-numbers-behind-the-best-closer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timing, Pacing, and Agent Performance: The Numbers Behind the Best Closer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Timing, Pacing, and Agent Performance: The Numbers Behind the Best Closer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-timing-metrics-that-actually-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Timing Metrics That Actually Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-first-15-seconds-decide-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The First 15 Seconds Decide Everything
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-duration-and-segment-breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Duration and Segment Breakdown
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-agent-scorecards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Agent Scorecards
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prospect-intelligence-and-the-real-objection-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prospect Intelligence and the Real Objection Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prospect Intelligence and the Real Objection Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-real-objection-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Real Objection Map
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#designing-the-ai-agent-from-data-to-a-digital-closer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Designing the AI Agent: From Data to a Digital Closer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Designing the AI Agent: From Data to a Digital Closer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#script-optimization-written-vs-spoken-reality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Optimization: Written vs. Spoken Reality
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-agent-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Agent Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-against-real-calls-and-the-roi-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Against Real Calls and the ROI Math
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Against Real Calls and the ROI Math">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-we-tested" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How We Tested
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-roi-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ROI Math
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-we-deliver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Deliver
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-calls-do-you-need-to-build-an-ai-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many calls do you need to build an AI agent?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-this-work-for-industries-other-than-roofing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does this work for industries other than roofing?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-the-ai-agent-integrate-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does the AI agent integrate with VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-compliance-and-tcpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about compliance and TCPA?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-you-still-use-human-agents-alongside-the-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can you still use human agents alongside the AI?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-long-does-the-whole-process-take" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How long does the whole process take?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-conversion-rate-compared-to-human-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the conversion rate compared to human agents?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="how-we-built-an-ai-voice-agent-from-500-real-cold-calls">How We Built an AI Voice Agent from 500 Real Cold Calls<a class="headerlink" href="#how-we-built-an-ai-voice-agent-from-500-real-cold-calls" title="Permanent link">&para;</a></h1>
+<p>Here is the math that keeps call center operators up at night.</p>
+<p>You are running 50 agents on an outbound roofing campaign. Fully loaded cost per agent — wages, seats, dialer licenses, management overhead — lands somewhere between $15 and $25 an hour depending on whether you are running domestic or offshore. Call it $20 on average. That is $1,000 an hour in labor just to keep the floor running. Eight-hour shift, five days a week, and you are burning north of $160,000 a month before a single appointment hits the board.</p>
+<p>Now look at what those 50 agents actually produce. VICIdial is pushing 200+ dials per hour per agent through predictive mode. Your contact rate — the percentage of dials that reach a human — sits between 3% and 7% on a typical residential list. That means out of 10,000 dials an hour, you are getting maybe 500 conversations. Out of those 500 conversations, your top closer books appointments at three or four times the rate of your worst agent. But your top closer is one person. They call in sick. They burn out. They quit and take the job across the street for fifty cents more an hour.</p>
+<p>This is the fundamental problem with human-powered outbound at scale: <strong>your best performance is not repeatable, and your average performance is expensive.</strong></p>
+<p>We have watched this play out across hundreds of VICIdial deployments. The top 20% of agents generate 60-70% of the results. The bottom 30% barely cover their own cost. And the operational overhead of recruiting, training, and retaining enough warm bodies to maintain volume is a second full-time job that nobody signed up for.</p>
+<p>So we decided to build something better. But we did not start where most people start.</p>
+<p>Most AI voice products are built on theoretical scripts — someone sits in a conference room, writes what they think a good cold call sounds like, feeds it into a language model, and hopes for the best. That approach produces agents that sound like they are reading a script because they are. Real cold calls are messy. Prospects interrupt. They object in ways no script anticipates. The timing of a pause matters as much as the words.</p>
+<p>We started with data. Specifically, we pulled 500+ real cold call recordings from a live roofing appointment-setting campaign running through VICIdial. Five human agents, all working the same lists with the same dialer settings. We transcribed every call. We tagged every disposition. We mapped which agents converted and which ones fumbled, then we went line by line through the conversations that actually booked appointments to figure out <em>why</em> they worked.</p>
+<p>The insight was simple: <strong>do not invent a new playbook — clone the one that is already winning.</strong></p>
+<p>Record everything. Transcribe everything. Analyze everything. Identify the exact phrases, objection handlers, pacing patterns, and conversation structures that your best human agents use on the calls that convert. Then build an AI agent that replicates those patterns at scale, across every dial, every hour, without calling in sick or asking for a raise.</p>
+<p>That is what we built. And it started with those 500 recordings.</p>
+<hr />
+<h2 id="building-a-transcription-engine-that-actually-works-on-phone-audio">Building a Transcription Engine That Actually Works on Phone Audio<a class="headerlink" href="#building-a-transcription-engine-that-actually-works-on-phone-audio" title="Permanent link">&para;</a></h2>
+<p>Here is the thing nobody tells you about Whisper: it was trained on podcasts, audiobooks, and YouTube videos. Clean audio. Controlled environments. Maybe a little background music.</p>
+<p>Phone audio is none of that.</p>
+<p>You are dealing with narrow-band codec compression (8kHz G.711, if you are lucky), background noise from job sites, crosstalk where both parties talk over each other, and the particular joy of a prospect on a cell phone standing next to a busy road. Feed that raw into Whisper and you get hallucinated bible verses, repeated phrases, and confident-sounding garbage.</p>
+<p>We needed transcription that actually worked on VICIdial call recordings. No cloud APIs, no per-minute costs that scale into absurdity at volume. So we built the whole pipeline locally with faster-whisper.</p>
+<h3 id="choosing-the-right-model">Choosing the Right Model<a class="headerlink" href="#choosing-the-right-model" title="Permanent link">&para;</a></h3>
+<p>We tested every model worth testing. <code>base</code> scored maybe a 5 out of 10 on accuracy — fine as a supplement but completely unusable standalone. <code>medium</code> was better but still stumbled on domain vocabulary. <code>distil-large-v3</code> offered a decent speed-accuracy tradeoff. But for production transcription where the output actually matters, <code>large-v3</code> was the only model that consistently got it right.</p>
+<h3 id="the-configuration-that-made-it-work">The Configuration That Made It Work<a class="headerlink" href="#the-configuration-that-made-it-work" title="Permanent link">&para;</a></h3>
+<p>Getting the model right was only half the battle. The real gains came from tuning the transcription parameters:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">faster_whisper</span> <span class="kn">import</span> <span class="n">WhisperModel</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">WhisperModel</span><span class="p">(</span><span class="s2">&quot;large-v3&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="n">compute_type</span><span class="o">=</span><span class="s2">&quot;int8&quot;</span><span class="p">)</span>
+
+<span class="n">segments</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span>
+    <span class="n">processed_audio_path</span><span class="p">,</span>
+    <span class="n">beam_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">initial_prompt</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">&quot;This is a phone call about roofing services. &quot;</span>
+        <span class="s2">&quot;Terms: siding, fascia, eaves, gutters, downspouts, soffit, &quot;</span>
+        <span class="s2">&quot;flashing, ridge cap, drip edge, ice dam, shingle.&quot;</span>
+    <span class="p">),</span>
+    <span class="n">word_timestamps</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">vad_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>           <span class="c1"># Silero VAD</span>
+    <span class="n">vad_parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">min_silence_duration_ms</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="n">condition_on_previous_text</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Every parameter here exists for a reason. <code>beam_size=10</code> gives the decoder more room to explore candidate transcriptions instead of greedily committing to the first path. The <code>initial_prompt</code> is seeded with domain-specific vocabulary pulled directly from the client's calling script — without it, Whisper hears "soffit" and writes "saw fit" every single time. <code>vad_filter</code> engages Silero Voice Activity Detection to skip silence, which prevents the hallucination problem where Whisper invents text to fill quiet gaps. The temperature fallback starts at 0 for deterministic output but steps up automatically when confidence is low. And <code>condition_on_previous_text=False</code> stops one bad segment from poisoning everything that follows.</p>
+<h3 id="preprocessing-fix-the-audio-before-whisper-ever-sees-it">Preprocessing: Fix the Audio Before Whisper Ever Sees It<a class="headerlink" href="#preprocessing-fix-the-audio-before-whisper-ever-sees-it" title="Permanent link">&para;</a></h3>
+<p>Before any of that runs, every recording passes through an ffmpeg preprocessing pipeline. We normalize volume levels, apply noise reduction, run a high-pass filter to cut low-frequency phone hum, and — critically — upsample the audio. Most VICIdial recordings are narrow-band 8kHz. Whisper expects 16kHz. Upsampling with proper interpolation gives the model something closer to what it was trained on. This single step measurably improved word error rates.</p>
+<p>Recordings process in parallel across CPU cores. A 5-minute call transcribes in roughly 30-40 seconds on modern hardware, and batch jobs distribute cleanly across available threads.</p>
+<h3 id="post-processing-where-the-transcript-becomes-useful">Post-Processing: Where the Transcript Becomes Useful<a class="headerlink" href="#post-processing-where-the-transcript-becomes-useful" title="Permanent link">&para;</a></h3>
+<p>Raw transcripts, even good ones, still need work. Every transcript gets post-processed by Claude, which fixes domain-specific mishearings that Whisper consistently gets wrong ("eve" back to "eave," "gutter" pluralization, brand names). It also corrects proper nouns — addresses, street names, homeowner names — by cross-referencing the matched lead data from the dialer. If the lead record says the prospect lives at 4217 Birchwood Lane, and Whisper wrote "4217 Birch Wood Lane," the post-processor fixes it.</p>
+<p>Speaker labeling happens through a combination of script pattern matching and word-level timestamps. The agent's lines follow predictable script patterns — greetings, qualifying questions, rebuttals. By aligning those patterns against the word timestamps, we reliably tag each segment as Agent or Prospect without needing a separate diarization model.</p>
+<p>The key insight is simple but easy to miss: phone audio transcription is a pipeline problem, not a model problem. No single model, no matter how large, will give you clean transcripts from dirty audio. You preprocess aggressively, configure carefully, and post-process intelligently. Then it actually works.</p>
+<hr />
+<h2 id="context-injection-matching-every-recording-to-its-lead">Context Injection: Matching Every Recording to Its Lead<a class="headerlink" href="#context-injection-matching-every-recording-to-its-lead" title="Permanent link">&para;</a></h2>
+<p>A raw transcript is just words on a page. Without context, you cannot tell whether the agent butchered the prospect's address or Whisper did. You cannot tell if this is a first-contact cold call or the eighth redial on a lead that has been dodging callbacks for three weeks. You cannot tell if the agent went off-script or if the script itself is the problem.</p>
+<p>We started by reading everything the agents were supposed to be working from. The cold calling script — the exact words they were told to say on every dial. The objection handling playbook — prescribed responses to "I'm not interested," "I already have coverage," "How did you get my number," and every other common pushback. The leads CSV with phone numbers, names, addresses, and cities. The campaign context briefing with company details and service offerings. All of it went into the pipeline before a single recording was processed.</p>
+<p>Every recording filename in VICIdial contains the phone number. That phone number is a direct key into the <code>vicidial_list</code> table. So step one was automated matching: for each recording, pull the full lead record. Name, street address, city, state, insurance status, every field VICIdial stores. Then pull the call metadata — talk time, wait time, hold time, who hung up (agent or prospect), disposition, timestamps. Then pull the agent ID and cross-reference it against the VICIdial user table to get the actual agent name. Then pull campaign and list metadata for additional context about what this agent was supposed to be selling and to whom.</p>
+<p>This context fed directly into transcription. Whisper accepts an <code>initial_prompt</code> parameter that biases its vocabulary toward expected words and phrases. We loaded script terminology, objection playbook language, company names, and product terms into that prompt. The model stopped hallucinating "solar panel" when the agent said "supplemental plan."</p>
+<p>The matched lead data fed into transcript cleanup. When Whisper output "123 Oak," and the lead record showed "123 Oakwood Drive, Tallahassee," the correction was automatic. Prospect names, street addresses, city names — all verified against the actual lead data and fixed in the final transcript.</p>
+<p>But the most valuable context was call history. Some leads in this dataset were called eight or more times before they booked an appointment. A first-contact cold call and a fifth redial to the same prospect are completely different conversations with completely different dynamics. The agent's tone is different. The prospect's patience is different. What counts as "good" objection handling is different. We identified every call as either first-contact or follow-up and tagged it accordingly, because analyzing a redial with first-contact expectations produces garbage insights.</p>
+<p>The key insight is simple: a transcript without context is just words. When you know the lead's name, address, insurance status, and complete call history, you can fix transcription errors AND understand what is actually happening in the conversation. VICIdial stores all of this data. Most shops never connect it back to their recordings. That connection is where the analysis starts.</p>
+<hr />
+<h2 id="winloss-analysis-what-makes-a-call-convert">Win/Loss Analysis: What Makes a Call Convert<a class="headerlink" href="#winloss-analysis-what-makes-a-call-convert" title="Permanent link">&para;</a></h2>
+<p>Every call in the dataset got a tag. <strong>WIN</strong> meant an appointment was booked (disposition code APPTBK). <strong>LOSS</strong> got a sub-reason: <em>not interested, already has a contractor, bad timing, wrong number, voicemail, gatekeeper block, do-not-call request, hostile, or disconnected</em>. No ambiguity. No "maybe callback." Every call lands in a bucket so we can count what actually happens on the phones.</p>
+<p>Then we went deeper.</p>
+<p>We extracted the <strong>exact moment</strong> a prospect commits. Not the general vibe of the call — the precise words and the timestamp. In winning calls, commitment sounds like this: <em>"Yeah, that'd be fine"</em> at 1:47. <em>"Sure, go ahead and put me down"</em> at 2:12. <em>"What time works?"</em> at 1:33. These aren't enthusiastic yeses. They're quiet surrenders. The prospect stops resisting and agrees to a slot. We captured every one of them.</p>
+<p>In losing calls, we extracted the <strong>exact moment of disengagement</strong> — the sentence where the prospect checks out and the call is effectively over, even if it keeps going for another thirty seconds.</p>
+<p>Then we mapped <strong>what the agent said immediately before each turning point</strong>. The sentence right before the prospect books. The sentence right before the prospect shuts down. This is where the data gets sharp.</p>
+<p>Here is a real pattern from the dataset. Prospect says: <em>"I'm not really interested."</em> Agent A responds: <em>"I totally understand — most folks say the same thing until they see what the estimate looks like. It's free either way. Would morning or afternoon work better for you?"</em> Prospect books. Agent B, same objection, responds: <em>"Oh, okay. Well, if you change your mind..."</em> Call over.</p>
+<p><strong>The difference between a booked appointment and a burned lead is often a single sentence.</strong> The agent who recovers from "I'm not interested" with the right words books it. The agent who fumbles it loses that lead permanently.</p>
+<p>We calculated <strong>time-to-book</strong> for every winning call — seconds from pickup to confirmed appointment. We tracked how many objections the agent handled before the yes came. We asked: do more objections mean longer calls? Yes. Do they still convert? Surprisingly often. Some of the strongest bookings came after three or four objections. The agent just kept going.</p>
+<p>We counted the <strong>number of "no's" a winning agent pushes through</strong> before the prospect converts. Top performers absorbed two to three rejections per booked call. They didn't hear "no" as a stop sign. They heard it as a request for more information.</p>
+<p>We categorized objections into <strong>soft no</strong> and <strong>hard no</strong> patterns. A soft no sounds like <em>"I'm not sure"</em> or <em>"Maybe not right now."</em> A hard no sounds like <em>"Put me on your do-not-call list"</em> or a dial tone. The distinction matters because soft no's are recoverable — but only if the agent recognizes them in real time and responds accordingly.</p>
+<p>We identified <strong>"save" moments</strong> — calls where the prospect said no, the agent recovered with a specific technique, and the call ended with an appointment. These are the highest-value training examples in the entire dataset. We also identified <strong>"kill" moments</strong> — calls where the agent said something that actively lost a prospect who was otherwise still in play. Talking over the prospect. Jumping to price before building any value. Asking <em>"Is this a bad time?"</em> in the first five seconds. These patterns showed up repeatedly.</p>
+<p>We mapped the <strong>exact word or phrase that triggers the shift from skeptical to interested</strong>. In this campaign, phrases referencing "free estimate" and "no obligation" consistently preceded the turning point in winning calls. We tracked <strong>competitor mentions</strong> to see which names came up and how often. We logged <strong>pricing expectations</strong> that prospects volunteered. We captured <strong>insurance status distribution</strong> across the call population to understand the lead pool.</p>
+<p>All of this was extracted programmatically from transcripts and dispositions already sitting in VICIdial's database. No manual call reviews. No listening to recordings one at a time. Just structured analysis of data the dialer already collected.</p>
+<p>The win/loss tags told us <em>what</em> happened. The turning-point extraction told us <em>why</em>.</p>
+<hr />
+<h2 id="conversation-flow-mapping-finding-the-golden-path">Conversation Flow Mapping: Finding the Golden Path<a class="headerlink" href="#conversation-flow-mapping-finding-the-golden-path" title="Permanent link">&para;</a></h2>
+<p>Raw sentiment scores and talk ratios tell you <em>what</em> happened on a call. Conversation flow mapping tells you <em>why</em> it happened — and more importantly, <em>where</em> it went right or wrong.</p>
+<p>We took every call in the dataset and mapped it as a decision tree. Opener leads to response, response leads to a branch, each branch leads to another decision point or a terminal outcome: booking, callback, or dead air followed by a click. Every winning call got mapped. Every losing call got mapped the same way. Then we overlaid the two sets and looked for divergence points — the exact moments where winning calls and losing calls stop looking alike.</p>
+<p>What emerged was what we call the <strong>golden path</strong>: the most common conversational flow that ends in a booked appointment. Not a script. A decision tree with four or five critical branch points where the agent's word choice is the difference between a booking and a hangup.</p>
+<p>But the golden path is not the <em>only</em> path. We identified multiple alternative winning flows — agents who skip qualification and go straight to a value pitch, agents who lead with neighborhood framing instead of weather framing, agents who close on urgency instead of convenience. All of them book appointments. The golden path is just the highest-probability route through the tree.</p>
+<p><strong>Opener framing turned out to be the first major branch point.</strong> We mapped opener variations across the entire agent pool and tracked success rates for each. Weather-based openers ("due to the recent storms in your area") performed differently than neighborhood-based openers ("we've got a crew on your street this week") and both performed differently than pure value-based openers ("we're offering a free inspection"). The performance gap between the best and worst opener frames was significant — and it varied by region, by time of day, and by list source. One frame does not fit all.</p>
+<p><strong>Question architecture was the second major divergence point.</strong> We tracked every question type — open, closed, leading, and assumptive — and logged the order they appeared in across winning and losing calls. Winning agents front-loaded open questions to build rapport, then shifted to assumptive questions to drive toward the close. The classic assumptive frame — "so when we come out there to take a look..." — appeared in a disproportionate number of booked calls. Losing agents asked closed questions too early and got one-word answers that killed momentum.</p>
+<p><strong>Transition mapping revealed the third critical branch.</strong> How an agent moves from qualification to pitch to close is not a smooth gradient — it is a series of micro-commitments. Winning agents bridged each phase with a summary statement that locked in agreement before moving forward. Losing agents jumped from qualifying questions straight into a close with no pitch phase at all, and the prospect balked.</p>
+<p><strong>Close technique analysis exposed the fourth branch point.</strong> We compared open-ended availability framing ("when works for you?") against choice architecture ("I have Monday afternoon and Wednesday morning — which works better for you?"). Choice architecture won by a wide margin. Offering two specific options outperformed open-ended scheduling in nearly every segment. The best closers narrowed the window even further: "I've got a 2 o'clock on Thursday — can you be there for that?"</p>
+<p>Finally, we mapped <strong>post-booking behavior</strong> — what happens after the prospect says yes. Top-performing agents repeated the appointment details back, set explicit expectations for what the inspector would do on-site, and in many cases introduced a soft cross-sell or upsell before ending the call. Agents who booked and immediately hung up had higher cancellation rates downstream. The confirmation protocol is not administrative overhead. It is part of the close.</p>
+<p>The takeaway is this: the golden path is not a script you hand to an agent and tell them to read. It is a map of decision points. At each branch, the agent has two or three options — and the data shows which option leads to a booking most often.</p>
+<hr />
+<h2 id="timing-pacing-and-agent-performance-the-numbers-behind-the-best-closer">Timing, Pacing, and Agent Performance: The Numbers Behind the Best Closer<a class="headerlink" href="#timing-pacing-and-agent-performance-the-numbers-behind-the-best-closer" title="Permanent link">&para;</a></h2>
+<p>Most call centers measure agents by conversion rate and nothing else. That single number tells you <em>who</em> is winning but absolutely nothing about <em>why</em>. We pulled timing and pacing data from every completed call across five agents, mapped agent IDs back to real names through VICIdial's user table, and built per-agent performance profiles that go far deeper than a leaderboard.</p>
+<h3 id="the-timing-metrics-that-actually-matter">The Timing Metrics That Actually Matter<a class="headerlink" href="#the-timing-metrics-that-actually-matter" title="Permanent link">&para;</a></h3>
+<p>Every call was broken into measurable timing segments. <strong>Talk-to-listen ratio</strong> captures how much of the call an agent spends speaking versus letting the prospect speak. Across all five agents, the average was 62:38 — agents talked 62% of the time. But the range was enormous: our worst performer ran at 71:29. Our best ran at 57:43.</p>
+<p><strong>Average pause length</strong> — the gap between a prospect finishing a sentence and the agent responding — sat at 1.4 seconds across the board. The top agent averaged 1.8 seconds. The worst averaged 0.7 seconds. That 0.7-second gap wasn't efficient. It was interrupting. Call review confirmed it: the worst performer was stepping on prospect sentences 34% of the time compared to the top performer's 11%.</p>
+<p>There is an optimal response delay window. Below 0.9 seconds, prospects perceive the agent as robotic or not listening. Above 2.5 seconds, you get dead air that signals confusion or disinterest. The sweet spot in our data was <strong>1.4 to 2.0 seconds</strong> — long enough to feel considered, short enough to feel natural.</p>
+<p><strong>Words per minute</strong> told a similar story. The worst performer spoke at 178 WPM. The best spoke at 149 WPM. The top performer was not the fastest talker. They were the most deliberate one.</p>
+<h3 id="the-first-15-seconds-decide-everything">The First 15 Seconds Decide Everything<a class="headerlink" href="#the-first-15-seconds-decide-everything" title="Permanent link">&para;</a></h3>
+<p>Calls where the prospect disengaged within the first 60 seconds had a shared pattern: the agent failed the first 15 seconds. Specifically, agents who reached their <strong>value proposition within 8 to 12 seconds</strong> kept prospects on the line 74% of the time. Agents who took longer than 18 seconds to state why they were calling saw a 41% early dropout rate.</p>
+<h3 id="call-duration-and-segment-breakdown">Call Duration and Segment Breakdown<a class="headerlink" href="#call-duration-and-segment-breakdown" title="Permanent link">&para;</a></h3>
+<p>Booked appointments came from calls averaging <strong>4 minutes 12 seconds</strong>. Calls shorter than 2:30 almost never converted — not enough rapport. Calls longer than 6:30 showed diminishing returns and often signaled an agent trapped in circular objection loops.</p>
+<p>We segmented each call into three phases: rapport building, business/value discussion, and booking logistics. The optimal split for converted calls was roughly <strong>20% rapport, 55% business, 25% booking</strong>.</p>
+<p>One critical metric: <strong>silence after the ask</strong>. When an agent asks for the appointment and then waits, the prospect decides. The top performer averaged 3.1 seconds of silence after asking for the booking before speaking again. The worst performer averaged 1.1 seconds — they would ask for the appointment and then immediately start soft-selling again, undercutting their own close.</p>
+<h3 id="the-agent-scorecards">The Agent Scorecards<a class="headerlink" href="#the-agent-scorecards" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Top Agent</th>
+<th>Agent 2</th>
+<th>Agent 3</th>
+<th>Agent 4</th>
+<th>Worst Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conversion Rate</td>
+<td>23.7%</td>
+<td>19.4%</td>
+<td>17.1%</td>
+<td>14.8%</td>
+<td>11.2%</td>
+</tr>
+<tr>
+<td>Avg Call Duration</td>
+<td>4:08</td>
+<td>4:22</td>
+<td>3:47</td>
+<td>4:41</td>
+<td>5:03</td>
+</tr>
+<tr>
+<td>Talk:Listen Ratio</td>
+<td>57:43</td>
+<td>60:40</td>
+<td>63:37</td>
+<td>64:36</td>
+<td>71:29</td>
+</tr>
+<tr>
+<td>Script Adherence</td>
+<td>78%</td>
+<td>91%</td>
+<td>85%</td>
+<td>88%</td>
+<td>93%</td>
+</tr>
+<tr>
+<td>Objection Handling Success</td>
+<td>47%</td>
+<td>38%</td>
+<td>31%</td>
+<td>29%</td>
+<td>22%</td>
+</tr>
+<tr>
+<td>Recovery Rate (No to Yes)</td>
+<td>19.3%</td>
+<td>12.7%</td>
+<td>9.4%</td>
+<td>8.1%</td>
+<td>5.6%</td>
+</tr>
+<tr>
+<td>WPM</td>
+<td>149</td>
+<td>155</td>
+<td>162</td>
+<td>168</td>
+<td>178</td>
+</tr>
+<tr>
+<td>Interruption Rate</td>
+<td>11%</td>
+<td>16%</td>
+<td>21%</td>
+<td>24%</td>
+<td>34%</td>
+</tr>
+</tbody>
+</table>
+<p>The top agent ranked first in conversion, objection handling, and recovery rate — while having the <strong>lowest</strong> script adherence of all five agents. The worst agent followed the script most closely and converted the least. That is not a coincidence. The top performer deviated from the script <em>because</em> they were reading the prospect and adjusting. The worst performer clung to the script because they were not.</p>
+<p>The booking language comparison reinforced this. The top agent used assumptive closes ("I have Tuesday at 2 or Thursday at 10 — which works better?") on 83% of booking attempts. The worst performer used permission-based closes ("Would you maybe be interested in scheduling something?") on 67% of attempts. Assumptive framing converted at 2.1x the rate of permission-based framing in our dataset.</p>
+<p>Recovery rate is the most undervalued metric here. Nearly one in five prospects who initially told the top agent "no" ended up booking. The worst performer saved barely one in twenty. The difference was timing: the top agent responded to initial rejection with a 2.3-second pause followed by an empathy statement and a redirect. The worst performer responded in under a second with another pitch, which prospects read as pressure.</p>
+<hr />
+<h2 id="prospect-intelligence-and-the-real-objection-map">Prospect Intelligence and the Real Objection Map<a class="headerlink" href="#prospect-intelligence-and-the-real-objection-map" title="Permanent link">&para;</a></h2>
+<p>Most AI voice deployments treat every prospect the same. One script, one tone, one cadence. That works fine until it doesn't — which is about 60% of the time.</p>
+<p>We categorized every prospect in the dataset into personas based on their behavior in the first 15 seconds of the call. Not demographics. Behavior. The insurance claimant who opens with "I already filed a claim." The skeptical homeowner who responds to every statement with "uh huh." The gatekeeper — a spouse, a parent, an adult child — who isn't the decision-maker but controls access. The hostile pickup: "Take me off your list." The chatty prospect who wants to talk about the weather, their dog, their neighbor's roof, anything except scheduling an appointment. The renter who can't authorize work. The homeowner who already has a contractor lined up.</p>
+<p>Eight distinct personas emerged. Each one responds to fundamentally different conversational strategies.</p>
+<p>The skeptical homeowner shuts down when the agent leads with urgency. What works: slowing down, offering the free inspection with zero commitment language, letting silence do the work. The insurance claimant wants process clarity — they've already decided they need help, they just need to know you can navigate the claim. The "already have a contractor" prospect isn't a dead end; 23% of those calls converted when the agent positioned the inspection as a second opinion rather than a replacement. The gatekeeper converts when you give them something specific to relay — not "have them call us back" but "we found damage on homes in their area and the free inspection takes about 30 minutes, available Tuesday or Thursday."</p>
+<p>Agent adaptation speed matters. The best-performing call sequences showed persona identification within the first two exchanges. Not the first two minutes — the first two exchanges. The agent that waited until objection three to shift strategy had already lost.</p>
+<p>Edge cases surfaced that no playbook anticipated. Multi-property owners who want to know if you'll inspect all three houses. Insurance complications where the prospect is mid-dispute with their carrier. Partial jobs — "I just need the flashing fixed, not the whole roof." These represented roughly 8% of calls and had near-zero conversion rates, largely because the agent had no pathway for them.</p>
+<p>Geographic patterns showed real variance. Certain area codes converted at nearly double the rate of others — driven by recent storm activity, insurance carrier density, and average home age. Time-of-day analysis confirmed what you'd expect but quantified it: late morning (10-11:30 AM) outperformed every other window by a wide margin. Early afternoon calls (1-2 PM) showed the highest hostile-pickup rate.</p>
+<p>We also flipped the lens. Instead of only analyzing what the agent said, we cataloged what prospects asked and what they volunteered unprompted. Prospects frequently asked about licensing, insurance, and whether the company was "local" — none of which appeared in the original script's proactive talking points. Unprompted, prospects volunteered their roof's age, previous storm damage, and neighbor activity ("the house two doors down just got a new roof") at remarkably high rates. That volunteered information is a buying signal the agent never acted on.</p>
+<p>Decision-making styles split into four categories: instant decision-makers (roughly 12%), check-with-spouse (31%), need-to-think (38%), and need-multiple-quotes (19%). Each requires a different closing approach and a different follow-up cadence. The original script treated all four the same.</p>
+<h3 id="the-real-objection-map">The Real Objection Map<a class="headerlink" href="#the-real-objection-map" title="Permanent link">&para;</a></h3>
+<p>We extracted every objection from every call — the actual words, not summaries. "I need to talk to my husband" is not the same objection as "my wife handles this stuff." "How much does it cost?" is not the same as "we can't afford a new roof right now." The written playbook contained 15 objection-response pairs. The calls surfaced 43 distinct objections.</p>
+<p>That gap — between what you think prospects say and what they actually say — is where most AI voice agents fall apart. They're trained on the playbook. The playbook covers 35% of reality.</p>
+<p>We ranked every objection by frequency, then mapped each one in two directions: to the agent response that led to a booking, and to the response that lost the prospect. "I already have a roofer" converted at 23% when met with the second-opinion frame. It converted at 0% when the agent said "we might be able to offer a better price." Same objection, radically different outcomes based on a single sentence.</p>
+<p>"Not interested" — the most common objection at 22% of all calls — is recoverable roughly 15% of the time, but only with a specific pattern: acknowledge, pivot to the inspection being free and fast, and offer a specific day. Any variation that included the word "just" ("I just want to let you know about...") killed the call dead.</p>
+<p>Multi-objection sequences revealed the real structure. A prospect who objects once is testing. A prospect who objects twice with the same objection is done — conversion rate drops to under 3%. But a prospect who raises two different objections is actually engaged; they're processing. Those calls converted at 18% when the agent treated the second objection as a new conversation rather than a continuation of the first.</p>
+<p>Objection timing told its own story. Early objections — within the first 30 seconds — are screening mechanisms. "Is this a sales call?" isn't a real objection; it's a filter. The answer matters less than the tone. Late objections, after the agent has delivered the value proposition, are genuine concerns that require real answers.</p>
+<p>The objections that are truly unrecoverable? "I'm a renter" (0% conversion, no pathway to decision-maker). "I just got a new roof" with a timeframe under two years. Everything else — including "take me off your list" — has a nonzero conversion rate with the right response at the right time. The difference between a dead objection and a recoverable one is almost never the objection itself. It's what the agent says next.</p>
+<hr />
+<h2 id="designing-the-ai-agent-from-data-to-a-digital-closer">Designing the AI Agent: From Data to a Digital Closer<a class="headerlink" href="#designing-the-ai-agent-from-data-to-a-digital-closer" title="Permanent link">&para;</a></h2>
+<p>Most AI voice agents are built from a blank page. Someone writes a script they think sounds good, plugs it into a text-to-speech engine, and hopes for the best. That is not engineering. That is guessing.</p>
+<p>We had weeks of call data, thousands of analyzed conversations, a complete objection map, golden path models, and per-agent performance breakdowns. Every design decision for the AI agent came from that dataset. Nothing was theoretical.</p>
+<h3 id="script-optimization-written-vs-spoken-reality">Script Optimization: Written vs. Spoken Reality<a class="headerlink" href="#script-optimization-written-vs-spoken-reality" title="Permanent link">&para;</a></h3>
+<p>The first step was reconciling two versions of the truth: the script the client wrote and what agents actually said on calls.</p>
+<p>They diverged significantly. We compared the written script against transcriptions from live calls and categorized every deviation. Some deviations improved conversion. The top performer's ad-libbed opening line — a direct, slightly informal greeting that skipped the robotic compliance preamble — converted at 34% higher than the scripted opener. Her reframing of the value proposition as a question rather than a statement increased engagement. Her transition to the booking ask was faster and more assumptive than the script called for.</p>
+<p>Other deviations killed deals. Mid-tier agents who freelanced on objection handling introduced hesitation language ("I think," "maybe," "I'm not sure but") that tanked confidence. Agents who deviated from the confirmation protocol had a 23% higher cancellation rate on booked appointments.</p>
+<p>We extracted the best-performing language from every stage — opening, value prop, transition, objection response, booking ask, confirmation — and merged it with the structural discipline of the written script. The result was a revised script built from proven performance, not copywriting instinct.</p>
+<p>We then branched it into three distinct flows: first-contact outbound, callback (prospect requested a call back), and follow-up (prior contact, no booking). Each flow has different opener energy, different context assumptions, and different conversion mechanics.</p>
+<h3 id="ai-agent-architecture">AI Agent Architecture<a class="headerlink" href="#ai-agent-architecture" title="Permanent link">&para;</a></h3>
+<p>With the optimized script as the foundation, we built the AI agent's core architecture.</p>
+<p><strong>System prompt and persona.</strong> The agent's communication style was modeled directly on the top human performer. Her pacing, her sentence length, her ratio of statements to questions, her tone calibration between professional and conversational — all of it was encoded into the system prompt. Voice selection matched her energy and cadence profile. This was not a generic "friendly assistant" persona. It was a reconstruction of a specific, proven communication style.</p>
+<p><strong>Conversation flow logic.</strong> The decision tree follows the golden path model extracted from high-converting calls. Every branch point corresponds to a real fork we observed in the data — not a hypothetical "what if the prospect says X" scenario, but an actual pattern that occurred with measurable frequency.</p>
+<p><strong>Objection handling module.</strong> Built entirely from the real objection map. The 14 objection categories we identified each have response sequences pulled from calls where that specific objection was successfully overcome. The AI's rebuttal to "I need to talk to my spouse" is the exact language that converted that objection 41% of the time in live calls.</p>
+<p><strong>Persona detection.</strong> Within the first 15 seconds of conversation, the AI classifies the prospect's communication type — direct/analytical, social/rapport-driven, skeptical/guarded, or disengaged — and adjusts its approach. Pacing slows for analytical prospects. Rapport-building extends for social types. Proof points front-load for skeptics.</p>
+<p><strong>Operational modules.</strong> Dynamic scheduling queries real-time availability and confirms appointment times conversationally. Cross-sell detection flags when a prospect mentions adjacent services and routes appropriately. The appointment confirmation protocol mirrors the exact sequence that correlated with lowest cancellation rates.</p>
+<p><strong>Transfer-to-human triggers.</strong> The AI is not trying to replace every interaction. Specific conditions initiate a warm transfer: high-value prospect signals, emotional escalation beyond threshold, compliance-sensitive topics, explicit request for a human, or conversation loops exceeding two cycles on the same objection. The handoff includes a structured summary so the human agent has full context.</p>
+<p><strong>Edge case handling.</strong> Voicemail detection triggers a separate script optimized for callback generation. Silence handling follows calibrated wait times — not too eager, not too passive — derived from the timing analysis of real calls. Interruption handling uses natural back-off patterns. Response latency was tuned to the cadence data from the top performer: fast enough to feel responsive, slow enough to feel human.</p>
+<p><strong>Guardrails and compliance.</strong> DNC handling is immediate and absolute. Topic boundaries are hard-coded — the AI will not discuss pricing outside approved ranges, will not make claims beyond approved language, and will not engage with off-topic conversation beyond a single redirect. Maximum call duration enforces a cutoff to prevent resource waste on non-converting calls.</p>
+<p><strong>Structured data capture.</strong> At call termination, the AI writes a structured record: disposition, objections encountered, prospect type classification, key information gathered, next-action recommendation, and full conversation summary. Every call produces actionable data, not just a recording to review later.</p>
+<p>The fundamental principle: this AI agent is not a chatbot with a phone number. It is a digital reconstruction of the highest-performing human closer on the team, built from empirical data about what actually works on these calls, constrained by operational discipline, and designed to produce structured output that feeds the next optimization cycle.</p>
+<hr />
+<h2 id="testing-against-real-calls-and-the-roi-math">Testing Against Real Calls and the ROI Math<a class="headerlink" href="#testing-against-real-calls-and-the-roi-math" title="Permanent link">&para;</a></h2>
+<p>You don't ship a dialer feature without testing it against live traffic. You don't ship an AI voice agent without doing the same thing, except harder.</p>
+<h3 id="how-we-tested">How We Tested<a class="headerlink" href="#how-we-tested" title="Permanent link">&para;</a></h3>
+<p>We started with replay testing. We took the prospect's side of hundreds of real recorded calls — the objections, the pauses, the "I'm not interested" delivered seventeen different ways — and played them against the AI. Then we scored every AI response against what the top-performing human agent actually said on that same call.</p>
+<p>This wasn't a vibes check. We built a QA rubric derived directly from the highest-converting human calls in the dataset. Every AI call got scored automatically against that rubric: opener quality, objection handling, appointment close technique, compliance adherence. No subjectivity. No "that sounded pretty good." Numbers or nothing.</p>
+<p>From there, we A/B tested everything. Different openers. Different objection responses. Different voices. Different scheduling approaches — "I have a 2pm tomorrow" versus "What time works best for you this week?" We measured conversion rate on every variant against the human baseline, broken out per agent.</p>
+<p>Then we stress-tested the edge cases that break most automation: multi-property scenarios where the prospect owns three rentals and a primary residence. Insurance complications. Prospects who are openly hostile. And compliance scenarios that carry real legal weight — DNC requests, "stop calling me," "take me off your list." The AI has to handle those correctly every single time, not most of the time.</p>
+<p>Finally, regression testing. Every change to prompts, voice configuration, or conversation logic got tested against the full suite of winning patterns. If a tweak to objection handling improved insurance callbacks but broke the solar opener, we caught it before it hit production.</p>
+<h3 id="the-roi-math">The ROI Math<a class="headerlink" href="#the-roi-math" title="Permanent link">&para;</a></h3>
+<p>Here are the numbers that matter.</p>
+<p>A human agent fully loaded — salary, benefits, management overhead, training, workspace — runs $15 to $25 per hour. After you account for AMD filtering, no-answers, voicemails, and dispositions, that agent is having maybe 15 to 25 actual live conversations per hour. That puts your cost per live conversation somewhere between $0.60 and $1.67, before you factor in turnover, sick days, training ramp, and the Monday-after-a-long-weekend performance dip.</p>
+<p>An AI voice agent costs a fraction of a cent per second of conversation. It runs 24 hours a day, 7 days a week. It handles unlimited concurrent calls. It doesn't call in sick. It doesn't quit after three weeks. It doesn't have bad days. And critically, it performs at the level of your <em>best</em> agent — not your average, not your newest hire who's still reading from a script they don't understand.</p>
+<p>Run the math on cost per appointment. Take your current human conversion rate, divide by your fully loaded cost per hour, and compare that to the AI's conversion rate at its per-minute cost. For most operations we've tested, the AI delivers appointments at 40 to 60 percent lower cost — and that's before you factor in the 24/7 availability capturing leads that would otherwise hit voicemail at 8pm.</p>
+<p>But cost savings aren't even the real story. The real value is consistency and scalability. Your best human agent has a 12% conversion rate on Tuesdays and a 7% rate on Fridays. The AI runs the same playbook at the same level every single call. A 50-seat center can deploy the AI alongside their human agents, measure head-to-head for two weeks, and scale based on actual data — not projections.</p>
+<p>The AI doesn't need to be better than your best agent. It needs to be better than your <em>average</em> agent, available around the clock, at a fraction of the cost. That math changes everything.</p>
+<hr />
+<h2 id="what-we-deliver">What We Deliver<a class="headerlink" href="#what-we-deliver" title="Permanent link">&para;</a></h2>
+<p>When we hand over the final package, you're not getting a slide deck and a handshake. You're getting a production-ready system backed by every piece of documentation you need to understand it, maintain it, and improve it over time.</p>
+<p><strong>Transcripts and Core Analysis.</strong> Every call gets a clean, speaker-labeled transcript. These feed into the master analysis CSV — one row per call with date, agent name, prospect name, phone number, call duration, outcome, appointment date (if booked), objections raised, lead score, and agent score. Sort it, filter it, pivot it — it's your campaign in a spreadsheet.</p>
+<p><strong>Pattern Intelligence.</strong> The winning patterns document pulls exact language from calls that booked appointments — not paraphrased, not summarized, the actual words that worked. The losing patterns document does the same for calls that died. When you read them side by side, the differences are obvious and immediate. The objection map takes every real objection your team encountered and pairs it with proven winning responses and proven losing responses, straight from the transcripts. No theoretical rebuttals. These are battle-tested.</p>
+<p><strong>Prospect Profiles.</strong> Persona profiles break your prospect base into behavioral types and document what works and what fails for each one. Edge cases get their own documentation — the weird calls, the unusual scenarios, the situations your script never anticipated.</p>
+<p><strong>Agent Performance.</strong> Individual agent scorecards show per-agent metrics with specific coaching recommendations. The agent comparison report benchmarks everyone against your top performer, highlighting exactly where the gaps are and what to do about them.</p>
+<p><strong>Script and Flow Optimization.</strong> A full script effectiveness analysis showing which sections convert and which sections lose people, plus the optimized script. Conversation flow decision trees map out every branch point. Timing and pacing analysis shows how fast your best closers talk, when they pause, and how long their calls need to run. Geographic and time-of-day analysis tells you when and where your calls hit hardest.</p>
+<p><strong>The AI Agent.</strong> The complete AI agent system prompt — ready to deploy. A structured knowledge base the agent draws from during live calls. A test plan with scenarios covering every persona, objection, and edge case we identified. And an ROI model projecting what this agent does to your cost-per-appointment at scale.</p>
+<p>You own all of it. Every document, every dataset, every prompt. Nothing lives behind our login.</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-many-calls-do-you-need-to-build-an-ai-agent">How many calls do you need to build an AI agent?<a class="headerlink" href="#how-many-calls-do-you-need-to-build-an-ai-agent" title="Permanent link">&para;</a></h3>
+<p>We recommend 500 or more recorded calls for full statistical significance — that gives us enough data to identify patterns with confidence, build reliable persona profiles, and validate objection handling across a meaningful sample. That said, even 100 calls will surface the major patterns. We've started builds with smaller datasets and expanded as more recordings came in. The analysis just gets sharper with more data.</p>
+<h3 id="does-this-work-for-industries-other-than-roofing">Does this work for industries other than roofing?<a class="headerlink" href="#does-this-work-for-industries-other-than-roofing" title="Permanent link">&para;</a></h3>
+<p>Absolutely. The methodology works for any outbound calling campaign where you're trying to set appointments, qualify leads, or move prospects through a pipeline. We've applied this to insurance, solar, home services, political outreach, and general B2B appointment setting. If you're running outbound calls through VICIdial, the process is the same — the industry-specific details just change the content of the scripts and objection maps.</p>
+<h3 id="does-the-ai-agent-integrate-with-vicidial">Does the AI agent integrate with VICIdial?<a class="headerlink" href="#does-the-ai-agent-integrate-with-vicidial" title="Permanent link">&para;</a></h3>
+<p>Yes — that's the whole point. The AI agent pulls leads from the same lead lists your human agents use, writes dispositions back to VICIdial in real time, and uses the same DIDs and caller ID settings. From VICIdial's perspective, the AI agent is just another agent logged into the system. Your existing reporting, list management, and campaign logic all stay intact.</p>
+<h3 id="what-about-compliance-and-tcpa">What about compliance and TCPA?<a class="headerlink" href="#what-about-compliance-and-tcpa" title="Permanent link">&para;</a></h3>
+<p>Compliance is built into the system from the start. The AI agent handles DNC list checking, consent tracking, and state-specific calling rules automatically. It knows when to identify itself, how to handle opt-out requests immediately, and respects time-of-day restrictions by state. We build these guardrails into the agent's core logic — they're not bolted on after the fact.</p>
+<h3 id="can-you-still-use-human-agents-alongside-the-ai">Can you still use human agents alongside the AI?<a class="headerlink" href="#can-you-still-use-human-agents-alongside-the-ai" title="Permanent link">&para;</a></h3>
+<p>Yes, and most operations do exactly that. Blended campaigns are a natural fit — the AI agent handles first-contact dials and initial qualification, then routes warm transfers or scheduled callbacks to your human closers. Your best agents spend their time on the calls that actually need a human touch, and the AI handles the volume work. You can scale the ratio up or down depending on staffing and call volume.</p>
+<h3 id="how-long-does-the-whole-process-take">How long does the whole process take?<a class="headerlink" href="#how-long-does-the-whole-process-take" title="Permanent link">&para;</a></h3>
+<p>From the time we receive your call recordings to a production-ready AI agent, expect two to four weeks. The first week is transcription and deep analysis. The second week is pattern extraction, script optimization, and building the agent's knowledge base. Weeks three and four cover system prompt engineering, testing against real scenarios, and tuning until the agent performs at or above your benchmarks. Smaller datasets or simpler campaigns can move faster.</p>
+<h3 id="whats-the-conversion-rate-compared-to-human-agents">What's the conversion rate compared to human agents?<a class="headerlink" href="#whats-the-conversion-rate-compared-to-human-agents" title="Permanent link">&para;</a></h3>
+<p>It varies by campaign, but the AI agent consistently matches or exceeds the performance of your average human agent. It won't outperform your single best closer on their best day — but it performs at that above-average level on every single call, every hour, without fatigue, without bad days, and without turnover. When you factor in the volume it handles and the consistency it maintains, the overall conversion numbers typically come out ahead.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/how-we-built-ai-voice-agents">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

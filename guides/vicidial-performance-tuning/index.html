@@ -1,0 +1,5246 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-performance-tuning/">
+      
+      
+        <link rel="prev" href="../vicidial-pause-codes-accountability/">
+      
+      
+        <link rel="next" href="../vicidial-political-campaigns/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Performance Tuning: Server Optimization for 500+ Agents - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-performance-tuning-server-optimization-for-500-agents" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Performance Tuning: Server Optimization for 500+ Agents
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#os-kernel-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OS Kernel Tuning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OS Kernel Tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sysctl-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sysctl Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ulimits-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ulimits Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpu-governor-and-power-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU Governor and Power Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-channel-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Channel Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Channel Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asteriskconf-and-modulesconf-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asterisk.conf and modules.conf Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-channel-configuration-chan_sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Channel Configuration (chan_sip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rtp-port-range-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RTP Port Range Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-memory-and-threading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Memory and Threading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysqlmariadb-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL/MariaDB Performance Tuning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL/MariaDB Performance Tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffer-pool-sizing-for-high-agent-counts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buffer Pool Sizing for High-Agent Counts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-cache-disable-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Cache: Disable It
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-tables-for-real-time-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEMORY Tables for Real-Time Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concurrent-insert-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concurrent Insert Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apache-vs-nginx-for-vicidial-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache vs Nginx for VICIdial Web
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Apache vs Nginx for VICIdial Web">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apache-the-default-and-its-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache: The Default (and Its Problems)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nginx-php-fpm-the-better-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nginx + PHP-FPM: The Better Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#php-fpm-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHP-FPM Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#process-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Process Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-vicidials-screen-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding VICIdial's Screen Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hardening-the-keepalive-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hardening the Keepalive System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oom-killer-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OOM Killer Protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#process-monitoring-with-custom-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process Monitoring with Custom Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capacity-planning-agents-to-server-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capacity Planning: Agents to Server Resources
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Capacity Planning: Agents to Server Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-core-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Core Formula
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-role-allocation-at-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Role Allocation at Scale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bandwidth Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Storage Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-and-alerting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring and Alerting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring and Alerting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-grafana-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus + Grafana Stack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alerting-rules-that-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alerting Rules That Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-command-line-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Command-Line Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-tuning-network-and-storage-io" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Tuning: Network and Storage I/O
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Tuning: Network and Storage I/O">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network-tuning-for-siprtp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Tuning for SIP/RTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-io-for-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage I/O for Recordings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tmpfs-for-asterisk-temporary-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tmpfs for Asterisk Temporary Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-vicidial-system-needs-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my VICIdial system needs performance tuning?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-500-agents-on-a-single-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run 500 agents on a single server?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-most-impactful-single-optimization-for-vicidial-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the most impactful single optimization for VICIdial performance?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-much-ram-do-i-need-per-server-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much RAM do I need per server role?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-use-vicidials-asterisk-configuration-or-tune-it-myself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I use VICIdial's Asterisk configuration or tune it myself?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-monitoring-tool-should-i-use-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What monitoring tool should I use for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-load-balancing-across-multiple-web-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle load balancing across multiple web servers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-revisit-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I revisit performance tuning?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#os-kernel-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OS Kernel Tuning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OS Kernel Tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sysctl-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sysctl Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ulimits-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ulimits Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpu-governor-and-power-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU Governor and Power Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-channel-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Channel Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Channel Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asteriskconf-and-modulesconf-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asterisk.conf and modules.conf Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sip-channel-configuration-chan_sip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Channel Configuration (chan_sip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rtp-port-range-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RTP Port Range Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-memory-and-threading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Memory and Threading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysqlmariadb-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL/MariaDB Performance Tuning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL/MariaDB Performance Tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffer-pool-sizing-for-high-agent-counts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buffer Pool Sizing for High-Agent Counts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-cache-disable-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Cache: Disable It
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-tables-for-real-time-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEMORY Tables for Real-Time Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concurrent-insert-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concurrent Insert Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apache-vs-nginx-for-vicidial-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache vs Nginx for VICIdial Web
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Apache vs Nginx for VICIdial Web">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apache-the-default-and-its-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache: The Default (and Its Problems)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nginx-php-fpm-the-better-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nginx + PHP-FPM: The Better Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#php-fpm-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHP-FPM Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#process-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Process Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-vicidials-screen-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding VICIdial's Screen Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hardening-the-keepalive-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hardening the Keepalive System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oom-killer-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OOM Killer Protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#process-monitoring-with-custom-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process Monitoring with Custom Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capacity-planning-agents-to-server-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capacity Planning: Agents to Server Resources
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Capacity Planning: Agents to Server Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-core-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Core Formula
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-role-allocation-at-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Role Allocation at Scale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bandwidth Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Storage Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-and-alerting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring and Alerting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring and Alerting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-grafana-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus + Grafana Stack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alerting-rules-that-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alerting Rules That Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-command-line-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Command-Line Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-tuning-network-and-storage-io" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Tuning: Network and Storage I/O
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Tuning: Network and Storage I/O">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network-tuning-for-siprtp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Tuning for SIP/RTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-io-for-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage I/O for Recordings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tmpfs-for-asterisk-temporary-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tmpfs for Asterisk Temporary Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-vicidial-system-needs-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my VICIdial system needs performance tuning?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-500-agents-on-a-single-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run 500 agents on a single server?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-most-impactful-single-optimization-for-vicidial-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the most impactful single optimization for VICIdial performance?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-much-ram-do-i-need-per-server-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much RAM do I need per server role?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-use-vicidials-asterisk-configuration-or-tune-it-myself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I use VICIdial's Asterisk configuration or tune it myself?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-monitoring-tool-should-i-use-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What monitoring tool should I use for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-load-balancing-across-multiple-web-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle load balancing across multiple web servers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-revisit-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I revisit performance tuning?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-performance-tuning-server-optimization-for-500-agents">VICIdial Performance Tuning: Server Optimization for 500+ Agents<a class="headerlink" href="#vicidial-performance-tuning-server-optimization-for-500-agents" title="Permanent link">&para;</a></h1>
+<p><em>You've got the cluster built. Four telephony servers, two web servers, a dedicated database box. VICIdial installs cleanly, agents log in, calls start flowing. Everything looks great at 50 agents. At 150 agents, real-time reports start lagging. At 300 agents, calls drop during peak hours. At 400, the telephony servers hit 100% CPU at 2 PM every day and you're playing whack-a-mole with screen sessions that silently die. The hardware is there. The architecture is right. But nobody tuned the operating system, nobody sized the Asterisk channels, nobody touched the default Apache config, and the kernel is still running with settings designed for a general-purpose web server — not a machine that needs to manage 2,000 concurrent SIP channels while a dozen Perl daemons hammer the database every second.</em></p>
+<p><em>This is the guide that turns good hardware into a 500+ agent VICIdial deployment that actually holds under load.</em></p>
+<p>VICIdial's performance ceiling is almost never about the software itself. Matt Florell's code handles scale. The bottleneck is the infrastructure underneath: the OS kernel parameters that throttle file descriptors and network connections, the Asterisk configuration that wastes memory on unused codecs, the MySQL instance running with default buffer sizes, the web server that spawns too many children and OOM-kills itself, and the process management that lets critical screen sessions die without anyone noticing.</p>
+<p>We've tuned VICIdial deployments from 20-agent single-server setups to 800+ agent clusters spanning a dozen machines. The pattern is always the same: the installation guide gets you running, but it doesn't get you running well at scale. This guide covers every layer of the stack — OS kernel, Asterisk, MySQL/MariaDB, web server, PHP, process management, capacity planning, and monitoring. Every recommendation comes from production deployments, not theory. Every config example has been load-tested.</p>
+<p>If you're running under 100 agents on a single server and things feel fine, bookmark this for later. If you're scaling beyond 200 agents or hitting unexplained performance walls, start reading now.</p>
+<hr />
+<h2 id="os-kernel-tuning">OS Kernel Tuning<a class="headerlink" href="#os-kernel-tuning" title="Permanent link">&para;</a></h2>
+<p>The Linux kernel ships with defaults tuned for a general-purpose server. VICIdial is not a general-purpose workload. It opens thousands of file descriptors (one per SIP channel, one per recording file, one per Perl process, one per database connection), maintains thousands of concurrent network sockets (SIP connections, HTTP agent sessions, database connections, AMI connections), and moves a massive volume of small packets through the network stack. Default kernel parameters throttle all of this.</p>
+<h3 id="sysctl-settings">sysctl Settings<a class="headerlink" href="#sysctl-settings" title="Permanent link">&para;</a></h3>
+<p>Create <code>/etc/sysctl.d/99-vicidial.conf</code> and apply these settings. Every parameter here solves a specific problem that manifests at scale:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ============================================================</span>
+<span class="c1"># FILE DESCRIPTOR AND INOTIFY LIMITS</span>
+<span class="c1"># ============================================================</span>
+<span class="c1"># VICIdial opens a LOT of files. Each SIP channel = 1-2 fds.</span>
+<span class="c1"># Each recording = 1 fd. Each Perl daemon = dozens of fds.</span>
+<span class="c1"># Each MySQL connection = 1 fd. Default 1024 per process is</span>
+<span class="c1"># laughably insufficient for a 500-agent telephony server.</span>
+<span class="na">fs.file-max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">524288</span>
+<span class="na">fs.inotify.max_user_watches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">131072</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># NETWORK STACK: CONNECTION TRACKING AND BUFFERS</span>
+<span class="c1"># ============================================================</span>
+<span class="c1"># Increase the connection tracking table for SIP/RTP traffic.</span>
+<span class="c1"># Default 65536 gets exhausted quickly with high call volumes.</span>
+<span class="na">net.netfilter.nf_conntrack_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">262144</span>
+<span class="na">net.nf_conntrack_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">262144</span>
+
+<span class="c1"># Increase socket backlog — prevents SIP connection drops</span>
+<span class="c1"># during traffic spikes when Asterisk can&#39;t accept() fast enough.</span>
+<span class="na">net.core.somaxconn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8192</span>
+<span class="na">net.core.netdev_max_backlog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16384</span>
+
+<span class="c1"># Receive and send buffer sizes for UDP (SIP/RTP).</span>
+<span class="c1"># Defaults are 128K-256K. At 500 agents with G.711 codec,</span>
+<span class="c1"># RTP alone pushes ~400 Mbps of small UDP packets.</span>
+<span class="na">net.core.rmem_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16777216</span>
+<span class="na">net.core.wmem_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16777216</span>
+<span class="na">net.core.rmem_default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1048576</span>
+<span class="na">net.core.wmem_default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1048576</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># TCP TUNING (agent web sessions, database connections, AMI)</span>
+<span class="c1"># ============================================================</span>
+<span class="c1"># Increase TCP buffer auto-tuning range</span>
+<span class="na">net.ipv4.tcp_rmem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4096 1048576 16777216</span>
+<span class="na">net.ipv4.tcp_wmem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4096 1048576 16777216</span>
+
+<span class="c1"># Allow more TIME_WAIT sockets. VICIdial&#39;s Perl daemons</span>
+<span class="c1"># create and destroy TCP connections to MySQL constantly.</span>
+<span class="c1"># Default 8192 causes connection failures at scale.</span>
+<span class="na">net.ipv4.tcp_max_tw_buckets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">65536</span>
+
+<span class="c1"># Reuse TIME_WAIT sockets for new connections.</span>
+<span class="c1"># Without this, MySQL connection exhaustion is common</span>
+<span class="c1"># in clusters where multiple servers hit the database.</span>
+<span class="na">net.ipv4.tcp_tw_reuse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="c1"># Reduce TIME_WAIT duration from 60s to 30s</span>
+<span class="na">net.ipv4.tcp_fin_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">30</span>
+
+<span class="c1"># Faster keepalive detection for dead MySQL connections</span>
+<span class="na">net.ipv4.tcp_keepalive_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">300</span>
+<span class="na">net.ipv4.tcp_keepalive_intvl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">30</span>
+<span class="na">net.ipv4.tcp_keepalive_probes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5</span>
+
+<span class="c1"># SYN backlog — prevents dropped connections during</span>
+<span class="c1"># agent login storms (shift change, everyone logs in at once)</span>
+<span class="na">net.ipv4.tcp_max_syn_backlog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8192</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># MEMORY MANAGEMENT</span>
+<span class="c1"># ============================================================</span>
+<span class="c1"># Prefer keeping application data in memory over filesystem cache.</span>
+<span class="c1"># VICIdial&#39;s real-time processes need low-latency memory access</span>
+<span class="c1"># more than they need disk caching.</span>
+<span class="na">vm.swappiness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10</span>
+
+<span class="c1"># Don&#39;t let the system swap aggressively — swap kills VICIdial</span>
+<span class="c1"># real-time performance. A swapping telephony server = dropped calls.</span>
+<span class="na">vm.dirty_ratio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">20</span>
+<span class="na">vm.dirty_background_ratio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># SHARED MEMORY (used by Asterisk and MySQL)</span>
+<span class="c1"># ============================================================</span>
+<span class="na">kernel.shmmax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4294967296</span>
+<span class="na">kernel.shmall</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4294967296</span>
+</code></pre></div>
+
+<p>Apply without reboot:</p>
+<div class="codehilite"><pre><span></span><code>sysctl<span class="w"> </span>--system
+</code></pre></div>
+
+<p><strong>The <code>vm.swappiness</code> story:</strong> We've seen more VICIdial outages caused by swap than by actual hardware failure. Here's what happens: the database server is running well, using 28 GB of 32 GB RAM. The OS decides to start swapping to make room for filesystem cache. MyISAM's data file reads now compete with swap I/O. MySQL slows down. Perl daemons queue up waiting for database responses. Memory usage spikes because of queued processes. More swapping. Within minutes, the system is in a swap death spiral, agents are frozen, and calls are dropping. Setting <code>vm.swappiness = 10</code> tells the kernel to strongly prefer dropping filesystem cache over swapping application memory. On a dedicated VICIdial server, you can set this to <code>1</code>. On a shared database+telephony server, <code>10</code> is the safe choice.</p>
+<h3 id="ulimits-configuration">ulimits Configuration<a class="headerlink" href="#ulimits-configuration" title="Permanent link">&para;</a></h3>
+<p>The kernel-level <code>fs.file-max</code> sets the system-wide ceiling, but each process also has its own limits. VICIdial's Asterisk and MySQL processes need high per-process limits.</p>
+<p>Edit <code>/etc/security/limits.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> VICIdial process limits
+<span class="k">*</span>               soft    nofile          65536
+<span class="k">*</span>               hard    nofile          131072
+<span class="k">*</span>               soft    nproc           65536
+<span class="k">*</span>               hard    nproc           65536
+root            soft    nofile          65536
+root            hard    nofile          131072
+mysql           soft    nofile          65536
+mysql           hard    nofile          131072
+asterisk        soft    nofile          65536
+asterisk        hard    nofile          131072
+</code></pre></div>
+
+<p>For systemd-managed services, the limits.conf values may be ignored. Override at the service level:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># For Asterisk</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/systemd/system/asterisk.service.d/
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/systemd/system/asterisk.service.d/limits.conf<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">[Service]</span>
+<span class="s">LimitNOFILE=131072</span>
+<span class="s">LimitNPROC=65536</span>
+<span class="s">LimitMEMLOCK=infinity</span>
+<span class="s">EOF</span>
+
+<span class="c1"># For MariaDB/MySQL</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/systemd/system/mariadb.service.d/
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/systemd/system/mariadb.service.d/limits.conf<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">[Service]</span>
+<span class="s">LimitNOFILE=131072</span>
+<span class="s">LimitNPROC=65536</span>
+<span class="s">EOF</span>
+
+systemctl<span class="w"> </span>daemon-reload
+</code></pre></div>
+
+<p><strong>How to verify:</strong> After restarting the services, check the actual limits:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Find Asterisk&#39;s PID and check its limits</span>
+cat<span class="w"> </span>/proc/<span class="k">$(</span>pidof<span class="w"> </span>asterisk<span class="k">)</span>/limits<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Max open files&quot;</span>
+<span class="c1"># Should show: Max open files  131072  131072  files</span>
+
+<span class="c1"># Same for MySQL</span>
+cat<span class="w"> </span>/proc/<span class="k">$(</span>pidof<span class="w"> </span>mysqld<span class="k">)</span>/limits<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Max open files&quot;</span>
+</code></pre></div>
+
+<p>If you see <code>1024</code> or <code>4096</code> here, the limits aren't taking effect. Check that PAM is loading <code>pam_limits.so</code> and that systemd overrides are in place.</p>
+<h3 id="cpu-governor-and-power-management">CPU Governor and Power Management<a class="headerlink" href="#cpu-governor-and-power-management" title="Permanent link">&para;</a></h3>
+<p>Modern servers ship with power-saving CPU governors enabled by default. On a telephony server, that means the CPU scales down during "quiet" periods and takes milliseconds to scale back up when a burst of calls arrives. Those milliseconds cause jitter on active calls.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check current governor</span>
+cat<span class="w"> </span>/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+
+<span class="c1"># Set to performance (maximum clock speed always)</span>
+<span class="k">for</span><span class="w"> </span>cpu<span class="w"> </span><span class="k">in</span><span class="w"> </span>/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span>performance<span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$cpu</span>
+<span class="k">done</span>
+
+<span class="c1"># Make persistent via tuned (RHEL/CentOS)</span>
+tuned-adm<span class="w"> </span>profile<span class="w"> </span>throughput-performance
+</code></pre></div>
+
+<p>On bare-metal servers, also disable C-states and P-states in the BIOS. Intel SpeedStep and AMD Cool'n'Quiet are great for power bills, terrible for real-time telephony.</p>
+<hr />
+<h2 id="asterisk-channel-optimization">Asterisk Channel Optimization<a class="headerlink" href="#asterisk-channel-optimization" title="Permanent link">&para;</a></h2>
+<p>Asterisk is the telephony engine. Every call — inbound and outbound — flows through Asterisk. At 500 agents with a 3:1 <a href="/settings/auto-dial-level/">dial ratio</a>, you're pushing 1,500 concurrent channels across your <a href="/glossary/vicidial-cluster/">cluster</a>. Each channel consumes CPU for <a href="/glossary/codec/">codec</a> processing, memory for channel state, and file descriptors for SIP sockets and recording files. Tuning Asterisk for this load means eliminating waste and allocating resources where they matter.</p>
+<h3 id="asteriskconf-and-modulesconf-tuning">asterisk.conf and modules.conf Tuning<a class="headerlink" href="#asteriskconf-and-modulesconf-tuning" title="Permanent link">&para;</a></h3>
+<p>Module loading is controlled in <code>/etc/asterisk/modules.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/modules.conf</span>
+<span class="k">[modules]</span>
+<span class="na">autoload</span><span class="o">=</span><span class="s">yes</span>
+
+<span class="c1">; Disable unused channel drivers to save memory and startup time.</span>
+<span class="c1">; VICIdial only uses SIP (chan_sip or chan_pjsip) and Local channels.</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_iax2.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_skinny.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_unistim.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_mgcp.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_oss.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_alsa.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_phone.so</span>
+
+<span class="c1">; Disable unused applications</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_voicemail.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_queue.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_followme.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; app_directory.so</span>
+
+<span class="c1">; Disable unused codecs you&#39;re not using</span>
+<span class="c1">; (keep the ones your carriers require)</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; codec_speex.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; codec_ilbc.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; codec_g726.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; codec_gsm.so</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; codec_lpc10.so</span>
+</code></pre></div>
+
+<p>And in <code>/etc/asterisk/asterisk.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[options]</span>
+<span class="c1">; Reduce console output overhead</span>
+<span class="na">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+
+<span class="c1">; Cache settings</span>
+<span class="na">cache_record_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+<span class="na">record_cache_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/tmp</span>
+
+<span class="c1">; Max calls per Asterisk instance</span>
+<span class="na">maxcalls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2048</span>
+
+<span class="c1">; Max simultaneous file descriptors Asterisk will use</span>
+<span class="na">maxfiles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">131072</span>
+</code></pre></div>
+
+<p><strong>The <code>noload</code> approach:</strong> Each loaded Asterisk module consumes memory and contributes to startup time and runtime overhead. The default Asterisk installation loads dozens of modules that VICIdial never uses — voicemail, queues, Skinny protocol (for Cisco phones), IAX2, MGCP, and others. Unloading them isn't just housekeeping. On a 500-agent telephony server, the memory freed by not loading unused modules is significant enough to allow 50-100 more concurrent channels.</p>
+<h3 id="sip-channel-configuration-chan_sip">SIP Channel Configuration (chan_sip)<a class="headerlink" href="#sip-channel-configuration-chan_sip" title="Permanent link">&para;</a></h3>
+<p>For high-volume outbound dialing, the SIP stack needs specific tuning. In <code>sip.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="c1">; Reduce SIP transaction timers for faster call teardown.</span>
+<span class="c1">; Default Timer B is 32 seconds — way too long for an outbound</span>
+<span class="c1">; dialer that needs to detect failed calls quickly.</span>
+<span class="na">timer1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">500</span>
+<span class="na">timerb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16000</span>
+
+<span class="c1">; Use TCP for SIP signaling if your carrier supports it.</span>
+<span class="c1">; UDP fragments at high packet rates and drops packets</span>
+<span class="c1">; more readily than TCP under load.</span>
+<span class="c1">; tcpenable = yes</span>
+<span class="c1">; transport = tcp</span>
+
+<span class="c1">; Reduce qualify frequency — VICIdial doesn&#39;t need per-second</span>
+<span class="c1">; peer monitoring. Every 60 seconds is sufficient.</span>
+<span class="na">qualifyfreq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">60</span>
+
+<span class="c1">; Max SIP registrations / concurrent dialogs</span>
+<span class="na">maxexpiry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3600</span>
+<span class="na">defaultexpiry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">360</span>
+
+<span class="c1">; RTP settings — moved to rtp.conf in newer Asterisk</span>
+<span class="c1">; but some versions still read from sip.conf</span>
+<span class="na">rtptimeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">60</span>
+<span class="na">rtpholdtimeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">300</span>
+
+<span class="c1">; Disable DNS SRV lookups for trunks with known IPs</span>
+<span class="na">srvlookup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+
+<span class="c1">; Compact SIP headers — reduces packet size,</span>
+<span class="c1">; matters at 1000+ concurrent calls</span>
+<span class="na">compactheaders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+</code></pre></div>
+
+<h3 id="rtp-port-range-optimization">RTP Port Range Optimization<a class="headerlink" href="#rtp-port-range-optimization" title="Permanent link">&para;</a></h3>
+<p>Each active call uses one RTP port for audio. At 1,500 concurrent channels, you need at least 1,500 available RTP ports. The default range (10000-20000) provides 10,000 ports, which is ample — but the range should be tuned to match your firewall rules and avoid conflicts.</p>
+<p>In <code>rtp.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">rtpstart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10000</span>
+<span class="na">rtpend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">30000</span>
+<span class="c1">; 20,000 ports — handles up to 20,000 concurrent calls</span>
+<span class="c1">; (you&#39;ll run out of CPU long before you run out of ports)</span>
+
+<span class="c1">; Enable strict RTP — drops RTP from unexpected sources.</span>
+<span class="c1">; Prevents RTP bleed and saves CPU on invalid packets.</span>
+<span class="na">strictrtp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+
+<span class="c1">; RTP checksums — disable for performance on trusted networks</span>
+<span class="c1">; rtpchecksums = no</span>
+</code></pre></div>
+
+<p><strong>Firewall alignment:</strong> Whatever range you set here must be open in iptables/firewalld for UDP traffic. Mismatched port ranges between rtp.conf and your firewall are a common cause of one-way audio that only appears under load (when the RTP ports fall outside the firewall-allowed range).</p>
+<h3 id="asterisk-memory-and-threading">Asterisk Memory and Threading<a class="headerlink" href="#asterisk-memory-and-threading" title="Permanent link">&para;</a></h3>
+<p>Asterisk's memory footprint per channel depends primarily on the codec used:</p>
+<table>
+<thead>
+<tr>
+<th>Codec</th>
+<th>Bandwidth per Call</th>
+<th>Memory per Channel</th>
+<th>CPU per Channel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G.711 (ulaw/alaw)</td>
+<td>87.2 kbps</td>
+<td>~120 KB</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>G.729</td>
+<td>31.2 kbps</td>
+<td>~120 KB + transcoding</td>
+<td><strong>High</strong></td>
+</tr>
+<tr>
+<td>GSM</td>
+<td>13.2 kbps</td>
+<td>~120 KB + transcoding</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Opus</td>
+<td>Variable</td>
+<td>~150 KB</td>
+<td>Medium-High</td>
+</tr>
+</tbody>
+</table>
+<p><strong>G.711 is the correct choice for VICIdial outbound dialing.</strong> It uses more bandwidth but requires zero transcoding — Asterisk passes the audio straight through. G.729 halves the bandwidth but requires software transcoding on every channel, which consumes significant CPU. At 500 concurrent calls, G.729 transcoding can consume 4-8 CPU cores that would otherwise handle more channels. Unless bandwidth is genuinely constrained (which it isn't on any modern data center connection), use G.711.</p>
+<p>Calculate per-server capacity:</p>
+<div class="codehilite"><pre><span></span><code>G.711 channels per core ≈ 150-200 (passthrough, no transcoding)
+G.729 channels per core ≈ 15-25 (with transcoding)
+</code></pre></div>
+
+<p>A 16-core telephony server running G.711 can handle approximately 1,500-2,000 concurrent channels — well beyond what you'd allocate to a single server in a properly designed <a href="/blog/vicidial-cluster-guide/">VICIdial cluster</a>. With G.729, that same server tops out at 200-400 channels before CPU saturation.</p>
+<hr />
+<h2 id="mysqlmariadb-performance-tuning">MySQL/MariaDB Performance Tuning<a class="headerlink" href="#mysqlmariadb-performance-tuning" title="Permanent link">&para;</a></h2>
+<p>We covered MySQL optimization in depth in the <a href="/blog/vicidial-mysql-optimization/">VICIdial MySQL Optimization guide</a>, including buffer pool sizing, slow query analysis, MEMORY table conversions, and archival strategies. Here, we'll focus specifically on the performance tuning aspects that interact with OS-level and cluster-level optimization.</p>
+<h3 id="buffer-pool-sizing-for-high-agent-counts">Buffer Pool Sizing for High-Agent Counts<a class="headerlink" href="#buffer-pool-sizing-for-high-agent-counts" title="Permanent link">&para;</a></h3>
+<p>The relationship between agent count and database memory requirements is non-linear. Each agent generates database activity through multiple pathways simultaneously — screen refreshes (SELECT against <code>vicidial_live_agents</code>), call events (INSERT/UPDATE on <code>vicidial_log</code>), <a href="/glossary/hopper/">hopper</a> queries, recording triggers, and status updates. At 500 agents, the database isn't doing 10x the work of 50 agents — it's doing 25-30x, because the interaction between concurrent queries creates lock contention that multiplies with agent count.</p>
+<p><strong>Recommended MySQL memory allocation by deployment size:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Agents</th>
+<th>Dedicated DB RAM</th>
+<th>key_buffer_size</th>
+<th>max_heap_table_size</th>
+<th>sort_buffer_size</th>
+<th>max_connections</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50</td>
+<td>16 GB</td>
+<td>512M</td>
+<td>64M</td>
+<td>4M</td>
+<td>2000</td>
+</tr>
+<tr>
+<td>100</td>
+<td>32 GB</td>
+<td>1024M</td>
+<td>128M</td>
+<td>8M</td>
+<td>3000</td>
+</tr>
+<tr>
+<td>200</td>
+<td>32 GB</td>
+<td>2048M</td>
+<td>128M</td>
+<td>8M</td>
+<td>4000</td>
+</tr>
+<tr>
+<td>300</td>
+<td>64 GB</td>
+<td>3072M</td>
+<td>256M</td>
+<td>16M</td>
+<td>5000</td>
+</tr>
+<tr>
+<td>500+</td>
+<td>64-128 GB</td>
+<td>4096M</td>
+<td>256M</td>
+<td>16M</td>
+<td>6000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why <code>max_connections</code> scales with agents:</strong> In a VICIdial cluster, every telephony server, web server, and cron process maintains multiple persistent connections to the database. A single telephony server running the standard set of VICIdial daemons holds 40-60 active database connections during peak operation. A single web server handling 100 agent sessions holds another 100-200 connections (each agent's browser polls the server, which polls the database). At 500 agents across 4 telephony servers and 2 web servers, you're looking at 600-1,000 active connections routinely, with spikes to 2,000+ during shift changes.</p>
+<h3 id="query-cache-disable-it">Query Cache: Disable It<a class="headerlink" href="#query-cache-disable-it" title="Permanent link">&para;</a></h3>
+<p>This deserves its own subsection because it's counterintuitive. MySQL's query cache sounds like it should help — it caches the results of SELECT queries and returns them instantly if the same query runs again. For read-heavy applications with infrequent writes, it's a significant performance boost.</p>
+<p>VICIdial is not that application. VICIdial writes to its core tables multiple times per second. Every write to a table invalidates every cached query result for that table. The query cache becomes a high-overhead bookkeeping system that caches results only to immediately invalidate them. The cache lock itself becomes a contention point.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">query_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+<span class="na">query_cache_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+</code></pre></div>
+
+<p>This is not optional. Every VICIdial MySQL optimization guide from the community arrives at the same conclusion. The query cache hurts VICIdial performance. Turn it off.</p>
+<h3 id="memory-tables-for-real-time-performance">MEMORY Tables for Real-Time Performance<a class="headerlink" href="#memory-tables-for-real-time-performance" title="Permanent link">&para;</a></h3>
+<p>The tables that VICIdial queries most frequently — <code>vicidial_live_agents</code>, <code>vicidial_auto_calls</code>, <code>vicidial_hopper</code>, <code>vicidial_live_inbound_agents</code>, <code>vicidial_live_sip_channels</code> — should run on the MEMORY storage engine. MEMORY tables live entirely in RAM, eliminate disk I/O for the hottest queries, and reduce lock duration from milliseconds to microseconds.</p>
+<p>The full conversion process is detailed in our <a href="/blog/vicidial-mysql-optimization/">MySQL optimization guide</a>. The critical sizing parameter:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="c1"># MEMORY table size limit.</span>
+<span class="c1"># Must accommodate ALL MEMORY tables simultaneously.</span>
+<span class="c1"># At 500 agents: vicidial_live_agents ≈ 2-4 MB,</span>
+<span class="c1"># vicidial_auto_calls ≈ 1-2 MB, vicidial_hopper ≈ 1-5 MB,</span>
+<span class="c1"># others ≈ 1-2 MB. Total: ~10-15 MB actual use.</span>
+<span class="c1"># Set much higher for safety margin and tmp table operations.</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+</code></pre></div>
+
+<p>When a MEMORY table hits the <code>max_heap_table_size</code> ceiling, INSERTs fail. In VICIdial, this manifests as agents unable to log in (can't INSERT into <code>vicidial_live_agents</code>) or calls not dialing (can't INSERT into <code>vicidial_auto_calls</code>). The error log will show "table is full" messages. Set the limit high enough that you never hit it.</p>
+<h3 id="concurrent-insert-optimization">Concurrent Insert Optimization<a class="headerlink" href="#concurrent-insert-optimization" title="Permanent link">&para;</a></h3>
+<p>MyISAM supports a feature called concurrent inserts — new rows can be inserted at the end of a table while SELECT queries read from it, without table-level locking. This is a significant performance feature for VICIdial's mixed read/write workload, but it requires a specific setting:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">concurrent_insert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+</code></pre></div>
+
+<p>The values: <code>0</code> = disabled, <code>1</code> = enabled only for tables with no deleted rows (gaps), <code>2</code> = enabled always, inserting at end of table regardless of gaps. VICIdial tables frequently have deleted rows (archival, hopper drains), so <code>concurrent_insert = 2</code> is necessary to get the benefit consistently.</p>
+<blockquote>
+<p><strong>Running 200+ Agents and the Database Is Your Bottleneck?</strong>
+ViciStack deployments include dedicated database servers with pre-tuned MySQL, MEMORY table conversions, and weekly performance reviews. We've solved this problem hundreds of times. <a href="/free-audit/">Get a Free Performance Audit →</a></p>
+</blockquote>
+<hr />
+<h2 id="apache-vs-nginx-for-vicidial-web">Apache vs Nginx for VICIdial Web<a class="headerlink" href="#apache-vs-nginx-for-vicidial-web" title="Permanent link">&para;</a></h2>
+<p>VICIdial's agent interface runs through Apache/Nginx serving PHP scripts. Every logged-in agent has a browser session that polls the server every second for real-time data (agent status, call information, script content, callback alerts). At 500 agents, that's 500 HTTP requests per second just from agent polling — before managers load reports, before supervisors check real-time dashboards, before any API calls.</p>
+<h3 id="apache-the-default-and-its-problems">Apache: The Default (and Its Problems)<a class="headerlink" href="#apache-the-default-and-its-problems" title="Permanent link">&para;</a></h3>
+<p>VICIdial's install scripts configure Apache with <code>mod_php</code> (prefork MPM). This is the simplest setup and works fine under 100 agents. The architecture: each incoming HTTP request gets its own Apache child process, and each child process has a PHP interpreter embedded in it. The problem at scale is memory.</p>
+<p>A single Apache+mod_php process with VICIdial loaded uses 30-60 MB of RAM. At 500 concurrent connections (one per agent, plus overhead), you need 500 Apache children. That's 15-30 GB of RAM just for the web server — on top of whatever else the server is running.</p>
+<p><strong>Default Apache configuration (what VICIdial installs):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c"># /etc/httpd/conf/httpd.conf — prefork MPM defaults</span>
+<span class="nt">&lt;IfModule</span><span class="w"> </span><span class="s">prefork.c</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">StartServers</span><span class="w">         </span><span class="m">8</span>
+<span class="w">    </span><span class="nb">MinSpareServers</span><span class="w">      </span><span class="m">5</span>
+<span class="w">    </span><span class="nb">MaxSpareServers</span><span class="w">     </span><span class="m">20</span>
+<span class="w">    </span><span class="nb">ServerLimit</span><span class="w">        </span><span class="m">256</span>
+<span class="w">    </span><span class="nb">MaxClients</span><span class="w">         </span><span class="m">256</span>
+<span class="w">    </span><span class="nb">MaxRequestsPerChild</span><span class="w">  </span><span class="m">4000</span>
+<span class="nt">&lt;/IfModule&gt;</span>
+</code></pre></div>
+
+<p><code>MaxClients 256</code> means Apache can handle 256 concurrent connections. Above that, requests queue. At 300 agents all polling simultaneously, you exceed the limit and agents see timeouts.</p>
+<p><strong>Tuned Apache configuration for 500 agents:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">&lt;IfModule</span><span class="w"> </span><span class="s">prefork.c</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">StartServers</span><span class="w">         </span><span class="m">50</span>
+<span class="w">    </span><span class="nb">MinSpareServers</span><span class="w">      </span><span class="m">25</span>
+<span class="w">    </span><span class="nb">MaxSpareServers</span><span class="w">      </span><span class="m">75</span>
+<span class="w">    </span><span class="nb">ServerLimit</span><span class="w">         </span><span class="m">600</span>
+<span class="w">    </span><span class="nb">MaxClients</span><span class="w">          </span><span class="m">600</span>
+<span class="w">    </span><span class="nb">MaxRequestsPerChild</span><span class="w">  </span><span class="m">10000</span>
+<span class="nt">&lt;/IfModule&gt;</span>
+
+<span class="c"># Disable unused modules</span>
+<span class="c"># Every loaded module adds memory to each child process</span>
+<span class="nb">LoadModule</span><span class="w"> </span>status_module<span class="w"> </span>modules/mod_status.so
+<span class="c"># Comment out or remove:</span>
+<span class="c"># LoadModule dav_module modules/mod_dav.so</span>
+<span class="c"># LoadModule dav_fs_module modules/mod_dav_fs.so</span>
+<span class="c"># LoadModule autoindex_module modules/mod_autoindex.so</span>
+<span class="c"># LoadModule negotiation_module modules/mod_negotiation.so</span>
+<span class="c"># LoadModule userdir_module modules/mod_userdir.so</span>
+
+<span class="c"># Connection tuning</span>
+<span class="nb">KeepAlive</span><span class="w"> </span><span class="k">On</span>
+<span class="nb">MaxKeepAliveRequests</span><span class="w"> </span><span class="m">100</span>
+<span class="nb">KeepAliveTimeout</span><span class="w"> </span><span class="m">5</span>
+
+<span class="c"># Timeout for stale connections</span>
+<span class="nb">Timeout</span><span class="w"> </span><span class="m">60</span>
+</code></pre></div>
+
+<p><strong>Memory budget:</strong> 600 children × 50 MB average = 30 GB. You need a web server (or web servers) with enough RAM to support this. In a <a href="/blog/vicidial-cluster-guide/">VICIdial cluster</a>, splitting agents across two web servers (300 agents each) cuts the per-server requirement in half.</p>
+<h3 id="nginx-php-fpm-the-better-architecture">Nginx + PHP-FPM: The Better Architecture<a class="headerlink" href="#nginx-php-fpm-the-better-architecture" title="Permanent link">&para;</a></h3>
+<p>Nginx with PHP-FPM separates the web server from PHP processing. Nginx handles HTTP connections using an event-driven model (thousands of connections with minimal memory), and forwards PHP requests to a pool of PHP-FPM worker processes. This architecture uses dramatically less memory because:</p>
+<ol>
+<li>Nginx connection handling: ~2-10 KB per connection (vs. 30-60 MB per Apache child)</li>
+<li>PHP-FPM workers: only as many as you need for concurrent PHP execution (not one per connection)</li>
+<li>Static files (CSS, JS, images) served directly by Nginx without touching PHP at all</li>
+</ol>
+<p><strong>Nginx configuration for VICIdial:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/nginx/conf.d/vicidial.conf</span>
+
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">dialer.example.com</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www/html</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">index</span><span class="w"> </span><span class="s">index.php</span><span class="w"> </span><span class="s">index.html</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># Static file caching — agent interface assets don&#39;t change</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="sr">*</span><span class="w"> </span><span class="s">\.(js|css|png|jpg|gif|ico|woff|woff2)</span>$<span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">7d</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">immutable&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1"># PHP processing via FPM</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.php$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">fastcgi_pass</span><span class="w"> </span><span class="s">unix:/run/php-fpm/www.sock</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_param</span><span class="w"> </span><span class="s">SCRIPT_FILENAME</span><span class="w"> </span><span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">include</span><span class="w"> </span><span class="s">fastcgi_params</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1"># VICIdial agent polling generates thousands of</span>
+<span class="w">        </span><span class="c1"># requests/sec. Keep connections to FPM alive.</span>
+<span class="w">        </span><span class="kn">fastcgi_keep_conn</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1"># Timeout tuning — some VICIdial report scripts</span>
+<span class="w">        </span><span class="c1"># take 30+ seconds on large datasets</span>
+<span class="w">        </span><span class="kn">fastcgi_read_timeout</span><span class="w"> </span><span class="mi">120</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_send_timeout</span><span class="w"> </span><span class="mi">60</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1"># Connection tuning</span>
+<span class="w">    </span><span class="kn">keepalive_timeout</span><span class="w"> </span><span class="mi">65</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">keepalive_requests</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># Buffer tuning — VICIdial responses are small</span>
+<span class="w">    </span><span class="c1"># (HTML fragments, JSON data for agent screens)</span>
+<span class="w">    </span><span class="kn">client_body_buffer_size</span><span class="w"> </span><span class="mi">16k</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">client_max_body_size</span><span class="w"> </span><span class="mi">50m</span><span class="p">;</span><span class="w">  </span><span class="c1"># For list uploads</span>
+
+<span class="w">    </span><span class="c1"># Gzip compression — reduces bandwidth for agent polling</span>
+<span class="w">    </span><span class="kn">gzip</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">gzip_types</span><span class="w"> </span><span class="s">text/html</span><span class="w"> </span><span class="s">text/css</span><span class="w"> </span><span class="s">application/javascript</span><span class="w"> </span><span class="s">text/xml</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">gzip_min_length</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Nginx worker configuration (<code>/etc/nginx/nginx.conf</code>):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">worker_processes</span><span class="w"> </span><span class="s">auto</span><span class="p">;</span><span class="w">  </span><span class="c1"># One worker per CPU core</span>
+<span class="k">worker_rlimit_nofile</span><span class="w"> </span><span class="mi">65536</span><span class="p">;</span>
+
+<span class="k">events</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">worker_connections</span><span class="w"> </span><span class="mi">4096</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">use</span><span class="w"> </span><span class="s">epoll</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">multi_accept</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">http</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1"># Connection pooling to PHP-FPM</span>
+<span class="w">    </span><span class="kn">upstream</span><span class="w"> </span><span class="s">php-fpm</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">server</span><span class="w"> </span><span class="s">unix:/run/php-fpm/www.sock</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">keepalive</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1"># Reduce logging overhead for agent polling requests</span>
+<span class="w">    </span><span class="c1"># (every agent generates 1 request/second — that&#39;s a LOT of log lines)</span>
+<span class="w">    </span><span class="kn">map</span><span class="w"> </span><span class="nv">$request_uri</span><span class="w"> </span><span class="nv">$loggable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">~*vicidial/vdc_db_query\.php</span><span class="w">  </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">default</span><span class="w">                        </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kn">access_log</span><span class="w"> </span><span class="s">/var/log/nginx/access.log</span><span class="w"> </span><span class="s">combined</span><span class="w"> </span><span class="s">if=</span><span class="nv">$loggable</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="php-fpm-tuning">PHP-FPM Tuning<a class="headerlink" href="#php-fpm-tuning" title="Permanent link">&para;</a></h3>
+<p>Whether you use Apache+mod_php or Nginx+PHP-FPM, the PHP configuration matters. With PHP-FPM, you have direct control over the process pool:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/php-fpm.d/www.conf</span>
+
+<span class="k">[www]</span>
+<span class="na">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">apache</span>
+<span class="na">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">apache</span>
+
+<span class="c1">; Use a Unix socket — faster than TCP for same-server communication</span>
+<span class="na">listen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/run/php-fpm/www.sock</span>
+
+<span class="c1">; Static process management — predictable resource usage.</span>
+<span class="c1">; Dynamic is fine for web apps. VICIdial&#39;s constant polling</span>
+<span class="c1">; means you always need all your workers, so pre-spawn them.</span>
+<span class="na">pm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">static</span>
+<span class="na">pm.max_children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128</span>
+
+<span class="c1">; At 500 agents polling every second, you need enough FPM</span>
+<span class="c1">; workers to handle the concurrent requests. Each agent poll</span>
+<span class="c1">; takes ~5-20ms of PHP execution time.</span>
+<span class="c1">; Throughput: 128 workers × (1000ms / 15ms avg) = ~8,500 req/sec</span>
+<span class="c1">; Required: 500 agents × 1 req/sec = 500 req/sec (minimum)</span>
+<span class="c1">; The 128 workers provide massive headroom for report queries</span>
+<span class="c1">; and burst traffic.</span>
+
+<span class="c1">; Recycle workers after 10,000 requests to prevent memory leaks</span>
+<span class="na">pm.max_requests</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10000</span>
+
+<span class="c1">; PHP settings for VICIdial</span>
+<span class="na">php_admin_value[memory_limit]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">php_admin_value[max_execution_time]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">120</span>
+<span class="na">php_admin_value[max_input_time]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">120</span>
+<span class="na">php_admin_value[upload_max_filesize]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">50M</span>
+<span class="na">php_admin_value[post_max_size]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">50M</span>
+
+<span class="c1">; OPcache — cache compiled PHP bytecode.</span>
+<span class="c1">; VICIdial serves the same PHP files thousands of times per second.</span>
+<span class="c1">; OPcache eliminates the parsing/compilation overhead.</span>
+<span class="na">php_admin_value[opcache.enable]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">php_admin_value[opcache.memory_consumption]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128</span>
+<span class="na">php_admin_value[opcache.max_accelerated_files]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10000</span>
+<span class="na">php_admin_value[opcache.validate_timestamps]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+<span class="c1">; Set validate_timestamps=0 in production. VICIdial PHP files</span>
+<span class="c1">; don&#39;t change between SVN updates, and disabling timestamp</span>
+<span class="c1">; checks saves a stat() call per request.</span>
+</code></pre></div>
+
+<p><strong>The Apache vs Nginx verdict:</strong> For new deployments at 200+ agents, Nginx + PHP-FPM is the right choice. It uses 60-70% less memory, handles connection surges more gracefully, and the static file serving is dramatically faster. For existing Apache deployments that work, switching is a weekend project — and the performance gain scales with agent count. At 100 agents, the difference is marginal. At 500, it's the difference between needing one web server and needing two.</p>
+<p><strong>One caveat:</strong> VICIdial's <code>.htaccess</code> files and some <code>mod_rewrite</code> rules won't work in Nginx. You need to convert them to Nginx <code>location</code> and <code>rewrite</code> directives. Test thoroughly in staging before cutting over.</p>
+<hr />
+<h2 id="process-management">Process Management<a class="headerlink" href="#process-management" title="Permanent link">&para;</a></h2>
+<p>VICIdial runs its core processes inside GNU <code>screen</code> sessions. The main keepalive script (<code>AST_VDauto_dial.pl</code>, <code>AST_manager_listen.pl</code>, <code>AST_update.pl</code>, and dozens more) are launched inside screen and monitored by cron-driven keepalive scripts. When a process dies, the keepalive script is supposed to restart it. In practice, this system has gaps that become critical at scale.</p>
+<h3 id="understanding-vicidials-screen-architecture">Understanding VICIdial's Screen Architecture<a class="headerlink" href="#understanding-vicidials-screen-architecture" title="Permanent link">&para;</a></h3>
+<p>When VICIdial starts, it launches a screen session (typically named <code>ASTscreen</code>) containing multiple windows, each running a critical Perl daemon:</p>
+<table>
+<thead>
+<tr>
+<th>Process</th>
+<th>Purpose</th>
+<th>Impact if Dead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AST_manager_listen.pl</code></td>
+<td>Listens to Asterisk AMI events</td>
+<td><strong>Complete dialer failure</strong> — no calls placed or tracked</td>
+</tr>
+<tr>
+<td><code>AST_VDauto_dial.pl</code></td>
+<td>Auto-dial engine</td>
+<td>Outbound dialing stops</td>
+</tr>
+<tr>
+<td><code>AST_VDremote_agents.pl</code></td>
+<td>Remote agent management</td>
+<td>Remote/PJSIP agents stop receiving calls</td>
+</tr>
+<tr>
+<td><code>AST_update.pl</code></td>
+<td>Updates real-time agent/call data</td>
+<td>Real-time reports freeze, agent screens stale</td>
+</tr>
+<tr>
+<td><code>AST_VDadapt.pl</code></td>
+<td>Adaptive dial-level calculations</td>
+<td>Dial ratios stop adjusting, over/under-dialing</td>
+</tr>
+<tr>
+<td><code>AST_VDhopper.pl</code></td>
+<td>Fills the <a href="/glossary/hopper/">hopper</a></td>
+<td>Hopper drains, dialing stops when empty</td>
+</tr>
+<tr>
+<td><code>AST_VDauto_dial_FILL.pl</code></td>
+<td>Supplemental dialing</td>
+<td>Reduced throughput</td>
+</tr>
+<tr>
+<td><code>AST_conf_update.pl</code></td>
+<td>Conference bridge management</td>
+<td>Agent-to-call bridging fails</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The failure mode nobody talks about:</strong> Screen itself can die. If the <code>ASTscreen</code> session is killed (OOM killer, manual <code>kill</code>, system resource exhaustion), every process inside it dies simultaneously. The keepalive scripts run via cron, typically every minute. That means up to 60 seconds of complete dialer downtime before the keepalives detect the failure and restart the screen session. At 500 agents and a 3:1 <a href="/settings/auto-dial-level/">dial ratio</a>, 60 seconds of downtime means ~1,500 calls that don't get placed and ~500 agents sitting idle.</p>
+<h3 id="hardening-the-keepalive-system">Hardening the Keepalive System<a class="headerlink" href="#hardening-the-keepalive-system" title="Permanent link">&para;</a></h3>
+<p>VICIdial's standard keepalive cron entries look like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="gu">##</span># recording hepatic
+<span class="k">*</span> * <span class="gs">* *</span> * /usr/share/astguiclient/AST_CRON_audio_1_move_mix.pl
+<span class="k">*</span> * <span class="gs">* *</span> * /usr/share/astguiclient/AST_CRON_audio_1_move_VDonly.pl
+<span class="gu">##</span># keepalive processes
+<span class="k">*</span> * <span class="gs">* *</span> * /usr/share/astguiclient/ADMIN_keepalive_ALL.pl --cu3way
+</code></pre></div>
+
+<p><code>ADMIN_keepalive_ALL.pl</code> is the master keepalive. It checks whether each expected process is running and restarts anything that's dead. The <code>--cu3way</code> flag includes the three-way call process. This runs every minute via cron.</p>
+<p><strong>Improving keepalive response time:</strong></p>
+<p>For 500+ agent deployments, one-minute keepalive intervals are too slow. Add a secondary check at 30-second intervals:</p>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> Primary keepalive — every minute
+<span class="k">*</span> * <span class="gs">* *</span> * /usr/share/astguiclient/ADMIN_keepalive_ALL.pl --cu3way
+<span class="gh">#</span> Secondary keepalive — 30 seconds offset
+<span class="k">*</span> * <span class="gs">* *</span> * sleep 30 &amp;&amp; /usr/share/astguiclient/ADMIN_keepalive_ALL.pl --cu3way
+</code></pre></div>
+
+<p>This ensures no process stays dead for more than 30 seconds. The <code>sleep 30 &amp;&amp;</code> trick runs the keepalive at the :30 second mark of each minute, interleaving with the standard :00 execution.</p>
+<h3 id="oom-killer-protection">OOM Killer Protection<a class="headerlink" href="#oom-killer-protection" title="Permanent link">&para;</a></h3>
+<p>The Linux OOM (Out of Memory) killer terminates processes when the system runs out of memory. It picks the process using the most memory — which on a VICIdial server is often MySQL or Asterisk. Both are catastrophic to lose.</p>
+<p>Protect critical processes:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Find PIDs and set OOM score adjustment</span>
+<span class="c1"># -1000 = never kill, -999 to -1 = less likely to kill</span>
+<span class="nb">echo</span><span class="w"> </span>-1000<span class="w"> </span>&gt;<span class="w"> </span>/proc/<span class="k">$(</span>pidof<span class="w"> </span>asterisk<span class="k">)</span>/oom_score_adj
+<span class="nb">echo</span><span class="w"> </span>-1000<span class="w"> </span>&gt;<span class="w"> </span>/proc/<span class="k">$(</span>pidof<span class="w"> </span>mysqld<span class="k">)</span>/oom_score_adj
+</code></pre></div>
+
+<p>Make this persistent by adding it to your startup scripts or systemd unit overrides:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/systemd/system/asterisk.service.d/oom.conf</span>
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">OOMScoreAdjust</span><span class="o">=</span>-1000
+
+<span class="c1"># /etc/systemd/system/mariadb.service.d/oom.conf</span>
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">OOMScoreAdjust</span><span class="o">=</span>-1000
+</code></pre></div>
+
+<p><strong>The real solution:</strong> Don't run out of memory in the first place. If the OOM killer is firing, you're either under-provisioned or leaking memory somewhere. But protecting Asterisk and MySQL buys you time to diagnose while the system stays up.</p>
+<h3 id="process-monitoring-with-custom-checks">Process Monitoring with Custom Checks<a class="headerlink" href="#process-monitoring-with-custom-checks" title="Permanent link">&para;</a></h3>
+<p>Beyond VICIdial's built-in keepalives, add process count verification:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/vicidial-process-check.sh</span>
+<span class="c1"># Run via cron every 5 minutes</span>
+
+<span class="nv">EXPECTED_PROCESSES</span><span class="o">=(</span>
+<span class="w">    </span><span class="s2">&quot;AST_manager_listen.pl&quot;</span>
+<span class="w">    </span><span class="s2">&quot;AST_VDauto_dial.pl&quot;</span>
+<span class="w">    </span><span class="s2">&quot;AST_update.pl&quot;</span>
+<span class="w">    </span><span class="s2">&quot;AST_VDadapt.pl&quot;</span>
+<span class="w">    </span><span class="s2">&quot;AST_VDhopper.pl&quot;</span>
+<span class="w">    </span><span class="s2">&quot;AST_conf_update.pl&quot;</span>
+<span class="o">)</span>
+
+<span class="k">for</span><span class="w"> </span>proc<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">EXPECTED_PROCESSES</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">COUNT</span><span class="o">=</span><span class="k">$(</span>pgrep<span class="w"> </span>-fc<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$proc</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COUNT</span><span class="s2">&quot;</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CRITICAL: </span><span class="nv">$proc</span><span class="s2"> is not running&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;VICIdial Process Alert: </span><span class="nv">$proc</span><span class="s2"> DOWN&quot;</span><span class="w"> </span>ops@example.com
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+
+<span class="c1"># Check screen session exists</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span>screen<span class="w"> </span>-list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">&quot;ASTscreen&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CRITICAL: ASTscreen session is missing&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;VICIdial Alert: Screen Session DOWN&quot;</span><span class="w"> </span>ops@example.com
+<span class="k">fi</span>
+</code></pre></div>
+
+<hr />
+<h2 id="capacity-planning-agents-to-server-resources">Capacity Planning: Agents to Server Resources<a class="headerlink" href="#capacity-planning-agents-to-server-resources" title="Permanent link">&para;</a></h2>
+<p>This is the section people skip during planning and regret during production. Capacity planning for VICIdial is not guesswork — there are concrete formulas based on call volume, agent count, recording requirements, and the architectural role of each server.</p>
+<h3 id="the-core-formula">The Core Formula<a class="headerlink" href="#the-core-formula" title="Permanent link">&para;</a></h3>
+<p>Every VICIdial cluster has three resource-consumption dimensions:</p>
+<ol>
+<li><strong>Telephony (Asterisk):</strong> CPU-bound. Scales with concurrent calls, not agents. A paused agent uses zero telephony resources.</li>
+<li><strong>Web (Apache/Nginx + PHP):</strong> Memory-bound. Scales linearly with logged-in agents regardless of call activity.</li>
+<li><strong>Database (MySQL):</strong> I/O-bound at scale. Scales non-linearly with agents due to lock contention.</li>
+</ol>
+<p><strong>Telephony server sizing:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Concurrent</span><span class="w"> </span><span class="nv">calls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">Agents</span><span class="w"> </span>×<span class="w"> </span><span class="nv">Dial</span><span class="w"> </span><span class="nv">ratio</span><span class="w"> </span>×<span class="w"> </span><span class="ss">(</span><span class="nv">Talk</span><span class="w"> </span><span class="nv">time</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="ss">(</span><span class="nv">Talk</span><span class="w"> </span><span class="nv">time</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">Wrap</span><span class="w"> </span><span class="nv">time</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">Pause</span><span class="w"> </span><span class="nv">time</span><span class="ss">))</span>
+</code></pre></div>
+
+<p>Example for 500 agents, outbound:
+- <a href="/settings/auto-dial-level/">Auto-dial level</a>: 3.0
+- Average talk time: 90 seconds
+- Average wrap time: 15 seconds
+- Average pause time: 5 seconds
+- Agent utilization: 90 / (90 + 15 + 5) = 82%</p>
+<div class="codehilite"><pre><span></span><code>Concurrent calls = 500 × 3.0 × 0.82 = 1,230 concurrent calls
+</code></pre></div>
+
+<p>At G.711 with no transcoding: <strong>1,230 calls ÷ 200 calls/core ≈ 7 cores</strong> of raw telephony processing. Add 30% for Asterisk overhead (AMI, recording initiation, channel management): <strong>~9 cores.</strong></p>
+<p>Spread across servers: 3 telephony servers with 8 cores each provides 24 cores of capacity — plenty of headroom for spikes, recording processing, and the OS overhead.</p>
+<p><strong>Web server sizing:</strong></p>
+<div class="codehilite"><pre><span></span><code>Required memory = Agents × Memory per agent session
+</code></pre></div>
+
+<p>With Apache+mod_php: <code>500 × 50 MB = 25 GB</code>
+With Nginx+PHP-FPM: <code>500 × 5 MB (Nginx) + 128 workers × 60 MB (PHP-FPM) = 10 GB</code></p>
+<p>Web server CPU is rarely the bottleneck — the PHP scripts execute in milliseconds. Memory is the constraint.</p>
+<p><strong>Database server sizing:</strong></p>
+<div class="codehilite"><pre><span></span><code>Minimum RAM = key_buffer_size + max_heap_table_size + (max_connections × per_thread_buffers) + OS reserve
+</code></pre></div>
+
+<p>For 500 agents:</p>
+<div class="codehilite"><pre><span></span><code><span class="mf">4096</span><span class="n">M</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">256</span><span class="n">M</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mf">6000</span><span class="w"> </span><span class="err">×</span><span class="w"> </span><span class="mf">0.5</span><span class="n">M</span><span class="w"> </span><span class="n">average</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">8192</span><span class="n">M</span><span class="w"> </span><span class="n">OS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">~</span><span class="mf">15.5</span><span class="w"> </span><span class="n">GB</span><span class="w"> </span><span class="n">minimum</span>
+<span class="n">Recommended</span><span class="p">:</span><span class="w"> </span><span class="mf">64</span><span class="w"> </span><span class="n">GB</span><span class="w"> </span><span class="p">(</span><span class="kr">to</span><span class="w"> </span><span class="n">maximize</span><span class="w"> </span><span class="n">OS</span><span class="w"> </span><span class="n">filesystem</span><span class="w"> </span><span class="n">cache</span><span class="w"> </span><span class="kr">for</span><span class="w"> </span><span class="n">MyISAM</span><span class="w"> </span><span class="mf">.</span><span class="n">MYD</span><span class="w"> </span><span class="n">files</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Storage: NVMe SSDs, not SATA SSDs, not spinning disks. At 500 agents, the database performs thousands of random I/O operations per second. NVMe latency (50-100 μs) vs SATA SSD (200-500 μs) vs spinning disk (5,000-10,000 μs) directly translates to query latency. The investment in NVMe storage pays for itself in reduced server count because each server can handle more load before I/O-bound contention degrades performance.</p>
+<h3 id="server-role-allocation-at-scale">Server Role Allocation at Scale<a class="headerlink" href="#server-role-allocation-at-scale" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Deployment Size</th>
+<th>Telephony Servers</th>
+<th>Web Servers</th>
+<th>Database Server</th>
+<th>Total Servers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50 agents</td>
+<td>1 (combined)</td>
+<td>1 (combined)</td>
+<td>1 (combined)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>100 agents</td>
+<td>1-2</td>
+<td>1</td>
+<td>1 (dedicated)</td>
+<td>3-4</td>
+</tr>
+<tr>
+<td>200 agents</td>
+<td>2-3</td>
+<td>1-2</td>
+<td>1 (dedicated)</td>
+<td>4-6</td>
+</tr>
+<tr>
+<td>300 agents</td>
+<td>3-4</td>
+<td>2</td>
+<td>1 (dedicated, 64 GB)</td>
+<td>6-7</td>
+</tr>
+<tr>
+<td>500 agents</td>
+<td>4-6</td>
+<td>2-3</td>
+<td>1 (dedicated, 64-128 GB)</td>
+<td>7-10</td>
+</tr>
+<tr>
+<td>800+ agents</td>
+<td>6-8</td>
+<td>3-4</td>
+<td>1-2 (primary + replica)</td>
+<td>10-14</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The database stays single.</strong> VICIdial cannot cluster its database. You can add a replica for reporting (see <a href="/blog/vicidial-mysql-optimization/">MySQL optimization guide</a>), but the primary database is a single instance. This is VICIdial's fundamental scaling constraint, and it's why database server hardware should be the most powerful machine in the cluster — faster CPUs, more RAM, NVMe storage, and battery-backed RAID.</p>
+<h3 id="bandwidth-planning">Bandwidth Planning<a class="headerlink" href="#bandwidth-planning" title="Permanent link">&para;</a></h3>
+<p>VICIdial's bandwidth consumption is dominated by RTP audio. SIP signaling, database queries, and web traffic are negligible by comparison.</p>
+<div class="codehilite"><pre><span></span><code>Bandwidth per call (G.711) = 87.2 kbps × 2 (in + out) = 174.4 kbps
+Bandwidth at 1,230 concurrent calls = 1,230 × 174.4 kbps = 214 Mbps
+</code></pre></div>
+
+<p>Add recording storage bandwidth (calls being recorded to disk): approximately 87 kbps per recorded call. If 100% of calls are recorded:</p>
+<div class="codehilite"><pre><span></span><code>Recording bandwidth = 1,230 × 87 kbps = 107 Mbps additional disk I/O
+Total: ~320 Mbps sustained
+</code></pre></div>
+
+<p>A single gigabit ethernet port handles this. But if your telephony servers have both management traffic and RTP on the same NIC, consider dedicated NICs for RTP traffic at this scale. Network congestion on a shared NIC manifests as jitter and packet loss — audible quality problems on active calls.</p>
+<h3 id="recording-storage-planning">Recording Storage Planning<a class="headerlink" href="#recording-storage-planning" title="Permanent link">&para;</a></h3>
+<p>Call recordings are the other storage dimension that catches people off guard:</p>
+<div class="codehilite"><pre><span></span><code>Storage per recording minute (G.711 WAV) = ~960 KB/min
+Storage per recording minute (compressed MP3/OGG) = ~120-240 KB/min
+</code></pre></div>
+
+<p>At 500 agents, 8 hours/day, 82% utilization, average 90-second calls:</p>
+<div class="codehilite"><pre><span></span><code>Calls per day = 500 × (8 × 3600) / (90 + 15 + 5) × 0.82 ≈ 120,000 calls/day
+Recording minutes per day = 120,000 × 1.5 min = 180,000 minutes
+Storage per day (WAV) = 180,000 × 0.96 MB = ~173 GB/day
+Storage per day (MP3) = 180,000 × 0.2 MB = ~36 GB/day
+Storage per month (MP3) = ~1 TB/month
+</code></pre></div>
+
+<p>Plan your recording storage accordingly. Many operations keep 90 days of recordings online, which means 3 TB of fast storage at 500 agents. Archive older recordings to cheaper storage (NFS, S3, tape).</p>
+<blockquote>
+<p><strong>Let Us Size Your Cluster.</strong>
+ViciStack provides capacity planning as part of every deployment — we calculate server specs, bandwidth requirements, and storage needs based on your actual campaign parameters. No undersizing, no overspending. <a href="/free-audit/">Get Your Free Audit →</a></p>
+</blockquote>
+<hr />
+<h2 id="monitoring-and-alerting">Monitoring and Alerting<a class="headerlink" href="#monitoring-and-alerting" title="Permanent link">&para;</a></h2>
+<p>You cannot tune what you cannot measure. A 500-agent VICIdial deployment without monitoring is a ticking clock. Problems at this scale don't announce themselves gradually — they hit a tipping point and cascade within minutes.</p>
+<h3 id="what-to-monitor">What to Monitor<a class="headerlink" href="#what-to-monitor" title="Permanent link">&para;</a></h3>
+<p><strong>System-level metrics (every server):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Warning Threshold</th>
+<th>Critical Threshold</th>
+<th>Tool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU usage</td>
+<td>&gt; 70% sustained</td>
+<td>&gt; 90% sustained</td>
+<td>Prometheus node_exporter, Nagios NRPE</td>
+</tr>
+<tr>
+<td>Memory usage</td>
+<td>&gt; 80%</td>
+<td>&gt; 90%</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Swap usage</td>
+<td>&gt; 0 MB</td>
+<td>&gt; 100 MB</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Disk usage</td>
+<td>&gt; 80%</td>
+<td>&gt; 90%</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Disk I/O wait</td>
+<td>&gt; 15%</td>
+<td>&gt; 30%</td>
+<td>iostat, sar</td>
+</tr>
+<tr>
+<td>Network errors</td>
+<td>&gt; 0</td>
+<td>&gt; 10/min</td>
+<td>ethtool, /proc/net/dev</td>
+</tr>
+<tr>
+<td>Load average</td>
+<td>&gt; CPU cores × 1.5</td>
+<td>&gt; CPU cores × 3</td>
+<td>Same</td>
+</tr>
+</tbody>
+</table>
+<p><strong>VICIdial-specific metrics:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>How to Check</th>
+<th>Warning Sign</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hopper level</td>
+<td><code>SELECT COUNT(*) FROM vicidial_hopper;</code></td>
+<td>Dropping below <a href="/settings/hopper-level/">hopper level setting</a></td>
+</tr>
+<tr>
+<td>Active calls vs agents</td>
+<td><code>SELECT COUNT(*) FROM vicidial_auto_calls;</code></td>
+<td>Ratio deviating from expected dial level</td>
+</tr>
+<tr>
+<td>Agent login count</td>
+<td><code>SELECT COUNT(*) FROM vicidial_live_agents WHERE status NOT IN ('PAUSED');</code></td>
+<td>Sudden drops</td>
+</tr>
+<tr>
+<td>MySQL connections</td>
+<td><code>SHOW STATUS LIKE 'Threads_connected';</code></td>
+<td>&gt; 80% of max_connections</td>
+</tr>
+<tr>
+<td>MySQL slow queries</td>
+<td><code>SHOW STATUS LIKE 'Slow_queries';</code></td>
+<td>Increasing faster than 10/hour</td>
+</tr>
+<tr>
+<td>Screen session health</td>
+<td><code>screen -list \| grep ASTscreen</code></td>
+<td>Missing session</td>
+</tr>
+<tr>
+<td>Asterisk channels</td>
+<td><code>asterisk -rx 'core show channels count'</code></td>
+<td>Exceeding expected concurrent calls</td>
+</tr>
+<tr>
+<td>SIP trunk registration</td>
+<td><code>asterisk -rx 'sip show registry'</code></td>
+<td>Unregistered trunks</td>
+</tr>
+</tbody>
+</table>
+<h3 id="prometheus-grafana-stack">Prometheus + Grafana Stack<a class="headerlink" href="#prometheus-grafana-stack" title="Permanent link">&para;</a></h3>
+<p>For comprehensive monitoring, deploy Prometheus with Grafana dashboards. See our <a href="/blog/vicidial-grafana-dashboards/">Grafana dashboards guide</a> for the complete setup. The short version:</p>
+<ol>
+<li><strong>node_exporter</strong> on every server — system metrics</li>
+<li><strong>mysqld_exporter</strong> on the database server — MySQL metrics</li>
+<li><strong>Custom VICIdial exporter</strong> — a script that queries VICIdial tables and exposes metrics in Prometheus format</li>
+</ol>
+<p>A minimal custom exporter:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/vicidial-metrics.sh</span>
+<span class="c1"># Output Prometheus-format metrics for VICIdial</span>
+<span class="c1"># Serve via node_exporter textfile collector</span>
+
+<span class="nv">MYSQL_CMD</span><span class="o">=</span><span class="s2">&quot;mysql -u cron -pYOUR_PASSWORD asterisk -N -B&quot;</span>
+<span class="nv">OUTPUT</span><span class="o">=</span><span class="s2">&quot;/var/lib/prometheus/node-exporter/vicidial.prom&quot;</span>
+
+<span class="nv">AGENTS</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_live_agents;&quot;</span><span class="k">)</span>
+<span class="nv">ACTIVE_CALLS</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_auto_calls;&quot;</span><span class="k">)</span>
+<span class="nv">HOPPER</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_hopper;&quot;</span><span class="k">)</span>
+<span class="nv">PAUSED</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_live_agents WHERE status=&#39;PAUSED&#39;;&quot;</span><span class="k">)</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OUTPUT</span><span class="s2">&quot;</span><span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s"># HELP vicidial_agents_total Total logged-in agents</span>
+<span class="s"># TYPE vicidial_agents_total gauge</span>
+<span class="s">vicidial_agents_total $AGENTS</span>
+<span class="s"># HELP vicidial_active_calls Current auto-dial calls</span>
+<span class="s"># TYPE vicidial_active_calls gauge</span>
+<span class="s">vicidial_active_calls $ACTIVE_CALLS</span>
+<span class="s"># HELP vicidial_hopper_count Leads in hopper</span>
+<span class="s"># TYPE vicidial_hopper_count gauge</span>
+<span class="s">vicidial_hopper_count $HOPPER</span>
+<span class="s"># HELP vicidial_paused_agents Agents in PAUSED status</span>
+<span class="s"># TYPE vicidial_paused_agents gauge</span>
+<span class="s">vicidial_paused_agents $PAUSED</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<p>Run this via cron every 15 seconds:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">*</span> * <span class="gs">* *</span> * /usr/local/bin/vicidial-metrics.sh
+<span class="k">*</span> * <span class="gs">* *</span> * sleep 15 &amp;&amp; /usr/local/bin/vicidial-metrics.sh
+<span class="k">*</span> * <span class="gs">* *</span> * sleep 30 &amp;&amp; /usr/local/bin/vicidial-metrics.sh
+<span class="k">*</span> * <span class="gs">* *</span> * sleep 45 &amp;&amp; /usr/local/bin/vicidial-metrics.sh
+</code></pre></div>
+
+<h3 id="alerting-rules-that-matter">Alerting Rules That Matter<a class="headerlink" href="#alerting-rules-that-matter" title="Permanent link">&para;</a></h3>
+<p>Don't alert on everything. Alert on conditions that require human intervention:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Prometheus alerting rules — /etc/prometheus/rules/vicidial.yml</span>
+<span class="nt">groups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HopperDraining</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial_hopper_count &lt; 20</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hopper</span><span class="nv"> </span><span class="s">below</span><span class="nv"> </span><span class="s">20</span><span class="nv"> </span><span class="s">leads</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">5+</span><span class="nv"> </span><span class="s">minutes&quot;</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NoActiveCalls</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial_active_calls == 0 and vicidial_agents_total &gt; 10</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;No</span><span class="nv"> </span><span class="s">active</span><span class="nv"> </span><span class="s">calls</span><span class="nv"> </span><span class="s">despite</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$value</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">agents</span><span class="nv"> </span><span class="s">logged</span><span class="nv"> </span><span class="s">in&quot;</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HighMySQLConnections</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql_global_status_threads_connected / mysql_global_variables_max_connections &gt; 0.8</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MySQL</span><span class="nv"> </span><span class="s">connections</span><span class="nv"> </span><span class="s">at</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$value</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">humanizePercentage</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">max&quot;</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SwapActive</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node_memory_SwapFree_bytes &lt; node_memory_SwapTotal_bytes</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Server</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">swapping</span><span class="nv"> </span><span class="s">—</span><span class="nv"> </span><span class="s">VICIdial</span><span class="nv"> </span><span class="s">performance</span><span class="nv"> </span><span class="s">degraded&quot;</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HighIOWait</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate(node_cpu_seconds_total{mode=&quot;iowait&quot;}[5m]) &gt; 0.2</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;I/O</span><span class="nv"> </span><span class="s">wait</span><span class="nv"> </span><span class="s">above</span><span class="nv"> </span><span class="s">20%</span><span class="nv"> </span><span class="s">—</span><span class="nv"> </span><span class="s">possible</span><span class="nv"> </span><span class="s">disk</span><span class="nv"> </span><span class="s">bottleneck&quot;</span>
+</code></pre></div>
+
+<h3 id="quick-command-line-health-check">Quick Command-Line Health Check<a class="headerlink" href="#quick-command-line-health-check" title="Permanent link">&para;</a></h3>
+<p>For operators who need a fast snapshot without dashboards:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/vicidial-healthcheck.sh</span>
+<span class="c1"># Quick health check — run anytime</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== VICIdial Health Check ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># System</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- System ---&quot;</span>
+uptime
+free<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-2
+df<span class="w"> </span>-h<span class="w"> </span>/<span class="w"> </span>/var/spool/asterisk/monitor<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span>+2
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># Asterisk</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Asterisk ---&quot;</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s1">&#39;core show channels count&#39;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Asterisk not responding&quot;</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s1">&#39;sip show registry&#39;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span>+2<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-5
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># MySQL</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- MySQL ---&quot;</span>
+mysql<span class="w"> </span>-u<span class="w"> </span>cron<span class="w"> </span>-pYOUR_PASSWORD<span class="w"> </span>asterisk<span class="w"> </span>-N<span class="w"> </span>-B<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    SELECT &#39;Agents:&#39;, COUNT(*) FROM vicidial_live_agents</span>
+<span class="s2">    UNION ALL</span>
+<span class="s2">    SELECT &#39;Active calls:&#39;, COUNT(*) FROM vicidial_auto_calls</span>
+<span class="s2">    UNION ALL</span>
+<span class="s2">    SELECT &#39;Hopper:&#39;, COUNT(*) FROM vicidial_hopper;</span>
+<span class="s2">&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+mysql<span class="w"> </span>-N<span class="w"> </span>-B<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW STATUS LIKE &#39;Threads_connected&#39;;&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># Processes</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Screen Sessions ---&quot;</span>
+screen<span class="w"> </span>-list<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;ASTscreen&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;VICIdial screen sessions running&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Critical Processes ---&quot;</span>
+<span class="k">for</span><span class="w"> </span>proc<span class="w"> </span><span class="k">in</span><span class="w"> </span>AST_manager_listen<span class="w"> </span>AST_VDauto_dial<span class="w"> </span>AST_update<span class="w"> </span>AST_VDhopper<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">COUNT</span><span class="o">=</span><span class="k">$(</span>pgrep<span class="w"> </span>-fc<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$proc</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$proc</span><span class="s2">: </span><span class="nv">$COUNT</span><span class="s2"> instance(s)&quot;</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<hr />
+<h2 id="advanced-tuning-network-and-storage-io">Advanced Tuning: Network and Storage I/O<a class="headerlink" href="#advanced-tuning-network-and-storage-io" title="Permanent link">&para;</a></h2>
+<p>Once you've addressed the kernel, Asterisk, MySQL, and web server layers, the remaining performance gains come from network and storage optimization.</p>
+<h3 id="network-tuning-for-siprtp">Network Tuning for SIP/RTP<a class="headerlink" href="#network-tuning-for-siprtp" title="Permanent link">&para;</a></h3>
+<p>SIP and RTP are UDP-based protocols. UDP has no built-in flow control — when a buffer fills, packets are silently dropped. On a busy telephony server, this manifests as audio quality problems (choppy voice, one-way audio) that only appear under load.</p>
+<p><strong>Increase NIC ring buffer sizes:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check current ring buffer settings</span>
+ethtool<span class="w"> </span>-g<span class="w"> </span>eth0
+
+<span class="c1"># Increase to maximum (values vary by NIC)</span>
+ethtool<span class="w"> </span>-G<span class="w"> </span>eth0<span class="w"> </span>rx<span class="w"> </span><span class="m">4096</span><span class="w"> </span>tx<span class="w"> </span><span class="m">4096</span>
+</code></pre></div>
+
+<p><strong>Verify no packet drops:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check for RX/TX errors and drops</span>
+ethtool<span class="w"> </span>-S<span class="w"> </span>eth0<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;drop\|error\|discard&quot;</span>
+
+<span class="c1"># Also check kernel-level drops</span>
+cat<span class="w"> </span>/proc/net/udp<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $5}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-rn<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</code></pre></div>
+
+<p>If you see RX drops under load, the solutions in order of impact:
+1. Increase ring buffers (above)
+2. Enable RX interrupt coalescing: <code>ethtool -C eth0 rx-usecs 50</code>
+3. Pin NIC interrupts to specific CPU cores (IRQ affinity)
+4. Enable Receive Side Scaling (RSS) if the NIC supports it
+5. Dedicated NIC for RTP traffic</p>
+<h3 id="storage-io-for-recordings">Storage I/O for Recordings<a class="headerlink" href="#storage-io-for-recordings" title="Permanent link">&para;</a></h3>
+<p>Call recording writes are a significant I/O pattern that's easy to overlook in capacity planning. Each active recorded call writes a continuous audio stream to disk. At 1,000 concurrent recorded calls with G.711:</p>
+<div class="codehilite"><pre><span></span><code>Write throughput = 1,000 × 64 kbps = 64 Mbps = 8 MB/sec sustained
+IOPS = 1,000 (one write stream per recording)
+</code></pre></div>
+
+<p>This isn't much for modern storage, but it's sustained and concurrent with everything else the disk is doing (Asterisk binary, configuration reads, log writes, MySQL if on the same server). The problem comes when recordings are stored on the same disk as MySQL data or Asterisk spool files.</p>
+<p><strong>Best practice:</strong> Separate mount point for recordings, preferably on a different physical disk:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Dedicated recording volume</span>
+/dev/sdb1<span class="w">  </span>/var/spool/asterisk/monitor<span class="w">  </span>xfs<span class="w">  </span>noatime,nodiratime<span class="w">  </span><span class="m">0</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<p>The <code>noatime</code> and <code>nodiratime</code> mount options eliminate the filesystem metadata writes that normally occur on every file access. Since recording files are written once and read rarely (only during playback), there's no benefit to tracking access times, and the I/O savings are measurable.</p>
+<h3 id="tmpfs-for-asterisk-temporary-files">tmpfs for Asterisk Temporary Files<a class="headerlink" href="#tmpfs-for-asterisk-temporary-files" title="Permanent link">&para;</a></h3>
+<p>Asterisk creates temporary files during call processing — particularly for recording mixing and format conversion. These temp files can be moved to RAM-backed tmpfs to eliminate disk I/O entirely:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Add to /etc/fstab</span>
+tmpfs<span class="w">  </span>/var/spool/asterisk/tmp<span class="w">  </span>tmpfs<span class="w">  </span><span class="nv">size</span><span class="o">=</span>2G,noatime<span class="w">  </span><span class="m">0</span><span class="w"> </span><span class="m">0</span>
+
+<span class="c1"># Mount it</span>
+mount<span class="w"> </span>-a
+</code></pre></div>
+
+<p>In <code>asterisk.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[directories]</span>
+<span class="na">astspooldir</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; /var/spool/asterisk</span>
+<span class="na">tmpdir</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; /var/spool/asterisk/tmp</span>
+</code></pre></div>
+
+<p>This is especially beneficial on servers that do real-time recording mixing (dual-channel to mono conversion) during the call. The temporary intermediate files never touch disk.</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>Every optimization in this guide — from the kernel sysctl parameters to the Nginx configuration to the Prometheus alerting rules — is baked into every ViciStack deployment from the first boot. We don't hand you a server with default settings and a tuning guide. We hand you a server that's already tuned for your specific agent count, codec configuration, recording requirements, and campaign type.</p>
+<p>More importantly, we maintain the tuning over time. A deployment that runs 200 agents today and 400 agents next quarter needs different kernel parameters, different MySQL buffer sizes, different web server process limits, and different monitoring thresholds. ViciStack adjusts these as your operation scales — proactively, before performance degrades, not reactively after agents start complaining.</p>
+<p>Performance tuning isn't a project. It's a practice. ViciStack exists so you can practice running your business instead of practicing Linux system administration.</p>
+<p><a href="/free-audit/">Get a free performance audit →</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial, Linux kernel, and infrastructure best practices evolve. Last updated: March 2026.</em></p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="how-do-i-know-if-my-vicidial-system-needs-performance-tuning">How do I know if my VICIdial system needs performance tuning?<a class="headerlink" href="#how-do-i-know-if-my-vicidial-system-needs-performance-tuning" title="Permanent link">&para;</a></h3>
+<p>Three reliable indicators: (1) Real-time reports take more than 2 seconds to refresh — this means database queries are slow, which cascades to everything else. (2) Agents report delays between clicking a disposition and getting the next call — this indicates hopper drain issues, dial-level calculation lag, or MySQL lock contention. (3) Call quality degrades during peak hours (choppy audio, one-way audio, dropped calls) — this points to CPU saturation on telephony servers or network buffer exhaustion. Check <code>top</code> on every server during peak hours. If any server shows CPU above 80% sustained, I/O wait above 15%, or any swap usage at all, tuning is overdue. The healthcheck script in the monitoring section gives you all of these in one command.</p>
+<h3 id="can-i-run-500-agents-on-a-single-server">Can I run 500 agents on a single server?<a class="headerlink" href="#can-i-run-500-agents-on-a-single-server" title="Permanent link">&para;</a></h3>
+<p>Technically possible but practically a bad idea. A single server running Asterisk, MySQL, Apache, and all VICIdial processes creates a single point of failure and forces every component to compete for the same CPU, memory, and I/O. We've seen single-server deployments work up to 80-100 agents with proper tuning. Beyond that, component contention creates problems that no amount of tuning can solve — Asterisk needs CPU for audio processing at the same moment MySQL needs CPU for a complex report query, and one of them loses. The correct architecture at 500 agents is a <a href="/blog/vicidial-cluster-guide/">VICIdial cluster</a> with dedicated telephony servers, web servers, and a database server. Clusters also provide redundancy — losing one telephony server in a four-server cluster reduces capacity by 25% instead of causing a total outage.</p>
+<h3 id="whats-the-most-impactful-single-optimization-for-vicidial-performance">What's the most impactful single optimization for VICIdial performance?<a class="headerlink" href="#whats-the-most-impactful-single-optimization-for-vicidial-performance" title="Permanent link">&para;</a></h3>
+<p>It depends on where the bottleneck is, but across hundreds of deployments, the answer is almost always one of three things: (1) MySQL <code>key_buffer_size</code> — the default is far too small for VICIdial's MyISAM workload, and increasing it to match your index size eliminates the most common I/O bottleneck. (2) The <code>skip-name-resolve</code> directive in <code>my.cnf</code> — this single line prevents DNS lookups on every database connection and has fixed more "unexplained slowness" than any other change. (3) Converting the hot real-time tables (<code>vicidial_live_agents</code>, <code>vicidial_auto_calls</code>, <code>vicidial_hopper</code>) to the MEMORY storage engine — this eliminates disk I/O for the most frequently accessed tables and reduces lock contention dramatically. All three are covered in our <a href="/blog/vicidial-mysql-optimization/">MySQL optimization guide</a>. If you haven't done any tuning yet, start there.</p>
+<h3 id="how-much-ram-do-i-need-per-server-role">How much RAM do I need per server role?<a class="headerlink" href="#how-much-ram-do-i-need-per-server-role" title="Permanent link">&para;</a></h3>
+<p><strong>Telephony servers:</strong> 8-16 GB is sufficient. Asterisk's memory footprint is modest — approximately 120 KB per concurrent channel plus overhead. At 500 channels per server, Asterisk uses ~1 GB. The rest goes to VICIdial's Perl daemons and the OS. <strong>Web servers:</strong> 16-32 GB with Apache+mod_php (memory-hungry), 8-16 GB with Nginx+PHP-FPM (memory-efficient). The dominant factor is the number of concurrent agent sessions. <strong>Database server:</strong> As much as you can afford. 64 GB is the sweet spot for 500 agents — MySQL buffers use 8-10 GB, and the remaining 50+ GB serves as OS filesystem cache for MyISAM data files, which is where the real database performance comes from. At 800+ agents, move to 128 GB. RAM is the single most cost-effective upgrade for a VICIdial database server.</p>
+<h3 id="should-i-use-vicidials-asterisk-configuration-or-tune-it-myself">Should I use VICIdial's Asterisk configuration or tune it myself?<a class="headerlink" href="#should-i-use-vicidials-asterisk-configuration-or-tune-it-myself" title="Permanent link">&para;</a></h3>
+<p>Start with VICIdial's stock <a href="/blog/vicidial-asterisk-configuration/">Asterisk configuration</a> and tune on top of it. The stock configuration establishes the SIP settings, dialplan contexts, and AMI permissions that VICIdial requires. Changing these without understanding VICIdial's call flow breaks things in subtle ways — calls connect but don't bridge to agents, recordings start but don't stop, transfers drop. The tuning in this guide (noload directives, timer adjustments, RTP settings, <a href="/glossary/codec/">codec</a> selection) sits on top of the stock configuration and doesn't alter VICIdial's functional requirements. Never modify <code>extensions.conf</code> entries that VICIdial manages, never change AMI user permissions, and never alter the dialplan contexts without testing in a non-production environment first.</p>
+<h3 id="what-monitoring-tool-should-i-use-for-vicidial">What monitoring tool should I use for VICIdial?<a class="headerlink" href="#what-monitoring-tool-should-i-use-for-vicidial" title="Permanent link">&para;</a></h3>
+<p>For deployments under 100 agents where simplicity matters: Nagios or Zabbix with the checks described in this guide. Both are mature, well-documented, and can monitor everything VICIdial needs with standard plugins plus the custom checks shown above. For deployments above 200 agents where you need historical trending and dashboards: Prometheus + Grafana. The time-series database handles VICIdial's high-frequency metrics efficiently, and Grafana dashboards give managers and operations staff visual insight into system health. See our <a href="/blog/vicidial-grafana-dashboards/">Grafana dashboards guide</a> for VICIdial-specific dashboard templates. Regardless of the tool, the non-negotiable alerts are: swap usage, hopper drain, screen session death, MySQL connection saturation, and disk space. If you monitor nothing else, monitor those five.</p>
+<h3 id="how-do-i-handle-load-balancing-across-multiple-web-servers">How do I handle load balancing across multiple web servers?<a class="headerlink" href="#how-do-i-handle-load-balancing-across-multiple-web-servers" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports <a href="/glossary/load-balancing/">load balancing</a> across web servers through its <code>server_ip</code> assignment in the <code>phones</code> table — each phone/agent is assigned to a specific web server. This is static assignment, not dynamic HTTP load balancing. For true HTTP load balancing (HAProxy, Nginx upstream, F5), you need to configure session persistence (sticky sessions) because VICIdial's agent interface maintains server-side state. Without sticky sessions, an agent's requests bounce between web servers and the session data doesn't follow, causing login loops and lost call state. The recommended approach: use DNS round-robin or a simple load balancer with cookie-based persistence, assigning each agent session to one web server for its entire duration. Failover to the other web server happens only on server failure, not per-request.</p>
+<h3 id="how-often-should-i-revisit-performance-tuning">How often should I revisit performance tuning?<a class="headerlink" href="#how-often-should-i-revisit-performance-tuning" title="Permanent link">&para;</a></h3>
+<p>After any significant change: adding 50+ agents, launching new campaigns with different call patterns (short calls vs. long calls, high <a href="/settings/auto-dial-level/">dial ratios</a> vs. preview dialing), adding servers to the cluster, upgrading VICIdial SVN, or upgrading the OS/kernel. Also review quarterly even if nothing changes — tables grow, indexes fragment, and workload patterns shift gradually. The monitoring stack should catch acute problems (CPU spikes, swap usage, hopper drain), but gradual degradation requires periodic review. Run <code>pt-query-digest</code> on the slow query log monthly, check <code>SHOW TABLE STATUS</code> for table sizes that are growing faster than expected, and verify that your capacity planning assumptions still hold against actual agent counts and call volumes. If you're on ViciStack, we handle this automatically through weekly performance reviews and proactive tuning adjustments.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-performance-tuning">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

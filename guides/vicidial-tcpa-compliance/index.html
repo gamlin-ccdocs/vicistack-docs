@@ -1,0 +1,4603 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-tcpa-compliance/">
+      
+      
+        <link rel="prev" href="../vicidial-support/">
+      
+      
+        <link rel="next" href="../vicidial-timezone-dialing-tcpa/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial TCPA Compliance Checklist [2026] - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-tcpa-compliance-checklist-2026" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial TCPA Compliance Checklist [2026]
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-2026-tcpa-regulatory-landscape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 2026 TCPA Regulatory Landscape
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 2026 TCPA Regulatory Landscape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-one-to-one-consent-rule-effective-january-27-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. One-to-One Consent Rule (Effective January 27, 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-revocation-rules-effective-april-11-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Revocation Rules (Effective April 11, 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stirshaken-enforcement-expansion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STIR/SHAKEN Enforcement Expansion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-settings-that-affect-tcpa-compliance-the-complete-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Settings That Affect TCPA Compliance: The Complete List
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial Settings That Affect TCPA Compliance: The Complete List">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campaign-detail-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Detail Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Detail Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#drop-percentage-abandon-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drop Percentage / Abandon Rate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#safe-harbor-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Safe Harbor Message
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-time-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Time Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-zone-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Zone Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnc-list-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNC List Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-3-abandon-rate-rule-configuration-and-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 3% Abandon Rate Rule: Configuration and Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 3% Abandon Rate Rule: Configuration and Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-calculates-drop-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Calculates Drop Rate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-settings-for-3-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Settings for 3% Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-drop-rate-in-real-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Drop Rate in Real Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-mini-tcpa-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Mini-TCPA Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State Mini-TCPA Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#florida-florida-telephone-solicitation-act-ftsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Florida — Florida Telephone Solicitation Act (FTSA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#texas-sb-140-and-texas-telemarketing-disclosure-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Texas — SB 140 and Texas Telemarketing Disclosure Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virginia-virginia-telephone-privacy-protection-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Virginia — Virginia Telephone Privacy Protection Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oklahoma-oklahoma-telephone-solicitation-act-otsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oklahoma — Oklahoma Telephone Solicitation Act (OTSA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indiana-indiana-telephone-solicitation-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indiana — Indiana Telephone Solicitation Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#california-multiple-overlapping-laws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        California — Multiple Overlapping Laws
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#washington-washington-automatic-dialing-and-announcing-device-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Washington — Washington Automatic Dialing and Announcing Device Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consent-tracking-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consent Tracking in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consent Tracking in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-fields-for-consent-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Fields for Consent Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lead-loading-with-consent-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Loading with Consent Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consent-record-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consent Record Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-complete-vicidial-tcpa-compliance-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Complete VICIdial TCPA Compliance Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Complete VICIdial TCPA Compliance Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#federal-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federal TCPA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-mini-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Mini-TCPA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-technical-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Technical Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operational-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-and-two-party-consent-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording and Two-Party Consent States
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consent-management-the-one-to-one-rule-in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consent Management: The One-to-One Rule in Practice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consent Management: The One-to-One Rule in Practice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-valid-consent-looks-like-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Valid Consent Looks Like in 2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lead-source-compliance-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Source Compliance Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementing-consent-validation-in-lead-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing Consent Validation in Lead Loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enforcement-trends-whats-getting-operations-sued-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enforcement Trends: What's Getting Operations Sued in 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-maximum-abandon-rate-allowed-under-the-tcpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is the maximum abandon rate allowed under the TCPA?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-quickly-do-i-need-to-process-a-do-not-call-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How quickly do I need to process a do-not-call request?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-vicidial-automatically-check-the-national-do-not-call-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does VICIdial automatically check the National Do Not Call Registry?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-if-my-vicidial-abandon-rate-goes-over-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if my VICIdial abandon rate goes over 3%?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-need-separate-vicidial-campaigns-for-different-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need separate VICIdial campaigns for different states?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-the-fcc-one-to-one-consent-rule-retroactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is the FCC one-to-one consent rule retroactive?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-tcpa-compliance-for-sms-campaigns-run-alongside-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle TCPA compliance for SMS campaigns run alongside VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-records-should-i-keep-for-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What records should I keep for TCPA compliance?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-2026-tcpa-regulatory-landscape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 2026 TCPA Regulatory Landscape
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 2026 TCPA Regulatory Landscape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-one-to-one-consent-rule-effective-january-27-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. One-to-One Consent Rule (Effective January 27, 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-revocation-rules-effective-april-11-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Revocation Rules (Effective April 11, 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stirshaken-enforcement-expansion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STIR/SHAKEN Enforcement Expansion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-settings-that-affect-tcpa-compliance-the-complete-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Settings That Affect TCPA Compliance: The Complete List
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial Settings That Affect TCPA Compliance: The Complete List">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campaign-detail-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Detail Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Detail Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#drop-percentage-abandon-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drop Percentage / Abandon Rate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#safe-harbor-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Safe Harbor Message
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-time-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Time Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-zone-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Zone Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnc-list-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNC List Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-3-abandon-rate-rule-configuration-and-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 3% Abandon Rate Rule: Configuration and Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 3% Abandon Rate Rule: Configuration and Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-calculates-drop-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Calculates Drop Rate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-settings-for-3-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Settings for 3% Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-drop-rate-in-real-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Drop Rate in Real Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-mini-tcpa-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Mini-TCPA Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State Mini-TCPA Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#florida-florida-telephone-solicitation-act-ftsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Florida — Florida Telephone Solicitation Act (FTSA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#texas-sb-140-and-texas-telemarketing-disclosure-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Texas — SB 140 and Texas Telemarketing Disclosure Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virginia-virginia-telephone-privacy-protection-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Virginia — Virginia Telephone Privacy Protection Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oklahoma-oklahoma-telephone-solicitation-act-otsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oklahoma — Oklahoma Telephone Solicitation Act (OTSA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indiana-indiana-telephone-solicitation-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indiana — Indiana Telephone Solicitation Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#california-multiple-overlapping-laws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        California — Multiple Overlapping Laws
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#washington-washington-automatic-dialing-and-announcing-device-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Washington — Washington Automatic Dialing and Announcing Device Act
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consent-tracking-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consent Tracking in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consent Tracking in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-fields-for-consent-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Fields for Consent Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lead-loading-with-consent-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Loading with Consent Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consent-record-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consent Record Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-complete-vicidial-tcpa-compliance-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Complete VICIdial TCPA Compliance Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Complete VICIdial TCPA Compliance Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#federal-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federal TCPA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-mini-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Mini-TCPA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-technical-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Technical Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operational-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-and-two-party-consent-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording and Two-Party Consent States
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consent-management-the-one-to-one-rule-in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consent Management: The One-to-One Rule in Practice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consent Management: The One-to-One Rule in Practice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-valid-consent-looks-like-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Valid Consent Looks Like in 2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lead-source-compliance-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Source Compliance Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementing-consent-validation-in-lead-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing Consent Validation in Lead Loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enforcement-trends-whats-getting-operations-sued-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enforcement Trends: What's Getting Operations Sued in 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-the-maximum-abandon-rate-allowed-under-the-tcpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is the maximum abandon rate allowed under the TCPA?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-quickly-do-i-need-to-process-a-do-not-call-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How quickly do I need to process a do-not-call request?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-vicidial-automatically-check-the-national-do-not-call-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does VICIdial automatically check the National Do Not Call Registry?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-if-my-vicidial-abandon-rate-goes-over-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if my VICIdial abandon rate goes over 3%?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-need-separate-vicidial-campaigns-for-different-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need separate VICIdial campaigns for different states?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-the-fcc-one-to-one-consent-rule-retroactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is the FCC one-to-one consent rule retroactive?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-tcpa-compliance-for-sms-campaigns-run-alongside-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle TCPA compliance for SMS campaigns run alongside VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-records-should-i-keep-for-tcpa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What records should I keep for TCPA compliance?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-tcpa-compliance-checklist-2026">VICIdial TCPA Compliance Checklist [2026]<a class="headerlink" href="#vicidial-tcpa-compliance-checklist-2026" title="Permanent link">&para;</a></h1>
+<p><strong>Every VICIdial setting that affects TCPA compliance, every state mini-TCPA you need to know about, and the exact configuration checklist that keeps your operation on the right side of a $1,500-per-violation penalty.</strong></p>
+<hr />
+<p>The Telephone Consumer Protection Act was passed in 1991. It's been amended, reinterpreted, and weaponized by plaintiff attorneys for 35 years. And in 2025-2026, the FCC rolled out the most significant TCPA regulatory changes in a decade — changes that specifically target outbound call centers running predictive dialers on platforms exactly like VICIdial.</p>
+<p>If you're running a VICIdial-based outbound operation in 2026 and you haven't updated your compliance configuration since the FCC's new rules took effect, you are exposed. Not "might be" exposed. Are exposed.</p>
+<p>This guide covers every aspect of TCPA compliance as it applies to VICIdial: the 2026 regulatory landscape, every relevant VICIdial configuration setting with the exact admin path, federal DNC and internal DNC management, the 3% abandon rate rule, time zone enforcement, state mini-TCPA requirements, consent tracking, and a printable checklist you can hand to your compliance officer.</p>
+<p>For the TCPA glossary definition, see <a href="/glossary/tcpa/">/glossary/tcpa/</a>.</p>
+<hr />
+<h2 id="the-2026-tcpa-regulatory-landscape">The 2026 TCPA Regulatory Landscape<a class="headerlink" href="#the-2026-tcpa-regulatory-landscape" title="Permanent link">&para;</a></h2>
+<p>Before touching VICIdial settings, you need to understand what changed. Three major FCC rulings in 2024-2025 redefined the compliance landscape for outbound dialers:</p>
+<h3 id="1-one-to-one-consent-rule-effective-january-27-2025">1. One-to-One Consent Rule (Effective January 27, 2025)<a class="headerlink" href="#1-one-to-one-consent-rule-effective-january-27-2025" title="Permanent link">&para;</a></h3>
+<p><strong>What changed:</strong> Prior to this rule, a single consumer consent could authorize calls from multiple companies — the classic "lead gen" model where a consumer fills out a form and their information is sold to 5-10 companies, all claiming consent from the same form submission.</p>
+<p>The new rule requires that consent to receive autodialed or prerecorded calls must be given to <strong>one specific seller at a time</strong>. Consent obtained through "comparison shopping" forms that authorize multiple sellers from a single checkbox is no longer valid under the TCPA.</p>
+<p><strong>What this means for VICIdial operators:</strong>
+- If you buy leads from aggregators, each lead must include proof that the consumer specifically consented to calls from <strong>your company</strong> — not "our partners" or "participating companies"
+- The consent language shown to the consumer must clearly identify your company by name
+- Consent records must be retrievable — you need to produce the specific form, timestamp, and consent language for any number you dial if challenged</p>
+<h3 id="2-revocation-rules-effective-april-11-2025">2. Revocation Rules (Effective April 11, 2025)<a class="headerlink" href="#2-revocation-rules-effective-april-11-2025" title="Permanent link">&para;</a></h3>
+<p><strong>What changed:</strong> Consumers can now revoke consent to receive calls through <strong>any reasonable means</strong> — including replying "stop" to a text, telling an agent on the phone, emailing, submitting a web form, or any other method the consumer chooses. The FCC explicitly stated that companies cannot limit revocation to a single specific channel.</p>
+<p>More critically: once a consumer revokes consent, you have <strong>a reasonable time</strong> to process the revocation — which the FCC has indicated means no more than <strong>10 business days</strong>. Any calls made after a reasonable processing period are violations.</p>
+<p><strong>What this means for VICIdial operators:</strong>
+- Your agents must be trained to process opt-out requests on every call, regardless of how the consumer phrases it
+- "Take me off your list," "don't call me again," "stop calling" — all of these constitute valid revocation
+- You need a centralized opt-out processing system that feeds into VICIdial's <a href="/glossary/dnc/">DNC lists</a> within 10 business days (sooner is better — most plaintiff attorneys argue for 24-48 hours as "reasonable")
+- Text-based opt-outs (if you're running SMS campaigns alongside VICIdial) must also be processed into your dialing DNC lists</p>
+<h3 id="3-stirshaken-enforcement-expansion">3. STIR/SHAKEN Enforcement Expansion<a class="headerlink" href="#3-stirshaken-enforcement-expansion" title="Permanent link">&para;</a></h3>
+<p>The FCC continued expanding STIR/SHAKEN requirements through 2025, with additional robocall mitigation program requirements for intermediate and smaller carriers. For VICIdial operators, this means:</p>
+<ul>
+<li>Your SIP provider <strong>must</strong> support STIR/SHAKEN with A-level attestation for your outbound DIDs</li>
+<li>Calls without proper attestation are increasingly being blocked at the carrier level (not just labeled as spam — blocked outright)</li>
+<li>See our <a href="/blog/stir-shaken-vicidial-guide/">complete STIR/SHAKEN implementation guide</a> for the VICIdial-specific configuration</li>
+</ul>
+<hr />
+<h2 id="vicidial-settings-that-affect-tcpa-compliance-the-complete-list">VICIdial Settings That Affect TCPA Compliance: The Complete List<a class="headerlink" href="#vicidial-settings-that-affect-tcpa-compliance-the-complete-list" title="Permanent link">&para;</a></h2>
+<p>Here's every VICIdial setting that has TCPA implications, organized by where you find it in the admin interface.</p>
+<h3 id="campaign-detail-settings">Campaign Detail Settings<a class="headerlink" href="#campaign-detail-settings" title="Permanent link">&para;</a></h3>
+<p><strong>Path: Admin → Campaigns → [Campaign Name] → Campaign Detail</strong></p>
+<h4 id="drop-percentage-abandon-rate">Drop Percentage / Abandon Rate<a class="headerlink" href="#drop-percentage-abandon-rate" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Setting:</strong> <code>Adaptive Dropped Percentage</code></li>
+<li><strong>Location:</strong> Campaign Detail → Dialing section</li>
+<li><strong>Compliant value:</strong> 2.5% or lower</li>
+<li><strong>Why:</strong> The TCPA (specifically the FCC's 2008 Declaratory Ruling and TSR Section 310.4(b)(4)(i)) requires that no more than 3% of answered calls be abandoned, measured over a 30-day period per campaign. Setting your adaptive dropped percentage at 2.5% gives you a safety margin for statistical variance. Running at exactly 3.0% means any spike pushes you over.</li>
+</ul>
+<p><strong>Important nuance:</strong> The 3% is measured against <strong>answered calls</strong>, not total dials. VICIdial's <code>Adaptive Dropped Percentage</code> setting controls the target — the algorithm adjusts dial levels to keep abandoned calls at or below this percentage. But the setting is a target, not a guarantee. During sudden shifts in answer rates (e.g., a batch of numbers from a newly activated list segment), actual abandons can momentarily spike above the target.</p>
+<p>To verify compliance, run this query against your VICIdial database:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">drops</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">          </span><span class="k">as</span><span class="w"> </span><span class="n">drop_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+</code></pre></div>
+
+<p>If any campaign shows above 3.0%, you have a compliance problem that needs immediate attention.</p>
+<h4 id="safe-harbor-message">Safe Harbor Message<a class="headerlink" href="#safe-harbor-message" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Setting:</strong> <code>Safe Harbor Audio</code></li>
+<li><strong>Location:</strong> Campaign Detail → Dialing section → Safe Harbor settings</li>
+<li><strong>Compliant value:</strong> ENABLED with a compliant audio file</li>
+<li><strong>Why:</strong> When a call is abandoned (agent not available after the consumer answers), the TCPA requires that a prerecorded message play within 2 seconds identifying the caller with: company name, phone number the consumer can call to request no further calls, and a statement that the call was made for telemarketing purposes. This is the "safe harbor" provision — if you play the message, the abandoned call may be excused from the 3% calculation under certain interpretations.</li>
+</ul>
+<p>Configure in VICIdial:</p>
+<div class="codehilite"><pre><span></span><code>Safe Harbor Audio: your_safe_harbor_message.wav
+Safe Harbor Message on Drop: Y
+Safe Harbor Exten: 8320 (default)
+</code></pre></div>
+
+<p>Your safe harbor audio should say something like: <em>"We apologize for the inconvenience. This call was made by [Company Name] regarding [product/service]. If you wish to be placed on our do not call list, please call [phone number]. Thank you."</em></p>
+<p>Record this as a WAV file (8kHz, 16-bit, mono) and upload to the VICIdial audio store, or place the file in <code>/var/lib/asterisk/sounds/</code>.</p>
+<h4 id="call-time-settings">Call Time Settings<a class="headerlink" href="#call-time-settings" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Setting:</strong> <code>Local Call Time</code></li>
+<li><strong>Location:</strong> Campaign Detail → Campaign Detail → Local Call Time</li>
+<li><strong>Compliant value:</strong> Must conform to TCPA hours (8 AM - 9 PM local time of the called party)</li>
+<li><strong>Why:</strong> The TCPA prohibits telemarketing calls before 8:00 AM or after 9:00 PM in the <strong>called party's local time zone</strong>. Not your time zone. Their time zone. Many state mini-TCPAs have stricter hours (see State Requirements section below).</li>
+</ul>
+<p>Create a compliant Call Time under <strong>Admin → Call Times:</strong></p>
+<div class="codehilite"><pre><span></span><code>Monday-Friday: 8:00 AM - 9:00 PM (or stricter per state rules)
+Saturday: 8:00 AM - 9:00 PM (check state restrictions)
+Sunday: Check state restrictions (some prohibit Sunday calling)
+</code></pre></div>
+
+<p><strong>Critical:</strong> Assign this Call Time as the <code>Local Call Time</code> on the campaign, not just the <code>Call Time</code>. The <code>Local Call Time</code> setting enforces time zone-aware dialing — VICIdial checks the lead's time zone (derived from area code or the <code>gmt_offset_now</code> field) before loading it into the hopper.</p>
+<h3 id="time-zone-enforcement">Time Zone Enforcement<a class="headerlink" href="#time-zone-enforcement" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Setting:</strong> <code>Hopper GMT Settings</code></li>
+<li><strong>Location:</strong> Campaign Detail → Hopper section</li>
+<li><strong>Compliant value:</strong> ENABLED with proper configuration</li>
+</ul>
+<p>VICIdial's hopper system handles time zone enforcement. When loading leads into the hopper (the queue of numbers ready to be dialed), VICIdial checks each lead's GMT offset against the campaign's Local Call Time to determine if the number is currently within legal calling hours.</p>
+<p>For this to work correctly:</p>
+<ol>
+<li><strong>Phone timezone data must be populated.</strong> VICIdial populates timezone data based on area code when leads are loaded. Verify the <code>vicidial_phone_codes</code> table is current:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">country_code</span><span class="p">,</span><span class="w"> </span><span class="n">areacode</span><span class="p">,</span><span class="w"> </span><span class="k">state</span><span class="p">,</span><span class="w"> </span><span class="n">GMT_offset</span><span class="p">,</span><span class="w"> </span><span class="n">DST</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_phone_codes</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">country_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1&#39;</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</code></pre></div>
+
+<ol>
+<li><strong>Enable timezone checking on the campaign:</strong></li>
+<li>
+<p><strong>Use Campaign Timezone:</strong> Set to the timezone checking method that matches your compliance needs. The safest option is <code>TZCODE</code> which uses the lead's postal code for precise timezone determination (more accurate than area code for ported numbers).</p>
+</li>
+<li>
+<p><strong>Account for ported numbers.</strong> A consumer in Florida (Eastern) may have a 213 (Los Angeles, Pacific) cell phone number. Area code-based timezone lookup would assume Pacific time. For maximum compliance, use postal code-based timezone lookup when you have the lead's ZIP code, or default to the <strong>more restrictive</strong> interpretation (if unsure between two timezones, use the earlier calling start time).</p>
+</li>
+</ol>
+<h3 id="dnc-list-management">DNC List Management<a class="headerlink" href="#dnc-list-management" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Setting:</strong> <code>Use Internal DNC List</code> and <code>Use Campaign DNC List</code></li>
+<li><strong>Location:</strong> Campaign Detail → DNC/Filtering section</li>
+<li><strong>Compliant value:</strong> Both ENABLED</li>
+</ul>
+<p>VICIdial supports multiple layers of DNC checking:</p>
+<p><strong>1. Internal DNC List (System-wide)</strong></p>
+<p>The system-wide internal DNC list applies across all campaigns. Numbers added here will not be dialed by any campaign.</p>
+<ul>
+<li><strong>Location:</strong> Admin → DNC Lists → Internal DNC</li>
+<li><strong>Adding numbers:</strong> Admin interface, API (<code>add_dnc_phone</code>), or direct database insert to <code>vicidial_dnc</code> table</li>
+<li><strong>Checking:</strong> VICIdial checks this list during hopper loading. Numbers matching the internal DNC are excluded from the hopper.</li>
+</ul>
+<p><strong>2. Campaign-specific DNC Lists</strong></p>
+<p>Each campaign can have its own DNC list for campaign-level opt-outs (consumers who asked not to be called about this specific product/campaign, but may have consented to other campaigns).</p>
+<ul>
+<li><strong>Location:</strong> Campaign Detail → DNC List ID</li>
+<li><strong>Adding numbers:</strong> Via dispositions (DNC disposition auto-adds to campaign DNC), API, or admin</li>
+</ul>
+<p><strong>3. National Do Not Call Registry</strong></p>
+<p>The FTC's National DNC Registry is <strong>separate</strong> from VICIdial's internal DNC. You must:
+- Download the DNC registry data (requires registration at telemarketing.donotcall.gov)
+- Scrub your lead lists against the national DNC <strong>before</strong> loading them into VICIdial
+- Re-scrub every 31 days (the maximum interval allowed by law)</p>
+<p>VICIdial does not natively integrate with the national DNC registry in real-time. The standard practice is to scrub lists externally before import, or to load the national DNC data into VICIdial's internal DNC table (this table can hold millions of entries but monitor MySQL performance).</p>
+<p><strong>4. State Do Not Call Lists</strong></p>
+<p>Several states maintain their own DNC registries separate from the national list. If you're calling into these states, you must obtain and scrub against their state lists:</p>
+<ul>
+<li>Indiana, Colorado, Florida, Louisiana, Mississippi, Missouri, Pennsylvania, Texas, Wyoming, and others</li>
+<li>Each state has its own registration and data access process</li>
+<li>Annual fees range from free to several hundred dollars</li>
+</ul>
+<p><strong>DNC compliance checklist for VICIdial:</strong></p>
+<ul>
+<li>[ ] Internal DNC list enabled on all campaigns</li>
+<li>[ ] Campaign DNC lists enabled where appropriate</li>
+<li>[ ] National DNC scrub performed within last 31 days</li>
+<li>[ ] State DNC scrubs current for all target states</li>
+<li>[ ] DNC disposition auto-adds to internal DNC list</li>
+<li>[ ] Opt-out processing workflow established (under 10 business days)</li>
+<li>[ ] DNC list import tested and verified</li>
+<li>[ ] Regular DNC audit (monthly) to verify list integrity</li>
+</ul>
+<hr />
+<h2 id="the-3-abandon-rate-rule-configuration-and-monitoring">The 3% Abandon Rate Rule: Configuration and Monitoring<a class="headerlink" href="#the-3-abandon-rate-rule-configuration-and-monitoring" title="Permanent link">&para;</a></h2>
+<p>The TCPA's abandon rate rule is one of the most commonly violated provisions — often unintentionally. Here's exactly how to configure and monitor it in VICIdial.</p>
+<h3 id="how-vicidial-calculates-drop-rate">How VICIdial Calculates Drop Rate<a class="headerlink" href="#how-vicidial-calculates-drop-rate" title="Permanent link">&para;</a></h3>
+<p>VICIdial tracks drops (abandoned calls) in the <code>vicidial_log</code> table with a status of <code>DROP</code>. The drop rate calculation is:</p>
+<div class="codehilite"><pre><span></span><code>Drop Rate = (DROP calls) / (Total answered calls) × 100
+</code></pre></div>
+
+<p>"Answered calls" are all calls where the consumer picked up — including calls routed to agents, drops, and AMD-classified calls (if AMD is enabled). Calls that rang with no answer (NA), busy (B), or disconnected (DC) are excluded from both numerator and denominator.</p>
+<h3 id="vicidial-settings-for-3-compliance">VICIdial Settings for 3% Compliance<a class="headerlink" href="#vicidial-settings-for-3-compliance" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Location</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Adaptive Dropped Percentage</td>
+<td>Campaign Detail → Dialing</td>
+<td>2.5%</td>
+<td>Target drop rate (margin below 3%)</td>
+</tr>
+<tr>
+<td>Drop Action</td>
+<td>Campaign Detail → Dialing</td>
+<td>AUDIO (safe harbor message)</td>
+<td>What happens to dropped calls</td>
+</tr>
+<tr>
+<td>Safe Harbor Audio</td>
+<td>Campaign Detail → Dialing</td>
+<td>[your message file]</td>
+<td>Plays compliance message</td>
+</tr>
+<tr>
+<td>Force Drop Timer</td>
+<td>Campaign Detail → Dialing</td>
+<td>5 seconds</td>
+<td>Max ring time before drop disposition</td>
+</tr>
+<tr>
+<td>Drop Percentage Max</td>
+<td>Campaign Detail → Dialing</td>
+<td>3.0%</td>
+<td>Hard ceiling — dialer pauses if hit</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The <code>Drop Percentage Max</code> setting</strong> is your emergency brake. When the actual drop percentage hits this ceiling, VICIdial's adaptive algorithm reduces dial levels to prevent further drops. Set this at 3.0% (the legal maximum). Your <code>Adaptive Dropped Percentage</code> target should be set lower (2.0-2.5%) so the emergency brake rarely triggers.</p>
+<h3 id="monitoring-drop-rate-in-real-time">Monitoring Drop Rate in Real Time<a class="headerlink" href="#monitoring-drop-rate-in-real-time" title="Permanent link">&para;</a></h3>
+<p>VICIdial's real-time reports show current drop rates. But for compliance, you need the 30-day rolling calculation. Run this query weekly (or daily if you're paranoid, which you should be):</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">call_day</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">daily_drops</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">daily_answered</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">          </span><span class="k">as</span><span class="w"> </span><span class="n">daily_drop_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">call_day</span><span class="p">;</span>
+</code></pre></div>
+
+<p>And the 30-day aggregate:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_drops_30d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_answered_30d</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">          </span><span class="k">as</span><span class="w"> </span><span class="n">rolling_30d_drop_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>If your rolling 30-day drop rate exceeds 3.0% on any campaign</strong>, take immediate action:
+1. Reduce the campaign's <code>Adaptive Dropped Percentage</code> to 1.5%
+2. Lower the <code>Adaptive Maximum Dial Level</code> to 1.5
+3. Add agents to the campaign to absorb more connects
+4. Investigate whether a specific date or time period caused the spike
+5. Document your remediation steps (this matters if you're ever audited)</p>
+<hr />
+<h2 id="state-mini-tcpa-requirements">State Mini-TCPA Requirements<a class="headerlink" href="#state-mini-tcpa-requirements" title="Permanent link">&para;</a></h2>
+<p>The federal TCPA sets the floor. State laws often go further. Here's every major state mini-TCPA that affects VICIdial configuration:</p>
+<h3 id="florida-florida-telephone-solicitation-act-ftsa">Florida — Florida Telephone Solicitation Act (FTSA)<a class="headerlink" href="#florida-florida-telephone-solicitation-act-ftsa" title="Permanent link">&para;</a></h3>
+<p>The FTSA is the most aggressive state telemarketing law in the country. Updated in 2021, it creates a private right of action (consumers can sue you directly) with significant per-violation damages.</p>
+<p><strong>Key requirements:</strong>
+- <strong>Calling hours:</strong> 8:00 AM - 8:00 PM local time (one hour shorter than federal)
+- <strong>Call frequency:</strong> Maximum <strong>3 calls per 24-hour period</strong> to the same residential telephone number
+- <strong>Do not call:</strong> Must scrub against Florida's state DNC list ($100/year access)
+- <strong>Written consent:</strong> Required for automated calls to cell phones (higher bar than federal)
+- <strong>Damages:</strong> $500 per violation, $1,500 for willful violations — with a private right of action</p>
+<p><strong>VICIdial configuration for Florida:</strong></p>
+<ol>
+<li>Create a Florida-specific Call Time: <code>8:00 AM - 8:00 PM ET</code></li>
+<li>Set per-number daily attempt limits using VICIdial's dial count features — configure <a href="/settings/auto-alt-dial/">Auto Alt Dial Limit</a> appropriately and use filter settings to cap Florida area codes at 3 attempts per 24 hours</li>
+<li>Maintain Florida state DNC scrub (updated quarterly)</li>
+<li>Store written consent records for all Florida cell phone numbers</li>
+</ol>
+<p><strong>Florida area codes to flag:</strong> 239, 305, 321, 352, 386, 407, 561, 727, 754, 772, 786, 813, 850, 863, 904, 941, 954</p>
+<h3 id="texas-sb-140-and-texas-telemarketing-disclosure-act">Texas — SB 140 and Texas Telemarketing Disclosure Act<a class="headerlink" href="#texas-sb-140-and-texas-telemarketing-disclosure-act" title="Permanent link">&para;</a></h3>
+<p><strong>Key requirements:</strong>
+- <strong>Registration required:</strong> Must register with the Texas Secretary of State before conducting telemarketing in Texas
+- <strong>Fee:</strong> Registration fee applies
+- <strong>Penalties:</strong> Up to $10,000 per violation
+- <strong>Calling hours:</strong> 8:00 AM - 9:00 PM local time (matches federal)</p>
+<p><strong>VICIdial configuration for Texas:</strong>
+- Ensure company registration is current before loading Texas leads
+- No special VICIdial settings needed beyond standard federal compliance
+- Maintain proof of registration in compliance files</p>
+<h3 id="virginia-virginia-telephone-privacy-protection-act">Virginia — Virginia Telephone Privacy Protection Act<a class="headerlink" href="#virginia-virginia-telephone-privacy-protection-act" title="Permanent link">&para;</a></h3>
+<p><strong>Key requirements:</strong>
+- <strong>10-year opt-out retention:</strong> Once a Virginia consumer requests no further calls, you must maintain that opt-out for <strong>10 years</strong> — one of the longest retention requirements in the country
+- <strong>DNC processing:</strong> Must process opt-out within 30 days (federal is technically 31 days, but Virginia courts have been stricter)</p>
+<p><strong>VICIdial configuration for Virginia:</strong>
+- Never purge DNC entries for Virginia numbers (434, 540, 571, 703, 757, 804)
+- Implement a DNC retention policy that prevents accidental deletion
+- Consider a separate DNC list or table with a <code>date_added</code> field for Virginia entries</p>
+<h3 id="oklahoma-oklahoma-telephone-solicitation-act-otsa">Oklahoma — Oklahoma Telephone Solicitation Act (OTSA)<a class="headerlink" href="#oklahoma-oklahoma-telephone-solicitation-act-otsa" title="Permanent link">&para;</a></h3>
+<p><strong>Key requirements:</strong>
+- <strong>Registration:</strong> Must register as a telephone solicitor with the Oklahoma Attorney General
+- <strong>Calling hours:</strong> 8:00 AM - 9:00 PM local time
+- <strong>Written confirmation:</strong> Must send written confirmation of any purchase within 3 business days (if applicable)
+- <strong>Bond requirement:</strong> $50,000 surety bond in some cases</p>
+<p><strong>VICIdial configuration:</strong>
+- Verify registration before dialing Oklahoma (405, 539, 580, 918)
+- Standard call time compliance</p>
+<h3 id="indiana-indiana-telephone-solicitation-act">Indiana — Indiana Telephone Solicitation Act<a class="headerlink" href="#indiana-indiana-telephone-solicitation-act" title="Permanent link">&para;</a></h3>
+<p><strong>Key requirements:</strong>
+- <strong>Registration:</strong> Must register with Indiana Attorney General
+- <strong>Do not call:</strong> Must scrub against Indiana state DNC list
+- <strong>Calling hours:</strong> 8:00 AM - 9:00 PM local time (matches federal)
+- <strong>Auto-dial:</strong> Specific restrictions on automated dialing to cell phones</p>
+<p><strong>VICIdial configuration:</strong>
+- Maintain Indiana state DNC scrub
+- Verify registration current</p>
+<h3 id="california-multiple-overlapping-laws">California — Multiple Overlapping Laws<a class="headerlink" href="#california-multiple-overlapping-laws" title="Permanent link">&para;</a></h3>
+<p>California combines the CCPA (data privacy), state telemarketing laws, and aggressive enforcement:</p>
+<p><strong>Key requirements:</strong>
+- <strong>CCPA:</strong> Consumers have the right to know what personal data you've collected, the right to delete it, and the right to opt out of data sales — this applies to lead data used in VICIdial campaigns
+- <strong>Opt-out processing:</strong> 15 business days (CCPA) — implement with VICIdial internal DNC
+- <strong>Calling hours:</strong> No state-specific override (federal 8 AM - 9 PM applies)
+- <strong>Cell phone consent:</strong> Written consent required for automated calls to cell phones (California Civil Code § 1770)
+- <strong>Private right of action:</strong> Yes, for both TCPA and CCPA violations</p>
+<p><strong>VICIdial configuration for California:</strong>
+- Maintain CCPA-compliant data handling processes
+- Process DNC requests within 15 business days
+- Store consent records for all California cell phone leads (213, 310, 323, 408, 415, 424, 442, 510, 530, 559, 562, 619, 626, 628, 650, 657, 661, 669, 707, 714, 747, 760, 805, 818, 831, 858, 909, 916, 925, 949, 951)</p>
+<h3 id="washington-washington-automatic-dialing-and-announcing-device-act">Washington — Washington Automatic Dialing and Announcing Device Act<a class="headerlink" href="#washington-washington-automatic-dialing-and-announcing-device-act" title="Permanent link">&para;</a></h3>
+<p><strong>Key requirements:</strong>
+- <strong>Prior consent:</strong> Required for any automated call or prerecorded message
+- <strong>Calling hours:</strong> 8:00 AM - 8:00 PM local time (same as Florida — one hour shorter than federal)
+- <strong>Identification:</strong> Must identify the caller and provide a phone number within the first 30 seconds</p>
+<p><strong>VICIdial configuration:</strong>
+- Create Washington-specific Call Time: <code>8:00 AM - 8:00 PM PT</code>
+- Ensure agent scripts include company identification within 30 seconds</p>
+<hr />
+<h2 id="consent-tracking-in-vicidial">Consent Tracking in VICIdial<a class="headerlink" href="#consent-tracking-in-vicidial" title="Permanent link">&para;</a></h2>
+<p>The one-to-one consent rule makes consent tracking a compliance requirement, not a best practice. Here's how to implement it in VICIdial.</p>
+<h3 id="custom-fields-for-consent-data">Custom Fields for Consent Data<a class="headerlink" href="#custom-fields-for-consent-data" title="Permanent link">&para;</a></h3>
+<p>Create custom fields on your VICIdial lead records to store consent information:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Add consent tracking fields to vicidial_lists_fields</span>
+<span class="c1">-- (or configure via Admin → Custom Fields)</span>
+
+<span class="n">consent_timestamp</span><span class="w">    </span><span class="c1">-- When consent was obtained</span>
+<span class="n">consent_source</span><span class="w">       </span><span class="c1">-- Where consent was obtained (URL, form name)</span>
+<span class="n">consent_language</span><span class="w">     </span><span class="c1">-- The specific consent text shown to consumer</span>
+<span class="n">consent_company</span><span class="w">      </span><span class="c1">-- Your company name as displayed in consent</span>
+<span class="n">consent_ip</span><span class="w">           </span><span class="c1">-- Consumer&#39;s IP address at time of consent</span>
+<span class="n">consent_method</span><span class="w">       </span><span class="c1">-- How consent was given (checkbox, signature, verbal)</span>
+</code></pre></div>
+
+<h3 id="lead-loading-with-consent-validation">Lead Loading with Consent Validation<a class="headerlink" href="#lead-loading-with-consent-validation" title="Permanent link">&para;</a></h3>
+<p>When loading leads via VICIdial's API or list import, validate that consent fields are populated before allowing the lead to enter the hopper:</p>
+<p><strong>API lead loading with consent fields:</strong></p>
+<div class="codehilite"><pre><span></span><code>/vicidial/non_agent_api.php?
+source=lead_import&amp;
+function=add_lead&amp;
+user=api_user&amp;
+pass=api_pass&amp;
+phone_number=5551234567&amp;
+first_name=John&amp;
+last_name=Smith&amp;
+list_id=10001&amp;
+consent_timestamp=2026-03-15T14:30:00Z&amp;
+consent_source=solar-quote-form-v3&amp;
+consent_company=ABC+Solar+Company&amp;
+custom_fields=Y
+</code></pre></div>
+
+<p>Implement a pre-hopper validation that checks for the presence of consent data. This can be done via a custom lead filter that excludes leads without consent fields populated.</p>
+<h3 id="consent-record-retrieval">Consent Record Retrieval<a class="headerlink" href="#consent-record-retrieval" title="Permanent link">&para;</a></h3>
+<p>When a consumer (or their attorney) requests proof of consent, you need to pull the complete record. Build this into your compliance workflow:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">l</span><span class="p">.</span><span class="n">phone_number</span><span class="p">,</span>
+<span class="w">    </span><span class="n">l</span><span class="p">.</span><span class="n">first_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">l</span><span class="p">.</span><span class="n">last_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cf</span><span class="p">.</span><span class="n">consent_timestamp</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cf</span><span class="p">.</span><span class="n">consent_source</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cf</span><span class="p">.</span><span class="n">consent_language</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cf</span><span class="p">.</span><span class="n">consent_company</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cf</span><span class="p">.</span><span class="n">consent_ip</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cf</span><span class="p">.</span><span class="n">consent_method</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">l</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">custom_</span><span class="p">[</span><span class="n">list_id</span><span class="p">]</span><span class="w"> </span><span class="n">cf</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cf</span><span class="p">.</span><span class="n">lead_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">phone_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;5551234567&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Store consent records indefinitely — or at minimum for 5 years after the last contact with the consumer. TCPA's statute of limitations is 4 years, but state laws vary.</p>
+<hr />
+<h2 id="the-complete-vicidial-tcpa-compliance-checklist">The Complete VICIdial TCPA Compliance Checklist<a class="headerlink" href="#the-complete-vicidial-tcpa-compliance-checklist" title="Permanent link">&para;</a></h2>
+<p>Print this. Tape it to the wall. Review it monthly.</p>
+<h3 id="federal-tcpa-compliance">Federal TCPA Compliance<a class="headerlink" href="#federal-tcpa-compliance" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>Abandon rate</strong> below 3% (30-day rolling) — <code>Adaptive Dropped Percentage</code> set to 2.5% or lower</li>
+<li>[ ] <strong>Safe harbor message</strong> plays on all abandoned calls — <code>Safe Harbor Audio</code> configured with compliant message</li>
+<li>[ ] <strong>Calling hours</strong> enforced: 8 AM - 9 PM called party's local time — <code>Local Call Time</code> configured with timezone checking</li>
+<li>[ ] <strong>National DNC</strong> scrub current within last 31 days — external scrub before lead import</li>
+<li>[ ] <strong>Internal DNC</strong> list enabled on all campaigns — both system and campaign DNC checked</li>
+<li>[ ] <strong>DNC processing</strong> within 10 business days of opt-out request</li>
+<li>[ ] <strong>One-to-one consent</strong> documented for every lead — consent fields populated and retrievable</li>
+<li>[ ] <strong>Consent revocation</strong> processed from any channel (phone, text, email, etc.)</li>
+<li>[ ] <strong>Company identification</strong> at start of every call — agent scripts include company name</li>
+<li>[ ] <strong>Opt-out mechanism</strong> offered on every call — agents trained to process DNC requests</li>
+<li>[ ] <strong>STIR/SHAKEN</strong> A-level attestation on all outbound DIDs — verified with SIP provider</li>
+</ul>
+<h3 id="state-mini-tcpa-compliance">State Mini-TCPA Compliance<a class="headerlink" href="#state-mini-tcpa-compliance" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>Florida (FTSA):</strong> 3 calls/24 hrs max, 8 AM-8 PM, state DNC scrubbed, written consent for cell phones</li>
+<li>[ ] <strong>Texas (SB 140):</strong> Registered with Secretary of State</li>
+<li>[ ] <strong>Virginia:</strong> 10-year DNC retention policy, DNC entries never purged</li>
+<li>[ ] <strong>Oklahoma (OTSA):</strong> Registered with Attorney General, bond in place if required</li>
+<li>[ ] <strong>California (CCPA):</strong> 15-day opt-out processing, data handling documented</li>
+<li>[ ] <strong>Washington:</strong> 8 AM-8 PM calling hours, caller identification within 30 seconds</li>
+<li>[ ] <strong>Indiana:</strong> Registered with Attorney General, state DNC scrubbed</li>
+<li>[ ] <strong>All target states:</strong> Verified calling hours, DNC list requirements, registration requirements</li>
+</ul>
+<h3 id="vicidial-technical-configuration">VICIdial Technical Configuration<a class="headerlink" href="#vicidial-technical-configuration" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>Adaptive Dropped Percentage:</strong> 2.0-2.5%</li>
+<li>[ ] <strong>Drop Percentage Max:</strong> 3.0%</li>
+<li>[ ] <strong>Safe Harbor Audio:</strong> Configured with compliant recording</li>
+<li>[ ] <strong>Safe Harbor Message on Drop:</strong> Y</li>
+<li>[ ] <strong>Local Call Time:</strong> Configured with state-compliant hours</li>
+<li>[ ] <strong>Time Zone Checking:</strong> Enabled (TZCODE preferred)</li>
+<li>[ ] <strong>Use Internal DNC List:</strong> Y</li>
+<li>[ ] <strong>Use Campaign DNC List:</strong> Y (where applicable)</li>
+<li>[ ] <strong>DNC auto-add on DNC disposition:</strong> Configured</li>
+<li>[ ] <strong>Hopper GMT Settings:</strong> Enabled</li>
+<li>[ ] <strong>Phone timezone data:</strong> Current in <code>vicidial_phone_codes</code></li>
+<li>[ ] <strong>Consent custom fields:</strong> Created and required for lead loading</li>
+<li>[ ] <strong>Dial timeout:</strong> 26-30 seconds (prevent premature hangups)</li>
+<li>[ ] <strong>AMD safe harbor:</strong> Message plays on AMD-classified machine calls if message is left</li>
+</ul>
+<h3 id="operational-compliance">Operational Compliance<a class="headerlink" href="#operational-compliance" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>Agent training:</strong> TCPA compliance training completed and documented</li>
+<li>[ ] <strong>Script compliance:</strong> Scripts include company identification and opt-out language</li>
+<li>[ ] <strong>Call recording:</strong> All calls recorded and retained per applicable law (check two-party consent states)</li>
+<li>[ ] <strong>Monthly compliance audit:</strong> Drop rates, DNC processing times, consent records reviewed</li>
+<li>[ ] <strong>Incident response plan:</strong> Documented process for handling TCPA complaints</li>
+<li>[ ] <strong>Compliance officer designated:</strong> Named individual responsible for TCPA compliance</li>
+<li>[ ] <strong>Attorney relationship:</strong> Outside counsel identified for TCPA matters</li>
+</ul>
+<h3 id="recording-and-two-party-consent-states">Recording and Two-Party Consent States<a class="headerlink" href="#recording-and-two-party-consent-states" title="Permanent link">&para;</a></h3>
+<p>VICIdial records calls by default (configurable per campaign). In two-party consent states, you must inform the called party that the call is being recorded. These states require all-party consent for recording:</p>
+<p>California, Connecticut, Delaware, Florida, Illinois, Maryland, Massachusetts, Michigan, Montana, Nevada, New Hampshire, Oregon, Pennsylvania, Vermont, Washington</p>
+<p><strong>VICIdial configuration:</strong> Enable a pre-call recording notification (either an automated message via the <code>campaign_recording_message</code> setting or require agents to state the recording disclosure in their opening script).</p>
+<hr />
+<h2 id="consent-management-the-one-to-one-rule-in-practice">Consent Management: The One-to-One Rule in Practice<a class="headerlink" href="#consent-management-the-one-to-one-rule-in-practice" title="Permanent link">&para;</a></h2>
+<p>The FCC's one-to-one consent rule deserves additional detail because it fundamentally changes how most outbound operations acquire leads.</p>
+<h3 id="what-valid-consent-looks-like-in-2026">What Valid Consent Looks Like in 2026<a class="headerlink" href="#what-valid-consent-looks-like-in-2026" title="Permanent link">&para;</a></h3>
+<p>A valid consent record under the new rule must show:</p>
+<ol>
+<li>
+<p><strong>Specific seller identification.</strong> The consent form must name your company — not "our partners," not "participating providers," not "companies in our network." Your company name, clearly and conspicuously displayed.</p>
+</li>
+<li>
+<p><strong>Specific product/service.</strong> The consent must relate to the product or service you're calling about. Consent to receive calls about solar panels does not authorize calls about home security systems, even if both products are sold by the same company (unless the consent language covers both).</p>
+</li>
+<li>
+<p><strong>Clear and conspicuous disclosure.</strong> The consent language cannot be buried in terms of service or hidden behind a hyperlink. It must be visible and readable at the point where the consumer takes the action that constitutes consent.</p>
+</li>
+<li>
+<p><strong>Affirmative action.</strong> The consumer must take an affirmative action to consent — checking an unchecked box, signing a form, clicking a button that clearly indicates consent. Pre-checked boxes do not constitute valid consent.</p>
+</li>
+<li>
+<p><strong>Logically and topically related.</strong> The call must be logically related to the interaction in which consent was obtained. If someone fills out a form requesting a solar quote, calling them about solar is topically related. Calling them about windows or roofing is not (unless the form explicitly covered those products).</p>
+</li>
+</ol>
+<h3 id="lead-source-compliance-verification">Lead Source Compliance Verification<a class="headerlink" href="#lead-source-compliance-verification" title="Permanent link">&para;</a></h3>
+<p>Before loading any purchased leads into VICIdial, verify the consent chain:</p>
+<p><strong>Tier 1: Exclusive leads (highest compliance confidence)</strong>
+- Consumer filled out your company's own web form
+- Consent language names your company specifically
+- You have the full consent record (form, timestamp, IP, language)
+- Risk: Low</p>
+<p><strong>Tier 2: Exclusive leads from a lead gen partner (moderate compliance confidence)</strong>
+- Consumer filled out a partner's web form that named your company
+- You receive the consent record from the partner
+- You've verified the partner's form and consent language comply with one-to-one rule
+- Risk: Moderate (depends on partner's compliance practices)</p>
+<p><strong>Tier 3: Shared leads / aggregator leads (high compliance risk)</strong>
+- Consumer filled out a form that authorized multiple companies
+- Pre-2025 consent model — <strong>likely non-compliant under one-to-one rule</strong>
+- Risk: High — these leads should be treated as non-consented unless the aggregator has updated their forms to comply with the new rule</p>
+<p><strong>Tier 4: Purchased lists without consent records (non-compliant)</strong>
+- No consent documentation
+- Risk: Extreme — do not dial these with predictive/automatic dialing</p>
+<h3 id="implementing-consent-validation-in-lead-loading">Implementing Consent Validation in Lead Loading<a class="headerlink" href="#implementing-consent-validation-in-lead-loading" title="Permanent link">&para;</a></h3>
+<p>Add a validation step to your VICIdial lead loading process:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># Pre-load consent validation for VICIdial lead import</span>
+<span class="c1"># Rejects leads without required consent fields</span>
+
+<span class="c1"># Required consent fields - all must be non-empty</span>
+<span class="nv">REQUIRED_FIELDS</span><span class="o">=</span><span class="s2">&quot;consent_timestamp consent_source consent_company&quot;</span>
+
+<span class="c1"># Validate each lead before API submission</span>
+<span class="k">while</span><span class="w"> </span><span class="nv">IFS</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>-r<span class="w"> </span>phone<span class="w"> </span>first<span class="w"> </span>last<span class="w"> </span>consent_ts<span class="w"> </span>consent_src<span class="w"> </span>consent_co<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">VALID</span><span class="o">=</span><span class="nb">true</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$consent_ts</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$consent_src</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$consent_co</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;REJECTED: </span><span class="nv">$phone</span><span class="s2"> - missing consent fields&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/log/vicidial/consent_rejects.log
+<span class="w">        </span><span class="nv">VALID</span><span class="o">=</span><span class="nb">false</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$VALID</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># Submit to VICIdial API</span>
+<span class="w">        </span>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://vicidial-server/vicidial/non_agent_api.php?\</span>
+<span class="s2">source=consent_import&amp;function=add_lead&amp;user=api_user&amp;pass=api_pass&amp;\</span>
+<span class="s2">phone_number=</span><span class="si">${</span><span class="nv">phone</span><span class="si">}</span><span class="s2">&amp;first_name=</span><span class="si">${</span><span class="nv">first</span><span class="si">}</span><span class="s2">&amp;last_name=</span><span class="si">${</span><span class="nv">last</span><span class="si">}</span><span class="s2">&amp;\</span>
+<span class="s2">list_id=10001&amp;custom_fields=Y&amp;\</span>
+<span class="s2">consent_timestamp=</span><span class="si">${</span><span class="nv">consent_ts</span><span class="si">}</span><span class="s2">&amp;consent_source=</span><span class="si">${</span><span class="nv">consent_src</span><span class="si">}</span><span class="s2">&amp;\</span>
+<span class="s2">consent_company=</span><span class="si">${</span><span class="nv">consent_co</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span><span class="w"> </span>&lt;<span class="w"> </span>leads_to_import.txt
+</code></pre></div>
+
+<hr />
+<h2 id="enforcement-trends-whats-getting-operations-sued-in-2026">Enforcement Trends: What's Getting Operations Sued in 2026<a class="headerlink" href="#enforcement-trends-whats-getting-operations-sued-in-2026" title="Permanent link">&para;</a></h2>
+<p>Understanding current enforcement patterns helps you prioritize compliance efforts:</p>
+<p><strong>1. Consent chain challenges.</strong> Plaintiff attorneys are aggressively challenging lead gen consent chains. They fill out forms themselves, receive calls from multiple companies, and then file class actions alleging the shared consent model violates the one-to-one rule. If you can't produce a one-to-one consent record for the specific phone number, you lose.</p>
+<p><strong>2. Revocation timing.</strong> Consumers who request removal and then receive a call 3 days later are filing complaints. The FCC's "reasonable time" standard is being interpreted by courts as 24-72 hours in most cases, not the 10 business days the FCC suggested as an outer limit. Process opt-outs faster.</p>
+<p><strong>3. State FTSA (Florida) litigation explosion.</strong> The Florida FTSA's private right of action has created a cottage industry of plaintiff attorneys filing FTSA class actions. The 3-call-per-24-hour limit is the most commonly violated provision because many VICIdial operations don't configure per-number daily limits for Florida leads.</p>
+<p><strong>4. ATDS definition still in flux.</strong> After the Supreme Court's 2021 Facebook v. Duguid decision narrowed the ATDS definition, litigation shifted to state laws (which often have broader ATDS definitions) and to consent-based claims. VICIdial's predictive dialer does qualify as an ATDS under some state definitions even if it may not under the narrowed federal definition. Don't rely on ATDS arguments as a defense — focus on consent and DNC compliance.</p>
+<p><strong>5. Recording consent violations.</strong> Two-party consent states are generating a new wave of litigation. An agent in a one-party state (like Texas) calling a consumer in a two-party state (like California) must comply with California's recording consent law. If your VICIdial campaigns record calls without informing consumers in two-party consent states, you're exposed.</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-the-maximum-abandon-rate-allowed-under-the-tcpa">What is the maximum abandon rate allowed under the TCPA?<a class="headerlink" href="#what-is-the-maximum-abandon-rate-allowed-under-the-tcpa" title="Permanent link">&para;</a></h3>
+<p>The FCC's safe harbor allows a maximum 3% abandon rate measured over a 30-day campaign period. This means no more than 3% of <strong>answered calls</strong> can be abandoned (no live agent available when the consumer picks up). In VICIdial, set <code>Adaptive Dropped Percentage</code> to 2.0-2.5% and <code>Drop Percentage Max</code> to 3.0%. Monitor your actual 30-day rolling rate weekly using the SQL queries provided in this guide.</p>
+<h3 id="how-quickly-do-i-need-to-process-a-do-not-call-request">How quickly do I need to process a do-not-call request?<a class="headerlink" href="#how-quickly-do-i-need-to-process-a-do-not-call-request" title="Permanent link">&para;</a></h3>
+<p>The FCC's revocation rules (effective April 2025) require processing within a "reasonable time," which the FCC has indicated as no more than 10 business days. However, courts and plaintiff attorneys are increasingly arguing that 24-72 hours is reasonable given modern technology. Best practice: process opt-outs within 24 hours. In VICIdial, configure the DNC disposition to auto-add to the internal DNC list immediately, which handles the dialing side. Ensure your CRM and lead sources also receive the opt-out notification.</p>
+<h3 id="does-vicidial-automatically-check-the-national-do-not-call-registry">Does VICIdial automatically check the National Do Not Call Registry?<a class="headerlink" href="#does-vicidial-automatically-check-the-national-do-not-call-registry" title="Permanent link">&para;</a></h3>
+<p>No. VICIdial has internal DNC lists (system and campaign level) but does not natively integrate with the FTC's National DNC Registry. You must scrub your lead lists against the national DNC externally before loading them into VICIdial, and re-scrub every 31 days. Some third-party list scrubbing services (DNC.com, Gryphon, Contact Center Compliance) offer automated scrubbing that can be integrated into your VICIdial lead loading workflow.</p>
+<h3 id="what-happens-if-my-vicidial-abandon-rate-goes-over-3">What happens if my VICIdial abandon rate goes over 3%?<a class="headerlink" href="#what-happens-if-my-vicidial-abandon-rate-goes-over-3" title="Permanent link">&para;</a></h3>
+<p>You're in violation of the TCPA's abandoned call provisions. Each abandoned call above the 3% threshold is a potential violation carrying $500-$1,500 in damages. For a campaign making 10,000 answered calls per month at 4% drops instead of 3%, that's 100 excess drops — potentially $50,000-$150,000 in exposure per month. Immediately reduce dial levels, add agents, and investigate the cause. Document your remediation actions.</p>
+<h3 id="do-i-need-separate-vicidial-campaigns-for-different-states">Do I need separate VICIdial campaigns for different states?<a class="headerlink" href="#do-i-need-separate-vicidial-campaigns-for-different-states" title="Permanent link">&para;</a></h3>
+<p>Not necessarily separate campaigns, but you need state-specific configurations. VICIdial's Call Time and lead filter features can handle state-specific calling hour restrictions. For states like Florida with per-number daily call limits, you'll need to configure lead filters or custom dial count limits for Florida area codes. Some operations create state-specific sub-campaigns for heavy-restriction states (Florida, California) to simplify compliance management.</p>
+<h3 id="is-the-fcc-one-to-one-consent-rule-retroactive">Is the FCC one-to-one consent rule retroactive?<a class="headerlink" href="#is-the-fcc-one-to-one-consent-rule-retroactive" title="Permanent link">&para;</a></h3>
+<p>The FCC stated the rule applies to consents obtained on or after January 27, 2025. Consents obtained before that date under the old rules remain valid — but only for the duration specified in the original consent (or until revoked). In practice, if you're still dialing leads from pre-2025 consent records in mid-2026, verify that the original consent hasn't expired and hasn't been revoked. The safest approach: transition entirely to one-to-one compliant consent by Q2 2026.</p>
+<h3 id="how-do-i-handle-tcpa-compliance-for-sms-campaigns-run-alongside-vicidial">How do I handle TCPA compliance for SMS campaigns run alongside VICIdial?<a class="headerlink" href="#how-do-i-handle-tcpa-compliance-for-sms-campaigns-run-alongside-vicidial" title="Permanent link">&para;</a></h3>
+<p>SMS (text messaging) is covered by the TCPA and has its own consent requirements. Key difference: the TCPA requires express written consent (not just express consent) for telemarketing text messages to cell phones. Your consent form must explicitly mention text messages. In VICIdial, if you're using the built-in SMS capabilities or integrating with an external SMS platform, ensure: (1) separate consent for SMS is obtained, (2) STOP/opt-out processing is automated, (3) message frequency matches what was disclosed in the consent, and (4) every message includes opt-out instructions.</p>
+<h3 id="what-records-should-i-keep-for-tcpa-compliance">What records should I keep for TCPA compliance?<a class="headerlink" href="#what-records-should-i-keep-for-tcpa-compliance" title="Permanent link">&para;</a></h3>
+<p>Retain the following for at least 5 years (longer for Virginia — 10 years for DNC records): consent records for every lead (timestamp, source, language, company identified), complete call logs (VICIdial's <code>vicidial_log</code> table), DNC list history (with dates added), agent training records, campaign configuration snapshots, abandon rate reports, and any consumer complaints received. VICIdial's MySQL database retains call logs indefinitely by default, but ensure your backup and archival processes preserve this data.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-tcpa-compliance">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

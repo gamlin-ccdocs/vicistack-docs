@@ -1,0 +1,3497 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-vs-convoso/">
+      
+      
+        <link rel="prev" href="../vicidial-vs-calltools/">
+      
+      
+        <link rel="next" href="../vicidial-vs-five9/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-vs-convoso-the-honest-comparison-convoso-doesnt-want-you-to-read" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#first-lets-talk-about-the-elephant-in-the-room-convoso-was-built-on-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First, Let's Talk About the Elephant in the Room: Convoso Was Built on VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-real-cost-comparison-not-convosos-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Real Cost Comparison (Not Convoso's Version)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-you-need-a-developer-argument-and-the-third-option-nobody-mentions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "You Need a Developer" Argument — and the Third Option Nobody Mentions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-parity-what-exactly-are-you-paying-90seat-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature Parity: What Exactly Are You Paying $90/Seat For?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#amd-accuracy-lets-be-honest-about-both-sides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD Accuracy: Let's Be Honest About Both Sides
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caller-id-reputation-convosos-strongest-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caller ID Reputation: Convoso's Strongest Card
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-tcpa-compliance-smokescreen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The TCPA Compliance Smokescreen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ai-future-belongs-to-open-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The AI Future Belongs to Open Source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalability-vicidials-proven-ceiling-vs-convosos-trust-us" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalability: VICIdial's Proven Ceiling vs Convoso's "Trust Us"
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-when-things-go-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens When Things Go Wrong
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-convoso-actually-wins-being-honest-makes-us-credible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Convoso Actually Wins (Being Honest Makes Us Credible)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-competitive-landscape-in-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Competitive Landscape in Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#first-lets-talk-about-the-elephant-in-the-room-convoso-was-built-on-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First, Let's Talk About the Elephant in the Room: Convoso Was Built on VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-real-cost-comparison-not-convosos-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Real Cost Comparison (Not Convoso's Version)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-you-need-a-developer-argument-and-the-third-option-nobody-mentions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "You Need a Developer" Argument — and the Third Option Nobody Mentions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-parity-what-exactly-are-you-paying-90seat-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature Parity: What Exactly Are You Paying $90/Seat For?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#amd-accuracy-lets-be-honest-about-both-sides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD Accuracy: Let's Be Honest About Both Sides
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caller-id-reputation-convosos-strongest-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caller ID Reputation: Convoso's Strongest Card
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-tcpa-compliance-smokescreen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The TCPA Compliance Smokescreen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ai-future-belongs-to-open-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The AI Future Belongs to Open Source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalability-vicidials-proven-ceiling-vs-convosos-trust-us" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalability: VICIdial's Proven Ceiling vs Convoso's "Trust Us"
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-when-things-go-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens When Things Go Wrong
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-convoso-actually-wins-being-honest-makes-us-credible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Convoso Actually Wins (Being Honest Makes Us Credible)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-competitive-landscape-in-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Competitive Landscape in Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-vs-convoso-the-honest-comparison-convoso-doesnt-want-you-to-read">VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read<a class="headerlink" href="#vicidial-vs-convoso-the-honest-comparison-convoso-doesnt-want-you-to-read" title="Permanent link">&para;</a></h1>
+<p><em>By someone who's managed 100+ VICIdial-based call centers, processed 600,000+ monthly dials, and has zero patience for vendor marketing disguised as journalism.</em></p>
+<hr />
+<p>If you Google "VICIdial vs Convoso" right now, every single result on the first page is either written by Convoso or auto-generated by a review site with zero editorial analysis. Five separate Convoso pages. Zero independent comparisons. Not one.</p>
+<p>That ends today.</p>
+<p>I've spent 15+ years building, scaling, and optimizing VICIdial deployments. I've hired 10,000+ agents. I've watched Convoso evolve from a VICIdial reseller called SafeSoft Solutions into a company that now spends serious marketing dollars attacking the very platform they built their business on. And I've got receipts.</p>
+<p>This isn't a puff piece for either platform. Convoso genuinely does some things well. But the comparison they're selling you is designed to move you toward a $130–200/seat/month commitment — and the math they present to get you there is, to put it politely, creative.</p>
+<p>Let's fix that.</p>
+<hr />
+<h2 id="first-lets-talk-about-the-elephant-in-the-room-convoso-was-built-on-vicidial">First, Let's Talk About the Elephant in the Room: Convoso Was Built on VICIdial<a class="headerlink" href="#first-lets-talk-about-the-elephant-in-the-room-convoso-was-built-on-vicidial" title="Permanent link">&para;</a></h2>
+<p>This isn't rumor. This isn't forum gossip. This is from Convoso's own blog.</p>
+<p>On their "hidden costs" page, they write — and I'm paraphrasing to respect their content — that they started as SafeSoft Solutions in 2006, worked with VICIdial's open-source code for over eleven years, learned from its limitations and customer pain points, and eventually decided they couldn't fix certain underlying code issues, so they built their own proprietary solution from scratch.</p>
+<p>Eleven years. On VICIdial code.</p>
+<p>SafeSoft Solutions was founded in 2006 in Woodland Hills, California by brothers Nima and Bobby Hakimi. Their product was called MarketDialer — a hosted predictive dialer running on VICIdial's open-source codebase. They rebranded to Convoso in September 2016 via PR Newswire, claiming they'd created the first "gamified contact center software."</p>
+<p>The VICIdial community noticed. And they noticed something else.</p>
+<p>In April 2019, a VICIdial forum member posted a Convoso marketing email targeting VICIdial users — the standard "10 Reasons to Switch" pitch. Normal competitive marketing, nothing unusual. Except the email's footer contained something extraordinary: VICIdial's own system version stamp. VERSION: 2.14-698a, BUILD: 190207-2301, Asterisk:13.24.1-vici, Vicibox 8.1.2.</p>
+<p>Convoso was marketing against VICIdial to VICIdial users <strong>while still running VICIdial infrastructure</strong>.</p>
+<p>When community members requested Convoso's source code modifications under the AGPLv2 license — which legally requires anyone running modified VICIdial code to provide access — multiple people reported being ignored and ghosted. The VICIdial project's creator, Matt Florell, acknowledged awareness of the situation and described the painful reality of AGPL enforcement: even winning a lawsuit doesn't guarantee you'll actually receive the code.</p>
+<p>I bring this up not to be petty, but because context matters. When Convoso tells you VICIdial is outdated and limited, they're attacking the platform that generated their first decade of revenue. The platform they couldn't fix isn't broken — they just realized they could charge $90+/seat for it if they wrapped it in a modern UI and locked you in.</p>
+<blockquote>
+<p><strong>They Built Their Business on VICIdial. Then Charged You $90/Seat for It.</strong>
+ViciStack gives you optimized VICIdial performance at a fraction of the cost. No lock-in, no surprises. <a href="/pricing/">See Our Pricing →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-real-cost-comparison-not-convosos-version">The Real Cost Comparison (Not Convoso's Version)<a class="headerlink" href="#the-real-cost-comparison-not-convosos-version" title="Permanent link">&para;</a></h2>
+<p>Convoso's "hidden costs of VICIdial" page claims open-source VICIdial can run over $100,000 per year in total cost of ownership. They arrive at this number by cherry-picking the most expensive possible hosting (VICIhost at $400/server/month), quoting top-tier US consultant rates ($100–200/hour), and ignoring the massive managed hosting ecosystem that exists between DIY and SaaS.</p>
+<p>The actual numbers tell a different story.</p>
+<p><strong>VICIdial Infrastructure Costs:</strong></p>
+<p>A Hetzner dedicated server runs $49–88/month and supports 25 predictive agents. At a 100-agent operation, you need roughly 4 telephony servers plus a database server and web server — call it $350–500/month total in infrastructure. That's <a href="/blog/vicidial-cost-2026/">$3.50–5.00 per agent per month</a> in pure infrastructure cost. Not $90. Not $165. Under five dollars.</p>
+<p><strong>VoIP Trunking at Wholesale:</strong></p>
+<p>BulkVS charges $0.004/minute outbound with DIDs at $0.06/month each. Telnyx runs $0.005–0.009/minute. For a 100-agent operation doing reasonable volume, monthly telecom runs $1,200–2,300 depending on your carrier. Convoso's estimated carrier pass-through? $6,000–9,000/month. That's a 3–7x markup over what you'd pay buying trunking directly.</p>
+<p><strong>The Full TCO Comparison:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Scale</th>
+<th>VICIdial All-In/Month</th>
+<th>Per Agent</th>
+<th>Convoso Estimated</th>
+<th>Per Agent</th>
+<th>Annual Savings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>25 agents</td>
+<td>~$1,345</td>
+<td>~$54</td>
+<td>~$4,125</td>
+<td>~$165</td>
+<td>$33,360</td>
+</tr>
+<tr>
+<td>50 agents</td>
+<td>~$2,554</td>
+<td>~$51</td>
+<td>~$8,250</td>
+<td>~$165</td>
+<td>$68,352</td>
+</tr>
+<tr>
+<td>100 agents</td>
+<td>~$4,941</td>
+<td>~$49</td>
+<td>~$16,500</td>
+<td>~$165</td>
+<td>$138,708</td>
+</tr>
+<tr>
+<td>200 agents</td>
+<td>~$9,106</td>
+<td>~$46</td>
+<td>~$33,000</td>
+<td>~$165</td>
+<td>$286,728</td>
+</tr>
+</tbody>
+</table>
+<p>VICIdial's all-in includes Hetzner infrastructure, Telnyx trunking, a full-time system administrator, and caller ID monitoring tools. At 200 agents, you're saving $287K per year. That's not a rounding error. That's a senior engineer's salary, your entire carrier bill, and a nice bonus for the ops team.</p>
+<blockquote>
+<p><strong>$287K/Year in Savings at 200 Agents. That's Not a Typo.</strong>
+ViciStack delivers managed VICIdial with AMD accuracy that rivals Convoso's claims. <a href="/free-audit/">Get Your Free Audit →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-you-need-a-developer-argument-and-the-third-option-nobody-mentions">The "You Need a Developer" Argument — and the Third Option Nobody Mentions<a class="headerlink" href="#the-you-need-a-developer-argument-and-the-third-option-nobody-mentions" title="Permanent link">&para;</a></h2>
+<p>Convoso's strongest talking point is legitimate: raw self-hosted VICIdial requires Linux, MySQL, and Asterisk expertise. If you can't SSH into a server, you can't run VICIdial yourself. Full stop.</p>
+<p>But Convoso frames this as a binary choice — their turnkey SaaS or your own Linux skills. They conveniently ignore the 12+ managed VICIdial hosting providers that have quietly built a thriving middle ground.</p>
+<p><strong>The Managed VICIdial Ecosystem:</strong></p>
+<p>eTollFree starts at $99/month with zero setup fees, live within an hour. CallCenterTech offers $39/month plans with 4-minute automated deployment. VoipPlus charges $200/month with a dedicated server supporting 25 agents — that's $8/seat. Quality Voice &amp; Data delivers implementations in under 30 days with HIPAA/GDPR/CCPA support. RockyDialer bundles caller ID reputation monitoring into their managed hosting. CyburDial/dialer.one layers a modern white-label UI theme on top with AI-driven <a href="/blog/vicidial-amd-guide/">AMD</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Deployment Model</th>
+<th>Cost/Seat/Month</th>
+<th>Technical Burden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Self-hosted VICIdial</td>
+<td>$15–30</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Managed VICIdial</td>
+<td>$40–80</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Convoso SaaS</td>
+<td>$130–200+</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p>This is the market gap nobody writes about. It's also where ViciStack lives — optimized VICIdial performance without the SaaS tax.</p>
+<hr />
+<h2 id="feature-parity-what-exactly-are-you-paying-90seat-for">Feature Parity: What Exactly Are You Paying $90/Seat For?<a class="headerlink" href="#feature-parity-what-exactly-are-you-paying-90seat-for" title="Permanent link">&para;</a></h2>
+<p>VICIdial includes — at zero licensing cost — every dialing mode (predictive, progressive, ratio, preview, manual, broadcast), inbound ACD with skills-based routing, automatic call recording with per-campaign rules, real-time monitoring with listen/whisper/barge, callback scheduling, timezone-aware dialing, per-state restrictions, DNC management, a built-in CRM supporting 20M+ active leads, email and chat handling, a WebRTC softphone (VICIphone), a Non-Agent API with 50+ functions, an Agent API for complete remote agent screen control, and over 3,000 configurable settings.</p>
+<p>That's not a stripped-down open-source toy. That's a 20-year-old battle-tested platform running 14,000+ installations across 100+ countries.</p>
+<p>What Convoso charges extra for — advanced API access, custom reporting, feature additions — VICIdial includes for free. With direct MySQL access to 300+ tables, you can build literally any report you want. One Capterra reviewer described building a complete BI system directly from VICIdial's database. Try doing that with Convoso's canned reports.</p>
+<p><strong>The Database Access Advantage Is Enormous.</strong></p>
+<p>VICIdial's MySQL schema includes vicidial_list (every lead), vicidial_log (every outbound call with second-level precision), vicidial_agent_log (granular agent activity — pause, wait, talk, dispo, dead time in epoch seconds), and recording_log (metadata with direct HTTP URLs to every recording). No API rate limits. No field restrictions. Full JOINs across anything. Custom indexes. Stored procedures. Direct replication to Tableau, Power BI, Metabase — whatever you want.</p>
+<p>Want a real-time agent performance dashboard? One query:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">talk_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">talk_time</span><span class="p">,</span>
+<span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">wait_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">wait_time</span><span class="p">,</span>
+<span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">pause_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">pause_time</span><span class="p">,</span>
+<span class="w">  </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls_handled</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">HOUR</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">campaign_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">talk_time</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Or pull conversion rates by list source to see which data vendors are actually performing:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span><span class="p">,</span><span class="w"> </span><span class="n">vc</span><span class="p">.</span><span class="n">list_name</span><span class="p">,</span>
+<span class="w">  </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">sales</span><span class="p">,</span>
+<span class="w">  </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">conv_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_lists</span><span class="w"> </span><span class="n">vc</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vc</span><span class="p">.</span><span class="n">list_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">conv_pct</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Convoso gives you their dashboard. If you want something it doesn't show, you submit a feature request.</p>
+<blockquote>
+<p><strong>Every Feature Convoso Charges Extra For? VICIdial Includes It Free.</strong>
+ViciStack adds the management layer. The software was always capable. <a href="/pricing/">See What's Included →</a></p>
+</blockquote>
+<hr />
+<h2 id="amd-accuracy-lets-be-honest-about-both-sides">AMD Accuracy: Let's Be Honest About Both Sides<a class="headerlink" href="#amd-accuracy-lets-be-honest-about-both-sides" title="Permanent link">&para;</a></h2>
+<p>Convoso claims 97% answering machine detection accuracy. VICIdial's built-in Asterisk <a href="/blog/vicidial-amd-guide/">AMD runs closer to 70%</a> with a roughly 30% false-positive rate. Matt Florell has been candid about this — it's openly documented in the forums and wiki.</p>
+<p>But the full picture is more nuanced.</p>
+<p>VICIdial's Sangoma Call Progress Detection integration — available since 2008 — pushes AMD accuracy to 95%. And the emerging AI-powered AMD market has blown past both platforms. AMDY.IO offers a native one-line install for VICIdial claiming 99% accuracy with under 1% false positives. Users report going from 8 answering machines per 10 calls down to 2 per 10.</p>
+<p>Convoso's 97% claim is self-reported with zero independent verification. Sangoma's CPD numbers come from a commercial product with documented methodology. AMDY.IO's numbers come from three years of production deployments. Convoso's number comes from their marketing department.</p>
+<p>On top of that, the AMD landscape is shifting to machine learning models that convert audio into mel spectrograms for image-based classification. This favors open-source platforms where you can plug in any model — VICIdial's Asterisk foundation supports AudioSocket for streaming raw audio to any external AI engine. Convoso's proprietary AMD is a black box you can't swap, test against alternatives, or improve independently.</p>
+<blockquote>
+<p><strong>92-96% AMD Accuracy. No "Up To" Hedge.</strong>
+ViciStack's AMD Crusher runs on dedicated GPU hardware. We publish real numbers. <a href="/free-audit/">See the Data →</a></p>
+</blockquote>
+<hr />
+<h2 id="caller-id-reputation-convosos-strongest-card">Caller ID Reputation: Convoso's Strongest Card<a class="headerlink" href="#caller-id-reputation-convosos-strongest-card" title="Permanent link">&para;</a></h2>
+<p>Credit where it's due: Convoso Ignite is their single strongest competitive differentiator. It automates DID scoring, procurement, and retirement — addressing the fact that 80% of calls from unrecognized numbers go unanswered and calls labeled "Spam Likely" see answer rates below 5%.</p>
+<p>Convoso customers report Ignite delivering 30–50% contact rate improvements. These are real numbers solving a real problem.</p>
+<p>VICIdial has no native equivalent. That's a genuine gap.</p>
+<p>But it's a bridgeable gap. Numeracle offers enterprise caller identity management with 99.8% spam-label prevention. Hiya Connect partners with AT&amp;T for branded caller ID. First Orion partners with T-Mobile. Free Caller Registry lets you register numbers with all three carrier analytics engines at zero cost. RockyDialer integrates <a href="/blog/vicidial-did-management/">CID reputation monitoring</a> into their managed VICIdial hosting.</p>
+<p>Is assembling these pieces more work than clicking "Enable Ignite" in Convoso? Absolutely. Is that work worth $50–120/seat/month in savings? At 100 agents, that question answers itself.</p>
+<hr />
+<h2 id="the-tcpa-compliance-smokescreen">The TCPA Compliance Smokescreen<a class="headerlink" href="#the-tcpa-compliance-smokescreen" title="Permanent link">&para;</a></h2>
+<p>Convoso markets compliance features — StateTracker for mini-TCPA laws, DNC scrubbing, <a href="/blog/stir-shaken-vicidial-guide/">STIR/SHAKEN</a> integration — as reasons to pay SaaS pricing. But the TCPA litigation data paints a different picture.</p>
+<p>TCPA class actions hit an all-time record of 2,788 in 2024 — up 67% year-over-year. Average class action settlements run $6.6 million. September 2025 set a single-month record of 224 filings.</p>
+<p>And the critical finding: <strong>no dialer platform — including Convoso — has ever been the target of FCC enforcement or named as a defendant in TCPA litigation.</strong> Every enforcement action targets voice service providers, individual robocallers, or lead generators. Convoso's own compliance page states users are solely responsible for using services in a legally compliant way.</p>
+<p>The tools that actually matter for TCPA compliance are entirely dialer-agnostic. Contact Center Compliance (DNC.com) explicitly lists VICIdial as an integration partner. Gryphon.ai provides real-time call blocking regardless of platform. PossibleNOW's DNCSolution starts at $200–450/month.</p>
+<p>StateTracker is convenient. It is not $90/seat/month worth of convenient.</p>
+<hr />
+<h2 id="the-ai-future-belongs-to-open-source">The AI Future Belongs to Open Source<a class="headerlink" href="#the-ai-future-belongs-to-open-source" title="Permanent link">&para;</a></h2>
+<p>The call center AI market has hit $2–4 billion in 2025 and is growing at 19–24% CAGR. Real-time agent coaching, automated QA on 100% of calls, sentiment analysis, AI-powered lead scoring — the entire industry is racing to embed AI.</p>
+<p>Convoso's AI approach is entirely proprietary and platform-locked. Voso.ai, Ignite, DX5 Dialer Engine — all first-party, closed tools. You can't swap AI models, access training data, or integrate competing solutions.</p>
+<p>VICIdial's Asterisk foundation provides three distinct paths for AI integration that blow this away.</p>
+<p>The Asterisk External Application Protocol (AEAP) abstracts speech recognition via WebSocket connections to any external provider. AudioSocket streams raw 8kHz PCM audio in 20ms chunks to Python or Node servers — enabling a fully modular pipeline: Asterisk to AudioSocket to speech-to-text to LLM to text-to-speech and back. Every component is independently swappable. ARI ExternalMedia uses a Snoop and Bridge technique to stream RTP from active calls to AI engines without disrupting conversations.</p>
+<p>A minimal AudioSocket dialplan entry in extensions.conf looks like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[audiosocket-ai]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,1,Answer()</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,AudioSocket(${UNIQUEID},127.0.0.1:9092)</span>
+<span class="w"> </span><span class="na">same</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; n,Hangup()</span>
+</code></pre></div>
+
+<p>That single line ships raw PCM to any listener on port 9092 — a Python STT server, a Node.js sentiment analyzer, whatever you wire up.</p>
+<p>Open-source AI voice agents already exist for Asterisk. Deepgram Nova-3 runs $0.0043/minute for speech-to-text. AssemblyAI Universal-2 costs $0.0025/minute with built-in sentiment analysis and PII detection. Self-hosted Whisper is effectively free.</p>
+<p>At 100,000 minutes per month, your STT bill is $250–600. Convoso builds AI capabilities into their pricing at margins you'll never see itemized. And when the next breakthrough model drops — whether it's from OpenAI, Anthropic, or some startup that doesn't exist yet — VICIdial operators can plug it in the same day. Convoso users wait for the product roadmap.</p>
+<hr />
+<h2 id="scalability-vicidials-proven-ceiling-vs-convosos-trust-us">Scalability: VICIdial's Proven Ceiling vs Convoso's "Trust Us"<a class="headerlink" href="#scalability-vicidials-proven-ceiling-vs-convosos-trust-us" title="Permanent link">&para;</a></h2>
+<p>VICIdial's largest documented single-<a href="/blog/vicidial-cluster-guide/">cluster</a> deployment: 500+ concurrent agents, 20+ servers, 2,000+ simultaneous calls. Largest multi-cluster: 1,600+ agents processing 6 million calls per day with 300,000+ inbound. A Brazilian BPO runs 40 dialer servers, 5 web servers, approximately 1,000 agents, and 1.5 million daily calls.</p>
+<p>Matt Florell has confirmed clients running 2,000,000+ outbound calls per day on a single cluster. The adaptive predictive algorithm — implemented in AST_VDadapt.pl — dynamically adjusts dial levels per agent based on real-time conversation time, connection time, and drop rates. It's not Erlang-C theory; it's empirical tuning proven across millions of calls.</p>
+<p>Scaling is linear and predictable: add roughly one $49 server per 25 additional predictive agents.</p>
+<p>Convoso's scalability claims? Their website says they handle "millions of calls daily." No documented maximum. No architecture details. No cluster specifications. Trust them.</p>
+<blockquote>
+<p><strong>1,600+ Agents. 6 Million Calls/Day. That's VICIdial at Scale.</strong>
+Convoso won't show you their ceiling. We'll show you how to blow past it. <a href="/free-audit/">Plan Your Scale →</a></p>
+</blockquote>
+<hr />
+<h2 id="what-happens-when-things-go-wrong">What Happens When Things Go Wrong<a class="headerlink" href="#what-happens-when-things-go-wrong" title="Permanent link">&para;</a></h2>
+<p>StatusGator monitoring data reveals Convoso experienced 92+ dialer outages since December 2022 — roughly one every 12 days. Their Leads component had 80+ outages. Reports &amp; Dashboards: 72+. A January 2024 Priority 1 incident saw calls not connecting for over an hour.</p>
+<p>Convoso publishes no public SLA, no uptime guarantee, and no downtime credit policy. Their Terms of Use provide services "AS IS" with "NO WARRANTIES OR GUARANTEES WHATSOEVER." Maximum liability is contractually capped at $100.</p>
+<p>Compare that to <a href="/blog/vicidial-vs-five9/">Five9 advertising 99.999% uptime</a>, or managed VICIdial providers offering contractual 99.9% uptime guarantees with actual service credits.</p>
+<p>When Convoso goes down, every customer goes down simultaneously. Self-hosted VICIdial operators have root access to diagnose and fix issues in real time — inspect Asterisk logs, restart services, modify configurations, troubleshoot SIP trunks. Managed hosting providers offer the same support without requiring your technical involvement.</p>
+<hr />
+<h2 id="when-convoso-actually-wins-being-honest-makes-us-credible">When Convoso Actually Wins (Being Honest Makes Us Credible)<a class="headerlink" href="#when-convoso-actually-wins-being-honest-makes-us-credible" title="Permanent link">&para;</a></h2>
+<p>Convoso is the better choice for 20–50 seat outbound teams without technical staff. G2 scores Convoso 9.3/10 for ease of use versus VICIdial's 8.6. If your team doesn't include anyone who's touched a command line, Convoso's turnkey onboarding has real value.</p>
+<p>For organizations needing immediate deployment in heavily regulated verticals where a single TCPA violation can trigger a $6.6 million class action, Convoso's integrated compliance automation — StateTracker, built-in DNC/RND scrubbing, dynamic scripting — represents engineering investment that would require significant custom work on VICIdial.</p>
+<p>For caller ID reputation management without the hassle of assembling multi-vendor solutions, Ignite is genuinely best-in-class with no native VICIdial equivalent.</p>
+<p>Convoso's sweet spot is the 20–50 seat non-technical team in a regulated vertical that values convenience over cost control. That's a legitimate market. It's just not the only market — and Convoso writes as if it is.</p>
+<hr />
+<h2 id="the-competitive-landscape-in-context">The Competitive Landscape in Context<a class="headerlink" href="#the-competitive-landscape-in-context" title="Permanent link">&para;</a></h2>
+<p>Convoso doesn't exist in a vacuum. This is where everyone sits:</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>$/Seat/Month</th>
+<th>Sweet Spot</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VICIdial (self-hosted)</td>
+<td>$15–30</td>
+<td>50+ seats, technical team</td>
+</tr>
+<tr>
+<td>VICIdial (managed)</td>
+<td>$40–80</td>
+<td>25+ seats, any skill level</td>
+</tr>
+<tr>
+<td>Convoso</td>
+<td>$130–200+</td>
+<td>20–50 seats, non-technical</td>
+</tr>
+<tr>
+<td>Readymode (fka XenCALL)</td>
+<td>$199–249</td>
+<td>5+ seats, SMB outbound</td>
+</tr>
+<tr>
+<td>Five9</td>
+<td>$119–175+</td>
+<td>50+ seats, enterprise omnichannel</td>
+</tr>
+<tr>
+<td>Genesys Cloud CX</td>
+<td>$75–360</td>
+<td>100+ seats, enterprise</td>
+</tr>
+<tr>
+<td>NICE CXone</td>
+<td>$71–249</td>
+<td>Enterprise</td>
+</tr>
+</tbody>
+</table>
+<p>At 200 agents, a Genesys CX4 deployment costs $576,000/year in licensing alone. VICIdial self-hosted? Under $110,000 all-in. That $466,000 gap buys a lot of development time, carrier capacity, and agent bonuses.</p>
+<hr />
+<h2 id="the-bottom-line">The Bottom Line<a class="headerlink" href="#the-bottom-line" title="Permanent link">&para;</a></h2>
+<p>VICIdial is a 20-year-old, battle-proven platform running 14,000+ installations in 100+ countries. Its AGPLv2 license makes vendor lock-in structurally impossible — no kill switches, no expiration dates, no proprietary forks allowed. A single mysqldump command exports your entire operation. Recordings live on your filesystem. The database is yours.</p>
+<p>Convoso is a polished SaaS product built by people who spent 11 years on VICIdial code, rebranded from a company that started as SafeSoft Solutions, got caught running VICIdial infrastructure while marketing against it, publishes no SLA, caps liability at $100, and experienced 92+ dialer outages in three years.</p>
+<p>Both are real products. Both serve real customers. But only one side has been telling this story — and they've been telling it with five dedicated attack pages and zero counterweight.</p>
+<p>Now there's a counterweight.</p>
+<p><strong>The math is simple:</strong> if you have technical capability or access to managed hosting, VICIdial saves you $33,000–287,000 per year depending on scale. If you don't have any technical resources and need everything turnkey yesterday, Convoso earns its premium. And if you want optimized VICIdial performance without the SaaS tax or the DIY headaches — that's exactly the gap we built ViciStack to fill.</p>
+<p>Your dialer, your data, your infrastructure, your choice.</p>
+<blockquote>
+<p><strong>Own Your Dialer. Own Your Data. Own Your Future.</strong>
+ViciStack: managed VICIdial without the SaaS tax. 48-hour proof of concept, or you pay nothing. <a href="/free-audit/">Prove It Free →</a></p>
+</blockquote>
+<hr />
+<p><em>Have questions about VICIdial optimization, managed hosting, or making the switch? <a href="/free-audit/">Contact ViciStack</a> — we've been doing this longer than Convoso has existed.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-vs-convoso">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

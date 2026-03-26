@@ -1,0 +1,3956 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/call-center-after-hours/">
+      
+      
+        <link rel="prev" href="../call-center-abandonment-rate/">
+      
+      
+        <link rel="next" href="../call-center-agent-onboarding/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off? - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#after-hours-call-center-strategy-ivr-voicemail-or-ai-which-pays-off" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-6-pm-phone-call" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 6 PM Phone Call
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-the-data-how-many-calls-are-you-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start With the Data: How Many Calls Are You Missing?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-1-ivr-self-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: IVR Self-Service
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 1: IVR Self-Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-after-hours-ivr-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up After-Hours IVR in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-Based Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ivr-cost-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IVR Cost Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-ivr-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When IVR Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-ivr-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When IVR Fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-2-voicemail-with-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Voicemail With Callbacks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 2: Voicemail With Callbacks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-voicemail-reality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Voicemail Reality
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voicemail-cost-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Cost Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voicemail-best-practices-if-you-must" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Best Practices (If You Must)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-3-ai-voice-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: AI Voice Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 3: AI Voice Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-ai-voice-agents-can-actually-do-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What AI Voice Agents Can Actually Do in 2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-voice-agent-cost-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Voice Agent Cost Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration With VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-hybrid-approach-what-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hybrid Approach: What Actually Works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-comparison-the-full-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost Comparison: The Full Picture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cost Comparison: The Full Picture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-hidden-cost-customer-satisfaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hidden Cost: Customer Satisfaction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-after-hours-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring After-Hours Performance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Timeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-decision-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Decision Framework
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-6-pm-phone-call" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 6 PM Phone Call
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-the-data-how-many-calls-are-you-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start With the Data: How Many Calls Are You Missing?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-1-ivr-self-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: IVR Self-Service
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 1: IVR Self-Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-after-hours-ivr-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up After-Hours IVR in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-based-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-Based Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ivr-cost-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IVR Cost Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-ivr-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When IVR Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-ivr-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When IVR Fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-2-voicemail-with-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Voicemail With Callbacks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 2: Voicemail With Callbacks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-voicemail-reality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Voicemail Reality
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voicemail-cost-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Cost Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voicemail-best-practices-if-you-must" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voicemail Best Practices (If You Must)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-3-ai-voice-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: AI Voice Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 3: AI Voice Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-ai-voice-agents-can-actually-do-in-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What AI Voice Agents Can Actually Do in 2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-voice-agent-cost-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Voice Agent Cost Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration With VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-hybrid-approach-what-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hybrid Approach: What Actually Works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-comparison-the-full-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost Comparison: The Full Picture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cost Comparison: The Full Picture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-hidden-cost-customer-satisfaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hidden Cost: Customer Satisfaction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measuring-after-hours-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring After-Hours Performance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Timeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-decision-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Decision Framework
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="after-hours-call-center-strategy-ivr-voicemail-or-ai-which-pays-off">After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?<a class="headerlink" href="#after-hours-call-center-strategy-ivr-voicemail-or-ai-which-pays-off" title="Permanent link">&para;</a></h1>
+<p><strong>An honest comparison of what happens to your calls after 5 PM. IVR menus, voicemail boxes, and AI voice agents — the real costs, the real capture rates, and when each one actually makes sense for your operation.</strong></p>
+<hr />
+<h2 id="the-6-pm-phone-call">The 6 PM Phone Call<a class="headerlink" href="#the-6-pm-phone-call" title="Permanent link">&para;</a></h2>
+<p>Here's a scenario that plays out every night at thousands of businesses. It's 6:17 PM. A prospect who's been thinking about your product all day finally has time to call. They've been on your website, they've read the comparison page, they're ready to talk to someone. They dial your number.</p>
+<p>And they get: "Thank you for calling. Our office hours are Monday through Friday, 8 AM to 5 PM. Please leave a message and we'll return your call on the next business day."</p>
+<p>That prospect hangs up. Sixty percent of the time, they don't leave a message. Of the ones who do leave a message, 30-40% don't answer when you call back the next day. By the time you actually reach them — maybe 48 hours later — they've talked to your competitor who answered the phone at 6:17 PM.</p>
+<p>That phone call was worth money. Depending on your business, it was worth $200, $2,000, or $20,000. And you lost it because nobody was there to pick up.</p>
+<p>This guide is about fixing that. Not with platitudes about "24/7 coverage" but with real math on what it costs, what it captures, and which approach makes sense for your call volume and budget.</p>
+<hr />
+<h2 id="start-with-the-data-how-many-calls-are-you-missing">Start With the Data: How Many Calls Are You Missing?<a class="headerlink" href="#start-with-the-data-how-many-calls-are-you-missing" title="Permanent link">&para;</a></h2>
+<p>Before deciding on a solution, figure out the actual problem size. Pull your inbound call data by hour.</p>
+<p>If you're running VICIdial:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">call_hour</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;NANQUE&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;NANQUE&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">missed_or_afterhours</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;NANQUE&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">miss_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">call_hour</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Typical output for a B2B operation running 8 AM - 5 PM:</p>
+<div class="codehilite"><pre><span></span><code>+------+-------+----------+-------------------+----------+
+| hour | total | answered | missed_afterhours | miss_pct |
++------+-------+----------+-------------------+----------+
+|    6 |    12 |        0 |                12 |   100.0  |
+|    7 |    38 |        3 |                35 |    92.1  |
+|    8 |   156 |      148 |                 8 |     5.1  |
+|    9 |   224 |      216 |                 8 |     3.6  |
+|   10 |   198 |      191 |                 7 |     3.5  |
+|   11 |   185 |      178 |                 7 |     3.8  |
+|   12 |   142 |      131 |                11 |     7.7  |
+|   13 |   178 |      172 |                 6 |     3.4  |
+|   14 |   195 |      188 |                 7 |     3.6  |
+|   15 |   182 |      175 |                 7 |     3.8  |
+|   16 |   167 |      158 |                 9 |     5.4  |
+|   17 |    89 |       42 |                47 |    52.8  |
+|   18 |    67 |        0 |                67 |   100.0  |
+|   19 |    45 |        0 |                45 |   100.0  |
+|   20 |    28 |        0 |                28 |   100.0  |
+|   21 |    14 |        0 |                14 |   100.0  |
+|   22 |     6 |        0 |                 6 |   100.0  |
++------+-------+----------+-------------------+----------+
+</code></pre></div>
+
+<p>Look at that. Between 5 PM and 10 PM, this operation misses 207 calls per month. Add in the early morning (6-7 AM) and weekends, and you're probably looking at 300-400 missed calls per month.</p>
+<p>Now multiply by your conversion rate and average deal value:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Missed</span><span class="w"> </span><span class="nv">calls</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">month</span>:<span class="w">           </span><span class="mi">350</span>
+<span class="nv">Estimated</span><span class="w"> </span><span class="nv">prospect</span><span class="w"> </span><span class="nv">calls</span><span class="w"> </span><span class="ss">(</span><span class="mi">60</span><span class="o">%</span><span class="ss">)</span>:<span class="w">   </span><span class="mi">210</span><span class="w">  </span><span class="ss">(</span><span class="mi">40</span><span class="o">%</span><span class="w"> </span><span class="nv">are</span><span class="w"> </span><span class="nv">existing</span><span class="w"> </span><span class="nv">customers</span>,<span class="w"> </span><span class="nv">vendors</span>,<span class="w"> </span><span class="nv">spam</span><span class="ss">)</span>
+<span class="nv">Conversion</span><span class="w"> </span><span class="nv">rate</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">answered</span>:<span class="w">       </span><span class="mi">12</span><span class="o">%</span>
+<span class="nv">Average</span><span class="w"> </span><span class="nv">deal</span><span class="w"> </span><span class="nv">value</span>:<span class="w">            </span><span class="mh">$1</span>,<span class="mi">500</span>
+<span class="nv">Monthly</span><span class="w"> </span><span class="nv">lost</span><span class="w"> </span><span class="nv">revenue</span>:<span class="w">         </span><span class="mh">$37</span>,<span class="mi">800</span>
+<span class="nv">Annual</span><span class="w"> </span><span class="nv">lost</span><span class="w"> </span><span class="nv">revenue</span>:<span class="w">         </span><span class="mh">$453</span>,<span class="mi">600</span>
+</code></pre></div>
+
+<p>That number should wake somebody up. Even if the real number is half that estimate, you're looking at $200K+ per year in lost revenue from calls that nobody answered.</p>
+<hr />
+<h2 id="option-1-ivr-self-service">Option 1: IVR Self-Service<a class="headerlink" href="#option-1-ivr-self-service" title="Permanent link">&para;</a></h2>
+<p>An Interactive Voice Response system lets callers interact with a menu to handle simple tasks without a human agent. After hours, your IVR can:</p>
+<ul>
+<li>Provide business hours and location info</li>
+<li>Route to emergency/on-call support</li>
+<li>Capture callback requests</li>
+<li>Process payments</li>
+<li>Check order/appointment status</li>
+<li>Answer FAQs with pre-recorded messages</li>
+</ul>
+<h3 id="setting-up-after-hours-ivr-in-vicidial">Setting Up After-Hours IVR in VICIdial<a class="headerlink" href="#setting-up-after-hours-ivr-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>VICIdial's Call Menu system handles IVR routing. In the admin panel, go to <strong>Admin &gt; Call Menus</strong> and create an after-hours menu.</p>
+<p>The basic structure:</p>
+<div class="codehilite"><pre><span></span><code><span class="nx">After</span><span class="o">-</span><span class="nx">Hours</span><span class="w"> </span><span class="nx">Call</span><span class="w"> </span><span class="nx">Menu</span><span class="w"> </span><span class="p">(</span><span class="nx">AFTERHRS_MENU</span><span class="p">)</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">Press</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="nx">Leave</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">callback</span><span class="w"> </span><span class="nx">request</span><span class="w"> </span><span class="p">(</span><span class="nx">route</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">voicemail</span><span class="w"> </span><span class="nx">group</span><span class="p">)</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">Press</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="w"> </span><span class="nx">Hear</span><span class="w"> </span><span class="nx">business</span><span class="w"> </span><span class="nx">hours</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nx">address</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">Press</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span><span class="w"> </span><span class="nx">Emergency</span><span class="w"> </span><span class="nx">support</span><span class="w"> </span><span class="p">(</span><span class="nx">route</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">on</span><span class="o">-</span><span class="nx">call</span><span class="w"> </span><span class="nx">phone</span><span class="p">)</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">Press</span><span class="w"> </span><span class="mi">4</span><span class="p">:</span><span class="w"> </span><span class="nx">Check</span><span class="w"> </span><span class="nx">appointment</span><span class="w"> </span><span class="nx">status</span><span class="w"> </span><span class="p">(</span><span class="nx">transfer</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="kd">external</span><span class="w"> </span><span class="nx">IVR</span><span class="p">)</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">Timeout</span><span class="p">:</span><span class="w"> </span><span class="nx">Repeat</span><span class="w"> </span><span class="nx">menu</span><span class="p">,</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nx">route</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">voicemail</span>
+<span class="err">└──</span><span class="w"> </span><span class="nx">Invalid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Sorry, I didn&#39;t catch that. Press 1 for...&quot;</span>
+</code></pre></div>
+
+<p>In VICIdial, the Call Menu configuration looks like:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Menu</span><span class="w"> </span><span class="n">Name</span><span class="o">:</span><span class="w"> </span><span class="n">AFTERHRS_MENU</span>
+<span class="n">Menu</span><span class="w"> </span><span class="n">Prompt</span><span class="o">:</span><span class="w"> </span><span class="n">afterhours_greeting</span><span class="p">.</span><span class="n">wav</span>
+<span class="n">Menu</span><span class="w"> </span><span class="n">Timeout</span><span class="o">:</span><span class="w"> </span><span class="mi">8</span>
+<span class="n">Menu</span><span class="w"> </span><span class="n">Timeout</span><span class="w"> </span><span class="n">Prompt</span><span class="o">:</span><span class="w"> </span><span class="n">timeout_prompt</span><span class="p">.</span><span class="n">wav</span>
+<span class="n">Menu</span><span class="w"> </span><span class="n">Invalid</span><span class="w"> </span><span class="n">Prompt</span><span class="o">:</span><span class="w"> </span><span class="n">invalid_prompt</span><span class="p">.</span><span class="n">wav</span>
+<span class="n">Menu</span><span class="w"> </span><span class="kr">Repeat</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span>
+
+<span class="n">Option</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">CALLMENU</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">CALLBACK_CAPTURE</span>
+<span class="n">Option</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"> </span><span class="n">CALLMENU</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">BUSINESS_INFO</span>
+<span class="n">Option</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w"> </span><span class="n">PHONE</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">15551234567</span><span class="w"> </span><span class="p">(</span><span class="n">on</span><span class="o">-</span><span class="n">call</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span>
+<span class="n">Option</span><span class="w"> </span><span class="mi">4</span><span class="o">:</span><span class="w"> </span><span class="n">PHONE</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">18005551234</span><span class="w"> </span><span class="p">(</span><span class="n">external</span><span class="w"> </span><span class="n">IVR</span><span class="p">)</span>
+<span class="n">Option</span><span class="w"> </span><span class="err">#</span><span class="o">:</span><span class="w"> </span><span class="n">VOICEMAIL</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">8500</span>
+<span class="n">Timeout</span><span class="o">:</span><span class="w"> </span><span class="n">CALLMENU</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">AFTERHRS_MENU</span><span class="w"> </span><span class="p">(</span><span class="kr">repeat</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The callback capture sub-menu records the caller's number and adds them to a callback list:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Menu</span><span class="w"> </span><span class="n">Name</span><span class="o">:</span><span class="w"> </span><span class="n">CALLBACK_CAPTURE</span>
+<span class="n">Menu</span><span class="w"> </span><span class="n">Prompt</span><span class="o">:</span><span class="w"> </span><span class="s">&quot;Please leave your name and number after the tone</span>
+<span class="s">             and we&#39;</span><span class="n">ll</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="kr">first</span><span class="w"> </span><span class="n">thing</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">morning</span><span class="p">.</span><span class="s">&quot;</span>
+<span class="s">Option: VOICEMAIL -&gt; 8501 (callback voicemail box)</span>
+</code></pre></div>
+
+<h3 id="time-based-routing">Time-Based Routing<a class="headerlink" href="#time-based-routing" title="Permanent link">&para;</a></h3>
+<p>Set up your inbound group to route differently based on time of day. In VICIdial, go to <strong>Inbound Groups &gt; [Your Group]</strong> and configure the <strong>After-Hours</strong> settings:</p>
+<ul>
+<li><strong>After Hours Action:</strong> CALLMENU</li>
+<li><strong>After Hours Call Menu:</strong> AFTERHRS_MENU</li>
+<li><strong>After Hours active:</strong> Y</li>
+</ul>
+<p>Then set your Call Time settings:</p>
+<div class="codehilite"><pre><span></span><code>Call Time Name: BUSINESS_HOURS
+Start: 0800
+End:   1700
+Days:  mon-fri
+</code></pre></div>
+
+<p>Calls outside these hours automatically route to the after-hours IVR.</p>
+<h3 id="ivr-cost-analysis">IVR Cost Analysis<a class="headerlink" href="#ivr-cost-analysis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VICIdial IVR</td>
+<td>$0 (built-in)</td>
+</tr>
+<tr>
+<td>Recording professional prompts</td>
+<td>$200-500 one-time</td>
+</tr>
+<tr>
+<td>DID/phone number</td>
+<td>$2-5/mo</td>
+</tr>
+<tr>
+<td>Inbound trunk minutes (350 calls × 1.5 min avg)</td>
+<td>$8-15/mo</td>
+</tr>
+<tr>
+<td><strong>Total monthly</strong></td>
+<td><strong>$10-20/mo</strong></td>
+</tr>
+<tr>
+<td><strong>Callback capture rate</strong></td>
+<td><strong>35-45% of callers</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The IVR itself is essentially free in VICIdial. The cost is in the inbound minutes and the one-time prompt recording. The problem is that IVR capture rate: only 35-45% of callers will actually leave a callback request through an IVR menu. The rest hang up when they hear the menu.</p>
+<h3 id="when-ivr-works">When IVR Works<a class="headerlink" href="#when-ivr-works" title="Permanent link">&para;</a></h3>
+<p>IVR is the right after-hours solution when:
+- Your callers need <strong>information</strong> (hours, directions, order status) more than they need a conversation
+- You have a small number of <strong>well-defined tasks</strong> that can be automated (payment processing, appointment confirmation)
+- Your after-hours volume is <strong>low</strong> (under 20 calls/night) and the cost of a human doesn't justify itself
+- Your callers are <strong>repeat customers</strong> who are used to navigating IVR menus</p>
+<h3 id="when-ivr-fails">When IVR Fails<a class="headerlink" href="#when-ivr-fails" title="Permanent link">&para;</a></h3>
+<p>IVR is the wrong choice when:
+- Your callers are <strong>prospects</strong> who want to talk to a human before buying
+- Your product requires <strong>explanation or customization</strong>
+- Your callers are <strong>frustrated or in distress</strong> (healthcare, emergency services, insurance claims)
+- Your competitor <strong>answers the phone</strong> at 6 PM and you don't</p>
+<hr />
+<h2 id="option-2-voicemail-with-callbacks">Option 2: Voicemail With Callbacks<a class="headerlink" href="#option-2-voicemail-with-callbacks" title="Permanent link">&para;</a></h2>
+<p>The simplest after-hours strategy: send callers to voicemail, collect messages, call them back in the morning.</p>
+<h3 id="the-voicemail-reality">The Voicemail Reality<a class="headerlink" href="#the-voicemail-reality" title="Permanent link">&para;</a></h3>
+<p>Here's what actually happens with after-hours voicemail:</p>
+<div class="codehilite"><pre><span></span><code><span class="mi">100</span> <span class="n">callers</span> <span class="n">reach</span> <span class="n">your</span> <span class="n">voicemail</span>
+ ├── <span class="mi">40</span> <span class="n">leave</span> <span class="n">a</span> <span class="nb">message</span> (<span class="mi">60</span>% <span class="n">hang</span> <span class="n">up</span> <span class="k">without</span> <span class="n">leaving</span> <span class="nb">one</span>)
+ │    ├── <span class="mi">28</span> <span class="n">answer</span> <span class="k">when</span> <span class="n">you</span> <span class="n">call</span> <span class="n">back</span> <span class="nb">next</span> <span class="n">morning</span>
+ │    │    ├── <span class="mi">14</span> <span class="n">are</span> <span class="n">still</span> <span class="n">interested</span>
+ │    │    │    └── <span class="mi">2</span> <span class="n">convert</span> (<span class="mi">14</span>% <span class="nb">of</span> <span class="n">the</span> <span class="mi">14</span> <span class="n">interested</span>)
+ │    │    └── <span class="mi">14</span> <span class="n">already</span> <span class="n">found</span> <span class="n">another</span> <span class="n">solution</span> <span class="o">or</span> <span class="n">lost</span> <span class="n">interest</span>
+ │    └── <span class="mi">12</span> <span class="n">don&#39;t</span> <span class="n">answer</span> <span class="n">your</span> <span class="n">callback</span> (<span class="nb">now</span> <span class="n">you&#39;re</span> <span class="n">the</span> <span class="n">cold</span> <span class="n">caller</span>)
+ └── <span class="mi">60</span> <span class="n">hang</span> <span class="n">up</span> — <span class="n">gone</span> <span class="n">forever</span>
+</code></pre></div>
+
+<p>From 100 callers, you get 2 conversions. That's a 2% capture rate from the original call volume. If those callers had reached a human (or something that sounds like a human), the conversion rate from the same 100 callers would be 8-12%.</p>
+<h3 id="voicemail-cost-analysis">Voicemail Cost Analysis<a class="headerlink" href="#voicemail-cost-analysis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Voicemail system</td>
+<td>$0 (VICIdial built-in)</td>
+</tr>
+<tr>
+<td>Agent time processing callbacks (2 hrs/day × $15/hr)</td>
+<td>$650/mo</td>
+</tr>
+<tr>
+<td>Callback attempts for non-answers (3 attempts each)</td>
+<td>~$180/mo in agent time</td>
+</tr>
+<tr>
+<td><strong>Total monthly</strong></td>
+<td><strong>$830/mo</strong></td>
+</tr>
+<tr>
+<td><strong>Callback capture rate</strong></td>
+<td><strong>28% of voicemails = 11% of total callers</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The cost isn't zero — someone has to listen to the voicemails, log them, prioritize them, and make the callbacks. That's 2+ hours per day for a 350-call/month after-hours volume. And the callback itself is outbound dialing, which means your agents are now cold-calling people who were once warm leads.</p>
+<h3 id="voicemail-best-practices-if-you-must">Voicemail Best Practices (If You Must)<a class="headerlink" href="#voicemail-best-practices-if-you-must" title="Permanent link">&para;</a></h3>
+<p>If voicemail is your only option, optimize the experience:</p>
+<p><strong>1. Keep the greeting under 15 seconds.</strong> Every additional second of greeting reduces message-leaving rate by about 2%. Don't recite your full address, website URL, and fax number.</p>
+<p>Bad: "Thank you for calling Acme Solutions. We are located at 123 Main Street, Suite 400, in beautiful downtown Springfield. Our normal business hours are Monday through Friday, 8 AM to 5 PM Eastern Standard Time. For sales inquiries, please visit our website at www.acmesolutions.com/contact, or you may leave a message..."</p>
+<p>Good: "Hi, you've reached Acme Solutions. We're closed right now but we want to talk to you. Leave your name and number — we'll call you back by 9 AM tomorrow."</p>
+<p><strong>2. Call back within 30 minutes of open.</strong> The first callbacks of the day should be last night's voicemails. The speed-to-lead research is brutal: contacting a lead within 5 minutes of their inquiry yields 900% higher conversion than waiting an hour. Overnight voicemails are already stale — don't make them staler.</p>
+<p><strong>3. Attempt callbacks 3 times.</strong> First attempt at 8:30 AM. Second at 11:00 AM. Third at 2:00 PM. After three unanswered callbacks, the lead is cold. Don't waste more time.</p>
+<hr />
+<h2 id="option-3-ai-voice-agents">Option 3: AI Voice Agents<a class="headerlink" href="#option-3-ai-voice-agents" title="Permanent link">&para;</a></h2>
+<p>This is the option that didn't exist three years ago and now keeps showing up in every industry conference deck. An AI voice agent answers the phone, has a natural-language conversation with the caller, collects information, answers questions, and either resolves the inquiry or schedules a callback.</p>
+<h3 id="what-ai-voice-agents-can-actually-do-in-2026">What AI Voice Agents Can Actually Do in 2026<a class="headerlink" href="#what-ai-voice-agents-can-actually-do-in-2026" title="Permanent link">&para;</a></h3>
+<p>The honest answer, not the marketing answer:</p>
+<p><strong>Good at:</strong>
+- Answering frequently asked questions ("What are your hours?" "Do you serve the Phoenix area?" "What does it cost?")
+- Collecting caller information (name, phone, email, what they're calling about)
+- Scheduling callbacks or appointments using calendar integration
+- Providing order status from a database lookup
+- Routing emergency/urgent calls to an on-call number
+- Handling 3-5 turn conversations that follow a predictable pattern</p>
+<p><strong>Bad at:</strong>
+- Complex troubleshooting that requires back-and-forth diagnosis
+- Emotional conversations (complaints, angry customers, sensitive issues)
+- Negotiations or custom pricing discussions
+- Anything requiring judgment calls on exceptions or policies
+- Calls in noisy environments or with heavy accents (getting better, but still not great)</p>
+<p>The technology has gotten remarkably good in the last 18 months. Modern voice AI built on large language models can handle natural conversation, understand context, recover from interruptions, and sound convincingly human. The latency issue (that awkward 1-2 second pause before the AI responds) has shrunk to under 500ms for well-architected systems. Most callers can't tell the difference for the first 30-60 seconds.</p>
+<h3 id="ai-voice-agent-cost-analysis">AI Voice Agent Cost Analysis<a class="headerlink" href="#ai-voice-agent-cost-analysis" title="Permanent link">&para;</a></h3>
+<p>Costs vary wildly depending on the vendor and deployment model. Here's a realistic range:</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI voice platform (per-minute pricing)</td>
+<td>$0.10-0.25/min</td>
+</tr>
+<tr>
+<td>Platform subscription fee</td>
+<td>$200-1,000/mo</td>
+</tr>
+<tr>
+<td>Inbound trunk minutes</td>
+<td>$8-15/mo</td>
+</tr>
+<tr>
+<td>Integration/setup (amortized)</td>
+<td>$100-200/mo</td>
+</tr>
+<tr>
+<td><strong>Total for 350 calls × 3 min avg</strong></td>
+<td><strong>$400-1,400/mo</strong></td>
+</tr>
+<tr>
+<td><strong>Caller capture rate</strong></td>
+<td><strong>65-80% of callers</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The capture rate is the key number. AI voice agents capture 65-80% of callers — double the IVR rate and 6x the voicemail rate. That's because callers don't hang up. They hear a voice, they start talking, and the AI keeps the conversation going long enough to collect their information and qualify their intent.</p>
+<h3 id="integration-with-vicidial">Integration With VICIdial<a class="headerlink" href="#integration-with-vicidial" title="Permanent link">&para;</a></h3>
+<p>Most AI voice platforms can integrate with VICIdial through SIP trunking. The after-hours call flow becomes:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Caller</span><span class="w"> </span>→<span class="w"> </span><span class="nv">VICIdial</span><span class="w"> </span><span class="nv">Inbound</span><span class="w"> </span><span class="nv">Group</span><span class="w"> </span>→<span class="w"> </span><span class="nv">After</span><span class="o">-</span><span class="nv">Hours</span><span class="w"> </span><span class="nv">Check</span>
+<span class="w">  </span>→<span class="w"> </span><span class="k">If</span><span class="w"> </span><span class="nv">after</span><span class="w"> </span><span class="nv">hours</span>:<span class="w"> </span><span class="nv">SIP</span><span class="w"> </span><span class="nv">transfer</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">AI</span><span class="w"> </span><span class="nv">voice</span><span class="w"> </span><span class="nv">platform</span>
+<span class="w">    </span>→<span class="w"> </span><span class="nv">AI</span><span class="w"> </span><span class="nv">handles</span><span class="w"> </span><span class="nv">call</span>,<span class="w"> </span><span class="nv">collects</span><span class="w"> </span><span class="nv">info</span>
+<span class="w">    </span>→<span class="w"> </span><span class="nv">AI</span><span class="w"> </span><span class="nv">posts</span><span class="w"> </span><span class="nv">lead</span><span class="w"> </span><span class="nv">data</span><span class="w"> </span><span class="nv">back</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">VICIdial</span><span class="w"> </span><span class="nv">via</span><span class="w"> </span><span class="nv">API</span>
+<span class="w">    </span>→<span class="w"> </span><span class="nv">Lead</span><span class="w"> </span><span class="nv">appears</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">callback</span><span class="w"> </span><span class="nv">list</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">morning</span>
+</code></pre></div>
+
+<p>To transfer after-hours calls to an external AI platform, configure your after-hours action:</p>
+<ul>
+<li><strong>After Hours Action:</strong> PHONE</li>
+<li><strong>After Hours Extension:</strong> The SIP URI or phone number of your AI platform</li>
+</ul>
+<p>Or route through a Call Menu that gives callers the option:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">AFTERHRS_AI_MENU</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Press</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">Connect</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">AI</span><span class="w"> </span><span class="n">assistant</span><span class="w"> </span><span class="o">(</span><span class="n">SIP</span><span class="w"> </span><span class="n">transfer</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">AI</span><span class="w"> </span><span class="n">platform</span><span class="o">)</span>
+<span class="w">  </span><span class="n">Press</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"> </span><span class="n">Leave</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">voicemail</span><span class="w"> </span><span class="o">(</span><span class="n">fallback</span><span class="o">)</span>
+<span class="w">  </span><span class="n">Press</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w"> </span><span class="n">Emergency</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">reach</span><span class="w"> </span><span class="n">on</span><span class="o">-</span><span class="n">call</span><span class="w"> </span><span class="o">(</span><span class="n">direct</span><span class="w"> </span><span class="n">dial</span><span class="o">)</span>
+</code></pre></div>
+
+<p>When the AI completes a call, it pushes the lead data back into VICIdial using the API:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># AI platform webhook calls this endpoint after each conversation</span>
+curl<span class="w"> </span><span class="s2">&quot;https://your-vicidial-server/vicidial/non_agent_api.php?\</span>
+<span class="s2">source=ai_afterhours&amp;\</span>
+<span class="s2">user=apiuser&amp;\</span>
+<span class="s2">pass=apipass123&amp;\</span>
+<span class="s2">function=add_lead&amp;\</span>
+<span class="s2">phone_number=5551234567&amp;\</span>
+<span class="s2">first_name=John&amp;\</span>
+<span class="s2">last_name=Smith&amp;\</span>
+<span class="s2">email=john@example.com&amp;\</span>
+<span class="s2">comments=Called+at+6:45+PM.+Interested+in+premium+plan.+Budget+approved.+Wants+callback+before+10AM.&amp;\</span>
+<span class="s2">list_id=9999&amp;\</span>
+<span class="s2">phone_code=1&amp;\</span>
+<span class="s2">status=AICLBK&quot;</span>
+</code></pre></div>
+
+<p>The lead shows up in your callback list with full context. When your agent calls John at 8:30 AM, they know exactly what he wants, what he said, and when he wants to talk. That's a world away from "You have... 14... new messages."</p>
+<hr />
+<h2 id="the-hybrid-approach-what-actually-works">The Hybrid Approach: What Actually Works<a class="headerlink" href="#the-hybrid-approach-what-actually-works" title="Permanent link">&para;</a></h2>
+<p>The right answer for most operations isn't one solution. It's a combination:</p>
+<div class="codehilite"><pre><span></span><code><span class="nx">After</span><span class="o">-</span><span class="nx">Hours</span><span class="w"> </span><span class="nx">Call</span><span class="w"> </span><span class="nx">Flow</span><span class="p">:</span>
+<span class="err">│</span>
+<span class="err">├─</span><span class="w"> </span><span class="nx">Simple</span><span class="w"> </span><span class="nx">inquiries</span><span class="w"> </span><span class="p">(</span><span class="nx">hours</span><span class="p">,</span><span class="w"> </span><span class="nx">directions</span><span class="p">,</span><span class="w"> </span><span class="nx">status</span><span class="p">)</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="nx">IVR</span><span class="w"> </span><span class="kp">self</span><span class="o">-</span><span class="nx">service</span><span class="w"> </span><span class="p">(</span><span class="nx">cost</span><span class="p">:</span><span class="w"> </span><span class="o">~</span><span class="err">$</span><span class="mi">0</span><span class="p">)</span>
+<span class="err">│</span>
+<span class="err">├─</span><span class="w"> </span><span class="nx">Prospect</span><span class="o">/</span><span class="nx">sales</span><span class="w"> </span><span class="nx">calls</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="nx">AI</span><span class="w"> </span><span class="nx">voice</span><span class="w"> </span><span class="nx">agent</span><span class="w"> </span><span class="p">(</span><span class="nx">cost</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="m m-Double">0.30</span><span class="o">-</span><span class="m m-Double">0.75</span><span class="w"> </span><span class="nx">per</span><span class="w"> </span><span class="nx">call</span><span class="p">)</span>
+<span class="err">│</span><span class="w">       </span><span class="err">└─</span><span class="w"> </span><span class="nx">Captures</span><span class="w"> </span><span class="nx">lead</span><span class="w"> </span><span class="nx">info</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">qualifies</span><span class="w"> </span><span class="nx">intent</span>
+<span class="err">│</span>
+<span class="err">├─</span><span class="w"> </span><span class="nx">Existing</span><span class="w"> </span><span class="nx">customer</span><span class="w"> </span><span class="nx">with</span><span class="w"> </span><span class="nx">issue</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="nx">AI</span><span class="w"> </span><span class="nx">voice</span><span class="w"> </span><span class="nx">agent</span><span class="w"> </span><span class="p">(</span><span class="nx">attempts</span><span class="w"> </span><span class="nx">resolution</span><span class="p">)</span>
+<span class="err">│</span><span class="w">       </span><span class="err">└─</span><span class="w"> </span><span class="nx">If</span><span class="w"> </span><span class="nx">unresolved</span><span class="p">:</span><span class="w"> </span><span class="nx">schedules</span><span class="w"> </span><span class="nx">priority</span><span class="w"> </span><span class="nx">callback</span>
+<span class="err">│</span>
+<span class="err">├─</span><span class="w"> </span><span class="nx">Emergency</span><span class="o">/</span><span class="nx">urgent</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="nx">Direct</span><span class="w"> </span><span class="nx">route</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">on</span><span class="o">-</span><span class="nx">call</span><span class="w"> </span><span class="p">(</span><span class="nx">IVR</span><span class="w"> </span><span class="nx">option</span><span class="p">)</span>
+<span class="err">│</span>
+<span class="err">└─</span><span class="w"> </span><span class="nx">Caller</span><span class="w"> </span><span class="nx">refuses</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">engage</span><span class="w"> </span><span class="nx">with</span><span class="w"> </span><span class="nx">AI</span><span class="o">/</span><span class="nx">IVR</span>
+<span class="w">    </span><span class="err">└─</span><span class="w"> </span><span class="nx">Voicemail</span><span class="w"> </span><span class="p">(</span><span class="nx">last</span><span class="w"> </span><span class="nx">resort</span><span class="p">,</span><span class="w"> </span><span class="nx">cost</span><span class="p">:</span><span class="w"> </span><span class="o">~</span><span class="err">$</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+
+<p>In VICIdial, this is a Call Menu with intelligent routing:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Menu</span><span class="o">:</span><span class="w"> </span><span class="n">AFTERHRS_HYBRID</span>
+<span class="err">├──</span><span class="w"> </span><span class="s2">&quot;If this is an emergency, press 9 now.&quot;</span>
+<span class="err">│</span><span class="w">    </span><span class="err">└──</span><span class="w"> </span><span class="n">Option</span><span class="w"> </span><span class="mi">9</span><span class="o">:</span><span class="w"> </span><span class="n">PHONE</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">on</span><span class="o">-</span><span class="n">call</span><span class="w"> </span><span class="n">number</span>
+<span class="err">├──</span><span class="w"> </span><span class="s2">&quot;For business hours and directions, press 1.&quot;</span>
+<span class="err">│</span><span class="w">    </span><span class="err">└──</span><span class="w"> </span><span class="n">Option</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">CALLMENU</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">BUSINESS_INFO</span>
+<span class="err">├──</span><span class="w"> </span><span class="s2">&quot;To speak with our after-hours assistant, press 2 or stay on the line.&quot;</span>
+<span class="err">│</span><span class="w">    </span><span class="err">└──</span><span class="w"> </span><span class="n">Option</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"> </span><span class="n">PHONE</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">AI</span><span class="w"> </span><span class="n">platform</span><span class="w"> </span><span class="n">SIP</span><span class="w"> </span><span class="n">URI</span>
+<span class="err">│</span><span class="w">    </span><span class="err">└──</span><span class="w"> </span><span class="n">Timeout</span><span class="o">:</span><span class="w"> </span><span class="n">PHONE</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">AI</span><span class="w"> </span><span class="n">platform</span><span class="w"> </span><span class="n">SIP</span><span class="w"> </span><span class="n">URI</span><span class="w"> </span><span class="o">(</span><span class="k">default</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">AI</span><span class="o">)</span>
+<span class="err">└──</span><span class="w"> </span><span class="s2">&quot;To leave a voicemail, press 3.&quot;</span>
+<span class="w">     </span><span class="err">└──</span><span class="w"> </span><span class="n">Option</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w"> </span><span class="n">VOICEMAIL</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">8501</span>
+</code></pre></div>
+
+<p>The key design decision: the <strong>default</strong> action (timeout) routes to the AI assistant, not voicemail. Most callers who don't press any buttons will be connected to the AI. Callers who actively want to leave a voicemail can press 3. This maximizes capture rate while giving callers control.</p>
+<hr />
+<h2 id="cost-comparison-the-full-picture">Cost Comparison: The Full Picture<a class="headerlink" href="#cost-comparison-the-full-picture" title="Permanent link">&para;</a></h2>
+<p>Here's the complete comparison for a business receiving 350 after-hours calls per month:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Voicemail Only</th>
+<th>IVR Only</th>
+<th>AI Voice Agent</th>
+<th>Hybrid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monthly cost</td>
+<td>$830</td>
+<td>$20</td>
+<td>$800</td>
+<td>$500</td>
+</tr>
+<tr>
+<td>Caller capture rate</td>
+<td>11%</td>
+<td>40%</td>
+<td>75%</td>
+<td>72%</td>
+</tr>
+<tr>
+<td>Leads captured/mo</td>
+<td>39</td>
+<td>140</td>
+<td>263</td>
+<td>252</td>
+</tr>
+<tr>
+<td>Conversions (12% close rate)</td>
+<td>5</td>
+<td>17</td>
+<td>32</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Revenue captured</td>
+<td>$7,500</td>
+<td>$25,500</td>
+<td>$48,000</td>
+<td>$45,000</td>
+</tr>
+<tr>
+<td>Cost per lead</td>
+<td>$21.28</td>
+<td>$0.14</td>
+<td>$3.04</td>
+<td>$1.98</td>
+</tr>
+<tr>
+<td>ROI</td>
+<td>8x</td>
+<td>1,275x</td>
+<td>59x</td>
+<td>89x</td>
+</tr>
+</tbody>
+</table>
+<p>The numbers are stark. Voicemail costs roughly the same as the hybrid approach but captures a fraction of the leads. IVR is cheapest in absolute dollars but only works for callers who can self-serve. AI captures the most leads but costs more. The hybrid approach is the sweet spot for most operations — nearly the capture rate of pure AI, at about 60% of the cost.</p>
+<h3 id="the-hidden-cost-customer-satisfaction">The Hidden Cost: Customer Satisfaction<a class="headerlink" href="#the-hidden-cost-customer-satisfaction" title="Permanent link">&para;</a></h3>
+<p>One number that doesn't appear in the table: customer satisfaction. A 2025 CCW survey found that 78% of consumers say they're more likely to buy from a company that answers the phone outside business hours, even if the response is automated. And 62% said they'd choose a competitor who answers at 7 PM over their preferred vendor who doesn't.</p>
+<p>The after-hours experience is a differentiator. In industries where most competitors send callers to voicemail, simply answering the phone — even with AI — puts you ahead. It's not about the technology. It's about the caller's experience of being heard versus being told to leave a message.</p>
+<hr />
+<h2 id="measuring-after-hours-performance">Measuring After-Hours Performance<a class="headerlink" href="#measuring-after-hours-performance" title="Permanent link">&para;</a></h2>
+<p>Whatever approach you choose, measure it. Here are the KPIs:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- After-hours performance dashboard (30-day rolling)</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="s1">&#39;METRICS&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">label</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_afterhours_calls</span><span class="p">,</span>
+
+<span class="w">    </span><span class="c1">-- Capture rate</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;NANQUE&#39;</span><span class="p">,</span><span class="s1">&#39;HANGUP&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">captured_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">,</span><span class="s1">&#39;AFTHRS&#39;</span><span class="p">,</span><span class="s1">&#39;NANQUE&#39;</span><span class="p">,</span><span class="s1">&#39;HANGUP&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">capture_rate_pct</span><span class="p">,</span>
+
+<span class="w">    </span><span class="c1">-- Callback completion</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;CALLBK&#39;</span><span class="p">,</span><span class="s1">&#39;AICLBK&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">callback_requests</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">,</span><span class="s1">&#39;APPSET&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">conversions</span><span class="p">,</span>
+
+<span class="w">    </span><span class="c1">-- Average handle time (AI calls)</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">17</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_afterhours_talk_sec</span>
+
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="p">(</span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">17</span>
+<span class="w">         </span><span class="k">OR</span><span class="w"> </span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">));</span>
+</code></pre></div>
+
+<p>Track weekly:</p>
+<ul>
+<li><strong>After-hours capture rate:</strong> Percentage of after-hours callers who leave info or engage. Target: 60%+.</li>
+<li><strong>Callback connection rate:</strong> Percentage of callback requests that result in a live conversation the next day. Target: 70%+.</li>
+<li><strong>After-hours conversion rate:</strong> Percentage of after-hours leads that eventually convert. Compare to business-hours conversion rate — if the gap is more than 50%, your callback process needs work.</li>
+<li><strong>Speed to callback:</strong> Average time between the after-hours call and the return callback. Under 30 minutes from open is the target.</li>
+<li><strong>IVR completion rate:</strong> For IVR self-service tasks, what percentage of callers complete the task without hanging up? Under 40% means the IVR flow needs simplification.</li>
+</ul>
+<hr />
+<h2 id="implementation-timeline">Implementation Timeline<a class="headerlink" href="#implementation-timeline" title="Permanent link">&para;</a></h2>
+<p>If you're starting from zero, here's a realistic implementation path:</p>
+<p><strong>Week 1: Audit and data pull.</strong> Run the SQL queries above to understand your after-hours volume, hourly distribution, and estimated revenue impact. Get buy-in from leadership with real numbers, not guesses.</p>
+<p><strong>Week 2: Deploy IVR.</strong> Set up the after-hours Call Menu in VICIdial. Record professional greetings. Test the routing. This gives you immediate improvement over straight-to-voicemail.</p>
+<p><strong>Week 3-4: Evaluate AI platforms.</strong> Test 2-3 AI voice agent platforms with your actual call scenarios. Things to test: latency, accuracy on your FAQ, lead capture completeness, API integration with VICIdial. Don't pick the one with the best demo — pick the one that handles your edge cases.</p>
+<p><strong>Week 5: Deploy hybrid.</strong> Connect the AI platform to VICIdial, set up the hybrid call menu, configure the API webhook for lead creation. Test end-to-end: call after hours, verify the AI captures info, verify the lead appears in VICIdial, verify agents can see the context.</p>
+<p><strong>Week 6+: Measure and optimize.</strong> Run the performance queries weekly. Tune the AI's responses based on call recordings. Adjust the IVR menu based on which options callers actually use.</p>
+<p>The whole thing can be live in 5 weeks if you don't overthink it. The IVR layer takes a day. The AI integration takes a week if the platform has decent documentation. The rest is testing and tuning.</p>
+<hr />
+<h2 id="the-decision-framework">The Decision Framework<a class="headerlink" href="#the-decision-framework" title="Permanent link">&para;</a></h2>
+<p>If you're still not sure which path to take, here's the decision tree:</p>
+<p><strong>Your after-hours volume is under 10 calls per night:</strong>
+→ IVR with voicemail fallback. The volume doesn't justify AI costs. Make the voicemail greeting short and call everyone back by 8:30 AM.</p>
+<p><strong>Your after-hours volume is 10-50 calls per night:</strong>
+→ Hybrid IVR + AI. The AI captures enough leads to pay for itself. Use IVR for self-service tasks and AI for prospect conversations.</p>
+<p><strong>Your after-hours volume is 50+ calls per night:</strong>
+→ Seriously consider a night shift. At 50+ calls per night, a part-time agent (4 hours, $15/hr, $60/night, $1,800/month) may outperform AI for complex products. AI is still worth testing, but the math starts favoring humans at higher volumes with higher deal values.</p>
+<p><strong>Your product requires custom quotes or technical discussion:</strong>
+→ AI for lead capture + priority callback. Don't try to make the AI close deals. Use it to qualify the lead, capture their requirements, and set up a morning callback where a human handles the actual conversation.</p>
+<p><strong>You're in healthcare, legal, or financial services:</strong>
+→ Compliance review first. AI voice agents in regulated industries need to handle consent, disclosure, and recording requirements correctly. Your compliance team needs to review the AI's scripts before deployment.</p>
+<p>The after-hours call is the most neglected moment in the customer journey. It's also one of the cheapest to fix. An IVR costs nothing. An AI voice agent costs less than a parking space. And the leads that come in at 6 PM on a Wednesday are some of the warmest leads you'll ever get — they called you. Don't waste them.</p>
+<p>For setting up the VICIdial side of after-hours routing, our <a href="https://vicistack.com/blog/vicidial-ivr-setup/">IVR setup guide</a> covers Call Menu configuration in detail. And if you're interested in AI voice agents for both after-hours and daytime operations, our guide on <a href="https://vicistack.com/blog/ai-outbound-call-center-2026/">AI voice agents for call centers</a> covers the current state of the technology.</p>
+<hr />
+<p><em>Not sure which after-hours strategy fits your operation? <a href="https://vicistack.com/contact/">Contact ViciStack</a> — we'll audit your call data and recommend the approach that makes financial sense.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/call-center-after-hours">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

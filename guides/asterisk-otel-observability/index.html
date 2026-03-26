@@ -1,0 +1,4342 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/asterisk-otel-observability/">
+      
+      
+        <link rel="prev" href="../ai-outbound-call-center-2026/">
+      
+      
+        <link rel="next" href="../asterisk-pjsip-tls-openssl3-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Asterisk Observability with OpenTelemetry and Grafana - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#asterisk-observability-with-opentelemetry-and-grafana" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Asterisk Observability with OpenTelemetry and Grafana
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-opentelemetry-instead-of-just-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why OpenTelemetry Instead of Just Prometheus
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-install-the-opentelemetry-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Install the OpenTelemetry Collector
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-configure-asterisks-statsd-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Configure Asterisk's StatsD Module
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: Configure Asterisk&#39;s StatsD Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-metrics-does-res_statsd-emit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Metrics Does res_statsd Emit?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-otel-collector-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: OTel Collector Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-custom-metrics-via-ami" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Custom Metrics via AMI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-prometheus-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Prometheus Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Prometheus Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-rules-for-call-center-kpis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Rules for Call Center KPIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-6-grafana-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Grafana Dashboards
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 6: Grafana Dashboards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-1-cluster-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 1: Cluster Overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-2-sip-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 2: SIP Health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-3-per-server-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 3: Per-Server Deep Dive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-7-distributed-tracing-for-call-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Distributed Tracing for Call Flows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-8-alerting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Alerting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 8: Alerting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-alerting-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Alerting Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-9-cdr-based-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9: CDR-Based Metrics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#putting-it-all-together-the-3-am-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Putting It All Together: The 3 AM Scenario
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Impact
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-we-covered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Covered
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-opentelemetry-instead-of-just-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why OpenTelemetry Instead of Just Prometheus
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-install-the-opentelemetry-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Install the OpenTelemetry Collector
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-configure-asterisks-statsd-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Configure Asterisk's StatsD Module
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: Configure Asterisk&#39;s StatsD Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-metrics-does-res_statsd-emit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Metrics Does res_statsd Emit?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-otel-collector-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: OTel Collector Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-custom-metrics-via-ami" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Custom Metrics via AMI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-prometheus-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Prometheus Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Prometheus Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-rules-for-call-center-kpis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Rules for Call Center KPIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-6-grafana-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Grafana Dashboards
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 6: Grafana Dashboards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-1-cluster-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 1: Cluster Overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-2-sip-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 2: SIP Health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-3-per-server-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 3: Per-Server Deep Dive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-7-distributed-tracing-for-call-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Distributed Tracing for Call Flows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-8-alerting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Alerting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 8: Alerting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-alerting-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Alerting Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-9-cdr-based-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9: CDR-Based Metrics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#putting-it-all-together-the-3-am-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Putting It All Together: The 3 AM Scenario
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Impact
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-we-covered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Covered
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="asterisk-observability-with-opentelemetry-and-grafana">Asterisk Observability with OpenTelemetry and Grafana<a class="headerlink" href="#asterisk-observability-with-opentelemetry-and-grafana" title="Permanent link">&para;</a></h1>
+<p><strong>How to actually see what's happening inside your Asterisk servers. OpenTelemetry as the collection layer, Prometheus for storage, Grafana for dashboards, and distributed tracing to follow a call from SIP INVITE to agent headset. Built from production VICIdial clusters pushing 200K+ daily calls.</strong></p>
+<hr />
+<p>I've been running Asterisk in production since the 1.4 days. For most of that time, "monitoring" meant SSH into the box, run <code>asterisk -rx "core show channels"</code>, squint at the output, and hope that the number of active channels looked about right. Maybe check <code>/var/log/asterisk/full</code> when something broke. Maybe not.</p>
+<p>That stopped being acceptable around the time we crossed 50,000 daily calls across a 4-server cluster. When a SIP trunk goes down at 2 PM on a Tuesday and 300 agents go idle, you need to know in seconds, not whenever someone notices the real-time report looks weird and pings you on Slack.</p>
+<p>This guide covers the full observability stack for Asterisk: metrics collection with OpenTelemetry, storage in Prometheus, visualization in Grafana, and distributed tracing for individual call flows. If you're running VICIdial, everything here applies — VICIdial's call processing is just Asterisk dialplan execution under the hood, and all the telemetry surfaces the same way.</p>
+<hr />
+<h2 id="why-opentelemetry-instead-of-just-prometheus">Why OpenTelemetry Instead of Just Prometheus<a class="headerlink" href="#why-opentelemetry-instead-of-just-prometheus" title="Permanent link">&para;</a></h2>
+<p>You could skip OpenTelemetry entirely. Install <code>prometheus-node-exporter</code> on your Asterisk box, write a script that scrapes <code>asterisk -rx</code> output into Prometheus metrics, and call it done. I've done exactly that. It works. It's also fragile, custom, and doesn't scale.</p>
+<p>OpenTelemetry (OTel) gives you three things that roll-your-own monitoring doesn't:</p>
+<p><strong>Vendor-neutral collection.</strong> The OTel Collector speaks StatsD, Prometheus, OTLP, syslog, and dozens of other formats. Asterisk's built-in <code>res_statsd</code> module pushes metrics via StatsD. AMI events can be forwarded as structured logs. You don't have to write custom parsers — you configure receivers.</p>
+<p><strong>Processing pipelines.</strong> OTel lets you filter, transform, aggregate, and route telemetry data before it hits your backend. Want to drop debug-level events but keep warnings? Want to add a <code>cluster_name</code> attribute to every metric? Want to sample 10% of traces for non-error calls? All configurable in the collector.</p>
+<p><strong>Multi-backend export.</strong> Send metrics to Prometheus, traces to Jaeger or Tempo, and logs to Loki — from one collector instance. If you ever want to switch from Prometheus to Mimir or from Jaeger to Tempo, you change one exporter config. Nothing on the Asterisk side changes.</p>
+<p>That said, if you have a single Asterisk box running 5,000 calls a day, a Prometheus scraper script is probably fine. OTel shines when you have multiple servers, multiple signal types (metrics + traces + logs), or when you're tired of maintaining custom scripts.</p>
+<hr />
+<h2 id="architecture-overview">Architecture Overview<a class="headerlink" href="#architecture-overview" title="Permanent link">&para;</a></h2>
+<p>Here's what we're building:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">┌─────────────────────────────────────────────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">Asterisk</span><span class="w"> </span><span class="n">Server</span><span class="w">                                     </span><span class="err">│</span>
+<span class="err">│</span><span class="w">                                                       </span><span class="err">│</span>
+<span class="err">│</span><span class="w">  </span><span class="n">res_statsd</span><span class="w"> </span><span class="err">──→</span><span class="w"> </span><span class="n">OTel</span><span class="w"> </span><span class="n">Collector</span><span class="w"> </span><span class="err">──→</span><span class="w"> </span><span class="n">Prometheus</span><span class="w">        </span><span class="err">│</span>
+<span class="err">│</span><span class="w">                    </span><span class="p">(</span><span class="n">sidecar</span><span class="p">)</span><span class="w">                          </span><span class="err">│</span>
+<span class="err">│</span><span class="w">  </span><span class="n">AMI</span><span class="w"> </span><span class="n">Events</span><span class="w"> </span><span class="err">──→</span><span class="w"> </span><span class="n">ami</span><span class="o">-</span><span class="n">otel</span><span class="o">-</span><span class="n">bridge</span><span class="w"> </span><span class="err">──→</span><span class="w"> </span><span class="n">OTel</span><span class="w"> </span><span class="n">Collector</span><span class="w">   </span><span class="err">│</span>
+<span class="err">│</span><span class="w">                                       </span><span class="err">│</span><span class="w">               </span><span class="err">│</span>
+<span class="err">│</span><span class="w">  </span><span class="n">CDR</span><span class="o">/</span><span class="n">CEL</span><span class="w"> </span><span class="err">──→</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="err">──→</span><span class="w"> </span><span class="n">mysqld_exporter</span><span class="w"> </span><span class="err">──→</span><span class="w"> </span><span class="n">Prometheus</span><span class="err">│</span>
+<span class="err">│</span><span class="w">                                                       </span><span class="err">│</span>
+<span class="err">└───────────────────────────────────────────────────────┘</span>
+<span class="w">         </span><span class="err">│</span><span class="w">                    </span><span class="err">│</span><span class="w">                </span><span class="err">│</span>
+<span class="w">         </span><span class="err">▼</span><span class="w">                    </span><span class="err">▼</span><span class="w">                </span><span class="err">▼</span>
+<span class="w">   </span><span class="err">┌──────────┐</span><span class="w">    </span><span class="err">┌────────────────┐</span><span class="w">   </span><span class="err">┌──────────┐</span>
+<span class="w">   </span><span class="err">│</span><span class="n">Prometheus</span><span class="err">│</span><span class="w">    </span><span class="err">│</span><span class="w"> </span><span class="n">Jaeger</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Tempo</span><span class="w">  </span><span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="n">Loki</span><span class="w">   </span><span class="err">│</span>
+<span class="w">   </span><span class="err">└────┬─────┘</span><span class="w">    </span><span class="err">└───────┬────────┘</span><span class="w">   </span><span class="err">└────┬─────┘</span>
+<span class="w">        </span><span class="err">│</span><span class="w">                  </span><span class="err">│</span><span class="w">                  </span><span class="err">│</span>
+<span class="w">        </span><span class="err">└──────────┬───────┘──────────────────┘</span>
+<span class="w">                   </span><span class="err">│</span>
+<span class="w">              </span><span class="err">┌────▼─────┐</span>
+<span class="w">              </span><span class="err">│</span><span class="w">  </span><span class="n">Grafana</span><span class="w">  </span><span class="err">│</span>
+<span class="w">              </span><span class="err">└──────────┘</span>
+</code></pre></div>
+
+<p>Components:
+- <strong>res_statsd</strong> — Asterisk's built-in StatsD module. Emits metrics on channel counts, endpoint status, bridge operations, and more.
+- <strong>OTel Collector</strong> — Runs as a sidecar process on the Asterisk server. Receives StatsD from res_statsd, processes it, exports to Prometheus.
+- <strong>ami-otel-bridge</strong> — A small script that reads Asterisk Manager Interface (AMI) events and converts them to OTel spans/logs.
+- <strong>mysqld_exporter</strong> — Exports MySQL metrics for CDR/CEL table monitoring.
+- <strong>Prometheus</strong> — Time-series database. Stores all metrics.
+- <strong>Grafana</strong> — Dashboards and alerting.
+- <strong>Jaeger/Tempo</strong> — Distributed tracing backend for call flow traces.</p>
+<p>Let's build each layer.</p>
+<hr />
+<h2 id="step-1-install-the-opentelemetry-collector">Step 1: Install the OpenTelemetry Collector<a class="headerlink" href="#step-1-install-the-opentelemetry-collector" title="Permanent link">&para;</a></h2>
+<p>The OTel Collector runs on each Asterisk server as a systemd service.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Download the latest stable release (check https://github.com/open-telemetry/opentelemetry-collector-releases)</span>
+<span class="nv">OTEL_VERSION</span><span class="o">=</span><span class="s2">&quot;0.96.0&quot;</span>
+curl<span class="w"> </span>-L<span class="w"> </span><span class="s2">&quot;https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v</span><span class="si">${</span><span class="nv">OTEL_VERSION</span><span class="si">}</span><span class="s2">/otelcol-contrib_</span><span class="si">${</span><span class="nv">OTEL_VERSION</span><span class="si">}</span><span class="s2">_linux_amd64.tar.gz&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>/tmp/otelcol.tar.gz
+tar<span class="w"> </span>xzf<span class="w"> </span>/tmp/otelcol.tar.gz<span class="w"> </span>-C<span class="w"> </span>/usr/local/bin/<span class="w"> </span>otelcol-contrib
+chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/otelcol-contrib
+
+<span class="c1"># Verify</span>
+otelcol-contrib<span class="w"> </span>--version
+</code></pre></div>
+
+<p>Create the systemd unit:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/systemd/system/otelcol.service</span>
+<span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">OpenTelemetry Collector</span>
+<span class="na">After</span><span class="o">=</span><span class="s">network.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">Type</span><span class="o">=</span><span class="s">simple</span>
+<span class="na">User</span><span class="o">=</span><span class="s">otelcol</span>
+<span class="na">Group</span><span class="o">=</span><span class="s">otelcol</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/local/bin/otelcol-contrib --config=/etc/otelcol/config.yaml</span>
+<span class="na">Restart</span><span class="o">=</span><span class="s">always</span>
+<span class="na">RestartSec</span><span class="o">=</span><span class="s">5</span>
+<span class="na">LimitNOFILE</span><span class="o">=</span><span class="s">65536</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">multi-user.target</span>
+</code></pre></div>
+
+<p>Create the user and directories:</p>
+<div class="codehilite"><pre><span></span><code>useradd<span class="w"> </span>--system<span class="w"> </span>--no-create-home<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>otelcol
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/otelcol
+chown<span class="w"> </span>otelcol:otelcol<span class="w"> </span>/etc/otelcol
+</code></pre></div>
+
+<hr />
+<h2 id="step-2-configure-asterisks-statsd-module">Step 2: Configure Asterisk's StatsD Module<a class="headerlink" href="#step-2-configure-asterisks-statsd-module" title="Permanent link">&para;</a></h2>
+<p>Asterisk has had built-in StatsD support since version 13 through <code>res_statsd</code>. It's compiled in by default on most distributions but not loaded by default.</p>
+<p>Enable it:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/asterisk/statsd.conf</span>
+<span class="k">[general]</span>
+<span class="na">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+<span class="na">server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1:8125</span><span class="w">    </span><span class="c1">; OTel Collector&#39;s StatsD receiver</span>
+<span class="na">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span><span class="w">           </span><span class="c1">; All metrics will be prefixed with &quot;asterisk.&quot;</span>
+<span class="na">add_newline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+</code></pre></div>
+
+<p>Load the module:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module load res_statsd.so&quot;</span>
+<span class="c1"># Verify it&#39;s loaded</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show like statsd&quot;</span>
+</code></pre></div>
+
+<p>Output should show:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">Module</span><span class="w">                         </span><span class="nn">Description</span><span class="w">                              </span><span class="n">Use</span><span class="w"> </span><span class="n">Count</span><span class="w">  </span><span class="n">Status</span>
+<span class="n">res_statsd</span><span class="p">.</span><span class="n">so</span><span class="w">                  </span><span class="n">StatsD</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="n">support</span><span class="w">                    </span><span class="mi">0</span><span class="w">          </span><span class="n">Running</span>
+</code></pre></div>
+
+<h3 id="what-metrics-does-res_statsd-emit">What Metrics Does res_statsd Emit?<a class="headerlink" href="#what-metrics-does-res_statsd-emit" title="Permanent link">&para;</a></h3>
+<p>Once loaded, Asterisk pushes the following metrics as StatsD gauges and counters:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>asterisk.channels.count</code></td>
+<td>gauge</td>
+<td>Current active channel count</td>
+</tr>
+<tr>
+<td><code>asterisk.channels.by_type.SIP</code></td>
+<td>gauge</td>
+<td>Active SIP channels</td>
+</tr>
+<tr>
+<td><code>asterisk.channels.by_type.PJSIP</code></td>
+<td>gauge</td>
+<td>Active PJSIP channels</td>
+</tr>
+<tr>
+<td><code>asterisk.channels.by_type.Local</code></td>
+<td>gauge</td>
+<td>Active Local channels</td>
+</tr>
+<tr>
+<td><code>asterisk.endpoints.count</code></td>
+<td>gauge</td>
+<td>Registered endpoints</td>
+</tr>
+<tr>
+<td><code>asterisk.endpoints.state.online</code></td>
+<td>gauge</td>
+<td>Endpoints in online state</td>
+</tr>
+<tr>
+<td><code>asterisk.endpoints.state.offline</code></td>
+<td>gauge</td>
+<td>Endpoints in offline state</td>
+</tr>
+<tr>
+<td><code>asterisk.bridges.count</code></td>
+<td>gauge</td>
+<td>Active bridges</td>
+</tr>
+<tr>
+<td><code>asterisk.bridges.channels</code></td>
+<td>gauge</td>
+<td>Channels in bridges</td>
+</tr>
+</tbody>
+</table>
+<p>These are updated every 10 seconds by default. For a busy system, that's fine. If you need sub-second resolution (you probably don't), you can adjust the interval in <code>statsd.conf</code>.</p>
+<hr />
+<h2 id="step-3-otel-collector-configuration">Step 3: OTel Collector Configuration<a class="headerlink" href="#step-3-otel-collector-configuration" title="Permanent link">&para;</a></h2>
+<p>Here's the collector config that receives StatsD from Asterisk and exports to Prometheus:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/otelcol/config.yaml</span>
+<span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Receive StatsD metrics from res_statsd</span>
+<span class="w">  </span><span class="nt">statsd</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0:8125&quot;</span>
+<span class="w">    </span><span class="nt">aggregation_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">    </span><span class="nt">timer_histogram_mapping</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">statsd_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;timer&quot;</span>
+<span class="w">        </span><span class="nt">observer_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;histogram&quot;</span>
+<span class="w">        </span><span class="nt">histogram</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">explicit</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">250</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+
+<span class="w">  </span><span class="c1"># Scrape host metrics (CPU, memory, disk, network)</span>
+<span class="w">  </span><span class="nt">hostmetrics</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">collection_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15s</span>
+<span class="w">    </span><span class="nt">scrapers</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">system.cpu.utilization</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">system.memory.utilization</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">disk</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">      </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">      </span><span class="nt">load</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+
+<span class="w">  </span><span class="c1"># Receive OTLP from custom instrumentation (ami-otel-bridge)</span>
+<span class="w">  </span><span class="nt">otlp</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocols</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">grpc</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0:4317&quot;</span>
+<span class="w">      </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0:4318&quot;</span>
+
+<span class="nt">processors</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Add resource attributes to every metric</span>
+<span class="w">  </span><span class="nt">resource</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service.name</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;asterisk&quot;</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upsert</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">host.name</span>
+<span class="w">        </span><span class="nt">from_attribute</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upsert</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cluster.name</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vicidial-prod&quot;</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upsert</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server.role</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dialer&quot;</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upsert</span>
+
+<span class="w">  </span><span class="c1"># Batch metrics to reduce export overhead</span>
+<span class="w">  </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">    </span><span class="nt">send_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="w">  </span><span class="c1"># Memory limiter to prevent OOM</span>
+<span class="w">  </span><span class="nt">memory_limiter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">check_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">    </span><span class="nt">limit_mib</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span>
+<span class="w">    </span><span class="nt">spike_limit_mib</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span>
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Export metrics to Prometheus</span>
+<span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0:8889&quot;</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;asterisk&quot;</span>
+<span class="w">    </span><span class="nt">resource_to_telemetry_conversion</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># Export traces to Jaeger (or Tempo)</span>
+<span class="w">  </span><span class="nt">otlp/jaeger</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jaeger.monitoring.local:4317&quot;</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">insecure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># Export logs to Loki</span>
+<span class="w">  </span><span class="nt">loki</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://loki.monitoring.local:3100/loki/api/v1/push&quot;</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">service.name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;service_name&quot;</span>
+<span class="w">        </span><span class="nt">host.name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hostname&quot;</span>
+
+<span class="w">  </span><span class="c1"># Debug output (disable in production)</span>
+<span class="w">  </span><span class="c1"># debug:</span>
+<span class="w">  </span><span class="c1">#   verbosity: detailed</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">statsd</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">hostmetrics</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">memory_limiter</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">resource</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">batch</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">prometheus</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">traces</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">memory_limiter</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">resource</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">batch</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp/jaeger</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">memory_limiter</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">resource</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">batch</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">loki</span><span class="p p-Indicator">]</span>
+
+<span class="w">  </span><span class="nt">telemetry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;warn&quot;</span>
+<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;:8888&quot;</span>
+</code></pre></div>
+
+<p>Start the collector:</p>
+<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>otelcol
+systemctl<span class="w"> </span>start<span class="w"> </span>otelcol
+
+<span class="c1"># Verify it&#39;s running and receiving StatsD</span>
+curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8889/metrics<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>asterisk_channels
+</code></pre></div>
+
+<p>You should see Prometheus-formatted metrics:</p>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> HELP asterisk_channels_count Current active channel count
+<span class="gh">#</span> TYPE asterisk_channels_count gauge
+asterisk_channels_count{cluster_name=&quot;vicidial-prod&quot;,host_name=&quot;dialer01&quot;,server_role=&quot;dialer&quot;} 47
+</code></pre></div>
+
+<hr />
+<h2 id="step-4-custom-metrics-via-ami">Step 4: Custom Metrics via AMI<a class="headerlink" href="#step-4-custom-metrics-via-ami" title="Permanent link">&para;</a></h2>
+<p>StatsD gives you the basics — channel counts, endpoint status, bridge counts. But for VICIdial-specific observability, you need more. The Asterisk Manager Interface (AMI) emits events for everything: new channels, hangups, DTMF, queue joins, agent status changes, you name it.</p>
+<p>Here's a Python script that connects to AMI, listens for events, and pushes them to the OTel Collector as metrics and traces:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ami_otel_bridge.py — Bridge AMI events to OpenTelemetry</span>
+<span class="sd">Runs as a daemon alongside Asterisk.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">opentelemetry</span> <span class="kn">import</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">trace</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.metrics</span> <span class="kn">import</span> <span class="n">MeterProvider</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.metrics.export</span> <span class="kn">import</span> <span class="n">PeriodicExportingMetricReader</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.trace</span> <span class="kn">import</span> <span class="n">TracerProvider</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.trace.export</span> <span class="kn">import</span> <span class="n">BatchSpanProcessor</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.exporter.otlp.proto.grpc.metric_exporter</span> <span class="kn">import</span> <span class="n">OTLPMetricExporter</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.exporter.otlp.proto.grpc.trace_exporter</span> <span class="kn">import</span> <span class="n">OTLPSpanExporter</span>
+
+<span class="c1"># OTel setup</span>
+<span class="n">metric_exporter</span> <span class="o">=</span> <span class="n">OTLPMetricExporter</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;localhost:4317&quot;</span><span class="p">,</span> <span class="n">insecure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">metric_reader</span> <span class="o">=</span> <span class="n">PeriodicExportingMetricReader</span><span class="p">(</span><span class="n">metric_exporter</span><span class="p">,</span> <span class="n">export_interval_millis</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">set_meter_provider</span><span class="p">(</span><span class="n">MeterProvider</span><span class="p">(</span><span class="n">metric_readers</span><span class="o">=</span><span class="p">[</span><span class="n">metric_reader</span><span class="p">]))</span>
+<span class="n">meter</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get_meter</span><span class="p">(</span><span class="s2">&quot;ami-bridge&quot;</span><span class="p">)</span>
+
+<span class="n">trace_exporter</span> <span class="o">=</span> <span class="n">OTLPSpanExporter</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;localhost:4317&quot;</span><span class="p">,</span> <span class="n">insecure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">trace</span><span class="o">.</span><span class="n">set_tracer_provider</span><span class="p">(</span><span class="n">TracerProvider</span><span class="p">())</span>
+<span class="n">trace</span><span class="o">.</span><span class="n">get_tracer_provider</span><span class="p">()</span><span class="o">.</span><span class="n">add_span_processor</span><span class="p">(</span><span class="n">BatchSpanProcessor</span><span class="p">(</span><span class="n">trace_exporter</span><span class="p">))</span>
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">get_tracer</span><span class="p">(</span><span class="s2">&quot;ami-bridge&quot;</span><span class="p">)</span>
+
+<span class="c1"># Metrics</span>
+<span class="n">calls_total</span> <span class="o">=</span> <span class="n">meter</span><span class="o">.</span><span class="n">create_counter</span><span class="p">(</span><span class="s2">&quot;asterisk.calls.total&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Total calls&quot;</span><span class="p">)</span>
+<span class="n">calls_active</span> <span class="o">=</span> <span class="n">meter</span><span class="o">.</span><span class="n">create_up_down_counter</span><span class="p">(</span><span class="s2">&quot;asterisk.calls.active&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Active calls&quot;</span><span class="p">)</span>
+<span class="n">calls_by_disposition</span> <span class="o">=</span> <span class="n">meter</span><span class="o">.</span><span class="n">create_counter</span><span class="p">(</span><span class="s2">&quot;asterisk.calls.by_disposition&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Calls by disposition&quot;</span><span class="p">)</span>
+<span class="n">sip_registrations</span> <span class="o">=</span> <span class="n">meter</span><span class="o">.</span><span class="n">create_up_down_counter</span><span class="p">(</span><span class="s2">&quot;asterisk.sip.registrations&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;SIP registration events&quot;</span><span class="p">)</span>
+<span class="n">queue_callers</span> <span class="o">=</span> <span class="n">meter</span><span class="o">.</span><span class="n">create_up_down_counter</span><span class="p">(</span><span class="s2">&quot;asterisk.queue.callers&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Callers waiting in queue&quot;</span><span class="p">)</span>
+<span class="n">call_duration</span> <span class="o">=</span> <span class="n">meter</span><span class="o">.</span><span class="n">create_histogram</span><span class="p">(</span><span class="s2">&quot;asterisk.call.duration_ms&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Call duration in milliseconds&quot;</span><span class="p">)</span>
+
+<span class="c1"># Track active call spans for distributed tracing</span>
+<span class="n">active_spans</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">AMI_HOST</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AMI_HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">)</span>
+<span class="n">AMI_PORT</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AMI_PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;5038&quot;</span><span class="p">))</span>
+<span class="n">AMI_USER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AMI_USER&quot;</span><span class="p">,</span> <span class="s2">&quot;admin&quot;</span><span class="p">)</span>
+<span class="n">AMI_SECRET</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AMI_SECRET&quot;</span><span class="p">,</span> <span class="s2">&quot;amp111&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">connect_ami</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect to AMI and authenticate.&quot;&quot;&quot;</span>
+    <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">AMI_HOST</span><span class="p">,</span> <span class="n">AMI_PORT</span><span class="p">))</span>
+
+    <span class="c1"># Read banner</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+
+    <span class="c1"># Login</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Action: Login</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Username: </span><span class="si">{</span><span class="n">AMI_USER</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Secret: </span><span class="si">{</span><span class="n">AMI_SECRET</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Events: call,agent,cdr</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">login</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;Success&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AMI login failed: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ami-otel] Connected to AMI at </span><span class="si">{</span><span class="n">AMI_HOST</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">AMI_PORT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sock</span>
+
+
+<span class="k">def</span> <span class="nf">parse_event</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an AMI event into a dict.&quot;&quot;&quot;</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;: &quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;: &quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">event</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">event</span>
+
+
+<span class="k">def</span> <span class="nf">handle_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process an AMI event and emit OTel signals.&quot;&quot;&quot;</span>
+    <span class="n">event_type</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Event&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;Newchannel&quot;</span><span class="p">:</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Channel&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+        <span class="n">calls_total</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;channel_type&quot;</span><span class="p">:</span> <span class="n">channel</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]})</span>
+        <span class="n">calls_active</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Start a trace span for this call</span>
+        <span class="n">uniqueid</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Uniqueid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">uniqueid</span><span class="p">:</span>
+            <span class="n">span</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">start_span</span><span class="p">(</span>
+                <span class="s2">&quot;asterisk.call&quot;</span><span class="p">,</span>
+                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;asterisk.channel&quot;</span><span class="p">:</span> <span class="n">channel</span><span class="p">,</span>
+                    <span class="s2">&quot;asterisk.uniqueid&quot;</span><span class="p">:</span> <span class="n">uniqueid</span><span class="p">,</span>
+                    <span class="s2">&quot;asterisk.caller_id&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CallerIDNum&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;asterisk.context&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;asterisk.exten&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Exten&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;span&quot;</span><span class="p">:</span> <span class="n">span</span><span class="p">,</span>
+                <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
+            <span class="p">}</span>
+
+    <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;Hangup&quot;</span><span class="p">:</span>
+        <span class="n">calls_active</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">uniqueid</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Uniqueid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">cause</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Cause-txt&quot;</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+
+        <span class="c1"># End the trace span</span>
+        <span class="k">if</span> <span class="n">uniqueid</span> <span class="ow">in</span> <span class="n">active_spans</span><span class="p">:</span>
+            <span class="n">span_data</span> <span class="o">=</span> <span class="n">active_spans</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">uniqueid</span><span class="p">)</span>
+            <span class="n">duration_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">span_data</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1000</span>
+            <span class="n">span_data</span><span class="p">[</span><span class="s2">&quot;span&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s2">&quot;asterisk.hangup_cause&quot;</span><span class="p">,</span> <span class="n">cause</span><span class="p">)</span>
+            <span class="n">span_data</span><span class="p">[</span><span class="s2">&quot;span&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s2">&quot;asterisk.duration_ms&quot;</span><span class="p">,</span> <span class="n">duration_ms</span><span class="p">)</span>
+            <span class="n">span_data</span><span class="p">[</span><span class="s2">&quot;span&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+            <span class="n">call_duration</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">duration_ms</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;cause&quot;</span><span class="p">:</span> <span class="n">cause</span><span class="p">})</span>
+
+    <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;AgentComplete&quot;</span><span class="p">:</span>
+        <span class="n">dispo</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Reason&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+        <span class="n">calls_by_disposition</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;disposition&quot;</span><span class="p">:</span> <span class="n">dispo</span><span class="p">})</span>
+
+    <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;PeerStatus&quot;</span><span class="p">:</span>
+        <span class="n">peer</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Peer&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PeerStatus&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;Registered&quot;</span><span class="p">:</span>
+            <span class="n">sip_registrations</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;peer&quot;</span><span class="p">:</span> <span class="n">peer</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;Unregistered&quot;</span><span class="p">:</span>
+            <span class="n">sip_registrations</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;peer&quot;</span><span class="p">:</span> <span class="n">peer</span><span class="p">})</span>
+
+    <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;Join&quot;</span><span class="p">:</span>
+        <span class="n">queue_callers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;queue&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Queue&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)})</span>
+
+    <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;Leave&quot;</span><span class="p">:</span>
+        <span class="n">queue_callers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;queue&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Queue&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)})</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sock</span> <span class="o">=</span> <span class="n">connect_ami</span><span class="p">()</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="s2">&quot;AMI connection lost&quot;</span><span class="p">)</span>
+
+                <span class="n">buffer</span> <span class="o">+=</span> <span class="n">data</span>
+
+                <span class="c1"># AMI events are separated by \r\n\r\n</span>
+                <span class="k">while</span> <span class="s2">&quot;</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                    <span class="n">raw_event</span><span class="p">,</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">raw_event</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                        <span class="n">event</span> <span class="o">=</span> <span class="n">parse_event</span><span class="p">(</span><span class="n">raw_event</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="s2">&quot;Event&quot;</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+                            <span class="n">handle_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ami-otel] Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, reconnecting in 5s...&quot;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Install dependencies and run as a service:</p>
+<div class="codehilite"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>opentelemetry-api<span class="w"> </span>opentelemetry-sdk<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>opentelemetry-exporter-otlp-proto-grpc
+
+<span class="c1"># Create systemd unit</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/systemd/system/ami-otel-bridge.service<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=AMI to OpenTelemetry Bridge</span>
+<span class="s">After=asterisk.service otelcol.service</span>
+
+<span class="s">[Service]</span>
+<span class="s">Type=simple</span>
+<span class="s">User=asterisk</span>
+<span class="s">Environment=AMI_HOST=127.0.0.1</span>
+<span class="s">Environment=AMI_PORT=5038</span>
+<span class="s">Environment=AMI_USER=admin</span>
+<span class="s">Environment=AMI_SECRET=your_ami_password_here</span>
+<span class="s">ExecStart=/usr/bin/python3 /usr/local/bin/ami_otel_bridge.py</span>
+<span class="s">Restart=always</span>
+<span class="s">RestartSec=5</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ami-otel-bridge
+systemctl<span class="w"> </span>start<span class="w"> </span>ami-otel-bridge
+</code></pre></div>
+
+<p>Now you have two metric sources feeding the OTel Collector: <code>res_statsd</code> for Asterisk internals, and the AMI bridge for call-level events and distributed traces.</p>
+<hr />
+<h2 id="step-5-prometheus-configuration">Step 5: Prometheus Configuration<a class="headerlink" href="#step-5-prometheus-configuration" title="Permanent link">&para;</a></h2>
+<p>Prometheus needs to scrape the OTel Collector's Prometheus exporter endpoint:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/prometheus/prometheus.yml (add to scrape_configs)</span>
+<span class="nt">scrape_configs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;asterisk-otel&#39;</span>
+<span class="w">    </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;dialer01.internal:8889&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;dialer02.internal:8889&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;dialer03.internal:8889&#39;</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;production&#39;</span>
+
+<span class="w">  </span><span class="c1"># Also scrape the OTel Collector&#39;s own health metrics</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;otel-collector&#39;</span>
+<span class="w">    </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;dialer01.internal:8888&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;dialer02.internal:8888&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;dialer03.internal:8888&#39;</span>
+</code></pre></div>
+
+<h3 id="recording-rules-for-call-center-kpis">Recording Rules for Call Center KPIs<a class="headerlink" href="#recording-rules-for-call-center-kpis" title="Permanent link">&para;</a></h3>
+<p>Raw metrics are useful, but derived metrics are where the value lives. Set up recording rules in Prometheus:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/prometheus/rules/asterisk.yml</span>
+<span class="nt">groups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk_kpis</span>
+<span class="w">    </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Calls per minute (cluster-wide)</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:calls_per_minute</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sum(rate(asterisk_calls_total[5m])) * 60</span>
+
+<span class="w">      </span><span class="c1"># Average call duration (5-minute window)</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:avg_call_duration_sec</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">histogram_quantile(0.5,</span>
+<span class="w">            </span><span class="no">rate(asterisk_call_duration_ms_bucket[5m])</span>
+<span class="w">          </span><span class="no">) / 1000</span>
+
+<span class="w">      </span><span class="c1"># 95th percentile call duration</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:p95_call_duration_sec</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">histogram_quantile(0.95,</span>
+<span class="w">            </span><span class="no">rate(asterisk_call_duration_ms_bucket[5m])</span>
+<span class="w">          </span><span class="no">) / 1000</span>
+
+<span class="w">      </span><span class="c1"># Channel utilization per server (active / max)</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:channel_utilization</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">asterisk_channels_count /</span>
+<span class="w">          </span><span class="no">(asterisk_endpoints_state_online * 2)</span>
+
+<span class="w">      </span><span class="c1"># SIP registration churn rate</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:registration_churn_rate</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">abs(rate(asterisk_sip_registrations[5m]))</span>
+
+<span class="w">      </span><span class="c1"># Queue wait callers (cluster total)</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:queue_callers_total</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sum(asterisk_queue_callers)</span>
+</code></pre></div>
+
+<p>Reload Prometheus:</p>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:9090/-/reload
+</code></pre></div>
+
+<hr />
+<h2 id="step-6-grafana-dashboards">Step 6: Grafana Dashboards<a class="headerlink" href="#step-6-grafana-dashboards" title="Permanent link">&para;</a></h2>
+<p>Now the fun part. Here's where you actually see things. If you haven't set up Grafana yet, our <a href="https://vicistack.com/blog/vicidial-grafana-dashboards/">VICIdial Grafana dashboard guide</a> covers the basic installation.</p>
+<h3 id="dashboard-1-cluster-overview">Dashboard 1: Cluster Overview<a class="headerlink" href="#dashboard-1-cluster-overview" title="Permanent link">&para;</a></h3>
+<p>The single-pane-of-glass dashboard. This should be on a TV on the wall.</p>
+<p><strong>Panel 1: Active Channels (Stat)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">sum</span><span class="o">(</span><span class="n">asterisk_channels_count</span><span class="o">)</span>
+<span class="n">Thresholds</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="o">-</span><span class="mi">100</span><span class="w"> </span><span class="n">green</span><span class="o">,</span><span class="w"> </span><span class="mi">100</span><span class="o">-</span><span class="mi">200</span><span class="w"> </span><span class="n">yellow</span><span class="o">,</span><span class="w"> </span><span class="mi">200</span><span class="o">+</span><span class="w"> </span><span class="n">red</span>
+</code></pre></div>
+
+<p><strong>Panel 2: Calls Per Minute (Time Series)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">asterisk</span><span class="o">:</span><span class="n">calls_per_minute</span>
+<span class="n">Legend</span><span class="o">:</span><span class="w"> </span><span class="o">{{</span><span class="n">host_name</span><span class="o">}}</span>
+</code></pre></div>
+
+<p><strong>Panel 3: Channel Utilization by Server (Gauge)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">asterisk</span><span class="o">:</span><span class="n">channel_utilization</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+<span class="n">Legend</span><span class="o">:</span><span class="w"> </span><span class="o">{{</span><span class="n">host_name</span><span class="o">}}</span>
+<span class="n">Min</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="o">,</span><span class="w"> </span><span class="n">Max</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="n">Thresholds</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="o">-</span><span class="mi">70</span><span class="w"> </span><span class="n">green</span><span class="o">,</span><span class="w"> </span><span class="mi">70</span><span class="o">-</span><span class="mi">85</span><span class="w"> </span><span class="n">yellow</span><span class="o">,</span><span class="w"> </span><span class="mi">85</span><span class="o">-</span><span class="mi">100</span><span class="w"> </span><span class="n">red</span>
+</code></pre></div>
+
+<p><strong>Panel 4: SIP Registrations (Stat + Sparkline)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">sum</span><span class="o">(</span><span class="n">asterisk_endpoints_state_online</span><span class="o">)</span>
+</code></pre></div>
+
+<p><strong>Panel 5: Call Duration Distribution (Heatmap)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">sum</span><span class="o">(</span><span class="n">rate</span><span class="o">(</span><span class="n">asterisk_call_duration_ms_bucket</span><span class="o">[</span><span class="mi">5</span><span class="n">m</span><span class="o">]))</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">(</span><span class="n">le</span><span class="o">)</span>
+<span class="n">Format</span><span class="o">:</span><span class="w"> </span><span class="n">Heatmap</span>
+</code></pre></div>
+
+<p><strong>Panel 6: Queue Callers Waiting (Time Series)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">sum</span><span class="o">(</span><span class="n">asterisk_queue_callers</span><span class="o">)</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">(</span><span class="n">queue</span><span class="o">)</span>
+<span class="n">Legend</span><span class="o">:</span><span class="w"> </span><span class="o">{{</span><span class="n">queue</span><span class="o">}}</span>
+<span class="n">Alert</span><span class="o">:</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">minutes</span>
+</code></pre></div>
+
+<h3 id="dashboard-2-sip-health">Dashboard 2: SIP Health<a class="headerlink" href="#dashboard-2-sip-health" title="Permanent link">&para;</a></h3>
+<p>This dashboard tells you when trunks are dying before your agents notice.</p>
+<p><strong>Panel 1: Registration Status by Peer (Table)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">asterisk_endpoints_state_online</span>
+<span class="n">Transform</span><span class="o">:</span><span class="w"> </span><span class="n">Labels</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">fields</span>
+<span class="n">Columns</span><span class="o">:</span><span class="w"> </span><span class="n">host_name</span><span class="o">,</span><span class="w"> </span><span class="n">peer</span><span class="o">,</span><span class="w"> </span><span class="n">value</span>
+<span class="n">Value</span><span class="w"> </span><span class="n">mappings</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Online&quot;</span><span class="w"> </span><span class="o">(</span><span class="n">green</span><span class="o">),</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Offline&quot;</span><span class="w"> </span><span class="o">(</span><span class="n">red</span><span class="o">)</span>
+</code></pre></div>
+
+<p><strong>Panel 2: Registration Events Rate (Time Series)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">rate</span><span class="o">(</span><span class="n">asterisk_sip_registrations</span><span class="o">[</span><span class="mi">5</span><span class="n">m</span><span class="o">])</span>
+<span class="n">Legend</span><span class="o">:</span><span class="w"> </span><span class="o">{{</span><span class="n">peer</span><span class="o">}}</span>
+</code></pre></div>
+
+<p>A spike in registration events means phones are flapping — registering, dropping, re-registering. This usually indicates a network issue between the phone and Asterisk, or a DNS problem with the SIP registrar.</p>
+<p><strong>Panel 3: Active Channels by Type (Pie Chart)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Query</span><span class="o">:</span><span class="w"> </span><span class="n">asterisk_channels_by_type</span>
+<span class="n">Legend</span><span class="o">:</span><span class="w"> </span><span class="o">{{</span><span class="n">channel_type</span><span class="o">}}</span>
+</code></pre></div>
+
+<p>In a healthy VICIdial system, you should see mostly PJSIP (or SIP) channels for agent phones and trunk calls, with some Local channels for internal routing. If you see IAX2 channels spiking, that's inter-server traffic in a cluster — normal during peak, but worth watching.</p>
+<h3 id="dashboard-3-per-server-deep-dive">Dashboard 3: Per-Server Deep Dive<a class="headerlink" href="#dashboard-3-per-server-deep-dive" title="Permanent link">&para;</a></h3>
+<p>For when you suspect a specific server is misbehaving:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Variables</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">server</span><span class="p">:</span><span class="w"> </span><span class="n">label_values</span><span class="p">(</span><span class="n">asterisk_channels_count</span><span class="p">,</span><span class="w"> </span><span class="n">host_name</span><span class="p">)</span>
+
+<span class="n">Panels</span><span class="p">:</span>
+<span class="w">  </span><span class="mf">1.</span><span class="w"> </span><span class="n">CPU</span><span class="w"> </span><span class="n">Usage</span><span class="p">:</span><span class="w">     </span><span class="n">system_cpu_utilization</span><span class="p">{</span><span class="n">host_name</span><span class="o">=</span><span class="s2">&quot;$server&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="mf">2.</span><span class="w"> </span><span class="n">Memory</span><span class="w"> </span><span class="n">Usage</span><span class="p">:</span><span class="w">  </span><span class="n">system_memory_utilization</span><span class="p">{</span><span class="n">host_name</span><span class="o">=</span><span class="s2">&quot;$server&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="mf">3.</span><span class="w"> </span><span class="n">Channels</span><span class="p">:</span><span class="w">      </span><span class="n">asterisk_channels_count</span><span class="p">{</span><span class="n">host_name</span><span class="o">=</span><span class="s2">&quot;$server&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="mf">4.</span><span class="w"> </span><span class="n">Load</span><span class="w"> </span><span class="n">Average</span><span class="p">:</span><span class="w">  </span><span class="n">system_cpu_load_average_5m</span><span class="p">{</span><span class="n">host_name</span><span class="o">=</span><span class="s2">&quot;$server&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="mf">5.</span><span class="w"> </span><span class="n">Network</span><span class="w"> </span><span class="n">I</span><span class="o">/</span><span class="n">O</span><span class="p">:</span><span class="w">   </span><span class="n">rate</span><span class="p">(</span><span class="n">system_network_io_bytes_total</span><span class="p">{</span><span class="n">host_name</span><span class="o">=</span><span class="s2">&quot;$server&quot;</span><span class="p">}[</span><span class="mi">5</span><span class="n">m</span><span class="p">])</span>
+<span class="w">  </span><span class="mf">6.</span><span class="w"> </span><span class="n">Disk</span><span class="w"> </span><span class="n">I</span><span class="o">/</span><span class="n">O</span><span class="p">:</span><span class="w">      </span><span class="n">rate</span><span class="p">(</span><span class="n">system_disk_io_bytes_total</span><span class="p">{</span><span class="n">host_name</span><span class="o">=</span><span class="s2">&quot;$server&quot;</span><span class="p">}[</span><span class="mi">5</span><span class="n">m</span><span class="p">])</span>
+</code></pre></div>
+
+<p>The magic correlation: if CPU spikes at the same time channels spike, that's expected. If CPU spikes without a channel increase, something else is eating resources — check for runaway AGI scripts, a MySQL query from hell, or a cron job that shouldn't be running during peak hours.</p>
+<hr />
+<h2 id="step-7-distributed-tracing-for-call-flows">Step 7: Distributed Tracing for Call Flows<a class="headerlink" href="#step-7-distributed-tracing-for-call-flows" title="Permanent link">&para;</a></h2>
+<p>This is the part most Asterisk monitoring setups miss entirely. Metrics tell you <em>that</em> something happened. Traces tell you <em>why</em>.</p>
+<p>A distributed trace follows a single call from the moment the SIP INVITE arrives through every dialplan step, AGI execution, queue wait, agent delivery, and hangup. When a caller reports "I waited 3 minutes and then got disconnected," you can pull up that exact call's trace and see every hop.</p>
+<p>The AMI bridge script above creates spans for each call. To get the full picture, you need child spans for key events within a call:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Enhanced event handling with nested spans</span>
+<span class="k">def</span> <span class="nf">handle_dial_begin</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Track outbound dial attempts within a call.&quot;&quot;&quot;</span>
+    <span class="n">uniqueid</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Uniqueid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">uniqueid</span> <span class="ow">in</span> <span class="n">active_spans</span><span class="p">:</span>
+        <span class="n">parent_span</span> <span class="o">=</span> <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">][</span><span class="s2">&quot;span&quot;</span><span class="p">]</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">set_span_in_context</span><span class="p">(</span><span class="n">parent_span</span><span class="p">)</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">start_span</span><span class="p">(</span>
+            <span class="s2">&quot;asterisk.dial&quot;</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;asterisk.dial.destination&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DestChannel&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;asterisk.dial.dialstring&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Dialstring&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">][</span><span class="s2">&quot;dial_span&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span>
+
+
+<span class="k">def</span> <span class="nf">handle_dial_end</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Complete the dial span with the result.&quot;&quot;&quot;</span>
+    <span class="n">uniqueid</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Uniqueid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">uniqueid</span> <span class="ow">in</span> <span class="n">active_spans</span> <span class="ow">and</span> <span class="s2">&quot;dial_span&quot;</span> <span class="ow">in</span> <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">]:</span>
+        <span class="n">dial_span</span> <span class="o">=</span> <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;dial_span&quot;</span><span class="p">)</span>
+        <span class="n">dial_span</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s2">&quot;asterisk.dial.status&quot;</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DialStatus&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="n">dial_span</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">handle_queue_join</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Track time spent in queue.&quot;&quot;&quot;</span>
+    <span class="n">uniqueid</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Uniqueid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">uniqueid</span> <span class="ow">in</span> <span class="n">active_spans</span><span class="p">:</span>
+        <span class="n">parent_span</span> <span class="o">=</span> <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">][</span><span class="s2">&quot;span&quot;</span><span class="p">]</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">set_span_in_context</span><span class="p">(</span><span class="n">parent_span</span><span class="p">)</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">start_span</span><span class="p">(</span>
+            <span class="s2">&quot;asterisk.queue.wait&quot;</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;asterisk.queue.name&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Queue&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;asterisk.queue.position&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Position&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;asterisk.queue.count&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Count&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">][</span><span class="s2">&quot;queue_span&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span>
+
+
+<span class="k">def</span> <span class="nf">handle_queue_leave</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;End queue wait span.&quot;&quot;&quot;</span>
+    <span class="n">uniqueid</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Uniqueid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">uniqueid</span> <span class="ow">in</span> <span class="n">active_spans</span> <span class="ow">and</span> <span class="s2">&quot;queue_span&quot;</span> <span class="ow">in</span> <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">]:</span>
+        <span class="n">queue_span</span> <span class="o">=</span> <span class="n">active_spans</span><span class="p">[</span><span class="n">uniqueid</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;queue_span&quot;</span><span class="p">)</span>
+        <span class="n">queue_span</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+</code></pre></div>
+
+<p>With this instrumentation, a typical inbound call trace in Jaeger looks like:</p>
+<div class="codehilite"><pre><span></span><code>[asterisk.call] ─── 145.2s total
+ ├── [asterisk.dial] ─── 0.8s (to queue)
+ ├── [asterisk.queue.wait] ─── 12.4s (INBOUND_SALES queue)
+ ├── [asterisk.dial] ─── 1.2s (to agent SIP/agent42)
+ └── [asterisk.call] ends ─── hangup cause: Normal Clearing
+</code></pre></div>
+
+<p>You can immediately see: 12.4 seconds in queue. Was that normal? What was the queue depth? Was the agent available or did we have to wait for one to go READY? The trace answers all of it.</p>
+<hr />
+<h2 id="step-8-alerting">Step 8: Alerting<a class="headerlink" href="#step-8-alerting" title="Permanent link">&para;</a></h2>
+<p>Dashboards are for humans staring at screens. Alerts are for 3 AM.</p>
+<h3 id="prometheus-alerting-rules">Prometheus Alerting Rules<a class="headerlink" href="#prometheus-alerting-rules" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/prometheus/rules/asterisk_alerts.yml</span>
+<span class="nt">groups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk_alerts</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Trunk down — no channels for 2 minutes</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AsteriskTrunkDown</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">asterisk_channels_count == 0</span>
+<span class="w">          </span><span class="no">and on(host_name)</span>
+<span class="w">          </span><span class="no">(time() - asterisk_channels_count offset 5m) &gt; 300</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Asterisk</span><span class="nv"> </span><span class="s">server</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.host_name</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">zero</span><span class="nv"> </span><span class="s">active</span><span class="nv"> </span><span class="s">channels</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">2+</span><span class="nv"> </span><span class="s">minutes&quot;</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;All</span><span class="nv"> </span><span class="s">trunks</span><span class="nv"> </span><span class="s">may</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">down.</span><span class="nv"> </span><span class="s">Check</span><span class="nv"> </span><span class="s">SIP</span><span class="nv"> </span><span class="s">registrations</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">carrier</span><span class="nv"> </span><span class="s">connectivity.&quot;</span>
+
+<span class="w">      </span><span class="c1"># Channel exhaustion warning</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AsteriskChannelExhaustion</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:channel_utilization &gt; 0.85</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Channel</span><span class="nv"> </span><span class="s">utilization</span><span class="nv"> </span><span class="s">above</span><span class="nv"> </span><span class="s">85%</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.host_name</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Server</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">approaching</span><span class="nv"> </span><span class="s">channel</span><span class="nv"> </span><span class="s">capacity.</span><span class="nv"> </span><span class="s">Current</span><span class="nv"> </span><span class="s">utilization:</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$value</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">humanizePercentage</span><span class="nv"> </span><span class="s">}}&quot;</span>
+
+<span class="w">      </span><span class="c1"># Registration storm — phones flapping</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AsteriskRegistrationStorm</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk:registration_churn_rate &gt; 5</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;High</span><span class="nv"> </span><span class="s">SIP</span><span class="nv"> </span><span class="s">registration</span><span class="nv"> </span><span class="s">churn</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.host_name</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Phones</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">registering/unregistering</span><span class="nv"> </span><span class="s">rapidly.</span><span class="nv"> </span><span class="s">Possible</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">instability.&quot;</span>
+
+<span class="w">      </span><span class="c1"># Queue backup — callers waiting too long</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AsteriskQueueBackup</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sum(asterisk_queue_callers) by (queue) &gt; 15</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Queue</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.queue</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$value</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">callers</span><span class="nv"> </span><span class="s">waiting&quot;</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;More</span><span class="nv"> </span><span class="s">than</span><span class="nv"> </span><span class="s">15</span><span class="nv"> </span><span class="s">callers</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">queue</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">2+</span><span class="nv"> </span><span class="s">minutes.</span><span class="nv"> </span><span class="s">Check</span><span class="nv"> </span><span class="s">agent</span><span class="nv"> </span><span class="s">availability.&quot;</span>
+
+<span class="w">      </span><span class="c1"># No calls for 10 minutes during business hours</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AsteriskNoCalls</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">asterisk:calls_per_minute == 0</span>
+<span class="w">          </span><span class="no">and hour() &gt;= 9</span>
+<span class="w">          </span><span class="no">and hour() &lt;= 17</span>
+<span class="w">          </span><span class="no">and day_of_week() &gt;= 1</span>
+<span class="w">          </span><span class="no">and day_of_week() &lt;= 5</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Zero</span><span class="nv"> </span><span class="s">calls</span><span class="nv"> </span><span class="s">per</span><span class="nv"> </span><span class="s">minute</span><span class="nv"> </span><span class="s">during</span><span class="nv"> </span><span class="s">business</span><span class="nv"> </span><span class="s">hours</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.host_name</span><span class="nv"> </span><span class="s">}}&quot;</span>
+
+<span class="w">      </span><span class="c1"># AMI bridge disconnected</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AMIBridgeDown</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">up{job=&quot;asterisk-otel&quot;} == 0</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2m</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;OTel</span><span class="nv"> </span><span class="s">Collector</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">reachable</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.instance</span><span class="nv"> </span><span class="s">}}&quot;</span>
+</code></pre></div>
+
+<p>Wire these into Alertmanager to send to Slack, PagerDuty, email, or whatever your on-call system uses.</p>
+<hr />
+<h2 id="step-9-cdr-based-metrics">Step 9: CDR-Based Metrics<a class="headerlink" href="#step-9-cdr-based-metrics" title="Permanent link">&para;</a></h2>
+<p>The AMI bridge captures real-time events, but CDR (Call Detail Records) give you the complete picture after a call ends. VICIdial stores CDRs in MySQL, and Prometheus can query MySQL through <code>mysqld_exporter</code> — but honestly, for CDR analysis, you're better off with a dedicated query:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Calls per hour with quality metrics (run from a cron-based exporter)</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">calldate</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;%Y-%m-%d %H:00:00&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">hour_bucket</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">billsec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_billsec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NO ANSWER&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">no_answer</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;BUSY&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">busy</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FAILED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">failed</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">HOUR</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">hour_bucket</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">hour_bucket</span><span class="p">;</span>
+</code></pre></div>
+
+<p>For a Prometheus-native approach, write a small exporter script that queries CDR data and exposes it as Prometheus metrics:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">cdr_exporter.py — Export Asterisk CDR metrics to Prometheus</span>
+<span class="sd">Run as a service, scrape on :9101/metrics</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">pymysql</span>
+<span class="kn">from</span> <span class="nn">prometheus_client</span> <span class="kn">import</span> <span class="n">start_http_server</span><span class="p">,</span> <span class="n">Gauge</span><span class="p">,</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">Histogram</span>
+
+<span class="c1"># Metrics</span>
+<span class="n">cdr_calls_total</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">&#39;asterisk_cdr_calls_total&#39;</span><span class="p">,</span> <span class="s1">&#39;Total CDR records&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;disposition&#39;</span><span class="p">])</span>
+<span class="n">cdr_duration</span> <span class="o">=</span> <span class="n">Histogram</span><span class="p">(</span><span class="s1">&#39;asterisk_cdr_duration_seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;Call duration from CDR&#39;</span><span class="p">,</span>
+                         <span class="n">buckets</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">1800</span><span class="p">])</span>
+<span class="n">cdr_asr</span> <span class="o">=</span> <span class="n">Gauge</span><span class="p">(</span><span class="s1">&#39;asterisk_cdr_asr&#39;</span><span class="p">,</span> <span class="s1">&#39;Answer-seizure ratio (15 min window)&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">collect_cdr_metrics</span><span class="p">():</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+        <span class="n">user</span><span class="o">=</span><span class="s1">&#39;cdr_readonly&#39;</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="s1">&#39;readonly_password&#39;</span><span class="p">,</span>
+        <span class="n">db</span><span class="o">=</span><span class="s1">&#39;asterisk&#39;</span><span class="p">,</span>
+        <span class="n">charset</span><span class="o">=</span><span class="s1">&#39;utf8mb4&#39;</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="c1"># Recent calls by disposition</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                SELECT disposition, COUNT(*), AVG(billsec)</span>
+<span class="s2">                FROM cdr</span>
+<span class="s2">                WHERE calldate &gt;= DATE_SUB(NOW(), INTERVAL 15 MINUTE)</span>
+<span class="s2">                GROUP BY disposition</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">)</span>
+            <span class="n">total_calls</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">answered_calls</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+                <span class="n">disposition</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">avg_bill</span> <span class="o">=</span> <span class="n">row</span>
+                <span class="n">cdr_calls_total</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">disposition</span><span class="o">=</span><span class="n">disposition</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+                <span class="n">total_calls</span> <span class="o">+=</span> <span class="n">count</span>
+                <span class="k">if</span> <span class="n">disposition</span> <span class="o">==</span> <span class="s1">&#39;ANSWERED&#39;</span><span class="p">:</span>
+                    <span class="n">answered_calls</span> <span class="o">+=</span> <span class="n">count</span>
+
+            <span class="k">if</span> <span class="n">total_calls</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">cdr_asr</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">answered_calls</span> <span class="o">/</span> <span class="n">total_calls</span><span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">start_http_server</span><span class="p">(</span><span class="mi">9101</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">collect_cdr_metrics</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="putting-it-all-together-the-3-am-scenario">Putting It All Together: The 3 AM Scenario<a class="headerlink" href="#putting-it-all-together-the-3-am-scenario" title="Permanent link">&para;</a></h2>
+<p>It's 3:17 AM. PagerDuty wakes you up: <strong>AsteriskTrunkDown</strong> on dialer02.</p>
+<p>Before this setup, here's what you'd do: SSH into dialer02, run <code>asterisk -rx "sip show peers"</code>, stare at the output, grep through logs, try to figure out when it broke and why, call the carrier, wait on hold.</p>
+<p>With the observability stack, here's what you do:</p>
+<ol>
+<li>
+<p><strong>Open Grafana on your phone.</strong> The Cluster Overview dashboard shows dialer02 with zero channels. Dialer01 and dialer03 are healthy.</p>
+</li>
+<li>
+<p><strong>Check the SIP Health dashboard.</strong> You see that dialer02's SIP trunk to Carrier A went offline at 3:04 AM. Registration events show a rapid unregister/register cycle starting at 3:01 AM — three minutes of flapping before it gave up.</p>
+</li>
+<li>
+<p><strong>Open the Prometheus alert timeline.</strong> RegistrationStorm fired at 3:03 AM. TrunkDown fired at 3:06 AM. The flapping started before the trunk died — likely a network issue, not a carrier issue.</p>
+</li>
+<li>
+<p><strong>Check host metrics.</strong> dialer02's network I/O dropped to zero at 3:04 AM on eth1 (the trunk interface). CPU and memory are fine. It's a network link failure, not a server issue.</p>
+</li>
+<li>
+<p><strong>Call the NOC</strong>, not the carrier. The network link to the trunk VLAN is down. They fix it. Trunk comes back. Total incident resolution: 12 minutes instead of 45.</p>
+</li>
+</ol>
+<p>That's observability. Not dashboards for the sake of dashboards. Dashboards that tell you where to look and what to do.</p>
+<hr />
+<h2 id="performance-impact">Performance Impact<a class="headerlink" href="#performance-impact" title="Permanent link">&para;</a></h2>
+<p>The question everyone asks: does all this monitoring slow down Asterisk?</p>
+<p>Short answer: no. Not measurably.</p>
+<p>Longer answer: <code>res_statsd</code> adds roughly 0.1% CPU overhead on a server handling 100 concurrent channels. The AMI bridge script uses about 15MB of RAM and negligible CPU — it's event-driven, not polling. The OTel Collector uses 50-100MB of RAM depending on pipeline complexity.</p>
+<p>On a production VICIdial cluster processing 200,000+ daily calls, the total overhead of the observability stack is less than what a single poorly-written AGI script adds per call. If you're worried about performance, profile your AGI scripts before cutting monitoring.</p>
+<p>One exception: if you enable very high-cardinality labels (like including the full caller ID number as a metric label), Prometheus will eat memory proportionally. Keep labels to low-cardinality values — server name, channel type, queue name, disposition status. Not phone numbers, not channel IDs, not caller names.</p>
+<hr />
+<h2 id="what-we-covered">What We Covered<a class="headerlink" href="#what-we-covered" title="Permanent link">&para;</a></h2>
+<p>You now have:
+- <strong>Metrics</strong> from <code>res_statsd</code> and AMI events flowing through OTel Collector to Prometheus
+- <strong>Dashboards</strong> in Grafana for cluster health, SIP status, and per-server deep dives
+- <strong>Distributed traces</strong> following individual calls through the Asterisk dialplan
+- <strong>Alerts</strong> for trunk failures, channel exhaustion, registration storms, and queue backups
+- <strong>CDR-based analytics</strong> exported as Prometheus metrics</p>
+<p>The monitoring itself is the easy part. The hard part is building the habit of looking at dashboards before they page you, reviewing traces for calls that went wrong, and treating your observability stack as infrastructure that needs maintenance — not a one-time setup.</p>
+<p>If you want to start smaller, skip the tracing. Get metrics into Prometheus, build the Cluster Overview dashboard, and set up the TrunkDown alert. That alone will save you from the next 3 AM "nobody noticed the trunk died" incident. Add tracing later when you need to debug specific call quality issues.</p>
+<p>For more on the VICIdial monitoring side — real-time agent dashboards, campaign performance panels, and dialer efficiency metrics — see our <a href="https://vicistack.com/blog/vicidial-grafana-realtime-dashboard/">VICIdial Grafana real-time dashboard guide</a>. And if your Asterisk configuration needs attention before you start monitoring it, our <a href="https://vicistack.com/blog/vicidial-asterisk-configuration/">Asterisk configuration guide</a> covers the SIP, codec, and NAT settings that affect call quality.</p>
+<hr />
+<p><em>Running a VICIdial cluster and want help setting up production observability? <a href="https://vicistack.com/contact/">Contact ViciStack</a> — we've instrumented Asterisk environments from single-server shops to 10-server clusters processing a million calls a day.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/asterisk-otel-observability">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

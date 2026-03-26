@@ -1,0 +1,3927 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-asterisk-cdr-analysis/">
+      
+      
+        <link rel="prev" href="../vicidial-api-integration/">
+      
+      
+        <link rel="next" href="../vicidial-asterisk-configuration/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Asterisk CDR Analysis for Connect Rate Optimization - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-asterisk-cdr-analysis-for-connect-rate-optimization" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cdr-table-structure-in-vicidials-asterisk-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CDR Table Structure in VICIdial's Asterisk Database
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-fields-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Fields Deep Dive
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Fields Deep Dive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disposition-the-outcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        disposition — The Outcome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#billsec-the-real-duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        billsec — The Real Duration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#channel-the-carrier-fingerprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        channel — The Carrier Fingerprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lastapp-what-asterisk-did" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lastapp — What Asterisk Did
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sql-queries-for-connect-rate-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQL Queries for Connect Rate Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SQL Queries for Connect Rate Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-connect-rate-by-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Connect Rate by Campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#true-human-connect-rate-filtering-short-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        True Human Connect Rate (Filtering Short Calls)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#identifying-dead-air-short-calls-and-abandoned-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identifying Dead Air, Short Calls, and Abandoned Calls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Identifying Dead Air, Short Calls, and Abandoned Calls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dead-air-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dead Air Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#short-call-distribution-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Short Call Distribution Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abandoned-call-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abandoned Call Tracking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-of-day-analysis-for-optimal-dialing-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-of-Day Analysis for Optimal Dialing Windows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time-of-Day Analysis for Optimal Dialing Windows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hourly-connect-rate-heatmap-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hourly Connect Rate Heatmap Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-area-code-timing-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Area-Code Timing Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#carrier-performance-comparison-from-cdr-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Performance Comparison from CDR Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Carrier Performance Comparison from CDR Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connect-rate-by-carrier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connect Rate by Carrier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-connect-duration-by-carrier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Connect Duration by Carrier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-failure-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Failure Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-cdr-analysis-routine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a CDR Analysis Routine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cdr-table-structure-in-vicidials-asterisk-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CDR Table Structure in VICIdial's Asterisk Database
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-fields-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Fields Deep Dive
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Fields Deep Dive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disposition-the-outcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        disposition — The Outcome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#billsec-the-real-duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        billsec — The Real Duration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#channel-the-carrier-fingerprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        channel — The Carrier Fingerprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lastapp-what-asterisk-did" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lastapp — What Asterisk Did
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sql-queries-for-connect-rate-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQL Queries for Connect Rate Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SQL Queries for Connect Rate Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-connect-rate-by-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Connect Rate by Campaign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#true-human-connect-rate-filtering-short-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        True Human Connect Rate (Filtering Short Calls)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#identifying-dead-air-short-calls-and-abandoned-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identifying Dead Air, Short Calls, and Abandoned Calls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Identifying Dead Air, Short Calls, and Abandoned Calls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dead-air-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dead Air Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#short-call-distribution-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Short Call Distribution Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abandoned-call-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abandoned Call Tracking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-of-day-analysis-for-optimal-dialing-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time-of-Day Analysis for Optimal Dialing Windows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time-of-Day Analysis for Optimal Dialing Windows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hourly-connect-rate-heatmap-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hourly Connect Rate Heatmap Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-area-code-timing-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Area-Code Timing Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#carrier-performance-comparison-from-cdr-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Performance Comparison from CDR Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Carrier Performance Comparison from CDR Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connect-rate-by-carrier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connect Rate by Carrier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-connect-duration-by-carrier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Connect Duration by Carrier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-failure-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Failure Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-cdr-analysis-routine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a CDR Analysis Routine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-asterisk-cdr-analysis-for-connect-rate-optimization">VICIdial Asterisk CDR Analysis for Connect Rate Optimization<a class="headerlink" href="#vicidial-asterisk-cdr-analysis-for-connect-rate-optimization" title="Permanent link">&para;</a></h1>
+<p>Your VICIdial system generates a CDR (Call Detail Record) for every single call attempt. In a 50-agent outbound operation dialing aggressively, that's tens of thousands of records per day. Most call center operators treat the CDR as a logging artifact — something that exists for billing disputes and compliance audits. That's leaving money on the table.</p>
+<p>The CDR is the most granular data source you have for understanding what happens between the moment a call leaves your system and the moment it either connects to a human or doesn't. When you analyze it systematically, you can identify carriers that silently fail, time windows where connect rates spike, and call patterns that distinguish a live answer from dead air or a fast busy.</p>
+<p>This guide covers the CDR table structure, the queries that matter, and how to turn raw CDR data into connect rate gains.</p>
+<h2 id="cdr-table-structure-in-vicidials-asterisk-database">CDR Table Structure in VICIdial's Asterisk Database<a class="headerlink" href="#cdr-table-structure-in-vicidials-asterisk-database" title="Permanent link">&para;</a></h2>
+<p>VICIdial stores CDR data in the <code>cdr</code> table within the <code>asteriskcdrdb</code> database. This is separate from VICIdial's own <code>vicidial_log</code> table in the <code>asterisk</code> database. Both contain call data, but the CDR table has Asterisk-level detail that VICIdial's application layer doesn't expose.</p>
+<p>Connect to the CDR database:</p>
+<div class="codehilite"><pre><span></span><code>mysql<span class="w"> </span>-u<span class="w"> </span>cron<span class="w"> </span>-p<span class="w"> </span>asteriskcdrdb
+</code></pre></div>
+
+<p>The core columns you'll work with:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>calldate</code></td>
+<td>datetime</td>
+<td>When the call was initiated</td>
+</tr>
+<tr>
+<td><code>clid</code></td>
+<td>varchar</td>
+<td>Caller ID sent with the call</td>
+</tr>
+<tr>
+<td><code>src</code></td>
+<td>varchar</td>
+<td>Source channel/extension</td>
+</tr>
+<tr>
+<td><code>dst</code></td>
+<td>varchar</td>
+<td>Destination number dialed</td>
+</tr>
+<tr>
+<td><code>dcontext</code></td>
+<td>varchar</td>
+<td>Dialplan context</td>
+</tr>
+<tr>
+<td><code>channel</code></td>
+<td>varchar</td>
+<td>Asterisk channel used (reveals trunk/carrier)</td>
+</tr>
+<tr>
+<td><code>dstchannel</code></td>
+<td>varchar</td>
+<td>Destination channel</td>
+</tr>
+<tr>
+<td><code>lastapp</code></td>
+<td>varchar</td>
+<td>Last Asterisk application executed</td>
+</tr>
+<tr>
+<td><code>lastdata</code></td>
+<td>varchar</td>
+<td>Arguments to the last application</td>
+</tr>
+<tr>
+<td><code>duration</code></td>
+<td>int</td>
+<td>Total call duration in seconds (ring + talk)</td>
+</tr>
+<tr>
+<td><code>billsec</code></td>
+<td>int</td>
+<td>Billable seconds (talk time only — after answer)</td>
+</tr>
+<tr>
+<td><code>disposition</code></td>
+<td>varchar</td>
+<td>Call outcome: ANSWERED, NO ANSWER, BUSY, FAILED</td>
+</tr>
+<tr>
+<td><code>amaflags</code></td>
+<td>int</td>
+<td>AMA flag for billing categorization</td>
+</tr>
+<tr>
+<td><code>accountcode</code></td>
+<td>varchar</td>
+<td>Account code (often campaign ID)</td>
+</tr>
+<tr>
+<td><code>uniqueid</code></td>
+<td>varchar</td>
+<td>Unique call identifier</td>
+</tr>
+<tr>
+<td><code>userfield</code></td>
+<td>varchar</td>
+<td>Custom field (VICIdial sometimes stores data here)</td>
+</tr>
+</tbody>
+</table>
+<p>The two most important columns for connect rate analysis are <code>disposition</code> and <code>billsec</code>. Together they tell you: did the call connect, and if so, for how long?</p>
+<h2 id="key-fields-deep-dive">Key Fields Deep Dive<a class="headerlink" href="#key-fields-deep-dive" title="Permanent link">&para;</a></h2>
+<h3 id="disposition-the-outcome">disposition — The Outcome<a class="headerlink" href="#disposition-the-outcome" title="Permanent link">&para;</a></h3>
+<p>Asterisk sets disposition to one of four values:</p>
+<ul>
+<li><strong>ANSWERED</strong> — The remote side sent a 200 OK / answer signal. This includes human answers, voicemail pickups, IVR systems, and answering machines.</li>
+<li><strong>NO ANSWER</strong> — Ring timeout expired with no answer. Your <code>dial</code> timeout in the dialplan controls how long Asterisk waits.</li>
+<li><strong>BUSY</strong> — Remote side returned a 486 Busy Here or equivalent.</li>
+<li><strong>FAILED</strong> — Call could not be placed. Trunk error, invalid number, network failure, or all circuits busy.</li>
+</ul>
+<p>A high FAILED rate on a specific trunk is a carrier problem. A high NO ANSWER rate at specific times is a scheduling optimization opportunity.</p>
+<h3 id="billsec-the-real-duration">billsec — The Real Duration<a class="headerlink" href="#billsec-the-real-duration" title="Permanent link">&para;</a></h3>
+<p><code>billsec</code> is the number of seconds after the call was answered. <code>duration</code> includes ring time plus talk time. The delta between them tells you how long the phone rang:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">duration</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">ring_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="n">billsec</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">talk_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="n">disposition</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-19 00:00:00&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Calls with <code>billsec</code> between 1-3 seconds that are marked ANSWERED are almost certainly voicemail greetings, IVRs, or answering machines that the AMD didn't catch. Calls with <code>billsec</code> of 0 and disposition ANSWERED are false positives — the carrier sent an answer signal but the call didn't actually connect.</p>
+<h3 id="channel-the-carrier-fingerprint">channel — The Carrier Fingerprint<a class="headerlink" href="#channel-the-carrier-fingerprint" title="Permanent link">&para;</a></h3>
+<p>The <code>channel</code> field reveals which trunk carried the call. In a typical VICIdial setup with SIP trunks:</p>
+<div class="codehilite"><pre><span></span><code>SIP/carrier1-00001a2b
+SIP/vicitrunk02-00003c4d
+PJSIP/outbound-0000ef01
+</code></pre></div>
+
+<p>The trunk name before the hyphen identifies the carrier. This lets you compare connect rates, answer rates, and call quality across carriers using the same dialed numbers.</p>
+<h3 id="lastapp-what-asterisk-did">lastapp — What Asterisk Did<a class="headerlink" href="#lastapp-what-asterisk-did" title="Permanent link">&para;</a></h3>
+<p>The <code>lastapp</code> field shows the final Asterisk application that handled the call:</p>
+<ul>
+<li><strong>Dial</strong> — Normal outbound call</li>
+<li><strong>Hangup</strong> — Call was explicitly hung up</li>
+<li><strong>AGI</strong> — Call went through an AGI script (common for AMD)</li>
+<li><strong>Playback</strong> — Audio was played (voicemail drop, message blasting)</li>
+<li><strong>Park</strong> — Call was parked</li>
+</ul>
+<p>Most outbound calls will show <code>Dial</code> as lastapp. If you see <code>Hangup</code> with <code>lastdata</code> showing specific hangup causes, that's diagnostic data about why calls terminated.</p>
+<h2 id="sql-queries-for-connect-rate-analysis">SQL Queries for Connect Rate Analysis<a class="headerlink" href="#sql-queries-for-connect-rate-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="basic-connect-rate-by-campaign">Basic Connect Rate by Campaign<a class="headerlink" href="#basic-connect-rate-by-campaign" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">accountcode</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">campaign</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_attempts</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;NO ANSWER&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">no_answer</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;BUSY&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">busy</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FAILED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">failed</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">connect_rate_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-03-18 00:00:00&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s1">&#39;2026-03-19 00:00:00&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">accountcode</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">connect_rate_pct</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="true-human-connect-rate-filtering-short-calls">True Human Connect Rate (Filtering Short Calls)<a class="headerlink" href="#true-human-connect-rate-filtering-short-calls" title="Permanent link">&para;</a></h3>
+<p>A raw ANSWERED rate overstates true connections because voicemail pickups and IVRs count as answers. Filter by <code>billsec</code> to isolate likely human conversations:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">accountcode</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">campaign</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_attempts</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">human_connects</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">short_answers</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">zero_sec_answers</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>
+<span class="w">        </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">human_connect_rate_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">accountcode</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">human_connect_rate_pct</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The 15-second threshold is a reasonable starting point. For B2B campaigns where conversations tend to be shorter at the introduction phase, you might lower this to 10 seconds. For consumer campaigns where agents have longer scripts, 20 seconds might be more appropriate. Calibrate by reviewing a sample of calls at the boundary.</p>
+<h2 id="identifying-dead-air-short-calls-and-abandoned-calls">Identifying Dead Air, Short Calls, and Abandoned Calls<a class="headerlink" href="#identifying-dead-air-short-calls-and-abandoned-calls" title="Permanent link">&para;</a></h2>
+<h3 id="dead-air-detection">Dead Air Detection<a class="headerlink" href="#dead-air-detection" title="Permanent link">&para;</a></h3>
+<p>Dead air calls are ones where the system connected but nobody spoke — either the agent wasn't bridged fast enough, or AMD incorrectly classified the call. These show up as ANSWERED calls with very low billsec:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">calldate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">dst</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">number_dialed</span><span class="p">,</span>
+<span class="w">    </span><span class="n">channel</span><span class="p">,</span>
+<span class="w">    </span><span class="n">billsec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">duration</span><span class="p">,</span>
+<span class="w">    </span><span class="n">duration</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">ring_time</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">4</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+</code></pre></div>
+
+<p>If you're seeing a high percentage of 1-4 second ANSWERED calls, investigate:</p>
+<ol>
+<li><strong>AMD timing</strong> — If AMD takes too long to classify, the human hangs up during the "hello? hello?" phase.</li>
+<li><strong>Agent bridge delay</strong> — The time between AMD classifying "HUMAN" and the call reaching an available agent. If all agents are busy, the caller hears silence and hangs up.</li>
+<li><strong>Carrier latency</strong> — Some carriers introduce audio delay. The caller answers, says hello, hears nothing (because audio hasn't bridged), and hangs up.</li>
+</ol>
+<h3 id="short-call-distribution-analysis">Short Call Distribution Analysis<a class="headerlink" href="#short-call-distribution-analysis" title="Permanent link">&para;</a></h3>
+<p>Understanding the distribution of call lengths reveals patterns:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">CASE</span>
+<span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;0 sec (no audio)&#39;</span>
+<span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;1-3 sec (dead air/hangup)&#39;</span>
+<span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;4-10 sec (quick reject)&#39;</span>
+<span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;11-30 sec (short conversation)&#39;</span>
+<span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">31</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">120</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;31-120 sec (pitch attempt)&#39;</span>
+<span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">121</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;2-5 min (engaged call)&#39;</span>
+<span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;5+ min (deep conversation)&#39;</span>
+<span class="w">    </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">call_bucket</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">call_count</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">call_bucket</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="n">billsec</span><span class="p">);</span>
+</code></pre></div>
+
+<p>A healthy outbound campaign should have the majority of answered calls in the "short conversation" through "deep conversation" buckets. If more than 20% of your ANSWERED calls are in the 0-3 second bucket, you have a systemic connection quality problem.</p>
+<h3 id="abandoned-call-tracking">Abandoned Call Tracking<a class="headerlink" href="#abandoned-call-tracking" title="Permanent link">&para;</a></h3>
+<p>Abandoned calls (where the system dropped the call before an agent picked up) can be cross-referenced between CDR and VICIdial's drop log:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Calls that lasted under 2 seconds post-answer with no agent bridge</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="k">c</span><span class="p">.</span><span class="n">calldate</span><span class="p">,</span>
+<span class="w">    </span><span class="k">c</span><span class="p">.</span><span class="n">dst</span><span class="p">,</span>
+<span class="w">    </span><span class="k">c</span><span class="p">.</span><span class="n">channel</span><span class="p">,</span>
+<span class="w">    </span><span class="k">c</span><span class="p">.</span><span class="n">billsec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">c</span><span class="p">.</span><span class="n">disposition</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">asteriskcdrdb</span><span class="p">.</span><span class="n">cdr</span><span class="w"> </span><span class="k">c</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">billsec</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">dstchannel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">calldate</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>An empty <code>dstchannel</code> combined with a short billsec typically means the call was answered but never bridged to an agent — it was either dropped due to no available agents or killed by the system.</p>
+<h2 id="time-of-day-analysis-for-optimal-dialing-windows">Time-of-Day Analysis for Optimal Dialing Windows<a class="headerlink" href="#time-of-day-analysis-for-optimal-dialing-windows" title="Permanent link">&para;</a></h2>
+<p>Connect rates vary dramatically by hour. Analyzing CDR data by time reveals when your specific list demographics are most likely to answer.</p>
+<h3 id="hourly-connect-rate-heatmap-data">Hourly Connect Rate Heatmap Data<a class="headerlink" href="#hourly-connect-rate-heatmap-data" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">HOUR</span><span class="p">(</span><span class="n">calldate</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">hour_of_day</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">calldate</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">day_of_week</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">attempts</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">human_connects</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>
+<span class="w">        </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">connect_rate</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">accountcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALESCAMP&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">HOUR</span><span class="p">(</span><span class="n">calldate</span><span class="p">),</span><span class="w"> </span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">calldate</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">day_of_week</span><span class="p">,</span><span class="w"> </span><span class="n">hour_of_day</span><span class="p">;</span>
+</code></pre></div>
+
+<p>This gives you a 7-day view of connect rates by hour and day. Typical patterns for consumer lists:</p>
+<ul>
+<li><strong>B2C:</strong> Peak connect rates between 10 AM-12 PM and 4 PM-7 PM local time. Worst rates before 9 AM and after 8:30 PM.</li>
+<li><strong>B2B:</strong> Best connect rates Tuesday-Thursday, 9 AM-11 AM and 1:30 PM-3:30 PM. Monday mornings and Friday afternoons are dead zones.</li>
+</ul>
+<h3 id="per-area-code-timing-analysis">Per-Area-Code Timing Analysis<a class="headerlink" href="#per-area-code-timing-analysis" title="Permanent link">&para;</a></h3>
+<p>Different regions have different answer patterns. Extract the area code from the dialed number and analyze:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">LEFT</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">area_code</span><span class="p">,</span>
+<span class="w">    </span><span class="n">HOUR</span><span class="p">(</span><span class="n">calldate</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">hour_of_day</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">attempts</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>
+<span class="w">        </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">connect_rate</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">accountcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALESCAMP&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">LENGTH</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">10</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">LEFT</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">HOUR</span><span class="p">(</span><span class="n">calldate</span><span class="p">)</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">attempts</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">50</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">area_code</span><span class="p">,</span><span class="w"> </span><span class="n">hour_of_day</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The <code>HAVING attempts &gt;= 50</code> filter ensures statistical relevance. With this data, you can build campaign-specific call schedules that prioritize area codes during their peak answer hours.</p>
+<h2 id="carrier-performance-comparison-from-cdr-data">Carrier Performance Comparison from CDR Data<a class="headerlink" href="#carrier-performance-comparison-from-cdr-data" title="Permanent link">&para;</a></h2>
+<p>If you're running multiple SIP trunks (and at 25+ agents, you should be for redundancy and A/B testing), the CDR tells you which carriers are actually delivering.</p>
+<h3 id="connect-rate-by-carrier">Connect Rate by Carrier<a class="headerlink" href="#connect-rate-by-carrier" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">carrier</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FAILED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">failed</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">answer_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FAILED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">fail_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk_sec</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">answer_rate</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="post-connect-duration-by-carrier">Post-Connect Duration by Carrier<a class="headerlink" href="#post-connect-duration-by-carrier" title="Permanent link">&para;</a></h3>
+<p>Two carriers might have similar raw answer rates, but one delivers longer conversations (indicating better audio quality and caller experience):</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">carrier</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">answered_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">billsec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_billsec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="n">STDDEV</span><span class="p">(</span><span class="n">billsec</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">stddev_billsec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls_over_60s</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">pct_over_60s</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="k">DAY</span><span class="p">)</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ANSWERED&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">billsec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">avg_billsec</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The <code>pct_over_60s</code> metric is particularly telling. A carrier with a 20% answer rate but 70% of those calls lasting over 60 seconds is far more valuable than one with a 25% answer rate where only 30% of calls exceed 60 seconds. The first carrier is delivering real conversations; the second is delivering a lot of answering machines.</p>
+<h3 id="carrier-failure-analysis">Carrier Failure Analysis<a class="headerlink" href="#carrier-failure-analysis" title="Permanent link">&para;</a></h3>
+<p>When a carrier returns FAILED disposition, the <code>lastdata</code> and Asterisk logs contain the SIP response code. Common codes and their meaning:</p>
+<table>
+<thead>
+<tr>
+<th>SIP Code</th>
+<th>Meaning</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>Carrier blocking your caller ID or IP</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>Invalid number format for this carrier</td>
+</tr>
+<tr>
+<td>480</td>
+<td>Temporarily Unavailable</td>
+<td>Carrier congestion</td>
+</tr>
+<tr>
+<td>486</td>
+<td>Busy Here</td>
+<td>Legitimate busy</td>
+</tr>
+<tr>
+<td>487</td>
+<td>Request Terminated</td>
+<td>Call cancelled (your side hung up during ring)</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable</td>
+<td>Carrier trunk exhaustion</td>
+</tr>
+</tbody>
+</table>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">carrier</span><span class="p">,</span>
+<span class="w">    </span><span class="n">lastdata</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">occurrences</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">cdr</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">calldate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FAILED&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">lastdata</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">occurrences</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">30</span><span class="p">;</span>
+</code></pre></div>
+
+<p>A spike in 403 responses from a carrier means they may have flagged your numbers. A spike in 503 means you're overrunning their capacity. Both require immediate action.</p>
+<h2 id="building-a-cdr-analysis-routine">Building a CDR Analysis Routine<a class="headerlink" href="#building-a-cdr-analysis-routine" title="Permanent link">&para;</a></h2>
+<p>For ongoing optimization, run these analyses on a schedule:</p>
+<ol>
+<li><strong>Daily:</strong> Connect rate by hour, carrier fail rate, short-call percentage</li>
+<li><strong>Weekly:</strong> Carrier comparison, area code timing patterns, call duration distribution</li>
+<li><strong>Monthly:</strong> Trend analysis — are connect rates improving or declining? Is a carrier degrading over time?</li>
+</ol>
+<p>Automate the daily checks with a cron job that dumps results to a file or sends them to Slack:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /opt/scripts/daily_cdr_report.sh</span>
+<span class="nv">MYSQL_CMD</span><span class="o">=</span><span class="s2">&quot;mysql -u cron -p&#39;yourpass&#39; asteriskcdrdb -N -B&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Daily CDR Report </span><span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d<span class="k">)</span><span class="s2"> ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Connect Rate by Campaign ---&quot;</span>
+<span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT accountcode, COUNT(*) AS attempts,</span>
+<span class="s2">    ROUND(SUM(CASE WHEN disposition=&#39;ANSWERED&#39; AND billsec&gt;=15 THEN 1 ELSE 0 END)*100.0/COUNT(*),2) AS human_connect_pct</span>
+<span class="s2">FROM cdr WHERE calldate &gt;= CURDATE() - INTERVAL 1 DAY AND calldate &lt; CURDATE()</span>
+<span class="s2">GROUP BY accountcode ORDER BY human_connect_pct DESC;</span>
+<span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Carrier Fail Rates ---&quot;</span>
+<span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT SUBSTRING_INDEX(channel,&#39;-&#39;,1) AS carrier,</span>
+<span class="s2">    COUNT(*) AS calls,</span>
+<span class="s2">    ROUND(SUM(CASE WHEN disposition=&#39;FAILED&#39; THEN 1 ELSE 0 END)*100.0/COUNT(*),2) AS fail_pct</span>
+<span class="s2">FROM cdr WHERE calldate &gt;= CURDATE() - INTERVAL 1 DAY AND calldate &lt; CURDATE()</span>
+<span class="s2">GROUP BY carrier ORDER BY fail_pct DESC;</span>
+<span class="s2">&quot;</span>
+</code></pre></div>
+
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>CDR analysis is one of the highest-leverage optimizations in any VICIdial operation, but it requires someone who lives in this data every day. Most operations are too busy managing agents and running campaigns to build and maintain a CDR analysis pipeline.</p>
+<p>At ViciStack, CDR analysis is central to what we do:</p>
+<ul>
+<li><strong>Automated carrier scoring</strong> — We continuously rank your trunks by human connect rate, not just raw answer rate, and route traffic accordingly</li>
+<li><strong>Time-of-day optimization</strong> — We build custom dialing schedules based on your specific list demographics and CDR patterns</li>
+<li><strong>Dead air elimination</strong> — We tune AMD sensitivity, agent bridge timing, and trunk selection to minimize the 1-4 second answered calls that burn through your list</li>
+<li><strong>Carrier negotiation leverage</strong> — When CDR data proves a carrier is underperforming, we provide the data you need for rate negotiations or replacement decisions</li>
+</ul>
+<p>This is included in ViciStack's $150/agent/month flat rate. No per-minute fees, no surprises.</p>
+<p><strong>See what your CDR data reveals about your connect rates</strong> — get a free analysis in under 5 minutes: <a href="https://vicistack.com/proof/">Request Your Free ViciStack Analysis</a></p>
+<h2 id="related-resources">Related Resources<a class="headerlink" href="#related-resources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-realtime-agent-dashboard">VICIdial Real-Time Agent Dashboard Customization Guide</a> — Visualize CDR-derived metrics in real-time wallboards</li>
+<li><a href="/blog/vicidial-auto-dial-level-tuning">VICIdial Auto-Dial Level Tuning by Campaign Type</a> — Use connect rate data to inform dial level decisions</li>
+<li><a href="/blog/vicidial-voicemail-drop">VICIdial Voicemail Drop Configuration and Compliance Guide</a> — AMD accuracy directly impacts CDR-based connect rate calculations</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-asterisk-cdr-analysis">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

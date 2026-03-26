@@ -1,0 +1,4978 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-mysql-optimization/">
+      
+      
+        <link rel="prev" href="../vicidial-multi-tenant/">
+      
+      
+        <link rel="next" href="../vicidial-outbound-sales/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial MySQL Optimization: Queries, Indexes & Tuning - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-mysql-optimization-queries-indexes-tuning" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial MySQL Optimization: Queries, Indexes & Tuning
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-vicidials-database-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding VICIdial's Database Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding VICIdial&#39;s Database Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-access-pattern-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Access Pattern Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-tables-and-their-growth-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Tables and Their Growth Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-tables-vicidials-real-time-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEMORY Tables: VICIdial's Real-Time Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mycnf-tuning-the-settings-that-actually-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        my.cnf Tuning: The Settings That Actually Matter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="my.cnf Tuning: The Settings That Actually Matter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#universal-settings-every-vicidial-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Universal Settings (Every VICIdial Deployment)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#50-agent-deployment-single-server-or-small-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        50-Agent Deployment (Single Server or Small Cluster)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#100-agent-deployment-dedicated-database-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100-Agent Deployment (Dedicated Database Server)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#500-agent-enterprise-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        500-Agent Enterprise Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-key_buffer_size-vs-innodb_buffer_pool_size-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The key_buffer_size vs innodb_buffer_pool_size Question
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slow-query-identification-and-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Query Identification and Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Slow Query Identification and Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-the-slow-query-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling the Slow Query Log
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pt-query-digest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using pt-query-digest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-processlist-diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The PROCESSLIST Diagnostic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#essential-indexes-vicidial-sometimes-misses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Essential Indexes VICIdial Sometimes Misses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Essential Indexes VICIdial Sometimes Misses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial_log-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vicidial_log Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial_list-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vicidial_list Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording_log-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        recording_log Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call_log-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        call_log Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-archival-the-maintenance-task-that-saves-your-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table Archival: The Maintenance Task That Saves Your Cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Table Archival: The Maintenance Task That Saves Your Cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-archive-and-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Archive and When
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-admin_archive_log_tablespl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using ADMIN_archive_log_tables.pl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-archive-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Archive Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-nuclear-option-truncate-and-rebuild" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Nuclear Option: TRUNCATE and Rebuild
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory-table-optimization-for-high-scale-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEMORY Table Optimization for High-Scale Deployments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MEMORY Table Optimization for High-Scale Deployments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-memory-tables-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why MEMORY Tables Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tables-to-convert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tables to Convert
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-conversion-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Conversion Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-timestamp-schema-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The TIMESTAMP Schema Migration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The TIMESTAMP Schema Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implications-for-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implications for Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corruption-recovery-when-tables-go-bad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corruption Recovery: When Tables Go Bad
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Corruption Recovery: When Tables Go Bad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptoms-of-table-corruption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symptoms of Table Corruption
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repair-table-the-first-line-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REPAIR TABLE: The First-Line Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#myisamchk-offline-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        myisamchk: Offline Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#innodb-force-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InnoDB Force Recovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prevention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prevention
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replication-for-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replication for Reporting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replication for Reporting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Replication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporting-specific-tuning-on-the-replica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reporting-Specific Tuning on the Replica
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#should-i-switch-vicidial-tables-from-myisam-to-innodb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I switch VICIdial tables from MyISAM to InnoDB?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-run-optimize-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I run OPTIMIZE TABLE?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#my-vicidial_manager-table-has-200-million-rows-how-do-i-fix-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        My vicidial_manager table has 200 million rows. How do I fix this?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-recommended-raid-configuration-for-a-vicidial-database-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the recommended RAID configuration for a VICIdial database server?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-database-is-the-bottleneck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my database is the bottleneck?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-amazon-rds-or-cloud-managed-mysql-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use Amazon RDS or cloud-managed MySQL for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-the-timestamp-migration-on-a-large-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle the TIMESTAMP migration on a large database?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-monitoring-should-i-set-up-for-the-vicidial-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What monitoring should I set up for the VICIdial database?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-vicidials-database-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding VICIdial's Database Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding VICIdial&#39;s Database Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-access-pattern-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Access Pattern Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-tables-and-their-growth-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Tables and Their Growth Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-tables-vicidials-real-time-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEMORY Tables: VICIdial's Real-Time Engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mycnf-tuning-the-settings-that-actually-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        my.cnf Tuning: The Settings That Actually Matter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="my.cnf Tuning: The Settings That Actually Matter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#universal-settings-every-vicidial-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Universal Settings (Every VICIdial Deployment)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#50-agent-deployment-single-server-or-small-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        50-Agent Deployment (Single Server or Small Cluster)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#100-agent-deployment-dedicated-database-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100-Agent Deployment (Dedicated Database Server)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#500-agent-enterprise-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        500-Agent Enterprise Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-key_buffer_size-vs-innodb_buffer_pool_size-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The key_buffer_size vs innodb_buffer_pool_size Question
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slow-query-identification-and-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Query Identification and Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Slow Query Identification and Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-the-slow-query-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling the Slow Query Log
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pt-query-digest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using pt-query-digest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-processlist-diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The PROCESSLIST Diagnostic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#essential-indexes-vicidial-sometimes-misses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Essential Indexes VICIdial Sometimes Misses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Essential Indexes VICIdial Sometimes Misses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vicidial_log-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vicidial_log Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial_list-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vicidial_list Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording_log-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        recording_log Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call_log-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        call_log Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-archival-the-maintenance-task-that-saves-your-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table Archival: The Maintenance Task That Saves Your Cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Table Archival: The Maintenance Task That Saves Your Cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-archive-and-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Archive and When
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-admin_archive_log_tablespl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using ADMIN_archive_log_tables.pl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-archive-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Archive Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-nuclear-option-truncate-and-rebuild" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Nuclear Option: TRUNCATE and Rebuild
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory-table-optimization-for-high-scale-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEMORY Table Optimization for High-Scale Deployments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MEMORY Table Optimization for High-Scale Deployments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-memory-tables-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why MEMORY Tables Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tables-to-convert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tables to Convert
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-conversion-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Conversion Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-timestamp-schema-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The TIMESTAMP Schema Migration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The TIMESTAMP Schema Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implications-for-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implications for Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corruption-recovery-when-tables-go-bad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corruption Recovery: When Tables Go Bad
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Corruption Recovery: When Tables Go Bad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptoms-of-table-corruption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symptoms of Table Corruption
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repair-table-the-first-line-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REPAIR TABLE: The First-Line Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#myisamchk-offline-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        myisamchk: Offline Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#innodb-force-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InnoDB Force Recovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prevention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prevention
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replication-for-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replication for Reporting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replication for Reporting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Replication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporting-specific-tuning-on-the-replica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reporting-Specific Tuning on the Replica
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#should-i-switch-vicidial-tables-from-myisam-to-innodb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I switch VICIdial tables from MyISAM to InnoDB?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-often-should-i-run-optimize-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How often should I run OPTIMIZE TABLE?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#my-vicidial_manager-table-has-200-million-rows-how-do-i-fix-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        My vicidial_manager table has 200 million rows. How do I fix this?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-recommended-raid-configuration-for-a-vicidial-database-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the recommended RAID configuration for a VICIdial database server?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-database-is-the-bottleneck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my database is the bottleneck?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-amazon-rds-or-cloud-managed-mysql-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use Amazon RDS or cloud-managed MySQL for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-the-timestamp-migration-on-a-large-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle the TIMESTAMP migration on a large database?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-monitoring-should-i-set-up-for-the-vicidial-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What monitoring should I set up for the VICIdial database?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-mysql-optimization-queries-indexes-tuning">VICIdial MySQL Optimization: Queries, Indexes &amp; Tuning<a class="headerlink" href="#vicidial-mysql-optimization-queries-indexes-tuning" title="Permanent link">&para;</a></h1>
+<p><em>It starts the same way every time. Your VICIdial system runs fine for six months. Then one Monday morning, agents can't log in. Real-time reports take 30 seconds to load. The hopper empties faster than it fills. You check the server — CPU is pegged, but not by Asterisk. It's MySQL, grinding through a query that used to take milliseconds and now takes 14 seconds because your <code>vicidial_log</code> table has 47 million rows and nobody set up archiving.</em></p>
+<p><em>This is the MySQL optimization guide that saves your next Monday morning.</em></p>
+<p>The database is VICIdial's single most critical component. Every agent action, every call event, every disposition, every real-time report, every hopper query, every dial-level calculation — all of it flows through one MySQL (or MariaDB) instance. In a <a href="/blog/vicidial-cluster-guide/">VICIdial cluster</a>, you can add telephony servers for more call capacity and web servers for more agent connections. But you cannot cluster the database. It's a single instance, and when it slows down, everything slows down.</p>
+<p>We've optimized MySQL on hundreds of VICIdial deployments, from 10-agent single-server setups to 500+ agent clusters processing millions of calls per month. This guide covers the database internals you actually need to understand: table architecture, growth patterns, buffer tuning, slow query identification, MEMORY table conversions, archival strategies, index optimization, the TIMESTAMP schema migration, corruption recovery, and replication for reporting. We include actual <code>my.cnf</code> configurations calibrated for real-world deployment sizes.</p>
+<hr />
+<h2 id="understanding-vicidials-database-architecture">Understanding VICIdial's Database Architecture<a class="headerlink" href="#understanding-vicidials-database-architecture" title="Permanent link">&para;</a></h2>
+<p>Before you can optimize VICIdial's MySQL instance, you need to understand how VICIdial uses its database — because it's not like most web applications.</p>
+<h3 id="the-access-pattern-problem">The Access Pattern Problem<a class="headerlink" href="#the-access-pattern-problem" title="Permanent link">&para;</a></h3>
+<p>VICIdial's database access patterns are unusual and demanding:</p>
+<ol>
+<li>
+<p><strong>High-frequency writes:</strong> Every second, multiple Perl daemons update agent states, call statuses, and dial metrics across dozens of tables. The <code>AST_update.pl</code> process alone performs hundreds of UPDATEs per second in a busy 50-agent campaign.</p>
+</li>
+<li>
+<p><strong>Constant polling:</strong> Real-time reports don't use WebSockets or push notifications. They poll the database every second. Ten managers with real-time reports open means 10 SELECT queries per second against <code>vicidial_live_agents</code> and <code>vicidial_auto_calls</code> — on top of everything else.</p>
+</li>
+<li>
+<p><strong>Mixed workload:</strong> Short, fast transactional queries (agent state updates) run simultaneously with long analytical queries (campaign reports spanning millions of call records). The transactional queries need low latency. The analytical queries need throughput. MySQL has to serve both from the same instance.</p>
+</li>
+<li>
+<p><strong>Table-level locking:</strong> VICIdial uses MyISAM exclusively. Matt Florell has been unambiguous: "We do not recommend using InnoDB under any circumstances." MyISAM's table-level locks mean that a single slow SELECT on <code>vicidial_log</code> blocks every INSERT, UPDATE, and DELETE on that same table until the SELECT completes. This is the fundamental scaling constraint.</p>
+</li>
+</ol>
+<h3 id="key-tables-and-their-growth-patterns">Key Tables and Their Growth Patterns<a class="headerlink" href="#key-tables-and-their-growth-patterns" title="Permanent link">&para;</a></h3>
+<p>Understanding which tables grow and how fast tells you where to focus optimization. Here are the tables that matter, with approximate growth rates for a 50-agent outbound operation running 8 hours per day:</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Purpose</th>
+<th>Growth Rate</th>
+<th>Typical Size at 6 Months</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vicidial_log</code></td>
+<td>Primary call log (one row per call attempt)</td>
+<td>~1M rows/month</td>
+<td>6M rows, ~2 GB</td>
+</tr>
+<tr>
+<td><code>vicidial_log_extended</code></td>
+<td>Extended call data (carrier info, etc.)</td>
+<td>~1M rows/month</td>
+<td>6M rows, ~3 GB</td>
+</tr>
+<tr>
+<td><code>call_log</code></td>
+<td>Raw Asterisk CDR data</td>
+<td>~1M rows/month</td>
+<td>6M rows, ~2 GB</td>
+</tr>
+<tr>
+<td><code>vicidial_carrier_log</code></td>
+<td>Trunk-level call events</td>
+<td>~2-3M rows/month</td>
+<td>15M rows, ~4 GB</td>
+</tr>
+<tr>
+<td><code>vicidial_manager</code></td>
+<td>AMI command queue/history</td>
+<td><strong>~5-10M rows/month</strong></td>
+<td>40M+ rows, ~8 GB</td>
+</tr>
+<tr>
+<td><code>recording_log</code></td>
+<td>Call recording metadata</td>
+<td>~500K rows/month</td>
+<td>3M rows, ~1 GB</td>
+</tr>
+<tr>
+<td><code>vicidial_closer_log</code></td>
+<td>Inbound/transfer call log</td>
+<td>~200K rows/month</td>
+<td>1.2M rows, ~500 MB</td>
+</tr>
+<tr>
+<td><code>server_performance</code></td>
+<td>Server stats (1 row/6 sec/server)</td>
+<td>~15K rows/day/server</td>
+<td>2.7M rows/server</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>vicidial_manager</code> is the fastest-growing table in most deployments</strong> and the one most often overlooked. It stores every AMI command VICIdial sends to Asterisk — Originate commands for dialing, Hangup commands, Monitor commands for recording. At 50 agents with a 5:1 <a href="/glossary/auto-dial-level/">dial ratio</a>, that's 250 Originate commands per cycle, plus hangups, plus monitors. This table can hit 100 million rows in under a year if not archived.</p>
+<h3 id="memory-tables-vicidials-real-time-engine">MEMORY Tables: VICIdial's Real-Time Engine<a class="headerlink" href="#memory-tables-vicidials-real-time-engine" title="Permanent link">&para;</a></h3>
+<p>Several critical VICIdial tables run in the MEMORY storage engine (also called HEAP). These tables live entirely in RAM — no disk I/O, no table-level lock contention with disk writes. They are how VICIdial achieves real-time performance:</p>
+<table>
+<thead>
+<tr>
+<th>MEMORY Table</th>
+<th>Purpose</th>
+<th>Typical Row Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vicidial_live_agents</code></td>
+<td>Current state of every logged-in agent</td>
+<td>1 row per agent</td>
+</tr>
+<tr>
+<td><code>vicidial_live_inbound_agents</code></td>
+<td>Inbound-eligible agents</td>
+<td>1 row per closer agent</td>
+</tr>
+<tr>
+<td><code>vicidial_auto_calls</code></td>
+<td>Every active auto-dial call</td>
+<td>1 row per active call</td>
+</tr>
+<tr>
+<td><code>vicidial_hopper</code></td>
+<td>Leads queued for dialing</td>
+<td>configurable, usually 50-500</td>
+</tr>
+<tr>
+<td><code>vicidial_live_sip_channels</code></td>
+<td>Active SIP channels</td>
+<td>dynamic</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical behavior:</strong> MEMORY tables lose all data when MySQL restarts. This is by design. When MySQL comes back up, these tables are empty. Agents will need to log out and log back in, and the hopper will refill automatically. This is normal — but it means unexpected MySQL restarts during production hours cause a brief disruption as the system repopulates.</p>
+<p>The MEMORY table ceiling is controlled by <code>max_heap_table_size</code> in <code>my.cnf</code>. If a MEMORY table tries to grow beyond this limit, the INSERT fails with an error that typically manifests as agents unable to log in or calls not being placed. For most deployments, 64 MB is sufficient. For 500+ agent operations, increase to 128-256 MB.</p>
+<blockquote>
+<p><strong>Your Database Is Your Bottleneck — Even If You Don't Know It Yet.</strong>
+ViciStack deployments ship with MySQL pre-tuned, MEMORY tables optimized, and archival jobs running from day one. <a href="/pricing/">See What Optimized Looks Like →</a></p>
+</blockquote>
+<hr />
+<h2 id="mycnf-tuning-the-settings-that-actually-matter">my.cnf Tuning: The Settings That Actually Matter<a class="headerlink" href="#mycnf-tuning-the-settings-that-actually-matter" title="Permanent link">&para;</a></h2>
+<p>Out of the box, MySQL/MariaDB is configured for a general-purpose workload on modest hardware. VICIdial's access patterns — high-frequency writes, constant polling, mixed transactional and analytical queries — need specific tuning. Here are the parameters that make a measurable difference, organized by deployment size.</p>
+<h3 id="universal-settings-every-vicidial-deployment">Universal Settings (Every VICIdial Deployment)<a class="headerlink" href="#universal-settings-every-vicidial-deployment" title="Permanent link">&para;</a></h3>
+<p>These settings should be applied regardless of size:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="c1"># THE most important single setting for VICIdial</span>
+<span class="na">skip-name-resolve</span>
+
+<span class="c1"># Allow VICIdial&#39;s connection-heavy architecture</span>
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2000</span>
+
+<span class="c1"># Disable query cache (more harm than good with VICIdial&#39;s write patterns)</span>
+<span class="na">query_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+<span class="na">query_cache_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+
+<span class="c1"># Allow concurrent inserts during SELECT on MyISAM tables</span>
+<span class="na">concurrent_insert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+
+<span class="c1"># Table cache — VICIdial opens hundreds of tables</span>
+<span class="na">table_open_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4096</span>
+
+<span class="c1"># Temp table limits (affects complex report queries)</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+
+<span class="c1"># Connection timeout tuning</span>
+<span class="na">wait_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">600</span>
+<span class="na">interactive_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">600</span>
+<span class="na">connect_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">30</span>
+
+<span class="c1"># Thread cache — avoids thread creation overhead for frequent connections</span>
+<span class="na">thread_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128</span>
+
+<span class="c1"># Slow query logging (enable always, analyze periodically)</span>
+<span class="na">slow_query_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">slow_query_log_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/slow-query.log</span>
+<span class="na">long_query_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+</code></pre></div>
+
+<p><strong>The <code>skip-name-resolve</code> story:</strong> Without this setting, MySQL performs a reverse DNS lookup on every single incoming connection. In a VICIdial cluster where telephony servers, web servers, and dozens of cron-spawned Perl scripts all maintain constant database connections, those DNS lookups pile up. The symptom is "Too many connections" errors even though <code>max_connections</code> is set high enough — because connections are stuck waiting for DNS resolution. This single line has saved more VICIdial installations than any other <code>my.cnf</code> change. We covered this in the <a href="/blog/vicidial-cluster-guide/">cluster guide</a>, and we're repeating it here because it's that important.</p>
+<p>When you enable <code>skip-name-resolve</code>, you must use IP addresses (not hostnames) in MySQL GRANT statements. <code>GRANT ALL ON *.* TO 'cron'@'10.0.0.5'</code> works. <code>GRANT ALL ON *.* TO 'cron'@'dialer1.local'</code> does not.</p>
+<h3 id="50-agent-deployment-single-server-or-small-cluster">50-Agent Deployment (Single Server or Small Cluster)<a class="headerlink" href="#50-agent-deployment-single-server-or-small-cluster" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="c1"># MyISAM key buffer — primary cache for MyISAM index blocks</span>
+<span class="na">key_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">512M</span>
+
+<span class="c1"># Sort buffer for ORDER BY / GROUP BY in reports</span>
+<span class="na">sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4M</span>
+<span class="na">read_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2M</span>
+<span class="na">read_rnd_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4M</span>
+
+<span class="c1"># MyISAM-specific settings</span>
+<span class="na">myisam_sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+<span class="na">myisam_max_sort_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10G</span>
+<span class="na">myisam_repair_threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="c1"># Binlog (enable if you plan to set up replication later)</span>
+<span class="c1"># log-bin = mysql-bin</span>
+<span class="c1"># binlog_format = MIXED</span>
+<span class="c1"># expire_logs_days = 7</span>
+
+<span class="c1"># InnoDB settings — even though VICIdial uses MyISAM,</span>
+<span class="c1"># MySQL system tables use InnoDB internally</span>
+<span class="na">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">innodb_log_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+</code></pre></div>
+
+<p><strong>Total RAM budget:</strong> On a dedicated database server with 16 GB RAM, this configuration uses approximately 1-2 GB for MySQL buffers, leaving ample room for OS cache (which MyISAM leverages heavily for data file caching through the filesystem cache).</p>
+<h3 id="100-agent-deployment-dedicated-database-server">100-Agent Deployment (Dedicated Database Server)<a class="headerlink" href="#100-agent-deployment-dedicated-database-server" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">key_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1024M</span>
+
+<span class="na">sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8M</span>
+<span class="na">read_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4M</span>
+<span class="na">read_rnd_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8M</span>
+<span class="na">join_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4M</span>
+
+<span class="na">myisam_sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128M</span>
+<span class="na">myisam_max_sort_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">20G</span>
+
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3000</span>
+<span class="na">table_open_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8192</span>
+
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128M</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128M</span>
+
+<span class="na">thread_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256</span>
+
+<span class="na">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">512M</span>
+<span class="na">innodb_log_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128M</span>
+
+<span class="c1"># Enable binary logging for replication</span>
+<span class="na">log-bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mysql-bin</span>
+<span class="na">binlog_format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">MIXED</span>
+<span class="na">expire_logs_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">7</span>
+<span class="na">sync_binlog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span><span class="w">    </span><span class="c1"># Async for performance</span>
+</code></pre></div>
+
+<p><strong>Total RAM budget:</strong> On a 32 GB dedicated database server, this uses approximately 3-4 GB for MySQL buffers. The operating system will use the remaining ~28 GB for filesystem cache, which directly benefits MyISAM's data file reads.</p>
+<h3 id="500-agent-enterprise-deployment">500-Agent Enterprise Deployment<a class="headerlink" href="#500-agent-enterprise-deployment" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">key_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4096M</span>
+
+<span class="na">sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16M</span>
+<span class="na">read_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8M</span>
+<span class="na">read_rnd_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16M</span>
+<span class="na">join_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8M</span>
+<span class="na">bulk_insert_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+
+<span class="na">myisam_sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">myisam_max_sort_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">50G</span>
+
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">6000</span>
+<span class="na">table_open_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16384</span>
+<span class="na">table_definition_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4096</span>
+<span class="na">open_files_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">65535</span>
+
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+
+<span class="na">thread_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">512</span>
+
+<span class="na">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2G</span>
+<span class="na">innodb_log_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+
+<span class="na">log-bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mysql-bin</span>
+<span class="na">binlog_format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">MIXED</span>
+<span class="na">expire_logs_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3</span>
+<span class="na">sync_binlog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+
+<span class="c1"># Per-thread buffers — be careful here, these multiply by max_connections</span>
+<span class="c1"># 6000 connections × 16M sort_buffer = 96 GB if all allocated simultaneously</span>
+<span class="c1"># In practice, MySQL allocates these on-demand, not all at once</span>
+</code></pre></div>
+
+<p><strong>Critical note on per-thread buffer sizing at scale:</strong> Settings like <code>sort_buffer_size</code>, <code>read_buffer_size</code>, and <code>join_buffer_size</code> are allocated per-thread when needed. With <code>max_connections = 6000</code>, the theoretical maximum memory for sort buffers alone would be 6000 × 16 MB = 96 GB. In reality, MySQL allocates these on-demand and most connections don't need large sort buffers simultaneously. But if you see unexpected memory pressure, these per-thread buffers are the first place to look.</p>
+<p><strong>Total RAM budget:</strong> 64 GB dedicated database server. MySQL buffers use approximately 8-10 GB. The remaining 54+ GB acts as filesystem cache for MyISAM data files, which is where the real performance comes from at scale.</p>
+<h3 id="the-key_buffer_size-vs-innodb_buffer_pool_size-question">The key_buffer_size vs innodb_buffer_pool_size Question<a class="headerlink" href="#the-key_buffer_size-vs-innodb_buffer_pool_size-question" title="Permanent link">&para;</a></h3>
+<p>VICIdial uses MyISAM, so <code>key_buffer_size</code> is your primary tuning lever — it caches MyISAM index blocks in memory. <code>innodb_buffer_pool_size</code> caches InnoDB data and indexes. Since VICIdial's tables are MyISAM, why set <code>innodb_buffer_pool_size</code> at all?</p>
+<p>Because MySQL's internal system tables (<code>mysql.user</code>, <code>information_schema</code>, <code>performance_schema</code>) use InnoDB. MariaDB also uses InnoDB for some system catalogs. A small InnoDB buffer pool prevents these internal operations from thrashing disk. Don't set it to zero — just keep it modest (256M-2G depending on total RAM).</p>
+<p>The real performance lever for MyISAM data access is the <strong>operating system filesystem cache</strong>. MyISAM stores data in <code>.MYD</code> files and indexes in <code>.MYI</code> files. <code>key_buffer_size</code> caches the <code>.MYI</code> index blocks. But the <code>.MYD</code> data files are read through the OS filesystem cache. This is why you don't want MySQL to consume all available RAM — the OS needs that memory for file caching. The rule of thumb: MySQL buffers should use no more than 40-50% of total RAM on a dedicated database server, leaving the rest for the OS cache.</p>
+<hr />
+<h2 id="slow-query-identification-and-analysis">Slow Query Identification and Analysis<a class="headerlink" href="#slow-query-identification-and-analysis" title="Permanent link">&para;</a></h2>
+<p>The slow query log is your single best diagnostic tool for database performance issues. Enable it always — the overhead is negligible compared to the debugging time it saves.</p>
+<h3 id="enabling-the-slow-query-log">Enabling the Slow Query Log<a class="headerlink" href="#enabling-the-slow-query-log" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">slow_query_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">slow_query_log_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/slow-query.log</span>
+<span class="na">long_query_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span><span class="w">         </span><span class="c1"># Log queries taking &gt;2 seconds</span>
+<span class="na">log_queries_not_using_indexes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span><span class="w">   </span><span class="c1"># Also log queries missing indexes</span>
+</code></pre></div>
+
+<p>Setting <code>long_query_time = 2</code> catches the genuinely problematic queries without flooding the log. For initial diagnosis on a system with known performance issues, temporarily set it to <code>0.5</code> to catch more borderline queries.</p>
+<h3 id="using-pt-query-digest">Using pt-query-digest<a class="headerlink" href="#using-pt-query-digest" title="Permanent link">&para;</a></h3>
+<p>Percona Toolkit's <code>pt-query-digest</code> is the industry standard for slow query analysis. Install it:</p>
+<div class="codehilite"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>percona-toolkit
+</code></pre></div>
+
+<p>Analyze your slow query log:</p>
+<div class="codehilite"><pre><span></span><code>pt-query-digest<span class="w"> </span>/var/log/mysql/slow-query.log<span class="w"> </span>&gt;<span class="w"> </span>/tmp/slow-query-report.txt
+</code></pre></div>
+
+<p>The output ranks queries by total execution time, showing you exactly which queries are consuming the most database resources. A typical VICIdial slow query report reveals:</p>
+<p><strong>The usual suspects:</strong></p>
+<ol>
+<li><strong>Report queries on <code>vicidial_log</code></strong> — <code>SELECT</code> with date ranges spanning millions of rows, often triggered by managers running "last 90 days" reports</li>
+<li><strong>Hopper fills on <code>vicidial_list</code></strong> — The hopper query scans <code>vicidial_list</code> looking for callable leads. On a list with 10M+ rows and inadequate indexes, this query can take 10+ seconds</li>
+<li><strong>Archive table queries</strong> — If <code>recording_log</code> or <code>vicidial_closer_log</code> has millions of rows, the recording search and call detail queries slow to a crawl</li>
+<li><strong><code>vicidial_manager</code> cleanup</strong> — The periodic DELETE on <code>vicidial_manager</code> to remove old entries can lock the table for seconds on a table with 50M+ rows</li>
+</ol>
+<h3 id="the-processlist-diagnostic">The PROCESSLIST Diagnostic<a class="headerlink" href="#the-processlist-diagnostic" title="Permanent link">&para;</a></h3>
+<p>When MySQL is actively struggling, check what's running:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="k">FULL</span><span class="w"> </span><span class="n">PROCESSLIST</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Look for:
+- Queries in "Locked" state — MyISAM table-level lock contention
+- Queries in "Copying to tmp table" — complex queries creating temporary tables on disk
+- Queries in "Sorting result" — ORDER BY on large result sets without appropriate indexes
+- Multiple connections with identical queries — real-time report polling storms</p>
+<p>For a more targeted view:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">PROCESSLIST</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">COMMAND</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;Sleep&#39;</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">TIME</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">TIME</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>This shows only active queries that have been running longer than 2 seconds — the ones actively causing problems.</p>
+<hr />
+<h2 id="essential-indexes-vicidial-sometimes-misses">Essential Indexes VICIdial Sometimes Misses<a class="headerlink" href="#essential-indexes-vicidial-sometimes-misses" title="Permanent link">&para;</a></h2>
+<p>VICIdial's installation scripts create most necessary indexes, but some indexes that significantly improve performance at scale are either missing or need to be added manually. Here are the ones that matter:</p>
+<h3 id="vicidial_log-indexes">vicidial_log Indexes<a class="headerlink" href="#vicidial_log-indexes" title="Permanent link">&para;</a></h3>
+<p>The default <code>vicidial_log</code> indexes cover <code>lead_id</code> and <code>uniqueid</code>, but report queries almost always filter by <code>call_date</code>. Add:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_call_date</span><span class="w"> </span><span class="p">(</span><span class="n">call_date</span><span class="p">);</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_campaign_call_date</span><span class="w"> </span><span class="p">(</span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">call_date</span><span class="p">);</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_user_call_date</span><span class="w"> </span><span class="p">(</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">call_date</span><span class="p">);</span>
+</code></pre></div>
+
+<p>The composite index on <code>(campaign_id, call_date)</code> dramatically improves campaign-specific report queries — the most common analytical pattern in VICIdial.</p>
+<h3 id="vicidial_list-indexes">vicidial_list Indexes<a class="headerlink" href="#vicidial_list-indexes" title="Permanent link">&para;</a></h3>
+<p>The hopper fill query is one of the most performance-critical queries in VICIdial. It scans <code>vicidial_list</code> for callable leads based on list ID, status, and various filter criteria. The default indexes are often insufficient for large lists:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_list_status</span><span class="w"> </span><span class="p">(</span><span class="n">list_id</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_status_modify</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">modify_date</span><span class="p">);</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_phone_number</span><span class="w"> </span><span class="p">(</span><span class="n">phone_number</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="recording_log-indexes">recording_log Indexes<a class="headerlink" href="#recording_log-indexes" title="Permanent link">&para;</a></h3>
+<p>Recording playback searches use <code>lead_id</code> and date ranges:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_lead_date</span><span class="w"> </span><span class="p">(</span><span class="n">lead_id</span><span class="p">,</span><span class="w"> </span><span class="n">start_time</span><span class="p">);</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">recording_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_start_time</span><span class="w"> </span><span class="p">(</span><span class="n">start_time</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="call_log-indexes">call_log Indexes<a class="headerlink" href="#call_log-indexes" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">call_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_start_time</span><span class="w"> </span><span class="p">(</span><span class="n">start_time</span><span class="p">);</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">call_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_channel_start</span><span class="w"> </span><span class="p">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">start_time</span><span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Before adding indexes:</strong> Run <code>SHOW INDEX FROM tablename</code> to verify the index doesn't already exist. Adding a duplicate index wastes space and slows writes. Also, adding an index to a large table (10M+ rows) locks the table for the duration of the ALTER TABLE operation on MyISAM. Schedule index additions during off-hours.</p>
+<p><strong>Index maintenance:</strong> MyISAM indexes can become fragmented over time, especially on heavily-written tables. Periodically run:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">OPTIMIZE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">;</span>
+<span class="n">OPTIMIZE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_list</span><span class="p">;</span>
+</code></pre></div>
+
+<p>This rebuilds indexes and reclaims space from deleted rows. It locks the table for the duration — on a 10M-row table, expect 5-30 minutes depending on hardware. Always run during maintenance windows.</p>
+<blockquote>
+<p><strong>Stop Guessing at Database Bottlenecks.</strong>
+ViciStack runs <code>pt-query-digest</code> analysis on every deployment and adds the indexes your specific workload needs. <a href="/free-audit/">Get Your Free Database Audit →</a></p>
+</blockquote>
+<hr />
+<h2 id="table-archival-the-maintenance-task-that-saves-your-cluster">Table Archival: The Maintenance Task That Saves Your Cluster<a class="headerlink" href="#table-archival-the-maintenance-task-that-saves-your-cluster" title="Permanent link">&para;</a></h2>
+<p>If your VICIdial deployment has been running for more than 90 days without archival, your database is carrying dead weight that's actively degrading performance. Every report query, every table lock, every OPTIMIZE TABLE operation takes longer because it's scanning rows that nobody will ever look at again.</p>
+<h3 id="what-to-archive-and-when">What to Archive and When<a class="headerlink" href="#what-to-archive-and-when" title="Permanent link">&para;</a></h3>
+<p>The archival principle is simple: <strong>move historical data out of hot tables into archive tables, keeping only recent data in the tables VICIdial actively queries.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Archive After</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vicidial_log</code></td>
+<td>90 days</td>
+<td>Report queries rarely go back further; 90 days covers quarterly analysis</td>
+</tr>
+<tr>
+<td><code>vicidial_log_extended</code></td>
+<td>90 days</td>
+<td>Paired with vicidial_log</td>
+</tr>
+<tr>
+<td><code>call_log</code></td>
+<td>60 days</td>
+<td>Raw CDR data, rarely accessed after initial reporting</td>
+</tr>
+<tr>
+<td><code>vicidial_carrier_log</code></td>
+<td>30 days</td>
+<td>High volume, low long-term value</td>
+</tr>
+<tr>
+<td><code>vicidial_manager</code></td>
+<td>7 days</td>
+<td>Fastest-growing table, almost never queried historically</td>
+</tr>
+<tr>
+<td><code>recording_log</code></td>
+<td>180 days</td>
+<td>Keep metadata longer for compliance; actual recordings stay on disk</td>
+</tr>
+<tr>
+<td><code>server_performance</code></td>
+<td>30 days</td>
+<td>Monitoring data, useless after analysis window</td>
+</tr>
+<tr>
+<td><code>vicidial_closer_log</code></td>
+<td>90 days</td>
+<td>Inbound/transfer logs</td>
+</tr>
+<tr>
+<td><code>vicidial_agent_log</code></td>
+<td>90 days</td>
+<td>Agent session data</td>
+</tr>
+</tbody>
+</table>
+<h3 id="using-admin_archive_log_tablespl">Using ADMIN_archive_log_tables.pl<a class="headerlink" href="#using-admin_archive_log_tablespl" title="Permanent link">&para;</a></h3>
+<p>VICIdial includes a built-in archival script. Set it up as a daily cron job:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Run archival at 1 AM server time, daily</span>
+<span class="m">0</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/share/astguiclient/ADMIN_archive_log_tables.pl<span class="w"> </span>--daily<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/log/astguiclient/archive.log
+</code></pre></div>
+
+<p>The <code>--daily</code> flag moves records older than 24 hours to <code>_archive</code> suffix tables. For most deployments, this is too aggressive — you want to keep 90 days in the hot tables. Use <code>--days=90</code> if your VICIdial version supports it, or write a custom archival script:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># Custom archival script for VICIdial</span>
+<span class="c1"># Moves records older than 90 days to archive tables</span>
+
+<span class="nv">DAYS</span><span class="o">=</span><span class="m">90</span>
+<span class="nv">MYSQL_CMD</span><span class="o">=</span><span class="s2">&quot;mysql -u cron -p&#39;your_password&#39; asterisk&quot;</span>
+
+<span class="c1"># Archive vicidial_log</span>
+<span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;INSERT INTO vicidial_log_archive SELECT * FROM vicidial_log WHERE call_date &lt; DATE_SUB(NOW(), INTERVAL </span><span class="nv">$DAYS</span><span class="s2"> DAY);&quot;</span>
+<span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;DELETE FROM vicidial_log WHERE call_date &lt; DATE_SUB(NOW(), INTERVAL </span><span class="nv">$DAYS</span><span class="s2"> DAY) LIMIT 100000;&quot;</span>
+
+<span class="c1"># Archive call_log</span>
+<span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;INSERT INTO call_log_archive SELECT * FROM call_log WHERE start_time &lt; DATE_SUB(NOW(), INTERVAL 60 DAY);&quot;</span>
+<span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;DELETE FROM call_log WHERE start_time &lt; DATE_SUB(NOW(), INTERVAL 60 DAY) LIMIT 100000;&quot;</span>
+
+<span class="c1"># Archive vicidial_manager (aggressive — 7 days)</span>
+<span class="nv">$MYSQL_CMD</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;DELETE FROM vicidial_manager WHERE entry_date &lt; DATE_SUB(NOW(), INTERVAL 7 DAY) LIMIT 500000;&quot;</span>
+</code></pre></div>
+
+<p><strong>Critical:</strong> Notice the <code>LIMIT</code> clause on the DELETE statements. Deleting millions of rows from a MyISAM table in a single operation locks the table for the entire duration. The LIMIT breaks it into smaller chunks. Run the script in a loop or multiple times if needed.</p>
+<h3 id="creating-archive-tables">Creating Archive Tables<a class="headerlink" href="#creating-archive-tables" title="Permanent link">&para;</a></h3>
+<p>Before archiving, the <code>_archive</code> tables need to exist. VICIdial creates them automatically in newer SVN revisions, but verify:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check if archive table exists</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;vicidial_log_archive&#39;</span><span class="p">;</span>
+
+<span class="c1">-- If it doesn&#39;t exist, create it as a copy of the structure</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log_archive</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">;</span>
+
+<span class="c1">-- Add indexes appropriate for archive queries (different from hot table)</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log_archive</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_call_date</span><span class="w"> </span><span class="p">(</span><span class="n">call_date</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="the-nuclear-option-truncate-and-rebuild">The Nuclear Option: TRUNCATE and Rebuild<a class="headerlink" href="#the-nuclear-option-truncate-and-rebuild" title="Permanent link">&para;</a></h3>
+<p>If your tables have grown to hundreds of millions of rows and archival takes too long, you may need a more aggressive approach during a maintenance window:</p>
+<ol>
+<li>Rename the bloated table: <code>RENAME TABLE vicidial_log TO vicidial_log_old;</code></li>
+<li>Create a fresh table: <code>CREATE TABLE vicidial_log LIKE vicidial_log_old;</code></li>
+<li>Copy recent data back: <code>INSERT INTO vicidial_log SELECT * FROM vicidial_log_old WHERE call_date &gt; DATE_SUB(NOW(), INTERVAL 90 DAY);</code></li>
+<li>Verify data: <code>SELECT COUNT(*) FROM vicidial_log;</code></li>
+<li>Drop or archive the old table: <code>DROP TABLE vicidial_log_old;</code> or rename to archive</li>
+</ol>
+<p>This approach is faster than DELETE because it builds the new table sequentially rather than performing random deletes. But it requires enough disk space for both tables temporarily, and VICIdial must be stopped (or at least not writing to that table) during the swap.</p>
+<hr />
+<h2 id="memory-table-optimization-for-high-scale-deployments">MEMORY Table Optimization for High-Scale Deployments<a class="headerlink" href="#memory-table-optimization-for-high-scale-deployments" title="Permanent link">&para;</a></h2>
+<p>For deployments above 150-200 agents, converting high-traffic tables from MyISAM to the MEMORY engine is one of the most impactful single optimizations you can make. We touched on this in the <a href="/blog/vicidial-cluster-guide/">cluster guide</a>, but here's the complete implementation guide.</p>
+<h3 id="why-memory-tables-matter">Why MEMORY Tables Matter<a class="headerlink" href="#why-memory-tables-matter" title="Permanent link">&para;</a></h3>
+<p><code>vicidial_live_agents</code> is the table that tracks every logged-in agent's real-time state: current call, pause status, <a href="/glossary/talk-time/">talk time</a>, <a href="/glossary/wrap-time/">wrap time</a>, etc. It gets read by every real-time report, every dialer process, every <a href="/glossary/agi/">AGI</a> script that routes calls. And it gets written to every time an agent's state changes — which is every few seconds per agent.</p>
+<p>On MyISAM, table-level locks on <code>vicidial_live_agents</code> create contention. A manager's real-time report running a SELECT locks the table, blocking the dialer's UPDATE that needs to mark an agent as available, which blocks the AGI script trying to route a call to that agent. The result: agents freeze, calls don't get placed, and the system feels sluggish for no apparent reason.</p>
+<p>MEMORY engine eliminates disk I/O entirely (the table is in RAM) and uses a hash index structure that provides O(1) lookups. The table-level locking still exists, but the lock duration drops from milliseconds-to-seconds (disk I/O) to microseconds (RAM-only). Forum users who've done this conversion consistently describe the difference as "night and day."</p>
+<h3 id="tables-to-convert">Tables to Convert<a class="headerlink" href="#tables-to-convert" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Convert?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vicidial_live_agents</code></td>
+<td><strong>Yes</strong></td>
+<td>Highest impact, most contended</td>
+</tr>
+<tr>
+<td><code>vicidial_live_inbound_agents</code></td>
+<td><strong>Yes</strong></td>
+<td>Same access pattern</td>
+</tr>
+<tr>
+<td><code>vicidial_auto_calls</code></td>
+<td><strong>Yes</strong></td>
+<td>Tracks active auto-dial calls</td>
+</tr>
+<tr>
+<td><code>vicidial_hopper</code></td>
+<td><strong>Yes</strong></td>
+<td>Frequently inserted/deleted</td>
+</tr>
+<tr>
+<td><code>vicidial_live_sip_channels</code></td>
+<td><strong>Yes</strong></td>
+<td>High-frequency updates</td>
+</tr>
+<tr>
+<td><code>vicidial_log</code></td>
+<td><strong>No</strong></td>
+<td>Too large, grows indefinitely</td>
+</tr>
+<tr>
+<td><code>vicidial_list</code></td>
+<td><strong>No</strong></td>
+<td>Too large, persistent data</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-conversion-process">The Conversion Process<a class="headerlink" href="#the-conversion-process" title="Permanent link">&para;</a></h3>
+<p>MEMORY engine requires fixed-width CHAR fields — it doesn't support VARCHAR. You need to alter the column types before converting:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Step 1: Check current table structure</span>
+<span class="k">DESCRIBE</span><span class="w"> </span><span class="n">vicidial_live_agents</span><span class="p">;</span>
+
+<span class="c1">-- Step 2: Alter VARCHAR columns to CHAR</span>
+<span class="c1">-- (VICIdial may have already done this in recent SVN revisions)</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_live_agents</span>
+<span class="w">  </span><span class="k">MODIFY</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="k">MODIFY</span><span class="w"> </span><span class="n">server_ip</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="k">MODIFY</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="k">MODIFY</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="c1">-- ... repeat for all VARCHAR columns</span>
+
+<span class="c1">-- Step 3: Convert to MEMORY engine</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_live_agents</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">MEMORY</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Important caveats:</strong></p>
+<ol>
+<li>
+<p><strong>Fixed-width columns use more memory.</strong> A VARCHAR(100) column storing "hello" uses 5 bytes. A CHAR(100) column storing "hello" uses 100 bytes. This is why you need adequate <code>max_heap_table_size</code>.</p>
+</li>
+<li>
+<p><strong>No TEXT or BLOB columns.</strong> MEMORY tables don't support TEXT or BLOB. If the table has any, you either need to convert them to CHAR (with a length limit) or skip that table.</p>
+</li>
+<li>
+<p><strong>Data lost on restart.</strong> MEMORY tables are empty after MySQL restarts. VICIdial handles this gracefully — agents log back in and repopulate <code>vicidial_live_agents</code>, the hopper refills automatically. But test this behavior before doing a conversion on a production system.</p>
+</li>
+<li>
+<p><strong>The conversion must survive MySQL restarts.</strong> Add the conversion to a MySQL init script or use an event:</p>
+</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Ensure MEMORY tables are recreated on MySQL restart</span>
+<span class="c1">-- Add this to a startup script that runs after MySQL is up</span>
+<span class="c1">-- VICIdial&#39;s keepalive scripts typically handle this automatically</span>
+</code></pre></div>
+
+<p>Recent VICIdial SVN revisions (3800+) include built-in support for MEMORY tables with automatic conversion on startup. Check your VICIdial version before doing manual conversions — you might be duplicating built-in functionality.</p>
+<hr />
+<h2 id="the-timestamp-schema-migration">The TIMESTAMP Schema Migration<a class="headerlink" href="#the-timestamp-schema-migration" title="Permanent link">&para;</a></h2>
+<p>Recent VICIdial SVN updates include a significant schema migration: converting DATETIME columns to TIMESTAMP across 40+ tables. This affects every table that stores date/time data and has important implications for both performance and maintenance.</p>
+<h3 id="what-changed">What Changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
+<p>DATETIME fields store a date and time as a literal string value (<code>2026-03-18 14:30:00</code>) and use 8 bytes. TIMESTAMP fields store a Unix timestamp integer (seconds since 1970-01-01) and use 4 bytes. Half the storage, faster comparisons, and automatic timezone handling.</p>
+<p>The migration script (<code>ADMIN_datetime_to_timestamp.pl</code> or the equivalent SQL migration in newer SVN revisions) alters columns like:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Before</span>
+<span class="n">call_date</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;0000-00-00 00:00:00&#39;</span>
+
+<span class="c1">-- After</span>
+<span class="n">call_date</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;1970-01-01 00:00:01&#39;</span>
+</code></pre></div>
+
+<h3 id="implications-for-optimization">Implications for Optimization<a class="headerlink" href="#implications-for-optimization" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Table lock duration during migration:</strong> ALTER TABLE on a multi-million-row MyISAM table locks the table for the duration. On a 50M-row <code>vicidial_log</code>, this can take 30+ minutes. Plan accordingly.</p>
+</li>
+<li>
+<p><strong>Index rebuilds:</strong> Indexes on altered columns get rebuilt during the ALTER TABLE. This is automatic but adds to the lock duration.</p>
+</li>
+<li>
+<p><strong>Application compatibility:</strong> If you have custom scripts that insert DATETIME-formatted values into these columns, they'll still work — MySQL/MariaDB handles the conversion. But direct comparisons like <code>WHERE call_date = '2026-03-18 14:30:00'</code> should be tested.</p>
+</li>
+<li>
+<p><strong>Timezone awareness:</strong> TIMESTAMP columns are stored in UTC and converted to the session timezone on retrieval. If your VICIdial server and database are in the same timezone (which they should be), this is transparent. But if you have remote reporting connections from different timezones, the displayed times will differ from what you saw with DATETIME.</p>
+</li>
+</ol>
+<h3 id="running-the-migration">Running the Migration<a class="headerlink" href="#running-the-migration" title="Permanent link">&para;</a></h3>
+<p>If your SVN update includes the TIMESTAMP migration:</p>
+<ol>
+<li><strong>Take a full database backup first.</strong> Not optional.</li>
+<li><strong>Schedule during a maintenance window.</strong> The table locks will make VICIdial unusable during the migration.</li>
+<li><strong>Run on one table at a time</strong> if doing it manually, so you can monitor progress:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="k">MODIFY</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;1970-01-01 00:00:01&#39;</span><span class="p">;</span>
+<span class="c1">-- Monitor with: SHOW PROCESSLIST; (look for &quot;copy to tmp table&quot; state)</span>
+</code></pre></div>
+
+<ol>
+<li><strong>Verify after migration:</strong></li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">DESCRIBE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">;</span>
+<span class="c1">-- Confirm call_date shows TIMESTAMP type</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="c1">-- Confirm dates display correctly</span>
+</code></pre></div>
+
+<hr />
+<h2 id="corruption-recovery-when-tables-go-bad">Corruption Recovery: When Tables Go Bad<a class="headerlink" href="#corruption-recovery-when-tables-go-bad" title="Permanent link">&para;</a></h2>
+<p>MyISAM tables can corrupt. Power failures, unexpected shutdowns, full disks, hardware failures — all can leave <code>.MYI</code> (index) or <code>.MYD</code> (data) files in an inconsistent state. VICIdial operators hit this more often than they'd like because VICIdial's constant write activity maximizes the window for corruption during any interruption.</p>
+<h3 id="symptoms-of-table-corruption">Symptoms of Table Corruption<a class="headerlink" href="#symptoms-of-table-corruption" title="Permanent link">&para;</a></h3>
+<ul>
+<li>"Table 'tablename' is marked as crashed and should be repaired"</li>
+<li>Queries returning unexpected results or incomplete data</li>
+<li>MySQL refusing to start (if system tables are corrupted)</li>
+<li><code>CHECK TABLE tablename</code> returns errors</li>
+</ul>
+<h3 id="repair-table-the-first-line-fix">REPAIR TABLE: The First-Line Fix<a class="headerlink" href="#repair-table-the-first-line-fix" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check for corruption</span>
+<span class="k">CHECK</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">;</span>
+
+<span class="c1">-- Repair the table (locks it during repair)</span>
+<span class="n">REPAIR</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">;</span>
+
+<span class="c1">-- If basic repair fails, try extended</span>
+<span class="n">REPAIR</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">EXTENDED</span><span class="p">;</span>
+
+<span class="c1">-- Nuclear option: rebuild from data file, discarding index</span>
+<span class="n">REPAIR</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">USE_FRM</span><span class="p">;</span>
+</code></pre></div>
+
+<p><code>REPAIR TABLE</code> locks the table for the duration. On a 10M-row table, expect minutes. On a 100M-row table, expect an hour or more.</p>
+<h3 id="myisamchk-offline-repair">myisamchk: Offline Repair<a class="headerlink" href="#myisamchk-offline-repair" title="Permanent link">&para;</a></h3>
+<p>If MySQL can't start or the table is too corrupted for <code>REPAIR TABLE</code>, use <code>myisamchk</code> directly on the files. <strong>MySQL must be stopped first:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Stop MySQL</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>mariadb
+
+<span class="c1"># Check the table</span>
+myisamchk<span class="w"> </span>-c<span class="w"> </span>/var/lib/mysql/asterisk/vicidial_log.MYI
+
+<span class="c1"># Repair with recovery</span>
+myisamchk<span class="w"> </span>-r<span class="w"> </span>/var/lib/mysql/asterisk/vicidial_log.MYI
+
+<span class="c1"># If -r fails, try safe recovery (slower but handles more corruption)</span>
+myisamchk<span class="w"> </span>-o<span class="w"> </span>/var/lib/mysql/asterisk/vicidial_log.MYI
+
+<span class="c1"># Start MySQL</span>
+systemctl<span class="w"> </span>start<span class="w"> </span>mariadb
+</code></pre></div>
+
+<h3 id="innodb-force-recovery">InnoDB Force Recovery<a class="headerlink" href="#innodb-force-recovery" title="Permanent link">&para;</a></h3>
+<p>If MySQL won't start due to InnoDB corruption (remember — system tables use InnoDB even though VICIdial tables are MyISAM), use the force recovery mode:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">innodb_force_recovery</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+</code></pre></div>
+
+<p>Start MySQL with this setting. If it starts, dump your databases:</p>
+<div class="codehilite"><pre><span></span><code>mysqldump<span class="w"> </span>--all-databases<span class="w"> </span>&gt;<span class="w"> </span>/tmp/full-backup.sql
+</code></pre></div>
+
+<p>Then stop MySQL, remove the corrupted InnoDB files, remove the <code>innodb_force_recovery</code> line, start MySQL, and reimport:</p>
+<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>stop<span class="w"> </span>mariadb
+rm<span class="w"> </span>/var/lib/mysql/ib_logfile*
+rm<span class="w"> </span>/var/lib/mysql/ibdata1
+systemctl<span class="w"> </span>start<span class="w"> </span>mariadb
+mysql<span class="w"> </span>&lt;<span class="w"> </span>/tmp/full-backup.sql
+</code></pre></div>
+
+<p><strong>Increase <code>innodb_force_recovery</code> incrementally (1 through 6) if lower values don't work.</strong> Level 6 is the most aggressive and may result in data loss. Always try the lowest value first.</p>
+<h3 id="prevention">Prevention<a class="headerlink" href="#prevention" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>UPS on every database server.</strong> Power failures are the #1 cause of MyISAM corruption.</li>
+<li><strong>RAID with battery-backed cache.</strong> Use LSI MegaRAID with BBU (battery backup unit) — it ensures writes complete even during power loss.</li>
+<li><strong>Don't kill MySQL processes.</strong> <code>kill -9 mysqld</code> during a write operation virtually guarantees corruption. Use <code>systemctl stop mariadb</code> and wait for a clean shutdown.</li>
+<li><strong>Monitor disk space.</strong> A full disk during a write operation corrupts the table being written to. Alert at 80% disk usage.</li>
+</ul>
+<hr />
+<h2 id="replication-for-reporting">Replication for Reporting<a class="headerlink" href="#replication-for-reporting" title="Permanent link">&para;</a></h2>
+<p>Running heavy analytical reports against your production VICIdial database is a bad idea. Report queries — especially those spanning 90 days of call data with GROUP BY and ORDER BY — can lock tables for seconds, blocking the real-time operations that keep your contact center running.</p>
+<p>The solution: MySQL replication to a dedicated reporting slave.</p>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>Primary (Production)  ──binary log──&gt;  Replica (Reporting)
+    VICIdial writes here                Reports run here
+    Real-time operations                Manager dashboards
+    Agent interactions                  Historical analytics
+</code></pre></div>
+
+<h3 id="setting-up-replication">Setting Up Replication<a class="headerlink" href="#setting-up-replication" title="Permanent link">&para;</a></h3>
+<p><strong>On the primary (production) server:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">server-id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">log-bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mysql-bin</span>
+<span class="na">binlog_format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">MIXED</span>
+<span class="na">expire_logs_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">7</span>
+<span class="na">sync_binlog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span><span class="w">        </span><span class="c1"># Async for performance</span>
+</code></pre></div>
+
+<p>Create a replication user:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;replication&#39;</span><span class="o">@</span><span class="s1">&#39;10.0.0.%&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;strong-password-here&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="n">REPLICATION</span><span class="w"> </span><span class="n">SLAVE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;replication&#39;</span><span class="o">@</span><span class="s1">&#39;10.0.0.%&#39;</span><span class="p">;</span>
+<span class="n">FLUSH</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Take a consistent snapshot:</p>
+<div class="codehilite"><pre><span></span><code>mysqldump<span class="w"> </span>--all-databases<span class="w"> </span>--master-data<span class="o">=</span><span class="m">2</span><span class="w"> </span>--single-transaction<span class="w"> </span>&gt;<span class="w"> </span>/tmp/dump.sql
+</code></pre></div>
+
+<p><strong>On the replica (reporting) server:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">server-id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">relay-log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">relay-bin</span>
+<span class="na">read_only</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span><span class="w">           </span><span class="c1"># Prevent accidental writes</span>
+<span class="na">replicate-do-db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">asterisk</span><span class="w">   </span><span class="c1"># Only replicate the VICIdial database</span>
+</code></pre></div>
+
+<p>Import the dump and start replication:</p>
+<div class="codehilite"><pre><span></span><code>mysql<span class="w"> </span>&lt;<span class="w"> </span>/tmp/dump.sql
+
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;CHANGE MASTER TO</span>
+<span class="s2">  MASTER_HOST=&#39;10.0.0.1&#39;,</span>
+<span class="s2">  MASTER_USER=&#39;replication&#39;,</span>
+<span class="s2">  MASTER_PASSWORD=&#39;strong-password-here&#39;,</span>
+<span class="s2">  MASTER_LOG_FILE=&#39;mysql-bin.000001&#39;,</span>
+<span class="s2">  MASTER_LOG_POS=4;</span>
+<span class="s2">START SLAVE;&quot;</span>
+</code></pre></div>
+
+<p>Verify:</p>
+<div class="codehilite"><pre><span></span><code>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SHOW SLAVE STATUS\G&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Slave_IO_Running|Slave_SQL_Running|Seconds_Behind_Master&quot;</span>
+</code></pre></div>
+
+<p>You should see both IO and SQL threads running, with <code>Seconds_Behind_Master</code> at or near 0.</p>
+<h3 id="reporting-specific-tuning-on-the-replica">Reporting-Specific Tuning on the Replica<a class="headerlink" href="#reporting-specific-tuning-on-the-replica" title="Permanent link">&para;</a></h3>
+<p>The replica doesn't need VICIdial's write-optimized settings. Tune it for read-heavy analytical workloads:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="c1"># Larger sort buffers for complex report queries</span>
+<span class="na">sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">32M</span>
+<span class="na">read_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16M</span>
+<span class="na">join_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16M</span>
+
+<span class="c1"># Larger tmp table size for GROUP BY operations</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">512M</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">512M</span>
+
+<span class="c1"># Disable binary logging on the replica (unless cascading)</span>
+<span class="na">skip-log-bin</span>
+
+<span class="c1"># MyISAM key buffer — generous for index scans on large tables</span>
+<span class="na">key_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2048M</span>
+</code></pre></div>
+
+<p>Point your VICIdial reporting users (managers, supervisors) at the replica's IP for historical reports, while keeping real-time reports on the primary (since they need up-to-the-second data from MEMORY tables that don't replicate).</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>Every optimization in this guide is something we implement and maintain on every ViciStack deployment — from the initial <code>my.cnf</code> tuning to the archival cron jobs to the MEMORY table conversions. We monitor <code>pt-query-digest</code> output weekly, add indexes proactively as workload patterns shift, and have replication pipelines set up for operations that need reporting isolation.</p>
+<p>The reality is that MySQL optimization isn't a one-time task. Tables grow, query patterns change, VICIdial updates alter the schema, and what worked at 50 agents doesn't work at 200. Keeping a VICIdial database healthy requires ongoing attention from someone who understands both MySQL internals and VICIdial's specific access patterns.</p>
+<p><strong>ViciStack exists so you don't have to be that someone.</strong> We handle the database so you can handle the business.</p>
+<p><a href="/free-audit/">Get a free database performance audit →</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial, MySQL/MariaDB, and best practices evolve. Last updated: March 2026.</em></p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="should-i-switch-vicidial-tables-from-myisam-to-innodb">Should I switch VICIdial tables from MyISAM to InnoDB?<a class="headerlink" href="#should-i-switch-vicidial-tables-from-myisam-to-innodb" title="Permanent link">&para;</a></h3>
+<p>No. VICIdial is designed for MyISAM and the developers explicitly recommend against InnoDB for VICIdial tables. The application's code assumes MyISAM behaviors — concurrent inserts, table-level locking semantics, MEMORY table compatibility, and the REPAIR TABLE workflow. Switching to InnoDB introduces row-level locking (which sounds better but changes VICIdial's timing assumptions), transaction overhead, and a completely different recovery process. The performance characteristics are different in ways that break VICIdial's real-time operations. Use MyISAM for VICIdial tables and accept that InnoDB exists only for MySQL's internal system tables.</p>
+<h3 id="how-often-should-i-run-optimize-table">How often should I run OPTIMIZE TABLE?<a class="headerlink" href="#how-often-should-i-run-optimize-table" title="Permanent link">&para;</a></h3>
+<p>For heavily-written tables like <code>vicidial_log</code>, <code>call_log</code>, and <code>vicidial_carrier_log</code>, run OPTIMIZE TABLE weekly during a low-traffic window (Sunday night or early morning). For <code>vicidial_list</code>, run it after large-scale list operations (bulk imports, mass status changes, or large deletes). For MEMORY tables, OPTIMIZE TABLE is unnecessary — they don't fragment. Remember that OPTIMIZE TABLE locks the table for the duration, so never run it during peak hours.</p>
+<h3 id="my-vicidial_manager-table-has-200-million-rows-how-do-i-fix-this">My vicidial_manager table has 200 million rows. How do I fix this?<a class="headerlink" href="#my-vicidial_manager-table-has-200-million-rows-how-do-i-fix-this" title="Permanent link">&para;</a></h3>
+<p>This is the most common "database emergency" we see. The <code>vicidial_manager</code> table grows fastest and is almost never needed historically. The quickest fix: <code>DELETE FROM vicidial_manager WHERE entry_date &lt; DATE_SUB(NOW(), INTERVAL 7 DAY) LIMIT 1000000;</code> — run this in a loop until the old rows are gone. If the table is too large for iterative deletes (each one locks the table), use the rename-and-recreate approach described in the archival section: rename to <code>vicidial_manager_old</code>, create a fresh <code>vicidial_manager</code>, copy recent rows back, then drop the old table during a maintenance window.</p>
+<h3 id="whats-the-recommended-raid-configuration-for-a-vicidial-database-server">What's the recommended RAID configuration for a VICIdial database server?<a class="headerlink" href="#whats-the-recommended-raid-configuration-for-a-vicidial-database-server" title="Permanent link">&para;</a></h3>
+<p>RAID-10 with an LSI MegaRAID controller with battery backup unit (BBU). Not RAID-5 — the write penalty on RAID-5 (read-modify-write cycle) is devastating for VICIdial's write-heavy workload. Not RAID-1 — it works for small deployments but doesn't provide the I/O parallelism needed above 100 agents. And specifically LSI MegaRAID — not 3ware, not Adaptec, not Dell PERC. Multiple VICIdial operators have paid for professional MySQL audits (including Percona engagements) and the recommendation is consistently the same: swap the RAID controller to LSI.</p>
+<h3 id="how-do-i-know-if-my-database-is-the-bottleneck">How do I know if my database is the bottleneck?<a class="headerlink" href="#how-do-i-know-if-my-database-is-the-bottleneck" title="Permanent link">&para;</a></h3>
+<p>Three quick checks: (1) Run <code>SHOW FULL PROCESSLIST</code> — if you see queries in "Locked" state or queries running for more than 2 seconds, you have contention. (2) Check the slow query log — if it's growing rapidly, queries are taking too long. (3) Monitor CPU and I/O wait — if <code>iowait</code> in <code>top</code> is above 20% on the database server, disk I/O is the constraint. For a more thorough assessment, enable the Performance Schema (<code>performance_schema = ON</code> in my.cnf) and query <code>events_statements_summary_by_digest</code> to find the most expensive query patterns.</p>
+<h3 id="can-i-use-amazon-rds-or-cloud-managed-mysql-for-vicidial">Can I use Amazon RDS or cloud-managed MySQL for VICIdial?<a class="headerlink" href="#can-i-use-amazon-rds-or-cloud-managed-mysql-for-vicidial" title="Permanent link">&para;</a></h3>
+<p>Technically, yes. Practically, it's a poor fit. VICIdial requires MyISAM (which RDS supports but doesn't optimize for), MEMORY tables (which work but are constrained by RDS instance class), and specific tuning parameters that RDS doesn't expose (like <code>myisam_repair_threads</code>). The latency between your EC2 telephony servers and RDS is also higher than bare-metal server-to-server communication. Most importantly, VICIdial's constant polling pattern generates a connection volume that gets expensive on RDS quickly. Bare-metal dedicated database servers with NVMe storage consistently outperform cloud database services for VICIdial workloads at a fraction of the cost.</p>
+<h3 id="how-do-i-handle-the-timestamp-migration-on-a-large-database">How do I handle the TIMESTAMP migration on a large database?<a class="headerlink" href="#how-do-i-handle-the-timestamp-migration-on-a-large-database" title="Permanent link">&para;</a></h3>
+<p>Plan a maintenance window. The ALTER TABLE operations lock each table for the duration of the conversion, which on a table with 50M+ rows can take 30-60 minutes. Run the migration table by table, starting with the smallest tables, so you can estimate timing before hitting the large ones. Take a full mysqldump backup before starting. If you can't afford the downtime for the largest tables, consider the rename-and-recreate approach: create a new table with the TIMESTAMP schema, copy recent data into it, swap the names, and archive the old table.</p>
+<h3 id="what-monitoring-should-i-set-up-for-the-vicidial-database">What monitoring should I set up for the VICIdial database?<a class="headerlink" href="#what-monitoring-should-i-set-up-for-the-vicidial-database" title="Permanent link">&para;</a></h3>
+<p>At minimum: (1) Disk usage alerts at 80% and 90%, (2) <code>Threads_connected</code> approaching <code>max_connections</code> (alert at 80%), (3) <code>Slow_queries</code> counter increasing faster than expected, (4) Replication lag on reporting slaves (<code>Seconds_Behind_Master</code> &gt; 60), (5) Table corruption detection via weekly <code>CHECK TABLE</code> on critical tables, (6) MEMORY table size approaching <code>max_heap_table_size</code>. Tools like Nagios, Zabbix, or Prometheus with the mysqld_exporter work well. For quick command-line monitoring, <code>mysqladmin extended-status</code> piped through <code>grep</code> for key metrics is useful during active troubleshooting.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-mysql-optimization">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

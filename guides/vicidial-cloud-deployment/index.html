@@ -1,0 +1,4893 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-cloud-deployment/">
+      
+      
+        <link rel="prev" href="../vicidial-carrier-selection/">
+      
+      
+        <link rel="next" href="../vicidial-cluster-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Cloud Deployment: AWS, GCP & DigitalOcean - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-cloud-deployment-aws-gcp-digitalocean" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-cloud-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Cloud for VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Cloud for VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-cloud-makes-sense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Cloud Makes Sense
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-cloud-does-not-make-sense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Cloud Does Not Make Sense
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-specific-cloud-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial-Specific Cloud Challenges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial-Specific Cloud Challenges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sip-nat-traversal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP NAT Traversal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latency-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latency Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shared-vcpu-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared vCPU Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AWS Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-sizing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instance Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-and-network-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC and Network Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elastic-ip-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Elastic IP Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#terraform-example-for-aws-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Terraform Example for AWS VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gcp-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCP Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GCP Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-sizing_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instance Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#digitalocean-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DigitalOcean Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DigitalOcean Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#droplet-sizing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Droplet Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managed-databases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managed Databases
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-architecture-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud Architecture Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud Architecture Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-single-server-under-25-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 1: Single Server (Under 25 Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-web-db-dialer-split-25-100-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 2: Web + DB + Dialer Split (25-100 Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-3-full-cluster-100-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 3: Full Cluster (100+ Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-comparison-cloud-vs-bare-metal-vs-managed-hosting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost Comparison: Cloud vs. Bare Metal vs. Managed Hosting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backup-strategies-for-cloud-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup Strategies for Cloud VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backup Strategies for Cloud VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-archival-to-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Archival to S3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-cloud-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Cloud VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Cloud VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CloudWatch (AWS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grafana-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grafana + Prometheus
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-deployment-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Deployment Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-vicidial-on-aws-free-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run VICIdial on AWS Free Tier?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-aws-lightsail-suitable-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is AWS Lightsail suitable for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-sip-registration-failures-in-the-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle SIP registration failures in the cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-use-a-vpn-between-cloud-vicidial-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I use a VPN between cloud VICIdial servers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-dockerkubernetes-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use Docker/Kubernetes for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-migrate-from-bare-metal-to-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I migrate from bare metal to cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-azure-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about Azure for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-much-bandwidth-does-vicidial-use-in-the-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much bandwidth does VICIdial use in the cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-cloud-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Cloud for VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Cloud for VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-cloud-makes-sense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Cloud Makes Sense
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-cloud-does-not-make-sense" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Cloud Does Not Make Sense
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-specific-cloud-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial-Specific Cloud Challenges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial-Specific Cloud Challenges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sip-nat-traversal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP NAT Traversal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latency-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latency Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shared-vcpu-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared vCPU Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AWS Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-sizing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instance Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-and-network-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC and Network Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elastic-ip-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Elastic IP Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#terraform-example-for-aws-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Terraform Example for AWS VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gcp-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCP Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GCP Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-sizing_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instance Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#digitalocean-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DigitalOcean Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DigitalOcean Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#droplet-sizing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Droplet Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managed-databases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managed Databases
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-architecture-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud Architecture Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud Architecture Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern-1-single-server-under-25-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 1: Single Server (Under 25 Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-web-db-dialer-split-25-100-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 2: Web + DB + Dialer Split (25-100 Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-3-full-cluster-100-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 3: Full Cluster (100+ Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-comparison-cloud-vs-bare-metal-vs-managed-hosting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost Comparison: Cloud vs. Bare Metal vs. Managed Hosting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backup-strategies-for-cloud-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup Strategies for Cloud VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backup Strategies for Cloud VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-archival-to-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Archival to S3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-cloud-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Cloud VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Cloud VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CloudWatch (AWS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grafana-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grafana + Prometheus
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-deployment-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Deployment Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-vicidial-on-aws-free-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run VICIdial on AWS Free Tier?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-aws-lightsail-suitable-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is AWS Lightsail suitable for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-sip-registration-failures-in-the-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle SIP registration failures in the cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-i-use-a-vpn-between-cloud-vicidial-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should I use a VPN between cloud VICIdial servers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-dockerkubernetes-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use Docker/Kubernetes for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-migrate-from-bare-metal-to-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I migrate from bare metal to cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-about-azure-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What about Azure for VICIdial?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-much-bandwidth-does-vicidial-use-in-the-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How much bandwidth does VICIdial use in the cloud?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-cloud-deployment-aws-gcp-digitalocean">VICIdial Cloud Deployment: AWS, GCP &amp; DigitalOcean<a class="headerlink" href="#vicidial-cloud-deployment-aws-gcp-digitalocean" title="Permanent link">&para;</a></h1>
+<p><strong>Last updated: March 2026 | Reading time: ~18 minutes</strong></p>
+<p>Every VICIdial guide assumes you have a rack, a static IP, and a data center contract. That made sense in 2014. In 2026, the majority of new VICIdial deployments we see at ViciStack start with the same question: can I run this in the cloud?</p>
+<p>The short answer is yes. The longer answer is yes, but <a href="/glossary/asterisk/">VICIdial</a> and cloud infrastructure have fundamentally different assumptions about networking, CPU scheduling, and storage I/O that you need to understand before you spin up an EC2 instance and wonder why half your calls have one-way audio.</p>
+<p>This guide covers the real-world deployment of VICIdial on AWS, Google Cloud Platform, and DigitalOcean. We are not going to rehash the <a href="/blog/vicidial-setup-guide/">basic installation steps</a> --- that guide exists and it is comprehensive. What we are covering here is everything that changes when your VICIdial server runs on a hypervisor in someone else's data center instead of on bare metal you control.</p>
+<p><strong>The pragmatic alternative:</strong> ViciStack deploys VICIdial on dedicated bare-metal infrastructure specifically optimized for real-time telephony workloads. No shared vCPUs, no noisy neighbors, no NAT headaches. <a href="/pricing/">Skip the cloud complexity altogether.</a></p>
+<hr />
+<h2 id="why-cloud-for-vicidial">Why Cloud for VICIdial<a class="headerlink" href="#why-cloud-for-vicidial" title="Permanent link">&para;</a></h2>
+<p>Before we get into the how, let us establish when cloud deployment actually makes sense. Not every VICIdial operation belongs in AWS, and pretending otherwise is dishonest.</p>
+<h3 id="when-cloud-makes-sense">When Cloud Makes Sense<a class="headerlink" href="#when-cloud-makes-sense" title="Permanent link">&para;</a></h3>
+<p><strong>Elastic scaling for seasonal operations.</strong> If your agent count swings from 20 in January to 150 during open enrollment season, cloud infrastructure lets you scale telephony servers up and down without buying hardware that sits idle 8 months a year. Insurance, tax preparation, political campaigns --- these verticals benefit enormously from cloud elasticity.</p>
+<p><strong>Geographic redundancy.</strong> Running <a href="/blog/vicidial-cluster-guide/">VICIdial clusters</a> across multiple regions gives you disaster recovery that is nearly impossible to achieve with colocated hardware without massive capital expenditure. Your database server in us-east-1, telephony in us-west-2, and a warm standby in eu-west-1 --- that is a real DR strategy.</p>
+<p><strong>No hardware lifecycle management.</strong> No drive replacements at 3 AM. No RAID controller failures. No firmware updates that require a maintenance window. The cloud provider handles the physical layer and you focus on the VICIdial layer.</p>
+<p><strong>Remote teams and distributed operations.</strong> If your agents are already connecting via <a href="/glossary/webrtc/">WebRTC</a> from their homes, the location of your server matters less. A cloud instance with low latency to your <a href="/glossary/carrier/">SIP carrier</a> may perform identically to a colocated box.</p>
+<h3 id="when-cloud-does-not-make-sense">When Cloud Does Not Make Sense<a class="headerlink" href="#when-cloud-does-not-make-sense" title="Permanent link">&para;</a></h3>
+<p><strong>Sustained high-density operations.</strong> If you are running 100+ agents on a stable, predictable workload 12 hours a day, 5 days a week, bare metal is cheaper. Period. The <a href="/blog/vicidial-cost-2026/">cost analysis</a> is clear: cloud compute at scale costs 2-3x what equivalent bare metal costs.</p>
+<p><strong>Ultra-low-latency requirements.</strong> Bare metal gives you dedicated CPU cores and no hypervisor overhead. For operations where <a href="/glossary/predictive-dialing/">predictive dialer</a> performance is critical and every millisecond of <a href="/glossary/amd/">AMD</a> detection matters, dedicated hardware still wins.</p>
+<p><strong>Budget-constrained startups.</strong> If you have 10 agents and $500/month for everything, a refurbished Dell PowerEdge on Hetzner or OVH for $50-80/month will outperform a $200/month cloud instance. Save the cloud budget for when you actually need elasticity.</p>
+<hr />
+<h2 id="vicidial-specific-cloud-challenges">VICIdial-Specific Cloud Challenges<a class="headerlink" href="#vicidial-specific-cloud-challenges" title="Permanent link">&para;</a></h2>
+<p>Before we dive into provider-specific configurations, you need to understand the fundamental challenges that make VICIdial cloud deployment different from deploying a web application.</p>
+<h3 id="sip-nat-traversal">SIP NAT Traversal<a class="headerlink" href="#sip-nat-traversal" title="Permanent link">&para;</a></h3>
+<p>This is the single biggest pain point and the reason most first-time cloud VICIdial deployments fail. <a href="/glossary/sip/">SIP</a> was designed in an era when every device had a public IP address. It embeds IP addresses inside the protocol payload, not just in the packet headers. When your VICIdial server sits behind a cloud provider's NAT, the SIP INVITE packets contain the server's private IP (e.g., 10.0.1.45) instead of its public IP. Your carrier sees the private IP, tries to send RTP media there, and it goes nowhere. Result: one-way audio or no audio at all.</p>
+<p>The fix involves multiple layers:</p>
+<p><strong>Asterisk SIP configuration</strong> --- In <code>/etc/asterisk/sip.conf</code> (or <code>pjsip.conf</code> if you are using <a href="/glossary/pjsip/">PJSIP</a>):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; sip.conf - NAT settings for cloud deployment</span>
+<span class="na">externip</span><span class="o">=</span><span class="s">&lt;YOUR_ELASTIC_IP&gt;</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">10.0.0.0/8</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">172.16.0.0/12</span>
+<span class="na">localnet</span><span class="o">=</span><span class="s">192.168.0.0/16</span>
+<span class="na">nat</span><span class="o">=</span><span class="s">force_rport,comedia</span>
+<span class="na">directmedia</span><span class="o">=</span><span class="s">no</span>
+</code></pre></div>
+
+<p>For PJSIP (the modern approach):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; pjsip.conf</span>
+<span class="k">[transport-udp]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">transport</span>
+<span class="na">protocol</span><span class="o">=</span><span class="s">udp</span>
+<span class="na">bind</span><span class="o">=</span><span class="s">0.0.0.0</span>
+<span class="na">external_media_address</span><span class="o">=</span><span class="s">&lt;YOUR_ELASTIC_IP&gt;</span>
+<span class="na">external_signaling_address</span><span class="o">=</span><span class="s">&lt;YOUR_ELASTIC_IP&gt;</span>
+<span class="na">local_net</span><span class="o">=</span><span class="s">10.0.0.0/8</span>
+<span class="na">local_net</span><span class="o">=</span><span class="s">172.16.0.0/12</span>
+<span class="na">local_net</span><span class="o">=</span><span class="s">192.168.0.0/16</span>
+</code></pre></div>
+
+<p><strong>Carrier-side configuration</strong> --- Most <a href="/glossary/carrier/">SIP carriers</a> need to know you are behind NAT. Some require you to enable "NAT keep-alive" or "SIP Comedia" on their portal. Others need you to whitelist the specific public IP so they send media to the right place.</p>
+<p><strong><a href="/glossary/nat-traversal/">STUN/TURN for WebRTC agents</a></strong> --- If your agents connect via ViciPhone (WebRTC), you need a STUN server at minimum. Cloud NAT adds another layer of complexity here. We recommend running your own coturn instance on the same VPC:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install coturn on a small instance in the same VPC</span>
+apt<span class="w"> </span>install<span class="w"> </span>coturn
+</code></pre></div>
+
+<h3 id="latency-requirements">Latency Requirements<a class="headerlink" href="#latency-requirements" title="Permanent link">&para;</a></h3>
+<p>VICIdial's <a href="/glossary/predictive-dialing/">predictive dialer</a> algorithm makes real-time decisions about when to place calls based on agent availability. The entire pipeline --- from hopper to dial to carrier to answer detection to agent connection --- is latency-sensitive. Here are the numbers that matter:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Target Latency</th>
+<th>Impact of Excess</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VICIdial server to SIP carrier</td>
+<td>&lt;100ms</td>
+<td>AMD false positives, delayed connections</td>
+</tr>
+<tr>
+<td>Database queries (hopper fills)</td>
+<td>&lt;10ms</td>
+<td>Hopper starvation, agent idle time</td>
+</tr>
+<tr>
+<td>Web server to agent browser</td>
+<td>&lt;200ms</td>
+<td>Agent screen lag, delayed dispositions</td>
+</tr>
+<tr>
+<td>Inter-server cluster communication</td>
+<td>&lt;5ms</td>
+<td>Keepalive failures, split-brain scenarios</td>
+</tr>
+</tbody>
+</table>
+<p>The carrier latency requirement is the most critical. If your VICIdial cloud instance is in us-east-1 and your carrier's nearest POP is in Chicago, you are looking at 15-25ms. That is fine. If your instance is in ap-southeast-1 (Singapore) and your carrier is US-only, you are looking at 180-250ms. That will destroy your <a href="/blog/vicidial-amd-guide/">AMD accuracy</a> and create noticeable delays for agents.</p>
+<p><strong>Rule of thumb:</strong> Deploy your VICIdial server in the same region as your SIP carrier's nearest point of presence.</p>
+<h3 id="shared-vcpu-performance">Shared vCPU Performance<a class="headerlink" href="#shared-vcpu-performance" title="Permanent link">&para;</a></h3>
+<p>This is the dirty secret of cloud VICIdial. <a href="/glossary/asterisk/">Asterisk</a> is extremely sensitive to CPU scheduling jitter. When Asterisk processes <a href="/glossary/rtp/">RTP</a> audio packets, it needs consistent sub-millisecond CPU access. On bare metal, you get this automatically. On a cloud instance with shared vCPUs, your Asterisk process competes with other tenants' workloads for CPU time.</p>
+<p>The symptoms are subtle and maddening: intermittent audio chopiness, occasional one-way audio that fixes itself, AMD accuracy that varies hour by hour. The fix is straightforward but more expensive: <strong>use dedicated/compute-optimized instances, not general-purpose burstable instances.</strong></p>
+<p>Do not run VICIdial on t3/t2 instances (AWS), e2 instances (GCP), or basic Droplets (DigitalOcean). These are burstable, meaning you get a baseline CPU allocation with occasional bursts. Asterisk needs consistent CPU, not bursts. Use c-series (compute-optimized) instances or dedicated host tenancy.</p>
+<hr />
+<h2 id="aws-deployment">AWS Deployment<a class="headerlink" href="#aws-deployment" title="Permanent link">&para;</a></h2>
+<p>AWS is the most common cloud platform for VICIdial deployments, and the most complex to configure correctly. Here is the complete architecture.</p>
+<h3 id="instance-sizing">Instance Sizing<a class="headerlink" href="#instance-sizing" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Instance Type</th>
+<th>Specs</th>
+<th>Monthly Cost (us-east-1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single server (&lt;25 agents)</td>
+<td>c5.2xlarge</td>
+<td>8 vCPU, 16 GB RAM</td>
+<td>~$245/month</td>
+</tr>
+<tr>
+<td>DB server (25-100 agents)</td>
+<td>m5.xlarge</td>
+<td>4 vCPU, 16 GB RAM</td>
+<td>~$140/month</td>
+</tr>
+<tr>
+<td>Telephony/dialer server</td>
+<td>c5.2xlarge</td>
+<td>8 vCPU, 16 GB RAM</td>
+<td>~$245/month</td>
+</tr>
+<tr>
+<td>Web server</td>
+<td>c5.xlarge</td>
+<td>4 vCPU, 8 GB RAM</td>
+<td>~$124/month</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why c5.2xlarge minimum for telephony:</strong> Each outbound agent with <a href="/glossary/predictive-dialing/">predictive dialing</a> active generates roughly 3-5 concurrent Asterisk channels (the agent channel plus multiple outbound attempts at typical <a href="/settings/auto-dial-level/">dial ratios</a>). At 50 agents with a 3:1 ratio, that is 150-200 concurrent channels. Asterisk processes these single-threaded per channel, but the overall load requires at least 6-8 dedicated vCPUs to avoid audio quality degradation.</p>
+<p><strong>Why m5.xlarge for the database:</strong> VICIdial's MySQL/MariaDB workload is memory-intensive, not CPU-intensive. The <a href="/glossary/hopper/">hopper</a> queries, real-time report queries, and <code>vicidial_log</code> writes benefit from large RAM more than fast cores. The m5 series gives you a balance of memory and network bandwidth that the c5 series does not.</p>
+<h3 id="storage-configuration">Storage Configuration<a class="headerlink" href="#storage-configuration" title="Permanent link">&para;</a></h3>
+<p><strong>EBS gp3 is the correct choice for VICIdial.</strong> Not gp2, not io1, not io2. Here is why:</p>
+<ul>
+<li><strong>gp3</strong> gives you 3,000 IOPS and 125 MB/s throughput baseline, and you can provision up to 16,000 IOPS independently of volume size. VICIdial's storage pattern --- lots of small random writes (database) and large sequential writes (<a href="/glossary/recording/">call recordings</a>) --- fits gp3 perfectly.</li>
+<li><strong>gp2</strong> scales IOPS with volume size (3 IOPS/GB), so you need a 1TB volume just to get 3,000 IOPS. Wasteful.</li>
+<li><strong>io1/io2</strong> are overkill for VICIdial unless you are running 200+ agents on a single database server.</li>
+</ul>
+<p>Recommended volumes:</p>
+<div class="codehilite"><pre><span></span><code>OS + VICIdial: 100 GB gp3, 3000 IOPS
+Database (separate EBS): 200 GB gp3, 6000 IOPS (provisioned)
+Recordings: 500 GB gp3, 3000 IOPS baseline
+</code></pre></div>
+
+<p>Mount the database volume at <code>/var/lib/mysql</code> and recordings at <code>/var/spool/asterisk/monitor/</code>. Separating these onto different EBS volumes gives you independent I/O paths and simplifies snapshots.</p>
+<h3 id="vpc-and-network-configuration">VPC and Network Configuration<a class="headerlink" href="#vpc-and-network-configuration" title="Permanent link">&para;</a></h3>
+<p>VICIdial requires a carefully designed VPC. Here is the architecture:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">VPC</span><span class="o">:</span><span class="w"> </span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.0</span><span class="o">/</span><span class="mi">16</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">Public</span><span class="w"> </span><span class="n">Subnet</span><span class="w"> </span><span class="o">(</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">1.0</span><span class="o">/</span><span class="mi">24</span><span class="o">)</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">VICIdial</span><span class="w"> </span><span class="n">Web</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="o">(</span><span class="k">with</span><span class="w"> </span><span class="n">Elastic</span><span class="w"> </span><span class="n">IP</span><span class="o">)</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">NAT</span><span class="w"> </span><span class="n">Gateway</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">Private</span><span class="w"> </span><span class="n">Subnet</span><span class="w"> </span><span class="o">(</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">2.0</span><span class="o">/</span><span class="mi">24</span><span class="o">)</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">Database</span><span class="w"> </span><span class="n">Server</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">Telephony</span><span class="w"> </span><span class="n">Server</span><span class="o">(</span><span class="n">s</span><span class="o">)</span>
+<span class="err">└──</span><span class="w"> </span><span class="n">Public</span><span class="w"> </span><span class="n">Subnet</span><span class="w"> </span><span class="o">(</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">3.0</span><span class="o">/</span><span class="mi">24</span><span class="o">)</span>
+<span class="w">    </span><span class="err">└──</span><span class="w"> </span><span class="n">Telephony</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span><span class="n">SIP</span><span class="w"> </span><span class="n">registration</span><span class="w"> </span><span class="n">requires</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="n">IP</span><span class="o">)</span>
+</code></pre></div>
+
+<p><strong>Important decision:</strong> Your telephony server needs a public IP for SIP registration with your carrier. You have two options:</p>
+<ol>
+<li><strong>Telephony in a public subnet with an Elastic IP</strong> --- simpler, the server has a direct public IP, SIP NAT traversal is straightforward.</li>
+<li><strong>Telephony in a private subnet behind NAT Gateway</strong> --- more secure, but adds another NAT layer that complicates SIP. Not recommended unless your security team absolutely requires it.</li>
+</ol>
+<p>We strongly recommend option 1. Put the telephony server in a public subnet with an Elastic IP and use security groups (not network isolation) for access control.</p>
+<h3 id="security-groups">Security Groups<a class="headerlink" href="#security-groups" title="Permanent link">&para;</a></h3>
+<p>VICIdial needs these ports open. Get these wrong and you will spend hours debugging connectivity issues.</p>
+<p><strong>Telephony Server Security Group:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Protocol</th>
+<th>Source</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5060</td>
+<td>UDP</td>
+<td>Carrier IPs</td>
+<td>SIP signaling</td>
+</tr>
+<tr>
+<td>5061</td>
+<td>TCP</td>
+<td>Carrier IPs</td>
+<td>SIP TLS (if used)</td>
+</tr>
+<tr>
+<td>10000-20000</td>
+<td>UDP</td>
+<td>0.0.0.0/0</td>
+<td>RTP media</td>
+</tr>
+<tr>
+<td>4569</td>
+<td>UDP</td>
+<td>Cluster servers</td>
+<td><a href="/glossary/iax2/">IAX2</a> inter-server</td>
+</tr>
+<tr>
+<td>3306</td>
+<td>TCP</td>
+<td>VPC CIDR</td>
+<td>MySQL (from web/DB)</td>
+</tr>
+<tr>
+<td>443</td>
+<td>TCP</td>
+<td>Agent IPs</td>
+<td>WebRTC/ViciPhone</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Web Server Security Group:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Protocol</th>
+<th>Source</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>80</td>
+<td>TCP</td>
+<td>0.0.0.0/0</td>
+<td>HTTP (redirect to HTTPS)</td>
+</tr>
+<tr>
+<td>443</td>
+<td>TCP</td>
+<td>0.0.0.0/0</td>
+<td>HTTPS agent interface</td>
+</tr>
+<tr>
+<td>8089</td>
+<td>TCP</td>
+<td>Agent IPs</td>
+<td>WebSocket for WebRTC</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Database Server Security Group:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Protocol</th>
+<th>Source</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3306</td>
+<td>TCP</td>
+<td>VPC CIDR only</td>
+<td>MySQL/MariaDB</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical:</strong> The RTP port range (10000-20000) must be open to 0.0.0.0/0 on UDP. These are the ports that carry actual voice audio. If you restrict them to carrier IPs only, you will break calls whenever the carrier routes media through a different POP than signaling. Yes, this feels wrong from a security perspective. It is how SIP works.</p>
+<h3 id="elastic-ip-configuration">Elastic IP Configuration<a class="headerlink" href="#elastic-ip-configuration" title="Permanent link">&para;</a></h3>
+<p>Assign an Elastic IP to your telephony server and <strong>never release it</strong>. SIP trunks are registered against this IP. Your carrier has whitelisted this IP. Your Asterisk <code>externip</code> setting points to this IP. Changing it means updating carrier configs, Asterisk configs, firewall rules, and potentially re-registering all trunks. Treat your Elastic IP like a phone number --- it is part of your identity.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Allocate and associate an Elastic IP via AWS CLI</span>
+aws<span class="w"> </span>ec2<span class="w"> </span>allocate-address<span class="w"> </span>--domain<span class="w"> </span>vpc<span class="w"> </span>--region<span class="w"> </span>us-east-1
+aws<span class="w"> </span>ec2<span class="w"> </span>associate-address<span class="w"> </span>--instance-id<span class="w"> </span>i-0abc123def456<span class="w"> </span>--allocation-id<span class="w"> </span>eipalloc-0abc123
+</code></pre></div>
+
+<h3 id="terraform-example-for-aws-vicidial">Terraform Example for AWS VICIdial<a class="headerlink" href="#terraform-example-for-aws-vicidial" title="Permanent link">&para;</a></h3>
+<p>Here is a condensed Terraform configuration for the key resources in a single-server VICIdial deployment:</p>
+<div class="codehilite"><pre><span></span><code><span class="kr">provider</span><span class="w"> </span><span class="nv">&quot;aws&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;us-east-1&quot;</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_vpc&quot;</span><span class="w"> </span><span class="nv">&quot;vicidial&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">cidr_block</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;10.0.0.0/16&quot;</span>
+<span class="w">  </span><span class="na">enable_dns_hostnames</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">  </span><span class="na">enable_dns_support</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">  </span><span class="nb">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vicidial-vpc&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_subnet&quot;</span><span class="w"> </span><span class="nv">&quot;public&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">vpc_id</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_vpc.vicidial.id</span>
+<span class="w">  </span><span class="na">cidr_block</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;10.0.1.0/24&quot;</span>
+<span class="w">  </span><span class="na">availability_zone</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;us-east-1a&quot;</span>
+<span class="w">  </span><span class="na">map_public_ip_on_launch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_internet_gateway&quot;</span><span class="w"> </span><span class="nv">&quot;gw&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">vpc_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_vpc.vicidial.id</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_security_group&quot;</span><span class="w"> </span><span class="nv">&quot;vicidial&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vicidial-sg&quot;</span>
+<span class="w">  </span><span class="na">vpc_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_vpc.vicidial.id</span>
+
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">22</span><span class="err">;</span><span class="w">    </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">22</span><span class="err">;</span><span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;; cidr_blocks = [&quot;YOUR_ADMIN_IP/32&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span><span class="err">;</span><span class="w">    </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span><span class="err">;</span><span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;; cidr_blocks = [&quot;0.0.0.0/0&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">443</span><span class="err">;</span><span class="w">   </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">443</span><span class="err">;</span><span class="w">   </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;; cidr_blocks = [&quot;0.0.0.0/0&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5060</span><span class="err">;</span><span class="w">  </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5060</span><span class="err">;</span><span class="w">  </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;udp&quot;; cidr_blocks = [&quot;CARRIER_IP/32&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10000</span><span class="err">;</span><span class="w"> </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20000</span><span class="err">;</span><span class="w"> </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;udp&quot;; cidr_blocks = [&quot;0.0.0.0/0&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8089</span><span class="err">;</span><span class="w">  </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8089</span><span class="err">;</span><span class="w">  </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;; cidr_blocks = [&quot;0.0.0.0/0&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nb">egress</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="err">;</span><span class="w">     </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="err">;</span><span class="w">     </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;-1&quot;;  cidr_blocks = [&quot;0.0.0.0/0&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_instance&quot;</span><span class="w"> </span><span class="nv">&quot;vicidial&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">ami</span><span class="w">                    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ami-XXXXXXXX&quot;</span><span class="c1"> # AlmaLinux 9 or openSUSE Leap 15.6</span>
+<span class="w">  </span><span class="na">instance_type</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;c5.2xlarge&quot;</span>
+<span class="w">  </span><span class="na">key_name</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;your-key-pair&quot;</span>
+<span class="w">  </span><span class="na">subnet_id</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_subnet.public.id</span>
+<span class="w">  </span><span class="na">vpc_security_group_ids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_security_group.vicidial.id</span><span class="p">]</span>
+
+<span class="w">  </span><span class="nb">root_block_device</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">volume_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gp3&quot;</span>
+<span class="w">    </span><span class="na">volume_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">    </span><span class="na">iops</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="m">3000</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_ebs_volume&quot;</span><span class="w"> </span><span class="nv">&quot;recordings&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">availability_zone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;us-east-1a&quot;</span>
+<span class="w">  </span><span class="na">size</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="m">500</span>
+<span class="w">  </span><span class="na">type</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gp3&quot;</span>
+<span class="w">  </span><span class="nb">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="na">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vicidial-recordings&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_volume_attachment&quot;</span><span class="w"> </span><span class="nv">&quot;recordings&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">device_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/dev/xvdf&quot;</span>
+<span class="w">  </span><span class="na">volume_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_ebs_volume.recordings.id</span>
+<span class="w">  </span><span class="na">instance_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_instance.vicidial.id</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_eip&quot;</span><span class="w"> </span><span class="nv">&quot;vicidial&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_instance.vicidial.id</span>
+<span class="w">  </span><span class="na">domain</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vpc&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>You will also need a route table associating the public subnet with the internet gateway. After <code>terraform apply</code>, SSH into the instance and follow the <a href="/blog/vicidial-setup-guide/">VICIdial scratch install guide</a> for AlmaLinux 9, then apply the NAT configuration from the section above.</p>
+<blockquote>
+<p><strong>Cloud Deployment Without the Headaches.</strong>
+ViciStack handles the infrastructure so you can focus on running campaigns. Bare metal performance, cloud-like simplicity. <a href="/pricing/">Get a Custom Quote.</a></p>
+</blockquote>
+<hr />
+<h2 id="gcp-deployment">GCP Deployment<a class="headerlink" href="#gcp-deployment" title="Permanent link">&para;</a></h2>
+<p>Google Cloud Platform offers comparable functionality to AWS with slightly different naming and a few VICIdial-relevant advantages.</p>
+<h3 id="instance-sizing_1">Instance Sizing<a class="headerlink" href="#instance-sizing_1" title="Permanent link">&para;</a></h3>
+<p>GCP's Compute Engine machine types map to AWS equivalents:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>GCP Machine Type</th>
+<th>Equivalent AWS</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single server (&lt;25 agents)</td>
+<td>n2-standard-8</td>
+<td>c5.2xlarge</td>
+<td>~$260/month</td>
+</tr>
+<tr>
+<td>DB server (25-100 agents)</td>
+<td>n2-highmem-4</td>
+<td>m5.xlarge</td>
+<td>~$155/month</td>
+</tr>
+<tr>
+<td>Telephony/dialer server</td>
+<td>c2-standard-8</td>
+<td>c5.2xlarge</td>
+<td>~$275/month</td>
+</tr>
+<tr>
+<td>Web server</td>
+<td>n2-standard-4</td>
+<td>c5.xlarge</td>
+<td>~$135/month</td>
+</tr>
+</tbody>
+</table>
+<p><strong>GCP advantage: c2-standard-8.</strong> The c2 series runs on dedicated 3.1 GHz Intel Cascade Lake processors with no CPU overcommit. This is as close to bare metal as you can get in a cloud VM, and it makes a measurable difference for Asterisk's real-time audio processing. If you are choosing between AWS c5 and GCP c2 specifically for VICIdial telephony, GCP's c2 has a slight edge in consistent CPU performance.</p>
+<p><strong>GCP advantage: sustained use discounts.</strong> Unlike AWS, where you need Reserved Instances or Savings Plans to get discounts, GCP automatically applies sustained use discounts when an instance runs more than 25% of the month. A c2-standard-8 running 24/7 gets a roughly 30% automatic discount. No commitment required.</p>
+<h3 id="storage">Storage<a class="headerlink" href="#storage" title="Permanent link">&para;</a></h3>
+<p>GCP Persistent Disks come in three relevant tiers:</p>
+<ul>
+<li><strong>pd-ssd</strong>: SSD-backed, 30 IOPS/GB read, 30 IOPS/GB write. The equivalent of AWS gp3 with auto-scaling IOPS.</li>
+<li><strong>pd-balanced</strong>: Lower-cost SSD option. Fine for recordings, not ideal for database.</li>
+<li><strong>pd-extreme</strong>: Up to 120,000 IOPS. Overkill for VICIdial unless you have 300+ agents on one database.</li>
+</ul>
+<p>Recommended configuration:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create instance with attached SSD persistent disks</span>
+gcloud<span class="w"> </span>compute<span class="w"> </span>instances<span class="w"> </span>create<span class="w"> </span>vicidial-server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--zone<span class="o">=</span>us-central1-a<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--machine-type<span class="o">=</span>c2-standard-8<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--image-family<span class="o">=</span>almalinux-9<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--image-project<span class="o">=</span>almalinux-cloud<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--boot-disk-size<span class="o">=</span>100GB<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--boot-disk-type<span class="o">=</span>pd-ssd<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--create-disk<span class="o">=</span><span class="nv">name</span><span class="o">=</span>vicidial-db,size<span class="o">=</span>200GB,type<span class="o">=</span>pd-ssd<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--create-disk<span class="o">=</span><span class="nv">name</span><span class="o">=</span>vicidial-recordings,size<span class="o">=</span>500GB,type<span class="o">=</span>pd-balanced<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--network-tier<span class="o">=</span>PREMIUM<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--tags<span class="o">=</span>vicidial-server
+</code></pre></div>
+
+<h3 id="firewall-rules">Firewall Rules<a class="headerlink" href="#firewall-rules" title="Permanent link">&para;</a></h3>
+<p>GCP uses network-level firewall rules instead of instance-level security groups. The tags-based approach is actually cleaner for VICIdial:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># SIP signaling from carrier</span>
+gcloud<span class="w"> </span>compute<span class="w"> </span>firewall-rules<span class="w"> </span>create<span class="w"> </span>vicidial-sip<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--direction<span class="o">=</span>INGRESS<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--priority<span class="o">=</span><span class="m">1000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--network<span class="o">=</span>default<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action<span class="o">=</span>ALLOW<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--rules<span class="o">=</span>udp:5060<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--source-ranges<span class="o">=</span>CARRIER_IP_1/32,CARRIER_IP_2/32<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--target-tags<span class="o">=</span>vicidial-server
+
+<span class="c1"># RTP media (must be open to all)</span>
+gcloud<span class="w"> </span>compute<span class="w"> </span>firewall-rules<span class="w"> </span>create<span class="w"> </span>vicidial-rtp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--direction<span class="o">=</span>INGRESS<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--priority<span class="o">=</span><span class="m">1000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--network<span class="o">=</span>default<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action<span class="o">=</span>ALLOW<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--rules<span class="o">=</span>udp:10000-20000<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--source-ranges<span class="o">=</span><span class="m">0</span>.0.0.0/0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--target-tags<span class="o">=</span>vicidial-server
+
+<span class="c1"># HTTPS for agent interface</span>
+gcloud<span class="w"> </span>compute<span class="w"> </span>firewall-rules<span class="w"> </span>create<span class="w"> </span>vicidial-https<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--direction<span class="o">=</span>INGRESS<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--priority<span class="o">=</span><span class="m">1000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--network<span class="o">=</span>default<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action<span class="o">=</span>ALLOW<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--rules<span class="o">=</span>tcp:443,tcp:8089<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--source-ranges<span class="o">=</span><span class="m">0</span>.0.0.0/0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--target-tags<span class="o">=</span>vicidial-server
+</code></pre></div>
+
+<h3 id="static-ip">Static IP<a class="headerlink" href="#static-ip" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Reserve a static external IP</span>
+gcloud<span class="w"> </span>compute<span class="w"> </span>addresses<span class="w"> </span>create<span class="w"> </span>vicidial-ip<span class="w"> </span>--region<span class="o">=</span>us-central1
+
+<span class="c1"># Assign to instance</span>
+gcloud<span class="w"> </span>compute<span class="w"> </span>instances<span class="w"> </span>add-access-config<span class="w"> </span>vicidial-server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--zone<span class="o">=</span>us-central1-a<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--access-config-name<span class="o">=</span><span class="s2">&quot;External NAT&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--address<span class="o">=</span><span class="k">$(</span>gcloud<span class="w"> </span>compute<span class="w"> </span>addresses<span class="w"> </span>describe<span class="w"> </span>vicidial-ip<span class="w"> </span>--region<span class="o">=</span>us-central1<span class="w"> </span>--format<span class="o">=</span><span class="s1">&#39;value(address)&#39;</span><span class="k">)</span>
+</code></pre></div>
+
+<p>Same rule as AWS: this IP is permanent. Do not release it.</p>
+<hr />
+<h2 id="digitalocean-deployment">DigitalOcean Deployment<a class="headerlink" href="#digitalocean-deployment" title="Permanent link">&para;</a></h2>
+<p>DigitalOcean is the simplest cloud option for VICIdial. Less flexibility than AWS or GCP, but dramatically less complexity. If you are running a small-to-medium operation (under 50 agents) and you want cloud without the AWS learning curve, DigitalOcean is the pragmatic choice.</p>
+<h3 id="droplet-sizing">Droplet Sizing<a class="headerlink" href="#droplet-sizing" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Droplet Type</th>
+<th>Specs</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single server (&lt;25 agents)</td>
+<td>CPU-Optimized 8 vCPU</td>
+<td>8 vCPU, 16 GB RAM</td>
+<td>$168/month</td>
+</tr>
+<tr>
+<td>DB server</td>
+<td>General Purpose 8 GB</td>
+<td>2 vCPU, 8 GB RAM</td>
+<td>$68/month</td>
+</tr>
+<tr>
+<td>Telephony server</td>
+<td>CPU-Optimized 8 vCPU</td>
+<td>8 vCPU, 16 GB RAM</td>
+<td>$168/month</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical: Use CPU-Optimized Droplets.</strong> DigitalOcean's Basic and General Purpose Droplets use shared vCPUs with burstable performance. CPU-Optimized Droplets provide dedicated vCPU cores, which is what Asterisk needs for consistent audio processing.</p>
+<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create a CPU-Optimized Droplet via doctl CLI</span>
+doctl<span class="w"> </span>compute<span class="w"> </span>droplet<span class="w"> </span>create<span class="w"> </span>vicidial-server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--region<span class="w"> </span>nyc1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--size<span class="w"> </span>c-8<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--image<span class="w"> </span>almalinux-9-x64<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ssh-keys<span class="w"> </span>YOUR_SSH_KEY_FINGERPRINT<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--wait
+
+<span class="c1"># Reserve a floating IP (DigitalOcean&#39;s equivalent of Elastic IP)</span>
+doctl<span class="w"> </span>compute<span class="w"> </span>floating-ip<span class="w"> </span>create<span class="w"> </span>--region<span class="w"> </span>nyc1
+
+<span class="c1"># Assign floating IP to droplet</span>
+doctl<span class="w"> </span>compute<span class="w"> </span>floating-ip-action<span class="w"> </span>assign<span class="w"> </span>FLOATING_IP<span class="w"> </span>DROPLET_ID
+</code></pre></div>
+
+<h3 id="firewall">Firewall<a class="headerlink" href="#firewall" title="Permanent link">&para;</a></h3>
+<p>DigitalOcean Cloud Firewalls are simpler than AWS Security Groups:</p>
+<div class="codehilite"><pre><span></span><code>doctl<span class="w"> </span>compute<span class="w"> </span>firewall<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>vicidial-fw<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--droplet-ids<span class="w"> </span>DROPLET_ID<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--inbound-rules<span class="w"> </span><span class="s2">&quot;protocol:tcp,ports:22,address:YOUR_ADMIN_IP/32 protocol:tcp,ports:80,address:0.0.0.0/0 protocol:tcp,ports:443,address:0.0.0.0/0 protocol:udp,ports:5060,address:CARRIER_IP/32 protocol:udp,ports:10000-20000,address:0.0.0.0/0 protocol:tcp,ports:8089,address:0.0.0.0/0&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--outbound-rules<span class="w"> </span><span class="s2">&quot;protocol:tcp,ports:all,address:0.0.0.0/0 protocol:udp,ports:all,address:0.0.0.0/0&quot;</span>
+</code></pre></div>
+
+<h3 id="managed-databases">Managed Databases<a class="headerlink" href="#managed-databases" title="Permanent link">&para;</a></h3>
+<p>DigitalOcean offers Managed MySQL databases, and this is genuinely tempting for VICIdial. Automated backups, failover, scaling --- everything you would normally do manually with MariaDB on a separate server.</p>
+<p><strong>The catch:</strong> VICIdial uses MEMORY tables (<code>vicidial_auto_calls</code>, <code>vicidial_hopper</code>, and several others defined in the <a href="/blog/vicidial-cluster-guide/">cluster configuration</a>). MEMORY tables do not persist across restarts and require the <code>MEMORY</code> storage engine to be available. Most managed database services restrict which storage engines you can use. DigitalOcean's managed MySQL <strong>does</strong> support the MEMORY engine, but you need to verify this explicitly for your specific plan tier before committing.</p>
+<p>Additionally, managed databases add 1-3ms of network latency compared to a local MySQL instance. For the <a href="/glossary/hopper/">hopper</a> fill process, which runs every second and queries the <code>vicidial_list</code> table, this additional latency can reduce hopper efficiency at high agent counts.</p>
+<p><strong>Our recommendation:</strong> Use managed databases only if you are running fewer than 50 agents and prioritize operational simplicity over raw performance. For larger operations, run MariaDB on a dedicated Droplet within the same VPC.</p>
+<hr />
+<h2 id="cloud-architecture-patterns">Cloud Architecture Patterns<a class="headerlink" href="#cloud-architecture-patterns" title="Permanent link">&para;</a></h2>
+<p>The right architecture depends entirely on your agent count and growth trajectory. Here are the three patterns we see in production.</p>
+<h3 id="pattern-1-single-server-under-25-agents">Pattern 1: Single Server (Under 25 Agents)<a class="headerlink" href="#pattern-1-single-server-under-25-agents" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>┌──────────────────────────┐
+│   Cloud Instance          │
+│   (c5.2xlarge / c2-8)    │
+│                           │
+│   ┌─────────────────┐    │
+│   │ Asterisk 18     │    │
+│   │ Apache/PHP      │    │
+│   │ MariaDB         │    │
+│   │ VICIdial Screens│    │
+│   └─────────────────┘    │
+│                           │
+│   Elastic/Static IP       │
+└──────────────────────────┘
+         │
+         ▼
+    SIP Carrier
+</code></pre></div>
+
+<p>This is the <a href="/blog/vicidial-setup-guide/">ViciBox Express</a> equivalent in the cloud. Everything on one box. Simple, cheap, and perfectly adequate for small operations.</p>
+<p><strong>When to use:</strong> Startup operations, testing environments, or stable small teams that will not grow past 25 outbound agents.</p>
+<p><strong>Estimated monthly cost:</strong> $200-350 depending on provider and instance type.</p>
+<h3 id="pattern-2-web-db-dialer-split-25-100-agents">Pattern 2: Web + DB + Dialer Split (25-100 Agents)<a class="headerlink" href="#pattern-2-web-db-dialer-split-25-100-agents" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+│  Web Server   │   │  DB Server    │   │ Telephony    │
+│  (c5.xlarge)  │   │  (m5.xlarge)  │   │ (c5.2xlarge) │
+│               │   │               │   │              │
+│  Apache/PHP   │   │  MariaDB      │   │ Asterisk 18  │
+│  Agent screens│   │  Lead data    │   │ SIP trunks   │
+│  Reports      │   │  CDR/logs     │   │ Recordings   │
+└──────┬───────┘   └──────┬───────┘   └──────┬───────┘
+       │                   │                   │
+       └───────────┬───────┘                   │
+                   │         VPC               │
+                   └───────────────────────────┘
+                              │
+                              ▼
+                         SIP Carrier
+</code></pre></div>
+
+<p>This is the sweet spot for cloud VICIdial. Separating the database from the telephony server eliminates I/O contention between MariaDB queries and Asterisk recording writes. The web server handles agent screen rendering without competing for CPU with call processing.</p>
+<p><strong>When to use:</strong> Growing operations that have outgrown a single server but do not need full cluster redundancy.</p>
+<p><strong>Estimated monthly cost:</strong> $500-800 depending on provider and storage requirements.</p>
+<h3 id="pattern-3-full-cluster-100-agents">Pattern 3: Full Cluster (100+ Agents)<a class="headerlink" href="#pattern-3-full-cluster-100-agents" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>┌────────────┐  ┌────────────┐
+│ Web Server  │  │ Web Server  │
+│ (redundant) │  │ (redundant) │
+└──────┬─────┘  └──────┬─────┘
+       │               │
+       └───────┬───────┘
+               │
+        ┌──────┴──────┐
+        │  DB Server   │
+        │  (primary)   │─── DB Replica (read)
+        └──────┬──────┘
+               │
+    ┌──────────┼──────────┐
+    │          │          │
+┌───┴───┐ ┌───┴───┐ ┌───┴───┐
+│ Dialer │ │ Dialer │ │ Dialer │
+│ Svr 1  │ │ Svr 2  │ │ Svr 3  │
+└────────┘ └────────┘ └────────┘
+</code></pre></div>
+
+<p>For the full details on <a href="/blog/vicidial-cluster-guide/">VICIdial cluster configuration</a>, see our dedicated guide. In a cloud context, the key additions are:</p>
+<ul>
+<li><strong>Placement groups</strong> (AWS) or <strong>sole-tenant nodes</strong> (GCP) to ensure telephony servers run on different physical hosts</li>
+<li><strong>Cross-AZ deployment</strong> for database redundancy</li>
+<li><strong>Auto Scaling Groups</strong> for web servers (agent screens are stateless)</li>
+<li><strong>Application Load Balancer</strong> in front of web servers for HTTPS termination</li>
+</ul>
+<p><strong>Estimated monthly cost:</strong> $1,200-2,500+ depending on agent count and redundancy level.</p>
+<hr />
+<h2 id="cost-comparison-cloud-vs-bare-metal-vs-managed-hosting">Cost Comparison: Cloud vs. Bare Metal vs. Managed Hosting<a class="headerlink" href="#cost-comparison-cloud-vs-bare-metal-vs-managed-hosting" title="Permanent link">&para;</a></h2>
+<p>Here is the honest cost breakdown for a 50-agent outbound operation running 8 hours/day, 5 days/week.</p>
+<table>
+<thead>
+<tr>
+<th>Cost Component</th>
+<th>AWS (us-east-1)</th>
+<th>Bare Metal (colo)</th>
+<th>ViciStack Managed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compute (web + DB + telephony)</td>
+<td>$600-750/month</td>
+<td>$200-350/month</td>
+<td>Included</td>
+</tr>
+<tr>
+<td>Storage (500 GB SSD + recordings)</td>
+<td>$80-120/month</td>
+<td>Included in server</td>
+<td>Included</td>
+</tr>
+<tr>
+<td>Data transfer (SIP + recordings)</td>
+<td>$50-100/month</td>
+<td>Included in colo</td>
+<td>Included</td>
+</tr>
+<tr>
+<td>Elastic IP / static IP</td>
+<td>$3.65/month</td>
+<td>Included</td>
+<td>Included</td>
+</tr>
+<tr>
+<td>Backups (EBS snapshots)</td>
+<td>$30-50/month</td>
+<td>Manual/custom</td>
+<td>Included</td>
+</tr>
+<tr>
+<td><strong>Total infrastructure</strong></td>
+<td><strong>$764-1,024/month</strong></td>
+<td><strong>$200-350/month</strong></td>
+<td><strong>Custom quote</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The cloud premium is 2-4x over bare metal for equivalent performance. That premium buys you elasticity, managed hardware, and geographic flexibility. Whether that is worth it depends on your operational profile.</p>
+<p><strong>Where cloud wins on cost:</strong> Operations that scale up/down seasonally. If you need 150 agents for 3 months and 30 agents the rest of the year, cloud reserved instances for the baseline plus on-demand for the surge is cheaper than owning 150-agent-capacity hardware year-round.</p>
+<p><strong>Where bare metal wins on cost:</strong> Steady-state operations. If your agent count is stable month over month, dedicated servers from OVH, Hetzner, or a traditional colo are dramatically cheaper and often faster due to dedicated CPU cores and local storage.</p>
+<blockquote>
+<p><strong>Get the Best of Both Worlds.</strong>
+ViciStack delivers bare-metal performance at predictable monthly pricing. No cloud markup, no hardware management. <a href="/pricing/">See Pricing.</a></p>
+</blockquote>
+<hr />
+<h2 id="backup-strategies-for-cloud-vicidial">Backup Strategies for Cloud VICIdial<a class="headerlink" href="#backup-strategies-for-cloud-vicidial" title="Permanent link">&para;</a></h2>
+<p>Cloud backup is one area where cloud deployment genuinely shines over bare metal. Here are the strategies, ordered by importance.</p>
+<h3 id="database-backups">Database Backups<a class="headerlink" href="#database-backups" title="Permanent link">&para;</a></h3>
+<p>The VICIdial database is your most critical asset. Losing it means losing all campaign configurations, lead data, CDR history, and agent settings.</p>
+<p><strong>EBS Snapshots (AWS):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Automated daily snapshot of the database volume</span>
+aws<span class="w"> </span>ec2<span class="w"> </span>create-snapshot<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume-id<span class="w"> </span>vol-0abc123def456<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--description<span class="w"> </span><span class="s2">&quot;VICIdial DB backup </span><span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--tag-specifications<span class="w"> </span><span class="s1">&#39;ResourceType=snapshot,Tags=[{Key=Name,Value=vicidial-db-daily}]&#39;</span>
+</code></pre></div>
+
+<p>Schedule this with a cron job or AWS Backup. Retain 30 days of daily snapshots and 12 months of monthly snapshots.</p>
+<p><strong>mysqldump for logical backups:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Daily logical backup (complements EBS snapshots)</span>
+mysqldump<span class="w"> </span>--single-transaction<span class="w"> </span>--routines<span class="w"> </span>--triggers<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--databases<span class="w"> </span>asterisk<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>gzip<span class="w"> </span>&gt;<span class="w"> </span>/backup/vicidial-db-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql.gz
+</code></pre></div>
+
+<p>Logical backups are portable across providers and allow granular table-level restores. EBS snapshots are faster for full restores. Use both.</p>
+<h3 id="recording-archival-to-s3">Recording Archival to S3<a class="headerlink" href="#recording-archival-to-s3" title="Permanent link">&para;</a></h3>
+<p>Call <a href="/glossary/recording/">recordings</a> are the largest storage consumer and the most expensive to keep on high-performance EBS. Move them to S3 after they age past your active access window.</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># archive_recordings.sh - Move recordings older than 90 days to S3</span>
+<span class="nv">ARCHIVE_DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;-90 days&quot;</span><span class="w"> </span>+%Y%m%d<span class="k">)</span>
+<span class="nv">RECORDING_DIR</span><span class="o">=</span><span class="s2">&quot;/var/spool/asterisk/monitor&quot;</span>
+<span class="nv">S3_BUCKET</span><span class="o">=</span><span class="s2">&quot;s3://your-vicidial-recordings&quot;</span>
+
+find<span class="w"> </span><span class="si">${</span><span class="nv">RECORDING_DIR</span><span class="si">}</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.wav&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+90<span class="w"> </span>-exec<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>aws<span class="w"> </span>s3<span class="w"> </span>mv<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="si">${</span><span class="nv">S3_BUCKET</span><span class="si">}</span>/<span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span>@<span class="k">$(</span>stat<span class="w"> </span>-c<span class="w"> </span>%Y<span class="w"> </span><span class="o">{}</span><span class="k">)</span><span class="w"> </span>+%Y/%m<span class="k">)</span>/<span class="w"> </span><span class="se">\;</span>
+</code></pre></div>
+
+<p>S3 Standard costs $0.023/GB/month. S3 Glacier Instant Retrieval costs $0.004/GB/month. For a 50-agent operation generating 300 GB/month of recordings, moving to Glacier after 90 days saves roughly $70/month versus keeping everything on EBS.</p>
+<p><strong>S3 Lifecycle Rule:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;Rules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;recordings-lifecycle&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;Status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Enabled&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;Transitions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;Days&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;StorageClass&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GLACIER_IR&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;Days&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">365</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;StorageClass&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEEP_ARCHIVE&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="configuration-backups">Configuration Backups<a class="headerlink" href="#configuration-backups" title="Permanent link">&para;</a></h3>
+<p>VICIdial's configuration lives in multiple places: the database, Asterisk config files, Apache configs, and cron jobs. Back up all of them:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># backup_config.sh</span>
+<span class="nv">BACKUP_DIR</span><span class="o">=</span><span class="s2">&quot;/backup/config/</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span><span class="s2">&quot;</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP_DIR</span><span class="si">}</span>
+
+<span class="c1"># Asterisk configs</span>
+tar<span class="w"> </span>czf<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP_DIR</span><span class="si">}</span>/asterisk-config.tar.gz<span class="w"> </span>/etc/asterisk/
+
+<span class="c1"># VICIdial web configs</span>
+tar<span class="w"> </span>czf<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP_DIR</span><span class="si">}</span>/vicidial-web.tar.gz<span class="w"> </span>/srv/www/htdocs/agc/<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="se">\</span>
+tar<span class="w"> </span>czf<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP_DIR</span><span class="si">}</span>/vicidial-web.tar.gz<span class="w"> </span>/var/www/html/agc/<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+
+<span class="c1"># Crontab</span>
+crontab<span class="w"> </span>-l<span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP_DIR</span><span class="si">}</span>/crontab.txt
+
+<span class="c1"># System configs</span>
+tar<span class="w"> </span>czf<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP_DIR</span><span class="si">}</span>/system-config.tar.gz<span class="w"> </span>/etc/my.cnf.d/<span class="w"> </span>/etc/httpd/<span class="w"> </span>/etc/apache2/
+
+<span class="c1"># Upload to S3</span>
+aws<span class="w"> </span>s3<span class="w"> </span>sync<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP_DIR</span><span class="si">}</span><span class="w"> </span>s3://your-vicidial-backups/config/<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>/
+</code></pre></div>
+
+<hr />
+<h2 id="monitoring-cloud-vicidial">Monitoring Cloud VICIdial<a class="headerlink" href="#monitoring-cloud-vicidial" title="Permanent link">&para;</a></h2>
+<p>Running VICIdial in the cloud gives you access to native monitoring tools that bare metal does not have. Use them.</p>
+<h3 id="cloudwatch-aws">CloudWatch (AWS)<a class="headerlink" href="#cloudwatch-aws" title="Permanent link">&para;</a></h3>
+<p>Key metrics to alarm on:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Threshold</th>
+<th>What It Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPUUtilization</td>
+<td>&gt;80% sustained 5 min</td>
+<td>Asterisk is CPU-starved, audio quality degrading</td>
+</tr>
+<tr>
+<td>EBSWriteLatency (DB volume)</td>
+<td>&gt;10ms</td>
+<td>Database queries slowing, hopper fill impacted</td>
+</tr>
+<tr>
+<td>NetworkIn/Out</td>
+<td>Sudden drop</td>
+<td>Network partition, carrier connectivity lost</td>
+</tr>
+<tr>
+<td>StatusCheckFailed</td>
+<td>Any</td>
+<td>Instance hardware failure, immediate action needed</td>
+</tr>
+</tbody>
+</table>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create CloudWatch alarm for CPU</span>
+aws<span class="w"> </span>cloudwatch<span class="w"> </span>put-metric-alarm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--alarm-name<span class="w"> </span><span class="s2">&quot;VICIdial-HighCPU&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--metric-name<span class="w"> </span>CPUUtilization<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="w"> </span>AWS/EC2<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--statistic<span class="w"> </span>Average<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--period<span class="w"> </span><span class="m">300</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--threshold<span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--comparison-operator<span class="w"> </span>GreaterThanThreshold<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dimensions<span class="w"> </span><span class="nv">Name</span><span class="o">=</span>InstanceId,Value<span class="o">=</span>i-0abc123def456<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--evaluation-periods<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--alarm-actions<span class="w"> </span>arn:aws:sns:us-east-1:123456789:vicidial-alerts
+</code></pre></div>
+
+<h3 id="grafana-prometheus">Grafana + Prometheus<a class="headerlink" href="#grafana-prometheus" title="Permanent link">&para;</a></h3>
+<p>For VICIdial-specific metrics that CloudWatch cannot see (agent talk time, hopper level, trunk utilization), deploy Grafana with a MySQL data source pointed at your VICIdial database:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Grafana query: Active calls right now</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">active_calls</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_auto_calls</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;LIVE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;XFER&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;CLOSER&#39;</span><span class="p">);</span>
+
+<span class="c1">-- Grafana query: Hopper level by campaign</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">hopper_count</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_hopper</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+
+<span class="c1">-- Grafana query: Agent status distribution</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">agent_count</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_live_agents</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+</code></pre></div>
+
+<p>This gives you a real-time dashboard that combines infrastructure metrics (CPU, disk, network) with VICIdial operational metrics (agent utilization, hopper health, trunk capacity).</p>
+<hr />
+<h2 id="post-deployment-checklist">Post-Deployment Checklist<a class="headerlink" href="#post-deployment-checklist" title="Permanent link">&para;</a></h2>
+<p>After your cloud VICIdial instance is running, verify these items before putting agents on it:</p>
+<ul>
+<li>[ ] Elastic/static IP assigned and confirmed in Asterisk <code>externip</code></li>
+<li>[ ] SIP registration successful (check <code>asterisk -rx "sip show peers"</code> or <code>pjsip show endpoints</code>)</li>
+<li>[ ] Two-way audio confirmed on test calls (call your cell phone, verify audio both directions)</li>
+<li>[ ] <a href="/glossary/rtp/">RTP ports</a> open and receiving media (check with <code>tcpdump -i eth0 udp portrange 10000-20000</code>)</li>
+<li>[ ] Database accessible from all servers in the cluster (test with <code>mysql -h DB_IP -u cron -p</code>)</li>
+<li>[ ] Recording files being written (place a test call, check <code>/var/spool/asterisk/monitor/</code>)</li>
+<li>[ ] Agent login works via HTTPS (test with the default 6666/1234 credentials, then change them)</li>
+<li>[ ] Time synchronization configured (NTP/chrony --- critical for CDR accuracy and <a href="/glossary/callback/">callback scheduling</a>)</li>
+<li>[ ] Backups tested with actual restore (a backup you have not tested is not a backup)</li>
+<li>[ ] Monitoring alerts configured and verified (send a test alert)</li>
+</ul>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="can-i-run-vicidial-on-aws-free-tier">Can I run VICIdial on AWS Free Tier?<a class="headerlink" href="#can-i-run-vicidial-on-aws-free-tier" title="Permanent link">&para;</a></h3>
+<p>No. The t2.micro/t3.micro instances in the free tier have 1 vCPU and 1 GB RAM. VICIdial requires a minimum of 4 cores and 8 GB RAM for even a small deployment. Attempting to run Asterisk on a t2.micro will result in immediate resource exhaustion. You need at least a c5.xlarge for a minimal test environment.</p>
+<h3 id="is-aws-lightsail-suitable-for-vicidial">Is AWS Lightsail suitable for VICIdial?<a class="headerlink" href="#is-aws-lightsail-suitable-for-vicidial" title="Permanent link">&para;</a></h3>
+<p>Lightsail is essentially DigitalOcean running on AWS infrastructure. The $40/month 8 GB plan could technically run a tiny VICIdial instance for testing, but Lightsail uses shared vCPUs and has limited networking options. For production, use proper EC2 instances.</p>
+<h3 id="how-do-i-handle-sip-registration-failures-in-the-cloud">How do I handle SIP registration failures in the cloud?<a class="headerlink" href="#how-do-i-handle-sip-registration-failures-in-the-cloud" title="Permanent link">&para;</a></h3>
+<p>The most common cause is incorrect security group configuration. SIP uses UDP 5060 for signaling, and many carriers also expect the server to respond on the same port. Verify that UDP 5060 is open inbound from your carrier's IP ranges, and that outbound UDP is unrestricted. Also check that your Asterisk <code>externip</code> matches your Elastic IP exactly.</p>
+<h3 id="should-i-use-a-vpn-between-cloud-vicidial-servers">Should I use a VPN between cloud VICIdial servers?<a class="headerlink" href="#should-i-use-a-vpn-between-cloud-vicidial-servers" title="Permanent link">&para;</a></h3>
+<p>For multi-server clusters within the same VPC, no. The VPC provides network isolation and encryption is unnecessary for intra-cluster traffic. For cross-region clusters or hybrid cloud/on-prem setups, yes --- use WireGuard or AWS Site-to-Site VPN. <a href="/glossary/iax2/">IAX2</a> inter-server traffic should be encrypted or tunneled if it crosses the public internet.</p>
+<h3 id="can-i-use-dockerkubernetes-for-vicidial">Can I use Docker/Kubernetes for VICIdial?<a class="headerlink" href="#can-i-use-dockerkubernetes-for-vicidial" title="Permanent link">&para;</a></h3>
+<p>You can, but you probably should not. Asterisk requires direct access to UDP ports, consistent CPU scheduling, and a persistent filesystem for recordings. Containerization adds networking complexity (SIP NAT is already hard enough without Docker's bridge networking adding another layer) and provides minimal benefit for a stateful telephony application. VICIdial is not a microservice --- it is a monolithic system that benefits from running directly on the OS.</p>
+<h3 id="how-do-i-migrate-from-bare-metal-to-cloud">How do I migrate from bare metal to cloud?<a class="headerlink" href="#how-do-i-migrate-from-bare-metal-to-cloud" title="Permanent link">&para;</a></h3>
+<p>The process is: (1) provision cloud infrastructure using this guide, (2) do a fresh VICIdial install on the cloud server, (3) export your database from bare metal with <code>mysqldump</code>, (4) import on the cloud server, (5) update Asterisk configs with new IP/NAT settings, (6) re-register SIP trunks with your carrier using the new IP, (7) migrate recordings via rsync or S3 upload. Plan for 2-4 hours of downtime for a clean cutover, or run parallel systems with a DNS-based switchover for zero-downtime migration.</p>
+<h3 id="what-about-azure-for-vicidial">What about Azure for VICIdial?<a class="headerlink" href="#what-about-azure-for-vicidial" title="Permanent link">&para;</a></h3>
+<p>Azure works, but it is less commonly used for VICIdial than AWS or GCP. The equivalent instance types are Fsv2 (compute-optimized) and Esv5 (memory-optimized). Azure's networking is more complex than AWS or GCP, and the SIP NAT traversal configuration requires additional steps with Azure's NAT Gateway. Unless your organization is already committed to Azure, AWS or GCP are simpler paths.</p>
+<h3 id="how-much-bandwidth-does-vicidial-use-in-the-cloud">How much bandwidth does VICIdial use in the cloud?<a class="headerlink" href="#how-much-bandwidth-does-vicidial-use-in-the-cloud" title="Permanent link">&para;</a></h3>
+<p>A single concurrent call using G.711 (the standard <a href="/glossary/codec/">codec</a> for VICIdial) consumes approximately 87 kbps in each direction. For 50 concurrent calls, that is roughly 8.7 Mbps sustained. Add agent screen traffic (minimal), database replication (if clustered), and recording uploads, and a 50-agent operation typically uses 15-25 Mbps sustained. Cloud data transfer costs apply: AWS charges $0.09/GB for outbound data after the first 100 GB/month. For a 50-agent operation, expect $50-100/month in data transfer charges.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-cloud-deployment">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

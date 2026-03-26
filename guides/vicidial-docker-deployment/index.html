@@ -1,0 +1,4568 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-docker-deployment/">
+      
+      
+        <link rel="prev" href="../vicidial-dnc-management/">
+      
+      
+        <link rel="next" href="../vicidial-golang-api-client/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Running VICIdial in Docker: The Container Setup Nobody Talks About - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#running-vicidial-in-docker-the-container-setup-nobody-talks-about" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Running VICIdial in Docker: The Container Setup Nobody Talks About
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-article-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Article Exists
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-architecture-what-goes-in-containers-and-what-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Architecture: What Goes in Containers and What Doesn't
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Architecture: What Goes in Containers and What Doesn&#39;t">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#components-that-containerize-well" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components That Containerize Well
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-that-fight-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components That Fight You
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-architecture-we-actually-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Architecture We Actually Run
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-docker-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building the Docker Images
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building the Docker Images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web-frontend-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Frontend Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mysql-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-docker-compose-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Docker Compose Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-in-a-container-the-hard-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk in a Container: The Hard Part
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk in a Container: The Hard Part">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sip-configuration-pjsipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Configuration (pjsip.conf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rtp-port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RTP Port Range
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timing-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timing Source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ami-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#managing-state-and-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managing State and Recordings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Managing State and Recordings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Storage Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mysql-data-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Data Persistence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#horizontal-scaling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Horizontal Scaling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Horizontal Scaling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scaling-the-web-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling the Web Tier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scaling-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling Asterisk
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-checks-that-actually-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Health Checks That Actually Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Health Checks That Actually Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web-container-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Container Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-container-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Container Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-problems-and-how-we-fixed-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Problems and How We Fixed Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Problems and How We Fixed Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 1: One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-container-restart-kills-active-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 2: Container Restart Kills Active Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-mysql-performance-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 3: MySQL Performance Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-perl-daemons-dying-silently" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 4: Perl Daemons Dying Silently
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#production-deployment-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Deployment Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-it-worth-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is It Worth It?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-article-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Article Exists
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-architecture-what-goes-in-containers-and-what-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Architecture: What Goes in Containers and What Doesn't
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Architecture: What Goes in Containers and What Doesn&#39;t">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#components-that-containerize-well" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components That Containerize Well
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-that-fight-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components That Fight You
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-architecture-we-actually-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Architecture We Actually Run
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-docker-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building the Docker Images
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building the Docker Images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web-frontend-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Frontend Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mysql-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-docker-compose-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Docker Compose Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-in-a-container-the-hard-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk in a Container: The Hard Part
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk in a Container: The Hard Part">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sip-configuration-pjsipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Configuration (pjsip.conf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rtp-port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RTP Port Range
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timing-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timing Source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ami-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMI Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#managing-state-and-recordings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managing State and Recordings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Managing State and Recordings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording Storage Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mysql-data-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Data Persistence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#horizontal-scaling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Horizontal Scaling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Horizontal Scaling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scaling-the-web-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling the Web Tier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scaling-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling Asterisk
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-checks-that-actually-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Health Checks That Actually Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Health Checks That Actually Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web-container-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Container Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asterisk-container-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Container Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-problems-and-how-we-fixed-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Problems and How We Fixed Them
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Problems and How We Fixed Them">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 1: One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-container-restart-kills-active-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 2: Container Restart Kills Active Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-mysql-performance-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 3: MySQL Performance Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-perl-daemons-dying-silently" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 4: Perl Daemons Dying Silently
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#production-deployment-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Deployment Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-it-worth-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is It Worth It?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="running-vicidial-in-docker-the-container-setup-nobody-talks-about">Running VICIdial in Docker: The Container Setup Nobody Talks About<a class="headerlink" href="#running-vicidial-in-docker-the-container-setup-nobody-talks-about" title="Permanent link">&para;</a></h1>
+<p><strong>You can absolutely run VICIdial in Docker. You probably shouldn't do it the way you're thinking. This guide covers the container architecture that actually works in production, the parts that fight you, and the configs that took us six months of broken calls to figure out.</strong></p>
+<hr />
+<h2 id="why-this-article-exists">Why This Article Exists<a class="headerlink" href="#why-this-article-exists" title="Permanent link">&para;</a></h2>
+<p>Every few months, someone on the VICIdial community forums asks "can I run VICIdial in Docker?" and gets one of two responses: an enthusiastic "yes, just containerize everything!" from someone who's never done it, or a flat "no, too many moving parts" from someone who tried once and gave up when Asterisk couldn't negotiate codecs through Docker's network stack.</p>
+<p>Both answers are wrong. The truth is somewhere in the middle, and it's more nuanced than either camp admits.</p>
+<p>We've been running containerized VICIdial components in production for two years. Not as a proof of concept. Not in a lab. In production, handling 400,000+ calls per month across three client operations. Some of those months were smooth. Some were 3 AM pages because a container restart killed 47 active calls.</p>
+<p>This article is the guide we wish existed when we started. It covers what to containerize, what to leave on bare metal, how to handle the parts that don't want to be containerized, and the actual configuration files that make it work.</p>
+<hr />
+<h2 id="the-architecture-what-goes-in-containers-and-what-doesnt">The Architecture: What Goes in Containers and What Doesn't<a class="headerlink" href="#the-architecture-what-goes-in-containers-and-what-doesnt" title="Permanent link">&para;</a></h2>
+<p>Here's the first thing nobody tells you: you don't containerize all of VICIdial the same way. The system has very different components with very different requirements.</p>
+<h3 id="components-that-containerize-well">Components That Containerize Well<a class="headerlink" href="#components-that-containerize-well" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>VICIdial Web Frontend (Apache/PHP)</strong> — Stateless HTTP requests. Perfect container workload. Scale horizontally behind a load balancer. Zero issues.</p>
+</li>
+<li>
+<p><strong>VICIdial Processes (Perl daemons)</strong> — <code>AST_manager_send.pl</code>, <code>AST_manager_listen.pl</code>, <code>AST_VDauto_dial.pl</code>, <code>AST_VDadapt.pl</code>, and the other daemon scripts. They connect to MySQL and Asterisk AMI over TCP. They containerize fine as long as they can reach both endpoints.</p>
+</li>
+<li>
+<p><strong>Ancillary Services</strong> — Cron jobs, log rotation, the FastAGI server. All straightforward in containers.</p>
+</li>
+</ol>
+<h3 id="components-that-fight-you">Components That Fight You<a class="headerlink" href="#components-that-fight-you" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Asterisk</strong> — This is where it gets ugly. Asterisk needs raw UDP access for SIP signaling and RTP media. It needs a predictable, wide port range (10000-20000 by default). It does timing-sensitive operations that don't love container overhead. It can be containerized, but the network configuration is non-trivial.</p>
+</li>
+<li>
+<p><strong>MySQL</strong> — Databases in containers is a religious debate. VICIdial's MySQL handles high-write workloads (CDR inserts, real-time agent status updates). It works in Docker, but you absolutely need proper volume management and you should benchmark your I/O before going live.</p>
+</li>
+<li>
+<p><strong>Recordings</strong> — Call recordings generate gigabytes per day. They need persistent storage that survives container lifecycle. This is a volume management problem, not a Docker problem, but it catches people off guard.</p>
+</li>
+</ol>
+<h3 id="the-architecture-we-actually-run">The Architecture We Actually Run<a class="headerlink" href="#the-architecture-we-actually-run" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────────────────────────┐
+│                  Load Balancer                    │
+│              (nginx / HAProxy)                    │
+└──────────┬───────────────┬───────────────────────┘
+           │               │
+    ┌──────▼──────┐ ┌──────▼──────┐
+    │  Web Front  │ │  Web Front  │    ← Docker containers
+    │  (Apache)   │ │  (Apache)   │       (scale horizontally)
+    └──────┬──────┘ └──────┬──────┘
+           │               │
+    ┌──────▼───────────────▼──────┐
+    │        MySQL Primary         │    ← Docker or bare metal
+    │      (persistent volume)     │       (your call)
+    └──────┬───────────────┬──────┘
+           │               │
+    ┌──────▼──────┐ ┌──────▼──────┐
+    │  Asterisk 1 │ │  Asterisk 2 │    ← Docker with host networking
+    │  (dialer)   │ │  (dialer)   │       (NOT bridge mode)
+    └─────────────┘ └─────────────┘
+</code></pre></div>
+
+<p>The critical insight: <strong>Asterisk containers must use host networking mode.</strong> Docker's default bridge networking adds NAT translation that breaks SIP in ways that are extremely difficult to debug. You'll get one-way audio, registration failures, and codec negotiation timeouts that make you question your career choices.</p>
+<hr />
+<h2 id="building-the-docker-images">Building the Docker Images<a class="headerlink" href="#building-the-docker-images" title="Permanent link">&para;</a></h2>
+<h3 id="web-frontend-dockerfile">Web Frontend Dockerfile<a class="headerlink" href="#web-frontend-dockerfile" title="Permanent link">&para;</a></h3>
+<p>This is the straightforward one. VICIdial's web interface is PHP served by Apache. The only complexity is the Perl dependencies that some backend processes need.</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># VICIdial Web Frontend</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">rockylinux:9</span>
+
+<span class="k">RUN</span><span class="w"> </span>dnf<span class="w"> </span>-y<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>dnf<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>httpd<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>php<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>php-mysqlnd<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>php-gd<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>php-mbstring<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>php-xml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-DBI<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-DBD-MySQL<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Digest-SHA<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Digest-HMAC<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-MIME-Base64<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Net-Telnet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Time-HiRes<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Getopt-Long<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-IO-Socket-SSL<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-LWP-Protocol-https<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Net-SSLeay<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>dnf<span class="w"> </span>clean<span class="w"> </span>all
+
+<span class="c"># VICIdial source</span>
+<span class="k">COPY</span><span class="w"> </span>vicidial/<span class="w"> </span>/srv/www/htdocs/vicidial/
+<span class="k">COPY</span><span class="w"> </span>agc/<span class="w"> </span>/srv/www/htdocs/agc/
+
+<span class="c"># Apache config</span>
+<span class="k">COPY</span><span class="w"> </span>configs/httpd-vicidial.conf<span class="w"> </span>/etc/httpd/conf.d/vicidial.conf
+
+<span class="c"># Database connection config</span>
+<span class="k">COPY</span><span class="w"> </span>configs/astguiclient.conf<span class="w"> </span>/etc/astguiclient.conf
+
+<span class="c"># Health check endpoint</span>
+<span class="k">COPY</span><span class="w"> </span>configs/healthcheck.php<span class="w"> </span>/srv/www/htdocs/healthcheck.php
+
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">80 443</span>
+
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;httpd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;-D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FOREGROUND&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<p>The <code>/etc/astguiclient.conf</code> file is the single most important configuration file in the VICIdial ecosystem. Every Perl process reads it to find the database. In a containerized setup, you need to point it at your MySQL container's hostname:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/astguiclient.conf</span>
+<span class="na">VARDB_server</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; mysql</span>
+<span class="na">VARDB_database</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; asterisk</span>
+<span class="na">VARDB_user</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; cron</span>
+<span class="na">VARDB_pass</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; your_secure_password_here</span>
+<span class="na">VARDB_custom_user</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; custom</span>
+<span class="na">VARDB_custom_pass</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; your_custom_password_here</span>
+<span class="na">VARDB_port</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; 3306</span>
+
+<span class="na">VARserver_ip</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; CONTAINER_IP</span>
+<span class="na">VARactive_keepalives</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; 1234568</span>
+<span class="na">VARasterisk_version</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; 20</span>
+<span class="na">VARFTP_host</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; recordings</span>
+<span class="na">VARFTP_user</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; recordings</span>
+<span class="na">VARFTP_pass</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; recordings_password</span>
+<span class="na">VARHTTP_path</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; /vicidial</span>
+</code></pre></div>
+
+<p>The <code>VARserver_ip</code> value is tricky in containers. On bare metal, it's the machine's IP. In Docker, it depends on your networking mode. With host networking, use the host IP. With bridge networking, use the container's bridge IP — but you'll need to handle service discovery.</p>
+<h3 id="asterisk-dockerfile">Asterisk Dockerfile<a class="headerlink" href="#asterisk-dockerfile" title="Permanent link">&para;</a></h3>
+<p>This is where the complexity lives.</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># VICIdial Asterisk Telephony</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">rockylinux:9</span>
+
+<span class="k">RUN</span><span class="w"> </span>dnf<span class="w"> </span>-y<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>dnf<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>gcc<span class="w"> </span>gcc-c++<span class="w"> </span>make<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>kernel-headers<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ncurses-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>libxml2-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>sqlite-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>openssl-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>libuuid-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>jansson-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>libsrtp-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>speex-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>opus-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>newt-devel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>wget<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-DBI<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-DBD-MySQL<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Digest-SHA<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Net-Telnet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>perl-Time-HiRes<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>sox<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>lame<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>dnf<span class="w"> </span>clean<span class="w"> </span>all
+
+<span class="c"># Build Asterisk from source</span>
+<span class="k">ARG</span><span class="w"> </span><span class="nv">ASTERISK_VERSION</span><span class="o">=</span><span class="m">20</span>.12.0
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/usr/src</span>
+<span class="k">RUN</span><span class="w"> </span>wget<span class="w"> </span>-q<span class="w"> </span>https://downloads.asterisk.org/pub/telephony/asterisk/asterisk-<span class="si">${</span><span class="nv">ASTERISK_VERSION</span><span class="si">}</span>.tar.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>tar<span class="w"> </span>xzf<span class="w"> </span>asterisk-<span class="si">${</span><span class="nv">ASTERISK_VERSION</span><span class="si">}</span>.tar.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>asterisk-<span class="si">${</span><span class="nv">ASTERISK_VERSION</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>contrib/scripts/get_mp3_source.sh<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>./configure<span class="w"> </span>--with-pjproject-bundled<span class="w"> </span>--with-jansson-bundled<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>menuselect.makeopts<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>menuselect/menuselect<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--enable<span class="w"> </span>CORE-SOUNDS-EN-ULAW<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--enable<span class="w"> </span>MOH-OPSOUND-ULAW<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--enable<span class="w"> </span>EXTRA-SOUNDS-EN-ULAW<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--enable<span class="w"> </span>res_snmp<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--enable<span class="w"> </span>chan_sip<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>menuselect.makeopts<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>install<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>samples<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/usr/src/asterisk-*
+
+<span class="c"># VICIdial AGI scripts</span>
+<span class="k">COPY</span><span class="w"> </span>agi/<span class="w"> </span>/var/lib/asterisk/agi-bin/
+<span class="k">RUN</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/var/lib/asterisk/agi-bin/*.agi
+
+<span class="c"># Asterisk configs</span>
+<span class="k">COPY</span><span class="w"> </span>configs/asterisk/<span class="w"> </span>/etc/asterisk/
+
+<span class="c"># Recordings volume mount point</span>
+<span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/var/spool/asterisk/monitor
+
+<span class="c"># VICIdial Perl daemons</span>
+<span class="k">COPY</span><span class="w"> </span>perl-scripts/<span class="w"> </span>/usr/share/astguiclient/
+<span class="k">COPY</span><span class="w"> </span>configs/astguiclient.conf<span class="w"> </span>/etc/astguiclient.conf
+
+<span class="k">COPY</span><span class="w"> </span>entrypoint-asterisk.sh<span class="w"> </span>/entrypoint.sh
+<span class="k">RUN</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/entrypoint.sh
+
+<span class="c"># SIP + RTP ports (only matters if not using host networking)</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">5060/udp 5060/tcp 5061/tcp 10000-20000/udp</span>
+
+<span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/entrypoint.sh&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<p>The entrypoint script handles starting both Asterisk and the VICIdial Perl daemons:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="c1"># Wait for MySQL to be available</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Waiting for MySQL...&quot;</span>
+<span class="k">while</span><span class="w"> </span>!<span class="w"> </span>perl<span class="w"> </span>-MDBI<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;DBI-&gt;connect(&#39;dbi:mysql:asterisk:mysql:3306&#39;,&#39;cron&#39;,&#39;</span><span class="si">${</span><span class="nv">DB_PASS</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>sleep<span class="w"> </span><span class="m">2</span>
+<span class="k">done</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;MySQL is up.&quot;</span>
+
+<span class="c1"># Set server IP in astguiclient.conf</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SERVER_IP</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/VARserver_ip =&gt;.*/VARserver_ip =&gt; </span><span class="nv">$SERVER_IP</span><span class="s2">/&quot;</span><span class="w"> </span>/etc/astguiclient.conf
+<span class="k">fi</span>
+
+<span class="c1"># Start Asterisk in background</span>
+asterisk<span class="w"> </span>-f<span class="w"> </span>-U<span class="w"> </span>asterisk<span class="w"> </span>-G<span class="w"> </span>asterisk<span class="w"> </span><span class="p">&amp;</span>
+<span class="nv">ASTERISK_PID</span><span class="o">=</span><span class="nv">$!</span>
+
+<span class="c1"># Wait for Asterisk to be fully loaded</span>
+sleep<span class="w"> </span><span class="m">5</span>
+<span class="k">until</span><span class="w"> </span>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show version&quot;</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>sleep<span class="w"> </span><span class="m">1</span>
+<span class="k">done</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Asterisk is running.&quot;</span>
+
+<span class="c1"># Start VICIdial keepalive processes</span>
+<span class="nb">cd</span><span class="w"> </span>/usr/share/astguiclient/
+perl<span class="w"> </span>AST_manager_send.pl<span class="w"> </span><span class="p">&amp;</span>
+perl<span class="w"> </span>AST_manager_listen.pl<span class="w"> </span><span class="p">&amp;</span>
+perl<span class="w"> </span>AST_VDauto_dial.pl<span class="w"> </span><span class="p">&amp;</span>
+perl<span class="w"> </span>AST_VDadapt.pl<span class="w"> </span><span class="p">&amp;</span>
+perl<span class="w"> </span>AST_VDremote_agents.pl<span class="w"> </span><span class="p">&amp;</span>
+perl<span class="w"> </span>AST_update.pl<span class="w"> </span><span class="p">&amp;</span>
+perl<span class="w"> </span>AST_send_action_child.pl<span class="w"> </span><span class="p">&amp;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;VICIdial processes started.&quot;</span>
+
+<span class="c1"># Keep container running, follow Asterisk</span>
+<span class="nb">wait</span><span class="w"> </span><span class="nv">$ASTERISK_PID</span>
+</code></pre></div>
+
+<h3 id="mysql-dockerfile">MySQL Dockerfile<a class="headerlink" href="#mysql-dockerfile" title="Permanent link">&para;</a></h3>
+<p>For MySQL, you have two good options: use the official MySQL 8 image or build a custom one with VICIdial's schema pre-loaded.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">mysql:8.0</span>
+
+<span class="c"># VICIdial requires specific SQL mode settings</span>
+<span class="k">COPY</span><span class="w"> </span>configs/my.cnf<span class="w"> </span>/etc/mysql/conf.d/vicidial.cnf
+
+<span class="c"># Pre-load schema on first run</span>
+<span class="k">COPY</span><span class="w"> </span>sql/vicidial-schema.sql<span class="w"> </span>/docker-entrypoint-initdb.d/01-schema.sql
+<span class="k">COPY</span><span class="w"> </span>sql/vicidial-initial-data.sql<span class="w"> </span>/docker-entrypoint-initdb.d/02-data.sql
+
+<span class="c"># Tuning for call center workloads</span>
+<span class="c"># These get overridden by the .cnf file but are here for documentation</span>
+<span class="k">ENV</span><span class="w"> </span><span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span>changeme
+<span class="k">ENV</span><span class="w"> </span><span class="nv">MYSQL_DATABASE</span><span class="o">=</span>asterisk
+</code></pre></div>
+
+<p>The MySQL configuration matters a lot for VICIdial's write-heavy workload:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># configs/my.cnf</span>
+<span class="k">[mysqld]</span>
+<span class="na">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4G</span>
+<span class="na">innodb_log_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">512M</span>
+<span class="na">innodb_flush_log_at_trx_commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">innodb_flush_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">O_DIRECT</span>
+<span class="na">innodb_io_capacity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2000</span>
+<span class="na">innodb_io_capacity_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4000</span>
+
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">500</span>
+<span class="na">max_allowed_packet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+
+<span class="c1"># VICIdial hits these tables hard</span>
+<span class="na">table_open_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4000</span>
+<span class="na">thread_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128</span>
+
+<span class="c1"># Slow query logging — you will need this</span>
+<span class="na">slow_query_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">slow_query_log_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/slow.log</span>
+<span class="na">long_query_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+
+<span class="c1"># Binary logging for replication (optional but recommended)</span>
+<span class="na">server-id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">log-bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mysql-bin</span>
+<span class="na">binlog_expire_logs_seconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">604800</span>
+</code></pre></div>
+
+<hr />
+<h2 id="the-docker-compose-stack">The Docker Compose Stack<a class="headerlink" href="#the-docker-compose-stack" title="Permanent link">&para;</a></h2>
+<p>Here's where it all comes together. This is the production <code>docker-compose.yml</code> we actually use:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.8&quot;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mysql</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile.mysql</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial-mysql</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MYSQL_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MYSQL_ROOT_PASS}&quot;</span>
+<span class="w">      </span><span class="nt">MYSQL_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk</span>
+<span class="w">      </span><span class="nt">MYSQL_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cron</span>
+<span class="w">      </span><span class="nt">MYSQL_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MYSQL_CRON_PASS}&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql_data:/var/lib/mysql</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./configs/my.cnf:/etc/mysql/conf.d/vicidial.cnf:ro</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql_logs:/var/log/mysql</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;3306:3306&quot;</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;mysqladmin&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;ping&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-h&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;localhost&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial-internal</span>
+
+<span class="w">  </span><span class="nt">web</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile.web</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial-web</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">mysql</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<span class="w">      </span><span class="nt">DB_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cron</span>
+<span class="w">      </span><span class="nt">DB_PASS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MYSQL_CRON_PASS}&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">recordings:/var/spool/asterisk/monitor</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web_logs:/var/log/httpd</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;443:443&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;80:80&quot;</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost/healthcheck.php&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial-internal</span>
+
+<span class="w">  </span><span class="nt">asterisk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile.asterisk</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial-asterisk</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">mysql</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">SERVER_IP</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${HOST_IP}&quot;</span>
+<span class="w">      </span><span class="nt">DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<span class="w">      </span><span class="nt">DB_PASS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MYSQL_CRON_PASS}&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">recordings:/var/spool/asterisk/monitor</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asterisk_logs:/var/log/asterisk</span>
+<span class="w">    </span><span class="c1"># THIS IS THE CRITICAL LINE</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">host</span>
+<span class="w">    </span><span class="c1"># Since we&#39;re using host networking, we don&#39;t need port mappings</span>
+<span class="w">    </span><span class="c1"># Asterisk binds directly to host ports 5060, 10000-20000</span>
+
+<span class="w">  </span><span class="nt">recordings-nfs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">erichough/nfs-server</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial-nfs</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">recordings:/data</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">NFS_EXPORT_0</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/data</span><span class="nv"> </span><span class="s">*(rw,sync,no_subtree_check,no_root_squash)&quot;</span>
+<span class="w">    </span><span class="nt">cap_add</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SYS_ADMIN</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;2049:2049&quot;</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vicidial-internal</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mysql_data</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">  </span><span class="nt">recordings</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">    </span><span class="nt">driver_opts</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
+<span class="w">      </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/vicidial/recordings</span>
+<span class="w">      </span><span class="nt">o</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bind</span>
+<span class="w">  </span><span class="nt">mysql_logs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">  </span><span class="nt">web_logs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">  </span><span class="nt">asterisk_logs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">vicidial-internal</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span>
+</code></pre></div>
+
+<p>Notice the deliberate split: the web and MySQL containers use a bridge network for internal communication. The Asterisk container uses <code>network_mode: host</code> because it needs direct access to the host's network interfaces for SIP and RTP traffic.</p>
+<p>This creates a problem: the Asterisk container can't use Docker DNS to resolve the <code>mysql</code> hostname. You need to configure the <code>astguiclient.conf</code> inside the Asterisk container to use the MySQL container's IP directly, or bind MySQL to the host network too, or use the Docker host's IP with the exposed MySQL port.</p>
+<p>The cleanest solution:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># In entrypoint-asterisk.sh, resolve MySQL&#39;s container IP</span>
+<span class="nv">MYSQL_IP</span><span class="o">=</span><span class="k">$(</span>getent<span class="w"> </span>hosts<span class="w"> </span>mysql<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="k">)</span>
+<span class="c1"># Falls back to the host IP if running in host network mode</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MYSQL_IP</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">MYSQL_IP</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HOST_IP</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">fi</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/VARDB_server =&gt;.*/VARDB_server =&gt; </span><span class="nv">$MYSQL_IP</span><span class="s2">/&quot;</span><span class="w"> </span>/etc/astguiclient.conf
+</code></pre></div>
+
+<hr />
+<h2 id="asterisk-in-a-container-the-hard-part">Asterisk in a Container: The Hard Part<a class="headerlink" href="#asterisk-in-a-container-the-hard-part" title="Permanent link">&para;</a></h2>
+<p>This section exists because we burned a lot of hours figuring this out. Asterisk in Docker works, but there are specific configuration requirements that differ from bare-metal installations.</p>
+<h3 id="sip-configuration-pjsipconf">SIP Configuration (pjsip.conf)<a class="headerlink" href="#sip-configuration-pjsipconf" title="Permanent link">&para;</a></h3>
+<p>When Asterisk runs inside a container — even with host networking — NAT detection can behave differently. Your <code>pjsip.conf</code> transport section needs explicit configuration:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/pjsip.conf</span>
+
+<span class="k">[transport-udp]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">transport</span>
+<span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">udp</span>
+<span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0:5060</span>
+<span class="na">local_net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10.0.0.0/8</span>
+<span class="na">local_net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">172.16.0.0/12</span>
+<span class="na">local_net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">192.168.0.0/16</span>
+<span class="na">external_media_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">YOUR_PUBLIC_IP</span>
+<span class="na">external_signaling_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">YOUR_PUBLIC_IP</span>
+
+<span class="k">[transport-tcp]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">transport</span>
+<span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tcp</span>
+<span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0:5060</span>
+<span class="na">local_net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10.0.0.0/8</span>
+<span class="na">local_net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">172.16.0.0/12</span>
+<span class="na">local_net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">192.168.0.0/16</span>
+<span class="na">external_media_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">YOUR_PUBLIC_IP</span>
+<span class="na">external_signaling_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">YOUR_PUBLIC_IP</span>
+</code></pre></div>
+
+<p>The <code>local_net</code> entries are critical. Docker's bridge network uses <code>172.17.0.0/16</code> by default, which falls within the <code>172.16.0.0/12</code> range. Even with host networking, Asterisk may see Docker-related addresses and needs to know they're internal.</p>
+<h3 id="rtp-port-range">RTP Port Range<a class="headerlink" href="#rtp-port-range" title="Permanent link">&para;</a></h3>
+<p>VICIdial's default RTP range is 10000-20000. In a containerized environment, you should tighten this:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/rtp.conf</span>
+<span class="k">[general]</span>
+<span class="na">rtpstart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10000</span>
+<span class="na">rtpend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">15000</span>
+<span class="na">rtpchecksums</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+<span class="na">dtmftimeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3000</span>
+<span class="na">strictrtp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+</code></pre></div>
+
+<p>Why shrink the range? Two reasons:
+1. If you're NOT using host networking (against our advice, but sometimes necessary), you need to EXPOSE this entire range. Docker creates an iptables rule for every exposed port. 10,000 port mappings will slow container startup to a crawl and eat memory.
+2. For most operations, 5,000 RTP ports supports 2,500 simultaneous calls. Unless you're running a massive operation, that's plenty.</p>
+<h3 id="timing-source">Timing Source<a class="headerlink" href="#timing-source" title="Permanent link">&para;</a></h3>
+<p>Asterisk needs a timing source for proper MusicOnHold, conferencing, and some dial plan operations. On bare metal, it uses <code>/dev/dahdi/timer</code> or the kernel's timerfd. In Docker:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/modules.conf</span>
+<span class="k">[modules]</span>
+<span class="na">autoload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_timing_dahdi.so</span><span class="w">    </span><span class="c1">; DAHDI isn&#39;t available in containers</span>
+<span class="na">load</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; res_timing_timerfd.so</span><span class="w">    </span><span class="c1">; Use timerfd instead — works everywhere</span>
+<span class="na">noload</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; chan_dahdi.so</span><span class="w">           </span><span class="c1">; No DAHDI hardware in containers</span>
+</code></pre></div>
+
+<p>If you skip this, you'll get warnings about missing timing sources, and MusicOnHold will play at weird speeds or not at all. Agents on hold hearing chipmunk music is a real thing that happened to us.</p>
+<h3 id="ami-configuration">AMI Configuration<a class="headerlink" href="#ami-configuration" title="Permanent link">&para;</a></h3>
+<p>The VICIdial Perl daemons connect to Asterisk via AMI (Asterisk Manager Interface). In a containerized setup with host networking, this usually just works. But if you've got web containers on a bridge network that need AMI access:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/manager.conf</span>
+<span class="k">[general]</span>
+<span class="na">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5038</span>
+<span class="na">bindaddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0</span>
+
+<span class="k">[cron]</span>
+<span class="na">secret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">your_ami_secret</span>
+<span class="na">read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">all</span>
+<span class="na">write</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">all</span>
+<span class="na">writetimeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5000</span>
+<span class="na">deny</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0/0.0.0.0</span>
+<span class="c1">; Allow Docker bridge network</span>
+<span class="na">permit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">172.16.0.0/255.240.0.0</span>
+<span class="c1">; Allow localhost</span>
+<span class="na">permit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1/255.255.255.255</span>
+<span class="c1">; Allow host network</span>
+<span class="na">permit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10.0.0.0/255.0.0.0</span>
+</code></pre></div>
+
+<hr />
+<h2 id="managing-state-and-recordings">Managing State and Recordings<a class="headerlink" href="#managing-state-and-recordings" title="Permanent link">&para;</a></h2>
+<h3 id="recording-storage-architecture">Recording Storage Architecture<a class="headerlink" href="#recording-storage-architecture" title="Permanent link">&para;</a></h3>
+<p>Call recordings are the biggest storage consumer in any VICIdial deployment. A single agent generates roughly 2-4 GB of recordings per day depending on talk time and codec.</p>
+<p>For a 50-agent operation running 8 hours, that's 100-200 GB of new recordings daily. You need a storage strategy that handles this volume and survives container restarts.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># In docker-compose.yml — use a bind mount, not a Docker volume</span>
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">recordings</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">    </span><span class="nt">driver_opts</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
+<span class="w">      </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mnt/recordings</span><span class="w">     </span><span class="c1"># This is a separate disk / NFS mount</span>
+<span class="w">      </span><span class="nt">o</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bind</span>
+</code></pre></div>
+
+<p>The bind mount approach is better than Docker named volumes for recordings because:
+1. You can point it at a dedicated disk or NFS share
+2. The files are accessible outside Docker for backup and archival
+3. You can mount the same path in multiple containers (web for playback, Asterisk for writing)</p>
+<p>For multi-server setups, NFS or object storage (MinIO, S3) is the right answer:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Mount NFS on the Docker host, then bind-mount into containers</span>
+mount<span class="w"> </span>-t<span class="w"> </span>nfs<span class="w"> </span>recordings-server:/recordings<span class="w"> </span>/mnt/recordings
+
+<span class="c1"># Or use a Docker NFS volume driver</span>
+docker<span class="w"> </span>volume<span class="w"> </span>create<span class="w"> </span>--driver<span class="w"> </span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--opt<span class="w"> </span><span class="nv">type</span><span class="o">=</span>nfs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--opt<span class="w"> </span><span class="nv">o</span><span class="o">=</span><span class="nv">addr</span><span class="o">=</span><span class="m">192</span>.168.1.100,rw,nfsvers<span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--opt<span class="w"> </span><span class="nv">device</span><span class="o">=</span>:/recordings<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>vicidial-recordings
+</code></pre></div>
+
+<h3 id="mysql-data-persistence">MySQL Data Persistence<a class="headerlink" href="#mysql-data-persistence" title="Permanent link">&para;</a></h3>
+<p>For MySQL, use a named volume with a dedicated partition:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create a dedicated partition and format it</span>
+mkfs.xfs<span class="w"> </span>/dev/sdb1
+mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/mysql-data
+mount<span class="w"> </span>/dev/sdb1<span class="w"> </span>/opt/mysql-data
+
+<span class="c1"># Add to fstab</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;/dev/sdb1 /opt/mysql-data xfs defaults,noatime 0 2&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/fstab
+</code></pre></div>
+
+<p>Then in your compose file:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mysql_data</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">    </span><span class="nt">driver_opts</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
+<span class="w">      </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/mysql-data</span>
+<span class="w">      </span><span class="nt">o</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bind</span>
+</code></pre></div>
+
+<h3 id="backup-strategy">Backup Strategy<a class="headerlink" href="#backup-strategy" title="Permanent link">&para;</a></h3>
+<p>Containerized databases need backup too. Here's the cron job we run on the Docker host:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /etc/cron.d/vicidial-backup</span>
+
+<span class="c1"># MySQL dump — runs inside the container</span>
+<span class="m">0</span><span class="w"> </span><span class="m">2</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>vicidial-mysql<span class="w"> </span>mysqldump<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="s2">&quot;</span><span class="si">${</span><span class="nv">MYSQL_ROOT_PASS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--single-transaction<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--routines<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--triggers<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>asterisk<span class="w"> </span><span class="p">|</span><span class="w"> </span>gzip<span class="w"> </span>&gt;<span class="w"> </span>/opt/backups/vicidial-<span class="k">$(</span>date<span class="w"> </span>+<span class="se">\%</span>Y<span class="se">\%</span>m<span class="se">\%</span>d<span class="k">)</span>.sql.gz
+
+<span class="c1"># Keep 14 days of backups</span>
+<span class="m">0</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>find<span class="w"> </span>/opt/backups/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;vicidial-*.sql.gz&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+14<span class="w"> </span>-delete
+
+<span class="c1"># Recording archival — move recordings older than 90 days to cold storage</span>
+<span class="m">0</span><span class="w"> </span><span class="m">4</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span><span class="m">0</span><span class="w"> </span>find<span class="w"> </span>/mnt/recordings/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.wav&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+90<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-exec<span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>mv<span class="w"> </span><span class="o">{}</span><span class="w"> </span>s3://vicidial-recordings-archive/<span class="w"> </span><span class="se">\;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="horizontal-scaling">Horizontal Scaling<a class="headerlink" href="#horizontal-scaling" title="Permanent link">&para;</a></h2>
+<p>One of the actual benefits of containerizing VICIdial is horizontal scaling. The web frontend scales trivially. Asterisk scales with some planning.</p>
+<h3 id="scaling-the-web-tier">Scaling the Web Tier<a class="headerlink" href="#scaling-the-web-tier" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Scale to 4 web frontend containers</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--scale<span class="w"> </span><span class="nv">web</span><span class="o">=</span><span class="m">4</span>
+</code></pre></div>
+
+<p>Put an nginx or HAProxy in front:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/nginx/conf.d/vicidial.conf</span>
+<span class="k">upstream</span><span class="w"> </span><span class="s">vicidial_web</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">least_conn</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">web-1</span><span class="p">:</span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">web-2</span><span class="p">:</span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">web-3</span><span class="p">:</span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">web-4</span><span class="p">:</span><span class="mi">80</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">dialer.example.com</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">ssl_certificate</span><span class="w"> </span><span class="s">/etc/ssl/certs/dialer.crt</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/ssl/private/dialer.key</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://vicidial_web</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Forwarded-For</span><span class="w"> </span><span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Forwarded-Proto</span><span class="w"> </span><span class="nv">$scheme</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1"># WebSocket support for real-time agent screens</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/ws</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://vicidial_web</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">&quot;upgrade&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="scaling-asterisk">Scaling Asterisk<a class="headerlink" href="#scaling-asterisk" title="Permanent link">&para;</a></h3>
+<p>Asterisk scaling is different. You don't scale it the same way you scale web servers because each Asterisk instance needs:
+- Its own SIP registration with your carrier
+- Its own IP address (or port range) for RTP
+- Its own entry in VICIdial's <code>servers</code> table in MySQL</p>
+<p>This is exactly how VICIdial's multi-server architecture works on bare metal — it's a cluster pattern, not a scale-out pattern.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Register each Asterisk server in VICIdial</span>
+<span class="c1"># (Do this through the admin GUI at Admin &gt; Servers, not direct SQL)</span>
+
+<span class="c1"># Server 1: handles campaigns A and B</span>
+<span class="c1"># Server 2: handles campaigns C and D</span>
+<span class="c1"># Each server has its own carrier trunk config</span>
+</code></pre></div>
+
+<p>The configuration in the VICIdial admin GUI under Admin &gt; Servers lets you assign campaigns to specific Asterisk instances. Each container becomes a "server" in VICIdial's cluster model.</p>
+<hr />
+<h2 id="health-checks-that-actually-work">Health Checks That Actually Work<a class="headerlink" href="#health-checks-that-actually-work" title="Permanent link">&para;</a></h2>
+<p>Docker health checks for VICIdial need to check more than "is the process running." A container can have a running Apache process but broken PHP, or a running Asterisk process with no SIP registration.</p>
+<h3 id="web-container-health-check">Web Container Health Check<a class="headerlink" href="#web-container-health-check" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="c1">// /srv/www/htdocs/healthcheck.php</span>
+<span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Type: application/json&#39;</span><span class="p">);</span>
+
+<span class="nv">$checks</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="nv">$healthy</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+
+<span class="c1">// Check MySQL connection</span>
+<span class="nv">$db</span> <span class="o">=</span> <span class="o">@</span><span class="k">new</span> <span class="nx">mysqli</span><span class="p">(</span>
+    <span class="nb">getenv</span><span class="p">(</span><span class="s1">&#39;DB_HOST&#39;</span><span class="p">)</span> <span class="o">?:</span> <span class="s1">&#39;mysql&#39;</span><span class="p">,</span>
+    <span class="nb">getenv</span><span class="p">(</span><span class="s1">&#39;DB_USER&#39;</span><span class="p">)</span> <span class="o">?:</span> <span class="s1">&#39;cron&#39;</span><span class="p">,</span>
+    <span class="nb">getenv</span><span class="p">(</span><span class="s1">&#39;DB_PASS&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;asterisk&#39;</span>
+<span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$db</span><span class="o">-&gt;</span><span class="na">connect_error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$checks</span><span class="p">[</span><span class="s1">&#39;mysql&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FAIL: &#39;</span> <span class="o">.</span> <span class="nv">$db</span><span class="o">-&gt;</span><span class="na">connect_error</span><span class="p">;</span>
+    <span class="nv">$healthy</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// Actually run a query to verify the connection works</span>
+    <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) AS cnt FROM vicidial_campaigns&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">fetch_assoc</span><span class="p">();</span>
+        <span class="nv">$checks</span><span class="p">[</span><span class="s1">&#39;mysql&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;OK: &#39;</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">&#39;cnt&#39;</span><span class="p">]</span> <span class="o">.</span> <span class="s1">&#39; campaigns&#39;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nv">$checks</span><span class="p">[</span><span class="s1">&#39;mysql&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FAIL: query error&#39;</span><span class="p">;</span>
+        <span class="nv">$healthy</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$db</span><span class="o">-&gt;</span><span class="na">close</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Check PHP extensions</span>
+<span class="nv">$required_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mysqlnd&#39;</span><span class="p">,</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="s1">&#39;mbstring&#39;</span><span class="p">,</span> <span class="s1">&#39;xml&#39;</span><span class="p">];</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$required_extensions</span> <span class="k">as</span> <span class="nv">$ext</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">extension_loaded</span><span class="p">(</span><span class="nv">$ext</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$checks</span><span class="p">[</span><span class="s1">&#39;php_&#39;</span> <span class="o">.</span> <span class="nv">$ext</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FAIL: not loaded&#39;</span><span class="p">;</span>
+        <span class="nv">$healthy</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nb">http_response_code</span><span class="p">(</span><span class="nv">$healthy</span> <span class="o">?</span> <span class="mi">200</span> <span class="o">:</span> <span class="mi">503</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nb">json_encode</span><span class="p">([</span>
+    <span class="s1">&#39;status&#39;</span> <span class="o">=&gt;</span> <span class="nv">$healthy</span> <span class="o">?</span> <span class="s1">&#39;healthy&#39;</span> <span class="o">:</span> <span class="s1">&#39;unhealthy&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;checks&#39;</span> <span class="o">=&gt;</span> <span class="nv">$checks</span><span class="p">,</span>
+    <span class="s1">&#39;timestamp&#39;</span> <span class="o">=&gt;</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+<span class="p">]);</span>
+</code></pre></div>
+
+<h3 id="asterisk-container-health-check">Asterisk Container Health Check<a class="headerlink" href="#asterisk-container-health-check" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /usr/local/bin/asterisk-healthcheck.sh</span>
+
+<span class="c1"># Check 1: Is Asterisk responsive?</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show version&quot;</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAIL: Asterisk not responding to CLI&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check 2: Are SIP trunks registered?</span>
+<span class="nv">REGISTERED</span><span class="o">=</span><span class="k">$(</span>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;pjsip show registrations&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;Registered&quot;</span><span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REGISTERED</span><span class="s2">&quot;</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAIL: No SIP registrations active&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check 3: Are VICIdial Perl daemons running?</span>
+<span class="k">for</span><span class="w"> </span>proc<span class="w"> </span><span class="k">in</span><span class="w"> </span>AST_manager_send<span class="w"> </span>AST_manager_listen<span class="w"> </span>AST_VDauto_dial<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span>pgrep<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$proc</span><span class="s2">&quot;</span><span class="w"> </span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAIL: </span><span class="nv">$proc</span><span class="s2"> not running&quot;</span>
+<span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+
+<span class="c1"># Check 4: Can we reach MySQL?</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span>perl<span class="w"> </span>-MDBI<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;DBI-&gt;connect(&#39;dbi:mysql:asterisk:</span><span class="si">${</span><span class="nv">DB_HOST</span><span class="si">}</span><span class="s2">:3306&#39;,&#39;cron&#39;,&#39;</span><span class="si">${</span><span class="nv">DB_PASS</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAIL: Cannot connect to MySQL&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;OK: Asterisk + VICIdial daemons healthy&quot;</span>
+<span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<p>Add to the compose file:</p>
+<div class="codehilite"><pre><span></span><code><span class="w">  </span><span class="nt">asterisk</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># ... other config ...</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;/usr/local/bin/asterisk-healthcheck.sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span><span class="w">   </span><span class="c1"># Give Asterisk time to start</span>
+</code></pre></div>
+
+<hr />
+<h2 id="common-problems-and-how-we-fixed-them">Common Problems and How We Fixed Them<a class="headerlink" href="#common-problems-and-how-we-fixed-them" title="Permanent link">&para;</a></h2>
+<h3 id="problem-1-one-way-audio">Problem 1: One-Way Audio<a class="headerlink" href="#problem-1-one-way-audio" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Agents can hear the lead but the lead can't hear the agent, or vice versa.</p>
+<p><strong>Cause:</strong> RTP packets are being sent to the wrong address because Asterisk doesn't know its external IP when running in a container.</p>
+<p><strong>Fix:</strong> Set <code>external_media_address</code> and <code>external_signaling_address</code> in <code>pjsip.conf</code> to your public IP. Also verify that your RTP port range is accessible through any firewalls.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Verify RTP is flowing correctly</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;rtp set debug on&quot;</span>
+<span class="c1"># Look for &quot;Sent RTP packet to&quot; and verify the IP is correct</span>
+</code></pre></div>
+
+<h3 id="problem-2-container-restart-kills-active-calls">Problem 2: Container Restart Kills Active Calls<a class="headerlink" href="#problem-2-container-restart-kills-active-calls" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Docker restarting the Asterisk container drops every active call.</p>
+<p><strong>Cause:</strong> This is by design. There's no way to gracefully migrate active Asterisk channels between processes.</p>
+<p><strong>Fix:</strong> Don't let Docker restart your Asterisk container during business hours. Use a maintenance window approach:</p>
+<div class="codehilite"><pre><span></span><code><span class="w">  </span><span class="nt">asterisk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">update_config</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">start-first</span><span class="w">    </span><span class="c1"># Start new container before stopping old</span>
+<span class="w">        </span><span class="nt">failure_action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rollback</span>
+</code></pre></div>
+
+<p>For zero-downtime updates, use VICIdial's multi-server architecture: drain calls from Server A, update Server A's container, shift calls back, then update Server B.</p>
+<h3 id="problem-3-mysql-performance-degradation">Problem 3: MySQL Performance Degradation<a class="headerlink" href="#problem-3-mysql-performance-degradation" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Agent screens become slow, real-time reports lag, calls take longer to connect.</p>
+<p><strong>Cause:</strong> Docker's storage driver (overlay2) adds overhead to disk I/O. Combined with VICIdial's write-heavy workload, you hit I/O limits faster than on bare metal.</p>
+<p><strong>Fix:</strong> Use direct bind mounts instead of Docker volumes. Put MySQL data on an SSD or NVMe. Tune <code>innodb_flush_log_at_trx_commit = 2</code> (it's in our config above) to batch commits instead of flushing every transaction.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check I/O performance inside the container</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>vicidial-mysql<span class="w"> </span>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/zero<span class="w"> </span><span class="nv">of</span><span class="o">=</span>/tmp/iotest<span class="w"> </span><span class="nv">bs</span><span class="o">=</span>1M<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">1024</span><span class="w"> </span><span class="nv">oflag</span><span class="o">=</span>dsync
+<span class="c1"># Compare to the same test on the host</span>
+<span class="c1"># If the container is &gt;20% slower, your storage driver configuration needs work</span>
+</code></pre></div>
+
+<h3 id="problem-4-perl-daemons-dying-silently">Problem 4: Perl Daemons Dying Silently<a class="headerlink" href="#problem-4-perl-daemons-dying-silently" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Calls stop going out. The dialer looks stuck. Asterisk is running, MySQL is fine.</p>
+<p><strong>Cause:</strong> VICIdial's Perl daemons (<code>AST_VDauto_dial.pl</code> etc.) crash and don't restart because they're background processes inside the container.</p>
+<p><strong>Fix:</strong> Use a process supervisor inside the container. We use supervisord:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/supervisord.d/vicidial.ini</span>
+<span class="k">[program:asterisk]</span>
+<span class="na">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/usr/sbin/asterisk -f -U asterisk -G asterisk</span>
+<span class="na">autorestart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">startsecs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10</span>
+<span class="na">stopwaitsecs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">30</span>
+
+<span class="k">[program:AST_manager_send]</span>
+<span class="na">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/usr/bin/perl /usr/share/astguiclient/AST_manager_send.pl</span>
+<span class="na">autorestart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">startsecs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5</span>
+
+<span class="k">[program:AST_manager_listen]</span>
+<span class="na">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/usr/bin/perl /usr/share/astguiclient/AST_manager_listen.pl</span>
+<span class="na">autorestart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">startsecs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5</span>
+
+<span class="k">[program:AST_VDauto_dial]</span>
+<span class="na">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/usr/bin/perl /usr/share/astguiclient/AST_VDauto_dial.pl</span>
+<span class="na">autorestart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">startsecs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5</span>
+
+<span class="k">[program:AST_VDadapt]</span>
+<span class="na">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/usr/bin/perl /usr/share/astguiclient/AST_VDadapt.pl</span>
+<span class="na">autorestart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">startsecs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5</span>
+</code></pre></div>
+
+<p>Then change the Dockerfile's CMD:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/usr/bin/supervisord&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;-c&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/etc/supervisord.conf&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<hr />
+<h2 id="production-deployment-checklist">Production Deployment Checklist<a class="headerlink" href="#production-deployment-checklist" title="Permanent link">&para;</a></h2>
+<p>Before you go live with containerized VICIdial, verify every item on this list. We learned each one the hard way.</p>
+<ul>
+<li>[ ] Asterisk container uses <code>network_mode: host</code> — no bridge networking for telephony</li>
+<li>[ ] <code>pjsip.conf</code> has correct <code>external_media_address</code> and <code>external_signaling_address</code></li>
+<li>[ ] RTP port range is accessible through host firewall (<code>iptables -L -n | grep 10000</code>)</li>
+<li>[ ] MySQL data is on a bind-mounted SSD, not a Docker volume on the root disk</li>
+<li>[ ] Recording storage is on a separate mount that won't fill up the root filesystem</li>
+<li>[ ] Health checks verify actual functionality, not just process existence</li>
+<li>[ ] Perl daemons are managed by supervisord or equivalent process manager</li>
+<li>[ ] Container restart policy won't restart Asterisk during active calls without draining</li>
+<li>[ ] Backup cron job is running on the Docker host and verified with a test restore</li>
+<li>[ ] Log rotation is configured for Asterisk, Apache, and MySQL logs inside containers</li>
+<li>[ ] Time synchronization (NTP/chrony) is running on the Docker host — containers inherit host time</li>
+<li>[ ] <code>.env</code> file with passwords is NOT committed to version control</li>
+</ul>
+<hr />
+<h2 id="is-it-worth-it">Is It Worth It?<a class="headerlink" href="#is-it-worth-it" title="Permanent link">&para;</a></h2>
+<p>Honest answer: it depends on your operation.</p>
+<p><strong>Containerize VICIdial if:</strong>
+- You're running multiple client operations and need isolation between them
+- You have a DevOps team that understands Docker networking
+- You want reproducible deployments across environments (dev/staging/prod)
+- You're already in a container ecosystem (Kubernetes, ECS) and VICIdial needs to fit in</p>
+<p><strong>Stay on bare metal if:</strong>
+- You're running a single operation with fewer than 100 agents
+- Your team is strong on Linux administration but new to containers
+- You need every last bit of telephony performance (bare metal Asterisk is still faster)
+- You don't have a container orchestration platform already in place</p>
+<p>For centers that want the performance of a tuned VICIdial installation without managing containers, infrastructure, or Asterisk configurations, <a href="https://vicistack.com">ViciStack</a> handles the entire stack — containerized or bare metal — so you can focus on running campaigns instead of debugging Docker networking at 2 AM.</p>
+<hr />
+<h2 id="further-reading">Further Reading<a class="headerlink" href="#further-reading" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://vicistack.com/blog/vicidial-cluster-guide/">VICIdial Cluster Setup Guide</a> — multi-server architecture that applies to container scaling</li>
+<li><a href="https://vicistack.com/blog/vicidial-performance-tuning/">VICIdial Performance Tuning</a> — optimization techniques that apply whether you're on bare metal or containers</li>
+<li><a href="https://vicistack.com/blog/vicidial-disaster-recovery/">VICIdial Disaster Recovery</a> — backup and failover strategies for containerized deployments</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-docker-deployment">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

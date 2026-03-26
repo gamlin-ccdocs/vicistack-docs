@@ -1,0 +1,3770 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/asterisk-pjsip-tls-openssl3-guide/">
+      
+      
+        <link rel="prev" href="../asterisk-otel-observability/">
+      
+      
+        <link rel="next" href="../best-predictive-dialer/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#asterisk-pjsip-tls-broken-after-openssl-3-upgrade-heres-the-fix-for-wrong-curve-and-every-other-handshake-failure" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-nobody-warned-you-about" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem Nobody Warned You About
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-changed-in-openssl-3x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed in OpenSSL 3.x
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-sip-devices-are-especially-affected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why SIP Devices Are Especially Affected
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnosing-the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnosing the Problem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diagnosing the Problem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-check-your-openssl-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Check Your OpenSSL Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-check-your-certificate-key-type-and-curve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Check Your Certificate Key Type and Curve
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-capture-the-tls-handshake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Capture the TLS Handshake
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-check-asterisk-pjsip-tls-transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Check Asterisk PJSIP TLS Transport
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-enable-verbose-tls-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Enable Verbose TLS Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-fixes-pick-what-fits-your-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Fixes (Pick What Fits Your Setup)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Fixes (Pick What Fits Your Setup)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fix-1-regenerate-your-certificate-with-p-256-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 1: Regenerate Your Certificate with P-256 (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-2-force-specific-curves-in-pjsipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 2: Force Specific Curves in pjsip.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-3-configure-openssl-system-wide-opensslcnf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 3: Configure OpenSSL System-Wide (openssl.cnf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-4-docker-specific-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 4: Docker-Specific Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-5-downgrade-to-tls-12-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 5: Downgrade to TLS 1.2 Only
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-working-pjsipconf-tls-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Working pjsip.conf TLS Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-after-the-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing After the Fix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ca_list_file-red-herring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ca_list_file Red Herring
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preventing-this-from-happening-again" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventing This From Happening Again
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-curve-compatibility-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference: Curve Compatibility Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-nobody-warned-you-about" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem Nobody Warned You About
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-changed-in-openssl-3x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed in OpenSSL 3.x
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-sip-devices-are-especially-affected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why SIP Devices Are Especially Affected
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnosing-the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnosing the Problem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diagnosing the Problem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-check-your-openssl-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Check Your OpenSSL Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-check-your-certificate-key-type-and-curve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Check Your Certificate Key Type and Curve
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-capture-the-tls-handshake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Capture the TLS Handshake
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-check-asterisk-pjsip-tls-transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Check Asterisk PJSIP TLS Transport
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-enable-verbose-tls-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Enable Verbose TLS Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-fixes-pick-what-fits-your-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Fixes (Pick What Fits Your Setup)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Fixes (Pick What Fits Your Setup)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fix-1-regenerate-your-certificate-with-p-256-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 1: Regenerate Your Certificate with P-256 (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-2-force-specific-curves-in-pjsipconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 2: Force Specific Curves in pjsip.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-3-configure-openssl-system-wide-opensslcnf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 3: Configure OpenSSL System-Wide (openssl.cnf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-4-docker-specific-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 4: Docker-Specific Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-5-downgrade-to-tls-12-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fix 5: Downgrade to TLS 1.2 Only
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-working-pjsipconf-tls-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Working pjsip.conf TLS Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-after-the-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing After the Fix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ca_list_file-red-herring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ca_list_file Red Herring
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preventing-this-from-happening-again" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventing This From Happening Again
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-curve-compatibility-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference: Curve Compatibility Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="asterisk-pjsip-tls-broken-after-openssl-3-upgrade-heres-the-fix-for-wrong-curve-and-every-other-handshake-failure">Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure<a class="headerlink" href="#asterisk-pjsip-tls-broken-after-openssl-3-upgrade-heres-the-fix-for-wrong-curve-and-every-other-handshake-failure" title="Permanent link">&para;</a></h1>
+<h2 id="the-problem-nobody-warned-you-about">The Problem Nobody Warned You About<a class="headerlink" href="#the-problem-nobody-warned-you-about" title="Permanent link">&para;</a></h2>
+<p>You upgraded your server — maybe a routine <code>apt upgrade</code>, maybe a Docker image rebuild, maybe a distro migration. Asterisk was humming along, PJSIP endpoints connecting over TLS on port 5061 like they have for years. Then suddenly:</p>
+<div class="codehilite"><pre><span></span><code>WARNING[12345]: pjproject: SSL SSL_ERROR_SSL (Handshake):
+  err: &lt;error:0A00017A:SSL routines::wrong curve&gt;
+</code></pre></div>
+
+<p>Your phones stop registering. Your ATAs go offline. Your SIP trunks drop. Disabling TLS brings everything back, but that's not a solution — it's a surrender.</p>
+<p>This is the OpenSSL 3.x ECDH curve compatibility problem, and it's hit a <em>lot</em> of Asterisk administrators who didn't see it coming. The error message is cryptic, the Asterisk logs don't tell you what curve is "wrong," and the fix requires understanding a change that happened deep inside OpenSSL's TLS negotiation logic.</p>
+<p>This guide covers exactly what changed, why it breaks specific devices, and the concrete steps to fix it — whether you're running Asterisk 18, 20, 21, or 22.</p>
+<h2 id="what-changed-in-openssl-3x">What Changed in OpenSSL 3.x<a class="headerlink" href="#what-changed-in-openssl-3x" title="Permanent link">&para;</a></h2>
+<p>OpenSSL 1.1.x was relatively forgiving about elliptic curve negotiation during TLS handshakes. If a client offered curves that didn't perfectly match the server's certificate key type, OpenSSL would often find a workable combination and proceed.</p>
+<p>OpenSSL 3.0 (released September 2021) and its successors introduced <strong>stricter curve validation</strong>. Specifically:</p>
+<ol>
+<li>
+<p><strong>Certificate key curves must match negotiated ECDH curves.</strong> If your TLS certificate uses a P-384 (secp384r1) key but the client only offers P-256 (secp256r1) in its supported groups, OpenSSL 3.x rejects the handshake with "wrong curve." OpenSSL 1.1.x would have silently worked around this in many cases.</p>
+</li>
+<li>
+<p><strong>Default curve lists changed.</strong> OpenSSL 3.x defaults to <code>X25519:P-256:P-384:P-521</code> for key exchange groups. Older devices — especially embedded SIP hardware — may only support <code>P-256</code> (secp256r1) or use non-standard curve names.</p>
+</li>
+<li>
+<p><strong>ECDH auto-selection became stricter.</strong> OpenSSL 3.x validates that the server's ECDSA certificate curve is in the client's supported groups list. If the client doesn't advertise the curve used by the certificate, the handshake fails immediately.</p>
+</li>
+</ol>
+<p>The practical impact: a certificate generated with <code>openssl ecparam -name secp384r1</code> will fail to connect with any client that only supports P-256 — and many SIP phones and ATAs fall into this category.</p>
+<h2 id="why-sip-devices-are-especially-affected">Why SIP Devices Are Especially Affected<a class="headerlink" href="#why-sip-devices-are-especially-affected" title="Permanent link">&para;</a></h2>
+<p>Grandstream, Yealink, Polycom, and other SIP hardware vendors often ship firmware with limited TLS curve support. A Grandstream HT801 or HT802, for example, may only advertise support for:</p>
+<ul>
+<li><code>secp256r1</code> (P-256)</li>
+<li><code>secp384r1</code> (P-384) — sometimes, depending on firmware</li>
+</ul>
+<p>It will <strong>not</strong> support X25519 or X448 — the modern curves that OpenSSL 3.x prefers.</p>
+<p>The failure sequence looks like this:</p>
+<ol>
+<li>Your Asterisk server has a TLS certificate with a P-384 ECDSA key (or sometimes RSA + ECDH negotiation triggers the issue)</li>
+<li>The SIP phone connects to port 5061 and sends its ClientHello with supported curves: <code>secp256r1</code></li>
+<li>OpenSSL 3.x on Asterisk sees the certificate uses P-384 but the client only supports P-256</li>
+<li>OpenSSL raises <code>SSL_ERROR_SSL: wrong curve</code></li>
+<li>pjproject logs the error, the handshake fails, the phone can't register</li>
+</ol>
+<p>The cruel part: this often breaks <strong>without any intentional change</strong> on your end. A base OS update, a Docker image rebuild, or even an unattended security patch can swap OpenSSL 1.1.x for 3.x underneath Asterisk.</p>
+<h2 id="diagnosing-the-problem">Diagnosing the Problem<a class="headerlink" href="#diagnosing-the-problem" title="Permanent link">&para;</a></h2>
+<p>Before jumping to fixes, confirm you're actually hitting the curve mismatch issue.</p>
+<h3 id="step-1-check-your-openssl-version">Step 1: Check Your OpenSSL Version<a class="headerlink" href="#step-1-check-your-openssl-version" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>openssl<span class="w"> </span>version
+<span class="c1"># OpenSSL 3.0.x or 3.1.x or 3.2.x = you are in the danger zone</span>
+</code></pre></div>
+
+<p>If you're running Asterisk in Docker, check inside the container:</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>asterisk<span class="w"> </span>openssl<span class="w"> </span>version
+</code></pre></div>
+
+<h3 id="step-2-check-your-certificate-key-type-and-curve">Step 2: Check Your Certificate Key Type and Curve<a class="headerlink" href="#step-2-check-your-certificate-key-type-and-curve" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/asterisk/keys/asterisk.pem<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;Public Key&quot;</span>
+</code></pre></div>
+
+<p>You'll see something like:</p>
+<div class="codehilite"><pre><span></span><code>Public Key Algorithm: id-ecPublicKey
+  Public-Key: (384 bit)
+  ASN1 OID: secp384r1
+</code></pre></div>
+
+<p>or:</p>
+<div class="codehilite"><pre><span></span><code>Public Key Algorithm: rsaEncryption
+  Public-Key: (2048 bit)
+</code></pre></div>
+
+<p>If it's ECDSA with <code>secp384r1</code> or <code>secp521r1</code>, and your phones only support <code>secp256r1</code>, that's your problem.</p>
+<h3 id="step-3-capture-the-tls-handshake">Step 3: Capture the TLS Handshake<a class="headerlink" href="#step-3-capture-the-tls-handshake" title="Permanent link">&para;</a></h3>
+<p>Use <code>openssl s_client</code> to simulate what your phone is doing:</p>
+<div class="codehilite"><pre><span></span><code>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span>your-asterisk-ip:5061<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-curves<span class="w"> </span>secp256r1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-servername<span class="w"> </span>your-asterisk-ip<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-tls1_2<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
+</code></pre></div>
+
+<p>If you see the "wrong curve" error, you've confirmed the issue.</p>
+<h3 id="step-4-check-asterisk-pjsip-tls-transport">Step 4: Check Asterisk PJSIP TLS Transport<a class="headerlink" href="#step-4-check-asterisk-pjsip-tls-transport" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;pjsip show transport &lt;your-tls-transport&gt;&quot;</span>
+</code></pre></div>
+
+<p>Look at the <code>cipher</code> and <code>method</code> fields. Note the certificate paths.</p>
+<h3 id="step-5-enable-verbose-tls-logging">Step 5: Enable Verbose TLS Logging<a class="headerlink" href="#step-5-enable-verbose-tls-logging" title="Permanent link">&para;</a></h3>
+<p>In <code>pjsip.conf</code> or your realtime config, increase logging:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[global]</span>
+<span class="na">debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+</code></pre></div>
+
+<p>And in <code>logger.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[logfiles]</span>
+<span class="na">full</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; notice,warning,error,verbose(5)</span>
+</code></pre></div>
+
+<h2 id="the-fixes-pick-what-fits-your-setup">The Fixes (Pick What Fits Your Setup)<a class="headerlink" href="#the-fixes-pick-what-fits-your-setup" title="Permanent link">&para;</a></h2>
+<h3 id="fix-1-regenerate-your-certificate-with-p-256-recommended">Fix 1: Regenerate Your Certificate with P-256 (Recommended)<a class="headerlink" href="#fix-1-regenerate-your-certificate-with-p-256-recommended" title="Permanent link">&para;</a></h3>
+<p>The most reliable fix. P-256 (secp256r1) is universally supported by every SIP device on the market.</p>
+<p><strong>Generate a new P-256 ECDSA key and self-signed certificate:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Generate P-256 private key</span>
+openssl<span class="w"> </span>ecparam<span class="w"> </span>-genkey<span class="w"> </span>-name<span class="w"> </span>prime256v1<span class="w"> </span>-out<span class="w"> </span>/etc/asterisk/keys/asterisk.key
+
+<span class="c1"># Generate self-signed certificate (valid 10 years)</span>
+openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span>-x509<span class="w"> </span>-key<span class="w"> </span>/etc/asterisk/keys/asterisk.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span>/etc/asterisk/keys/asterisk.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-days<span class="w"> </span><span class="m">3650</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=asterisk.local/O=Asterisk PBX&quot;</span>
+
+<span class="c1"># Combine into PEM (what Asterisk expects)</span>
+cat<span class="w"> </span>/etc/asterisk/keys/asterisk.key<span class="w"> </span>/etc/asterisk/keys/asterisk.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/etc/asterisk/keys/asterisk.pem
+
+<span class="c1"># Set permissions</span>
+chown<span class="w"> </span>asterisk:asterisk<span class="w"> </span>/etc/asterisk/keys/*
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/asterisk/keys/asterisk.key
+chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>/etc/asterisk/keys/asterisk.crt<span class="w"> </span>/etc/asterisk/keys/asterisk.pem
+</code></pre></div>
+
+<p><strong>If you are using RSA instead of ECDSA</strong>, use 2048-bit RSA (avoids curve issues entirely):</p>
+<div class="codehilite"><pre><span></span><code>openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-keyout<span class="w"> </span>/etc/asterisk/keys/asterisk.key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-out<span class="w"> </span>/etc/asterisk/keys/asterisk.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-days<span class="w"> </span><span class="m">3650</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=asterisk.local/O=Asterisk PBX&quot;</span>
+
+cat<span class="w"> </span>/etc/asterisk/keys/asterisk.key<span class="w"> </span>/etc/asterisk/keys/asterisk.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/etc/asterisk/keys/asterisk.pem
+</code></pre></div>
+
+<p>After generating, reload PJSIP:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module reload res_pjsip.so&quot;</span>
+</code></pre></div>
+
+<h3 id="fix-2-force-specific-curves-in-pjsipconf">Fix 2: Force Specific Curves in pjsip.conf<a class="headerlink" href="#fix-2-force-specific-curves-in-pjsipconf" title="Permanent link">&para;</a></h3>
+<p>If you can't regenerate certificates (e.g., using a CA-signed cert), force Asterisk's TLS transport to offer specific curves:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[tls-transport]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">transport</span>
+<span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tls</span>
+<span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0:5061</span>
+<span class="na">cert_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/etc/asterisk/keys/asterisk.crt</span>
+<span class="na">priv_key_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/etc/asterisk/keys/asterisk.key</span>
+<span class="na">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tlsv1_2</span>
+<span class="na">cipher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256</span>
+</code></pre></div>
+
+<p><strong>Important:</strong> As of Asterisk 22, the PJSIP transport configuration does not have a direct <code>curves</code> or <code>groups</code> option — curve selection is controlled by the certificate key type and OpenSSL's defaults. This is why Fix 1 (regenerating the cert with P-256) is the most reliable approach.</p>
+<h3 id="fix-3-configure-openssl-system-wide-opensslcnf">Fix 3: Configure OpenSSL System-Wide (openssl.cnf)<a class="headerlink" href="#fix-3-configure-openssl-system-wide-opensslcnf" title="Permanent link">&para;</a></h3>
+<p>You can modify OpenSSL's default behavior system-wide:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/ssl/openssl.cnf (or /etc/pki/tls/openssl.cnf on RHEL)</span>
+
+<span class="k">[system_default_sect]</span>
+<span class="na">Groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">P-256:P-384:X25519</span>
+<span class="c1"># Put P-256 first to maximize device compatibility</span>
+</code></pre></div>
+
+<p>On Debian/Ubuntu with OpenSSL 3.x, you may also need:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/ssl/openssl.cnf — at the top</span>
+<span class="na">openssl_conf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">openssl_init</span>
+
+<span class="k">[openssl_init]</span>
+<span class="na">ssl_conf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ssl_sect</span>
+
+<span class="k">[ssl_sect]</span>
+<span class="na">system_default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">system_default_sect</span>
+
+<span class="k">[system_default_sect]</span>
+<span class="na">Groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">P-256:P-384:X25519</span>
+<span class="na">CipherSuites</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256</span>
+</code></pre></div>
+
+<p>Restart Asterisk after modifying:</p>
+<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>restart<span class="w"> </span>asterisk
+</code></pre></div>
+
+<h3 id="fix-4-docker-specific-fix">Fix 4: Docker-Specific Fix<a class="headerlink" href="#fix-4-docker-specific-fix" title="Permanent link">&para;</a></h3>
+<p>If Asterisk runs in Docker, the OpenSSL version is determined by the base image, not the host. Check and pin it:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Use a specific base image with known OpenSSL version</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">debian:bookworm-slim</span>
+
+<span class="c"># Check what you got</span>
+<span class="k">RUN</span><span class="w"> </span>openssl<span class="w"> </span>version
+
+<span class="c"># If needed, install specific OpenSSL config</span>
+<span class="k">COPY</span><span class="w"> </span>openssl-asterisk.cnf<span class="w"> </span>/etc/ssl/openssl.cnf
+</code></pre></div>
+
+<p>Or mount your certs and openssl.cnf from the host:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># docker-compose.yml</span>
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./certs:/etc/asterisk/keys:ro</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./openssl-asterisk.cnf:/etc/ssl/openssl.cnf:ro</span>
+</code></pre></div>
+
+<p>The key insight for Docker: when you rebuild the image or pull a new base, OpenSSL can silently upgrade. Pin your base image digest or at minimum track what OpenSSL version each rebuild introduces.</p>
+<h3 id="fix-5-downgrade-to-tls-12-only">Fix 5: Downgrade to TLS 1.2 Only<a class="headerlink" href="#fix-5-downgrade-to-tls-12-only" title="Permanent link">&para;</a></h3>
+<p>If you're hitting TLS 1.3 negotiation issues specifically (TLS 1.3 has different curve handling than 1.2), force TLS 1.2:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[tls-transport]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">transport</span>
+<span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tls</span>
+<span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0:5061</span>
+<span class="na">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tlsv1_2</span>
+</code></pre></div>
+
+<p>Most SIP devices don't support TLS 1.3 anyway, so this doesn't sacrifice real security.</p>
+<h2 id="complete-working-pjsipconf-tls-configuration">Complete Working pjsip.conf TLS Configuration<a class="headerlink" href="#complete-working-pjsipconf-tls-configuration" title="Permanent link">&para;</a></h2>
+<p>Here's a battle-tested TLS transport configuration that works with OpenSSL 3.x and the widest range of SIP devices:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">;; TLS Transport — OpenSSL 3.x compatible</span>
+<span class="k">[tls-transport]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">transport</span>
+<span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tls</span>
+<span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0:5061</span>
+<span class="na">cert_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/etc/asterisk/keys/asterisk.crt</span>
+<span class="na">priv_key_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/etc/asterisk/keys/asterisk.key</span>
+<span class="c1">; ca_list_file is optional for self-signed setups</span>
+<span class="c1">; ca_list_file = /etc/asterisk/keys/ca.crt</span>
+<span class="na">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tlsv1_2</span>
+<span class="c1">; ECDHE preferred, RSA fallback, no weak ciphers</span>
+<span class="na">cipher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ECDHE-RSA-AES128-GCM-SHA256,AES128-GCM-SHA256</span>
+<span class="na">require_client_cert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+<span class="na">verify_client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+<span class="na">verify_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+
+<span class="c1">;; Endpoint using TLS transport</span>
+<span class="k">[my-phone]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">endpoint</span>
+<span class="na">transport</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tls-transport</span>
+<span class="na">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">internal</span>
+<span class="na">disallow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">all</span>
+<span class="na">allow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ulaw,alaw,g722</span>
+<span class="na">media_encryption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">sdes</span>
+<span class="na">media_encryption_optimistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
+</code></pre></div>
+
+<h2 id="testing-after-the-fix">Testing After the Fix<a class="headerlink" href="#testing-after-the-fix" title="Permanent link">&para;</a></h2>
+<p>After applying your fix, verify it works:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Reload PJSIP</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module reload res_pjsip.so&quot;</span>
+
+<span class="c1"># 2. Test with openssl s_client</span>
+openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span>localhost:5061<span class="w"> </span>-curves<span class="w"> </span>secp256r1<span class="w"> </span>-tls1_2
+
+<span class="c1"># 3. Check the certificate being served</span>
+openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span>localhost:5061<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>openssl<span class="w"> </span>x509<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Public Key|ASN1 OID&quot;</span>
+
+<span class="c1"># 4. Watch for successful registrations</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;pjsip show registrations&quot;</span>
+
+<span class="c1"># 5. Check for any remaining TLS errors</span>
+grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;SSL\|TLS\|wrong curve\|handshake&quot;</span><span class="w"> </span>/var/log/asterisk/full
+</code></pre></div>
+
+<h2 id="the-ca_list_file-red-herring">The ca_list_file Red Herring<a class="headerlink" href="#the-ca_list_file-red-herring" title="Permanent link">&para;</a></h2>
+<p>One common source of confusion: the <code>ca_list_file</code> setting in PJSIP transport configuration. If you see errors like:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="n">Failed</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">read</span><span class="w"> </span><span class="n">CA</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="sr">/etc/asterisk/keys/</span><span class="n">ca</span><span class="o">.</span><span class="na">crt</span>
+</code></pre></div>
+
+<p>This is often a <strong>red herring</strong> — it won't cause the "wrong curve" error. The CA list is only needed if you're verifying client certificates (mutual TLS) or verifying the server's certificate against a CA chain. For most Asterisk SIP setups with self-signed certs:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; You can safely omit ca_list_file for self-signed setups</span>
+<span class="c1">; ca_list_file = /etc/asterisk/keys/ca.crt</span>
+<span class="na">require_client_cert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+<span class="na">verify_client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+<span class="na">verify_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">no</span>
+</code></pre></div>
+
+<p>Don't chase CA list errors when the real problem is curve negotiation.</p>
+<h2 id="preventing-this-from-happening-again">Preventing This From Happening Again<a class="headerlink" href="#preventing-this-from-happening-again" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Pin your OpenSSL version</strong> in Docker images or package management. Know when it changes.</li>
+<li><strong>Use P-256 (prime256v1) for all new certificates.</strong> It's the safest choice for device compatibility.</li>
+<li><strong>Monitor TLS handshake failures.</strong> Add a cron job or monitoring check:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Quick health check — test TLS handshake</span>
+<span class="nb">echo</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span>localhost:5061<span class="w"> </span>-tls1_2<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">&quot;Verify return code&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;TLS OK&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;TLS BROKEN&quot;</span>
+</code></pre></div>
+
+<ol>
+<li><strong>Test after every upgrade.</strong> Asterisk, OpenSSL, or base OS — always verify TLS connectivity after any package update.</li>
+<li><strong>Keep a working certificate backed up.</strong> Store your last-known-good cert/key pair somewhere recoverable.</li>
+</ol>
+<h2 id="quick-reference-curve-compatibility-matrix">Quick Reference: Curve Compatibility Matrix<a class="headerlink" href="#quick-reference-curve-compatibility-matrix" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Device/Software</th>
+<th>P-256</th>
+<th>P-384</th>
+<th>P-521</th>
+<th>X25519</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grandstream HT80x</td>
+<td>Yes</td>
+<td>Sometimes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Grandstream GXP21xx</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Yealink T4x/T5x</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Firmware-dependent</td>
+</tr>
+<tr>
+<td>Polycom VVX</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Linphone</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Obihai/Obi</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Asterisk + OpenSSL 3.x</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>The takeaway: <strong>P-256 is the only curve guaranteed to work with everything.</strong></p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>The "wrong curve" error is OpenSSL 3.x being strict about ECDH curve matching — something OpenSSL 1.1.x was lenient about. The fix is almost always one of:</p>
+<ol>
+<li>Regenerate your certificate with a P-256 key (<code>openssl ecparam -name prime256v1</code>)</li>
+<li>Use RSA 2048+ instead of ECDSA (avoids curve issues entirely)</li>
+<li>Configure OpenSSL's default groups to prioritize P-256</li>
+</ol>
+<p>Don't panic, don't disable TLS, and don't downgrade OpenSSL. The fix is a 30-second certificate regeneration.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/asterisk-pjsip-tls-openssl3-guide">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

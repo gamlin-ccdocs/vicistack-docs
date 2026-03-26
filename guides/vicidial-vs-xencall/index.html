@@ -1,0 +1,4053 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-vs-xencall/">
+      
+      
+        <link rel="prev" href="../vicidial-vs-gohighlevel/">
+      
+      
+        <link rel="next" href="../vicidial-webrtc-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial vs XenCall: Which Dialer Is Right for Your Call Center? - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-vs-xencall-which-dialer-is-right-for-your-call-center" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pricing-vicidial-vs-xencall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pricing: VICIdial vs XenCall
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pricing: VICIdial vs XenCall">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencall-pricing-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall Pricing Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-pricing-self-hosted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Pricing (Self-Hosted)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#total-cost-of-ownership-3-year-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Total Cost of Ownership: 3-Year Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uiux-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UI/UX Comparison
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UI/UX Comparison">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencalls-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall's Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-uiux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: UI/UX
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-crm-vs-vicidials-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in CRM vs VICIdial's Lead Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in CRM vs VICIdial&#39;s Lead Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencalls-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall's CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Lead Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reporting-and-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reporting and Analytics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reporting and Analytics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencall-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#customization-and-api-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customization and API Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Customization and API Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Customization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#moving-from-xencall-to-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving from XenCall to VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#moving-from-vicidial-to-xencall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving from VICIdial to XenCall
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pricing-vicidial-vs-xencall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pricing: VICIdial vs XenCall
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pricing: VICIdial vs XenCall">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencall-pricing-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall Pricing Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-pricing-self-hosted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Pricing (Self-Hosted)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#total-cost-of-ownership-3-year-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Total Cost of Ownership: 3-Year Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uiux-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UI/UX Comparison
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UI/UX Comparison">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencalls-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall's Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-uiux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: UI/UX
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-crm-vs-vicidials-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in CRM vs VICIdial's Lead Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in CRM vs VICIdial&#39;s Lead Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencalls-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall's CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidials-lead-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Lead Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: CRM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reporting-and-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reporting and Analytics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reporting and Analytics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencall-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#customization-and-api-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customization and API Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Customization and API Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xencall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XenCall
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verdict-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict: Customization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#moving-from-xencall-to-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving from XenCall to VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#moving-from-vicidial-to-xencall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving from VICIdial to XenCall
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-vs-xencall-which-dialer-is-right-for-your-call-center">VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?<a class="headerlink" href="#vicidial-vs-xencall-which-dialer-is-right-for-your-call-center" title="Permanent link">&para;</a></h1>
+<p>XenCall and VICIdial sit at opposite ends of the call center software spectrum. XenCall is a polished, cloud-hosted dialer with a built-in CRM and a price tag to match. VICIdial is the open-source workhorse that powers thousands of call centers worldwide with zero licensing fees.</p>
+<p>If you're evaluating these two platforms, you're probably asking one of two questions: "Is XenCall worth the premium over VICIdial?" or "Can VICIdial match what XenCall gives me out of the box?"</p>
+<p>The answer to both is nuanced, and it depends on your team size, technical capabilities, growth plans, and how much you value customization versus convenience. This article provides the complete, honest breakdown so you can make the right call.</p>
+<h2 id="quick-comparison">Quick Comparison<a class="headerlink" href="#quick-comparison" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>VICIdial</th>
+<th>XenCall</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>License</strong></td>
+<td>Open-source (AGPLv2)</td>
+<td>Proprietary SaaS</td>
+</tr>
+<tr>
+<td><strong>Hosting</strong></td>
+<td>Self-hosted / managed</td>
+<td>Cloud-hosted only</td>
+</tr>
+<tr>
+<td><strong>Base Price</strong></td>
+<td>Free (self-hosted)</td>
+<td>~$125-150/agent/month</td>
+</tr>
+<tr>
+<td><strong>Per-Minute Charges</strong></td>
+<td>Carrier rates only</td>
+<td>Included in plan</td>
+</tr>
+<tr>
+<td><strong>Dialing Modes</strong></td>
+<td>Predictive, progressive, manual, ratio, adapt</td>
+<td>Predictive, power, preview, manual</td>
+</tr>
+<tr>
+<td><strong>Built-in CRM</strong></td>
+<td>Lead management only</td>
+<td>Full CRM suite</td>
+</tr>
+<tr>
+<td><strong>UI/UX</strong></td>
+<td>Functional, dated</td>
+<td>Modern, intuitive</td>
+</tr>
+<tr>
+<td><strong>API Access</strong></td>
+<td>Full (non-agent + agent APIs)</td>
+<td>REST API</td>
+</tr>
+<tr>
+<td><strong>Customization</strong></td>
+<td>Unlimited (source access)</td>
+<td>Platform-limited</td>
+</tr>
+<tr>
+<td><strong>Max Agents</strong></td>
+<td>Unlimited (hardware)</td>
+<td>Plan-dependent</td>
+</tr>
+<tr>
+<td><strong>Contract</strong></td>
+<td>None</td>
+<td>Monthly/annual</td>
+</tr>
+<tr>
+<td><strong>Setup Time</strong></td>
+<td>Days to weeks</td>
+<td>Hours to days</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pricing-vicidial-vs-xencall">Pricing: VICIdial vs XenCall<a class="headerlink" href="#pricing-vicidial-vs-xencall" title="Permanent link">&para;</a></h2>
+<p>Pricing is where the conversation usually starts, and it's where the two platforms diverge most dramatically.</p>
+<h3 id="xencall-pricing-structure">XenCall Pricing Structure<a class="headerlink" href="#xencall-pricing-structure" title="Permanent link">&para;</a></h3>
+<p>XenCall charges approximately $125-150 per agent per month. Some published plans show:</p>
+<ul>
+<li><strong>Starter:</strong> ~$125/agent/month (basic features)</li>
+<li><strong>Professional:</strong> ~$150/agent/month (advanced features, API access)</li>
+<li><strong>Enterprise:</strong> Custom pricing (dedicated support, SLA guarantees)</li>
+</ul>
+<p>Additional costs to factor in:
+- DID numbers: typically $1-3/month each
+- Toll-free numbers: $3-5/month plus per-minute usage
+- SMS/MMS: per-message charges
+- Setup/onboarding: varies, often $500-2,000
+- Additional storage for recordings beyond plan limits</p>
+<p><strong>50-agent center monthly estimate on XenCall:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50 agents x $140/agent</td>
+<td>$7,000</td>
+</tr>
+<tr>
+<td>150 DIDs</td>
+<td>$300</td>
+</tr>
+<tr>
+<td>Toll-free numbers (5)</td>
+<td>$75</td>
+</tr>
+<tr>
+<td>SMS package</td>
+<td>$200</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~$7,575/month</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Annual: ~$90,900</strong></p>
+<h3 id="vicidial-pricing-self-hosted">VICIdial Pricing (Self-Hosted)<a class="headerlink" href="#vicidial-pricing-self-hosted" title="Permanent link">&para;</a></h3>
+<p>VICIdial has no licensing fee. Period. Your costs are servers, carriers, and human expertise:</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dedicated servers (2 for redundancy)</td>
+<td>$400-800/month</td>
+</tr>
+<tr>
+<td>SIP trunking (50 concurrent channels)</td>
+<td>$200-500/month</td>
+</tr>
+<tr>
+<td>150 DIDs</td>
+<td>$75-150/month</td>
+</tr>
+<tr>
+<td>System administrator (partial FTE)</td>
+<td>$2,000-4,000/month</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~$2,675-5,450/month</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Annual: ~$32,100-65,400</strong></p>
+<p>The delta is significant: $25,500-58,800 per year saved by running VICIdial self-hosted. But that savings assumes you have competent technical staff. If a server crash at 2 PM on a Tuesday costs you an hour of downtime across 50 agents, that's 50 agent-hours of lost productivity -- easily $2,500+ in a single incident.</p>
+<h3 id="total-cost-of-ownership-3-year-analysis">Total Cost of Ownership: 3-Year Analysis<a class="headerlink" href="#total-cost-of-ownership-3-year-analysis" title="Permanent link">&para;</a></h3>
+<p>Let's compare the true 3-year TCO for a 50-agent center:</p>
+<table>
+<thead>
+<tr>
+<th>Cost Element</th>
+<th>XenCall (3yr)</th>
+<th>VICIdial Self-Hosted (3yr)</th>
+<th>ViciStack Managed (3yr)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Platform/license</td>
+<td>$252,000</td>
+<td>$0</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>Management fee</td>
+<td>$0</td>
+<td>$0</td>
+<td>$270,000</td>
+</tr>
+<tr>
+<td>Infrastructure</td>
+<td>Included</td>
+<td>$28,800</td>
+<td>Included</td>
+</tr>
+<tr>
+<td>Telecom (DIDs + trunks)</td>
+<td>$13,500</td>
+<td>$9,900</td>
+<td>$9,900</td>
+</tr>
+<tr>
+<td>IT staff allocation</td>
+<td>$0</td>
+<td>$108,000</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>Setup/migration</td>
+<td>$2,000</td>
+<td>$5,000</td>
+<td>Included</td>
+</tr>
+<tr>
+<td><strong>3-Year Total</strong></td>
+<td><strong>$267,500</strong></td>
+<td><strong>$151,700</strong></td>
+<td><strong>$279,900</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Raw self-hosted VICIdial is the cheapest option. But the analysis misses a critical factor: performance. Self-hosted VICIdial without expert optimization typically achieves 3-4% connect rates. XenCall's managed platform delivers 3.5-4.5%. ViciStack-optimized VICIdial consistently achieves 6-8%.</p>
+<p>At $50 revenue per connect, a 50-agent center producing 20 extra connects per day generates an additional $1,000/day or $264,000/year. Over three years, that's $792,000 in additional revenue -- dwarfing the cost differences between any of the three options.</p>
+<h2 id="uiux-comparison">UI/UX Comparison<a class="headerlink" href="#uiux-comparison" title="Permanent link">&para;</a></h2>
+<h3 id="xencalls-interface">XenCall's Interface<a class="headerlink" href="#xencalls-interface" title="Permanent link">&para;</a></h3>
+<p>XenCall's modern UI is its strongest selling point. The agent interface features:</p>
+<ul>
+<li><strong>Clean dashboard</strong> with call controls, lead info, and scripts in a single view</li>
+<li><strong>Drag-and-drop campaign builder</strong> for non-technical managers</li>
+<li><strong>Visual reporting</strong> with charts and graphs</li>
+<li><strong>Mobile-responsive design</strong> for remote agents</li>
+<li><strong>Built-in softphone</strong> (WebRTC) -- no separate softphone needed</li>
+<li><strong>One-click CRM actions</strong> from the call screen</li>
+</ul>
+<p>For call center managers who aren't technical, XenCall's interface significantly reduces training time. New agents can typically start making calls within 30 minutes of account creation.</p>
+<h3 id="vicidials-interface">VICIdial's Interface<a class="headerlink" href="#vicidials-interface" title="Permanent link">&para;</a></h3>
+<p>VICIdial's interface is functional but dated. The agent screen provides:</p>
+<ul>
+<li>Lead information display</li>
+<li>Call controls (dial, hangup, transfer, park)</li>
+<li>Disposition selection</li>
+<li>Callback scheduling</li>
+<li>Script display</li>
+<li>Manual dial option</li>
+<li>Three-way conferencing</li>
+</ul>
+<p>The admin interface includes:</p>
+<ul>
+<li>Campaign configuration with extensive settings</li>
+<li>Real-time monitoring</li>
+<li>User/group management</li>
+<li>List management and lead loading</li>
+<li>Reporting suite</li>
+</ul>
+<p>VICIdial's UI hasn't had a major visual overhaul in years. The layout uses tables, the styling is circa 2008, and navigation requires knowing where things are. However, experienced VICIdial agents develop muscle memory quickly, and the interface's simplicity means it loads fast even on slow connections.</p>
+<p>For custom UI needs, VICIdial supports:</p>
+<ul>
+<li><strong>Custom agent screens</strong> via the <code>web_form</code> URL feature</li>
+<li><strong>External CRM iframes</strong> embedded in the agent view</li>
+<li><strong>Complete reskinning</strong> via CSS and PHP template modifications</li>
+<li><strong>Third-party agent interfaces</strong> like QueueMetrics that provide modern UIs on top of VICIdial's backend</li>
+</ul>
+<h3 id="verdict-uiux">Verdict: UI/UX<a class="headerlink" href="#verdict-uiux" title="Permanent link">&para;</a></h3>
+<p>XenCall wins on out-of-the-box experience. It's modern, intuitive, and reduces onboarding time. VICIdial wins on customizability -- you can make the agent screen look however you want if you have development resources. For most operations, XenCall's UI advantage matters less than people think: agents spend 95% of their time on the same three screens, and muscle memory overcomes design differences within a week.</p>
+<h2 id="built-in-crm-vs-vicidials-lead-management">Built-in CRM vs VICIdial's Lead Management<a class="headerlink" href="#built-in-crm-vs-vicidials-lead-management" title="Permanent link">&para;</a></h2>
+<h3 id="xencalls-crm">XenCall's CRM<a class="headerlink" href="#xencalls-crm" title="Permanent link">&para;</a></h3>
+<p>XenCall includes a full CRM as part of the platform:</p>
+<ul>
+<li><strong>Contact records</strong> with unlimited custom fields</li>
+<li><strong>Pipeline management</strong> with visual deal stages</li>
+<li><strong>Activity tracking</strong> (calls, emails, texts, notes)</li>
+<li><strong>Task and follow-up management</strong></li>
+<li><strong>Email integration</strong> with templates</li>
+<li><strong>SMS/MMS</strong> messaging from the platform</li>
+<li><strong>Document storage</strong> attached to contacts</li>
+<li><strong>Import/export</strong> with field mapping</li>
+</ul>
+<p>For centers that don't have an existing CRM, XenCall's built-in option eliminates the need for a separate tool. It's not Salesforce, but for outbound sales operations it covers the fundamentals well.</p>
+<h3 id="vicidials-lead-management">VICIdial's Lead Management<a class="headerlink" href="#vicidials-lead-management" title="Permanent link">&para;</a></h3>
+<p>VICIdial's built-in lead management handles:</p>
+<ul>
+<li><strong>Lead storage</strong> in the vicidial_list table</li>
+<li><strong>Custom fields</strong> per list (up to 100+ fields)</li>
+<li><strong>Disposition tracking</strong> with custom status codes</li>
+<li><strong>Callback scheduling</strong> (agent-specific and campaign-wide)</li>
+<li><strong>DNC management</strong> (internal, national, campaign-level)</li>
+<li><strong>Lead recycling</strong> based on disposition and time rules</li>
+<li><strong>List management</strong> with upload, export, and field mapping</li>
+</ul>
+<p>What VICIdial does NOT have natively:
+- Pipeline/deal tracking
+- Email marketing
+- SMS from the agent screen (requires add-on)
+- Document management
+- Visual workflow builder</p>
+<p>For CRM integration, VICIdial provides two approaches:</p>
+<p><strong>1. Web Form Integration (most common):</strong></p>
+<p>In Campaign settings, configure the <code>Web Form</code> URL:</p>
+<div class="codehilite"><pre><span></span><code>https://your-crm.com/lead?phone=--A--phone_number--B--&amp;first=--A--first_name--B--&amp;last=--A--last_name--B--&amp;lead_id=--A--lead_id--B--&amp;dispo=--A--dispo--B--
+</code></pre></div>
+
+<p>VICIdial replaces the <code>--A--field--B--</code> tokens with live lead data. The CRM page opens in an iframe or new window. This is how most centers integrate Salesforce, Zoho, HubSpot, and custom platforms.</p>
+<p><strong>2. API Integration:</strong></p>
+<p>VICIdial's Non-Agent API supports programmatic operations:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Add a lead via API</span>
+curl<span class="w"> </span><span class="s2">&quot;https://server/vicidial/non_agent_api.php?\</span>
+<span class="s2">source=api&amp;user=apiuser&amp;pass=apipass\</span>
+<span class="s2">&amp;function=add_lead\</span>
+<span class="s2">&amp;phone_number=3125551234\</span>
+<span class="s2">&amp;first_name=John&amp;last_name=Smith\</span>
+<span class="s2">&amp;list_id=1001&quot;</span>
+
+<span class="c1"># Update lead data</span>
+curl<span class="w"> </span><span class="s2">&quot;https://server/vicidial/non_agent_api.php?\</span>
+<span class="s2">source=api&amp;user=apiuser&amp;pass=apipass\</span>
+<span class="s2">&amp;function=update_lead\</span>
+<span class="s2">&amp;lead_id=12345\</span>
+<span class="s2">&amp;custom_field_1=new_value&quot;</span>
+</code></pre></div>
+
+<p>The Agent API provides real-time control:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Get agent status</span>
+curl<span class="w"> </span><span class="s2">&quot;https://server/agc/api.php?\</span>
+<span class="s2">source=api&amp;user=agent001&amp;pass=agentpass\</span>
+<span class="s2">&amp;function=external_status\</span>
+<span class="s2">&amp;value=SALE&quot;</span>
+</code></pre></div>
+
+<h3 id="verdict-crm">Verdict: CRM<a class="headerlink" href="#verdict-crm" title="Permanent link">&para;</a></h3>
+<p>XenCall wins if you need an all-in-one CRM and don't have one. VICIdial wins if you have an existing CRM you want to integrate deeply, or if your lead management needs are straightforward (which they are for most outbound operations). The "built-in CRM" advantage sounds bigger than it is -- most centers either already have a CRM or need something more powerful than what any dialer platform bundles.</p>
+<h2 id="reporting-and-analytics">Reporting and Analytics<a class="headerlink" href="#reporting-and-analytics" title="Permanent link">&para;</a></h2>
+<h3 id="xencall-reporting">XenCall Reporting<a class="headerlink" href="#xencall-reporting" title="Permanent link">&para;</a></h3>
+<p>XenCall provides:</p>
+<ul>
+<li>Real-time agent status dashboard</li>
+<li>Campaign performance analytics with visual charts</li>
+<li>Agent scorecard with KPIs</li>
+<li>Call disposition reports</li>
+<li>Time-based analytics (hourly, daily, weekly)</li>
+<li>Recording search with filters</li>
+<li>Scheduled report delivery via email</li>
+<li>Export to CSV/Excel</li>
+</ul>
+<p>The dashboard is visual and manager-friendly. You can see at a glance which campaigns are performing and which agents are producing. For day-to-day operational management, it's well-designed.</p>
+<h3 id="vicidial-reporting">VICIdial Reporting<a class="headerlink" href="#vicidial-reporting" title="Permanent link">&para;</a></h3>
+<p>VICIdial's built-in reporting covers:</p>
+<ul>
+<li>Real-time agent monitoring</li>
+<li>Campaign summary stats</li>
+<li>Agent time detail</li>
+<li>Outbound calling report</li>
+<li>Closer (inbound) report</li>
+<li>DID report</li>
+<li>AST (Agent Status Timeline) report</li>
+<li>CSV export</li>
+</ul>
+<p>Where VICIdial's reporting truly shines is beneath the surface. Every piece of data lives in MySQL tables that you can query directly. This means:</p>
+<ul>
+<li>Custom reports via SQL views (see our <a href="/blog/vicidial-custom-mysql-reports">MySQL Reports Guide</a>)</li>
+<li>Integration with BI tools like Grafana and Metabase</li>
+<li>Automated report generation via cron</li>
+<li>Real-time dashboards with 10-second refresh</li>
+<li>Historical analysis across any time period with any grouping</li>
+</ul>
+<p>Example: a query XenCall can't run but VICIdial can:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Find agents whose AMD false positive rate exceeds 5%</span>
+<span class="c1">-- by comparing short-duration human dispositions to total calls</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">possible_amd_errors</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;AA&#39;</span><span class="p">,</span><span class="s1">&#39;AM&#39;</span><span class="p">,</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span>
+<span class="w">        </span><span class="o">/</span><span class="w"> </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">error_rate</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">error_rate</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">error_rate</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="verdict-reporting">Verdict: Reporting<a class="headerlink" href="#verdict-reporting" title="Permanent link">&para;</a></h3>
+<p>XenCall wins on visual, out-of-the-box reporting. VICIdial wins on depth, customization, and the ability to answer questions that no pre-built report covers. For operations that make data-driven decisions, VICIdial's raw database access is invaluable.</p>
+<h2 id="customization-and-api-access">Customization and API Access<a class="headerlink" href="#customization-and-api-access" title="Permanent link">&para;</a></h2>
+<h3 id="xencall">XenCall<a class="headerlink" href="#xencall" title="Permanent link">&para;</a></h3>
+<p>XenCall offers:</p>
+<ul>
+<li>REST API for lead management, calling, and reporting</li>
+<li>Webhook notifications for call events</li>
+<li>Zapier integration for connecting to other tools</li>
+<li>Custom fields and dispositions</li>
+<li>Customizable agent scripts</li>
+</ul>
+<p>You're working within the boundaries XenCall has defined. If the platform does what you need, it works well. If you need something the platform doesn't support, you're submitting a feature request and waiting.</p>
+<h3 id="vicidial">VICIdial<a class="headerlink" href="#vicidial" title="Permanent link">&para;</a></h3>
+<p>VICIdial's customization is effectively unlimited:</p>
+<ul>
+<li><strong>Full source code access</strong> -- modify any behavior</li>
+<li><strong>Non-Agent API</strong> with 60+ functions for programmatic control</li>
+<li><strong>Agent API</strong> for real-time agent screen manipulation</li>
+<li><strong>Custom dialplan</strong> via Asterisk configuration</li>
+<li><strong>Custom reports</strong> via MySQL</li>
+<li><strong>Custom agent screens</strong> with web form integration</li>
+<li><strong>Custom call routing</strong> via AGI scripts</li>
+<li><strong>Webhook-style notifications</strong> via vicidial_url_log</li>
+<li><strong>Custom IVR</strong> via Asterisk dialplan</li>
+<li><strong>Plugin system</strong> for extending admin functionality</li>
+</ul>
+<p>A practical example: suppose you want to automatically route leads to specific agents based on a custom algorithm that considers lead value, agent skill rating, and time since last contact. In XenCall, you'd submit a feature request. In VICIdial, you'd write a custom AGI script:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/perl</span>
+<span class="c1"># Custom lead-agent matching AGI</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">Asterisk::AGI</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">DBI</span><span class="p">;</span>
+
+<span class="k">my</span><span class="w"> </span><span class="nv">$agi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nn">Asterisk::</span><span class="n">AGI</span><span class="p">;</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">%input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$agi</span><span class="o">-&gt;</span><span class="n">ReadParse</span><span class="p">();</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">$lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$agi</span><span class="o">-&gt;</span><span class="n">get_variable</span><span class="p">(</span><span class="s">&#39;lead_id&#39;</span><span class="p">);</span>
+
+<span class="k">my</span><span class="w"> </span><span class="nv">$dbh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">DBI</span><span class="o">-&gt;</span><span class="nb">connect</span><span class="p">(</span><span class="s">&quot;DBI:mysql:asterisk:localhost&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cron&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="p">);</span>
+
+<span class="c1"># Get lead value score</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">$lead_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$dbh</span><span class="o">-&gt;</span><span class="n">selectrow_array</span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;SELECT custom_score FROM vicidial_list WHERE lead_id = ?&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">undef</span><span class="p">,</span><span class="w"> </span><span class="nv">$lead_id</span>
+<span class="p">);</span>
+
+<span class="c1"># Find best available agent by skill match</span>
+<span class="k">my</span><span class="w"> </span><span class="nv">$best_agent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$dbh</span><span class="o">-&gt;</span><span class="n">selectrow_array</span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;SELECT user FROM vicidial_live_agents</span>
+<span class="s">     WHERE status = &#39;READY&#39;</span>
+<span class="s">     AND closer_campaigns LIKE &#39;%SKILLMATCH%&#39;</span>
+<span class="s">     ORDER BY calls_today ASC LIMIT 1&quot;</span>
+<span class="p">);</span>
+
+<span class="nv">$agi</span><span class="o">-&gt;</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&#39;BEST_AGENT&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">$best_agent</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="verdict-customization">Verdict: Customization<a class="headerlink" href="#verdict-customization" title="Permanent link">&para;</a></h3>
+<p>VICIdial wins overwhelmingly. If your operation has unique requirements -- and most 25+ agent centers do -- VICIdial's open architecture is a massive advantage. XenCall's approach of "works great within our boundaries" serves simpler operations well, but becomes limiting as complexity grows.</p>
+<h2 id="migration-considerations">Migration Considerations<a class="headerlink" href="#migration-considerations" title="Permanent link">&para;</a></h2>
+<h3 id="moving-from-xencall-to-vicidial">Moving from XenCall to VICIdial<a class="headerlink" href="#moving-from-xencall-to-vicidial" title="Permanent link">&para;</a></h3>
+<p>If you're considering the switch, here's what the migration involves:</p>
+<ol>
+<li><strong>Lead data export:</strong> XenCall provides CSV export. Map fields to VICIdial's list structure.</li>
+<li><strong>Recording migration:</strong> Request recording exports (may take time for large archives).</li>
+<li><strong>DID porting:</strong> Port numbers from XenCall's carrier to your chosen SIP provider. Typically 5-15 business days.</li>
+<li><strong>Agent training:</strong> VICIdial's interface is different. Budget 2-4 hours of training.</li>
+<li><strong>Campaign recreation:</strong> Rebuild campaigns, dispositions, scripts, and routing in VICIdial.</li>
+<li><strong>Parallel running:</strong> Run both systems for 1-2 weeks during transition.</li>
+</ol>
+<p>For a complete migration framework, see our <a href="/blog/vicidial-hosted-migration-checklist">VICIdial Hosted Migration Checklist</a>.</p>
+<h3 id="moving-from-vicidial-to-xencall">Moving from VICIdial to XenCall<a class="headerlink" href="#moving-from-vicidial-to-xencall" title="Permanent link">&para;</a></h3>
+<p>Honestly, this is rare. Most migration traffic goes the other direction. But if you're considering it:</p>
+<ol>
+<li><strong>Lead export:</strong> Use VICIdial's admin list export or MySQL direct.</li>
+<li><strong>Recording migration:</strong> Copy from your server storage.</li>
+<li><strong>DID porting:</strong> Port from your SIP carrier to XenCall's.</li>
+<li><strong>Customization loss:</strong> Any custom AGI, scripts, or integrations need to be rebuilt within XenCall's framework (or abandoned).</li>
+</ol>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>The VICIdial vs XenCall debate usually comes down to: "I want VICIdial's power but XenCall's ease of use." ViciStack eliminates that tradeoff.</p>
+<p>With ViciStack managing your VICIdial instance:</p>
+<ul>
+<li><strong>You get the modern experience:</strong> We handle all server management, monitoring, updates, and troubleshooting. Your team focuses on running the business.</li>
+<li><strong>You get expert optimization:</strong> AMD tuning, predictive algorithm optimization, and carrier management that typically doubles connect rates versus out-of-the-box configurations.</li>
+<li><strong>You get better reporting:</strong> Custom dashboards and automated reports built for your specific KPIs.</li>
+<li><strong>You get flat pricing:</strong> $150/agent/month with no per-minute charges, no DID markups, and no storage fees. For a 50-agent center, you're paying slightly more than raw self-hosted VICIdial but getting the operational simplicity of a managed platform.</li>
+<li><strong>You keep full control:</strong> Unlike XenCall, your data stays on your infrastructure. You keep source code access. You're never locked in.</li>
+</ul>
+<p>Centers that switch from XenCall to ViciStack typically see:
+- 40-60% reduction in cost per acquisition
+- 80-120% increase in connect rates
+- Elimination of per-minute cost surprises
+- Full data ownership and portability</p>
+<p><strong>See the difference for yourself.</strong> Get a free analysis of your current dialer performance -- whether you're on XenCall, VICIdial, or anything else. We'll show you exactly where connects are being lost and what optimized performance looks like.</p>
+<p><a href="https://vicistack.com/proof/">Request Your Free Analysis at vicistack.com/proof/</a> -- response time: under 5 minutes during business hours.</p>
+<h2 id="related-articles">Related Articles<a class="headerlink" href="#related-articles" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-vs-calltools">VICIdial vs CallTools: Detailed Comparison</a></li>
+<li><a href="/blog/vicidial-amd-optimization">VICIdial AMD Optimization: Eliminating False Positives</a></li>
+<li><a href="/blog/vicidial-custom-mysql-reports">VICIdial Custom MySQL Reports Guide</a></li>
+<li><a href="/blog/vicidial-roi-case-study">VICIdial ROI Case Study: How One Center Doubled Connects</a></li>
+<li><a href="/blog/vicidial-hosted-migration-checklist">VICIdial to Hosted Migration Checklist</a></li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-vs-xencall">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

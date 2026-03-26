@@ -1,0 +1,5289 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-agent-screen-customization/">
+      
+      
+        <link rel="prev" href="../vicidial-agent-efficiency-metrics/">
+      
+      
+        <link rel="next" href="../vicidial-amd-false-positive-reduction/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Agent Screen Customization Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-agent-screen-customization-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Agent Screen Customization Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-agent-screen-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Agent Screen Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding the Agent Screen Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-its-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It's Built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-three-customization-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three Customization Layers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#screen-labels-the-easiest-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Screen Labels: The Easiest Customization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Screen Labels: The Easiest Customization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-screen-labels-can-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Screen Labels Can Do
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-screen-label-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating a Screen Label Set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hiding-unnecessary-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hiding Unnecessary Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assigning-screen-labels-to-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning Screen Labels to Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-web-forms-the-primary-customization-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Web Forms: The Primary Customization Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Web Forms: The Primary Customization Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-web-forms-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Web Forms Work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-web-forms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Web Forms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-substitution-in-web-form-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Substitution in Web Form URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-custom-lead-qualification-form" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Custom Lead Qualification Form
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-form-display-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Form Display Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-tab-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Tab Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script Tab Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assigning-scripts-to-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning Scripts to Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#iframe-integration-for-external-crmtools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IFRAME Integration for External CRM/Tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IFRAME Integration for External CRM/Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#methods-of-iframe-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods of IFRAME Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-origin-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Origin Limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hotkey-configuration-for-dispositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hotkey Configuration for Dispositions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hotkey Configuration for Dispositions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-hotkeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Hotkeys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hotkey-behavior-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hotkey Behavior Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-screen-layout-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Screen Layout Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Screen Layout Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layout-1-standard-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout 1: Standard (Default)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-2-slim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout 2: Slim
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-3-wide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout 3: Wide
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controlling-agent-interface-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlling Agent Interface Elements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Controlling Agent Interface Elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#button-visibility-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Button Visibility Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restricting-agent-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restricting Agent Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viciphone-panel-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ViciPhone Panel Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ViciPhone Panel Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#viciphone-position-and-sizing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ViciPhone Position and Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hiding-viciphone-for-sip-phone-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hiding ViciPhone for SIP Phone Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-javascript-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom JavaScript Injection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom JavaScript Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#injection-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Injection Points
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-javascript-customizations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common JavaScript Customizations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-transfer-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Transfer Lists
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Transfer Lists">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-transfer-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Transfer Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-transfer-presets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Transfer Presets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations-and-workarounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations and Workarounds
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Limitations and Workarounds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-fundamental-architecture-constraint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Fundamental Architecture Constraint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#css-injection-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSS Injection Limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iframe-communication-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IFRAME Communication Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mobile-responsiveness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mobile Responsiveness
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#can-i-completely-replace-the-vicidial-agent-interface-with-a-custom-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I completely replace the VICIdial agent interface with a custom UI?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-pass-custom-field-data-to-a-web-form" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I pass custom field data to a web form?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-agents-use-keyboard-shortcuts-beyond-hotkeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can agents use keyboard shortcuts beyond hotkeys?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-make-the-web-form-auto-update-when-a-new-call-connects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I make the web form auto-update when a new call connects?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-integrate-salesforcehubspotzoho-directly-into-the-agent-screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I integrate Salesforce/HubSpot/Zoho directly into the agent screen?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-test-agent-screen-customizations-without-affecting-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I test agent screen customizations without affecting production?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-performance-impact-of-heavy-javascript-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the performance impact of heavy JavaScript customization?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-customize-the-manageradmin-interface-the-same-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I customize the manager/admin interface the same way?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-agent-screen-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Agent Screen Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding the Agent Screen Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-its-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It's Built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-three-customization-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three Customization Layers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#screen-labels-the-easiest-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Screen Labels: The Easiest Customization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Screen Labels: The Easiest Customization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-screen-labels-can-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Screen Labels Can Do
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-screen-label-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating a Screen Label Set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hiding-unnecessary-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hiding Unnecessary Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assigning-screen-labels-to-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning Screen Labels to Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-web-forms-the-primary-customization-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Web Forms: The Primary Customization Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Web Forms: The Primary Customization Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-web-forms-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Web Forms Work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-web-forms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Web Forms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-substitution-in-web-form-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Substitution in Web Form URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-custom-lead-qualification-form" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Custom Lead Qualification Form
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-form-display-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Form Display Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-tab-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Tab Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script Tab Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assigning-scripts-to-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning Scripts to Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#iframe-integration-for-external-crmtools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IFRAME Integration for External CRM/Tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IFRAME Integration for External CRM/Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#methods-of-iframe-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods of IFRAME Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-origin-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Origin Limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hotkey-configuration-for-dispositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hotkey Configuration for Dispositions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hotkey Configuration for Dispositions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-hotkeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Hotkeys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hotkey-behavior-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hotkey Behavior Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-screen-layout-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Screen Layout Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Screen Layout Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layout-1-standard-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout 1: Standard (Default)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-2-slim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout 2: Slim
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-3-wide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout 3: Wide
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controlling-agent-interface-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlling Agent Interface Elements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Controlling Agent Interface Elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#button-visibility-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Button Visibility Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restricting-agent-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restricting Agent Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viciphone-panel-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ViciPhone Panel Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ViciPhone Panel Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#viciphone-position-and-sizing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ViciPhone Position and Sizing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hiding-viciphone-for-sip-phone-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hiding ViciPhone for SIP Phone Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-javascript-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom JavaScript Injection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom JavaScript Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#injection-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Injection Points
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-javascript-customizations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common JavaScript Customizations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-transfer-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Transfer Lists
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Transfer Lists">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-transfer-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Transfer Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-transfer-presets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Transfer Presets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations-and-workarounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations and Workarounds
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Limitations and Workarounds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-fundamental-architecture-constraint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Fundamental Architecture Constraint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#css-injection-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSS Injection Limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iframe-communication-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IFRAME Communication Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mobile-responsiveness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mobile Responsiveness
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#can-i-completely-replace-the-vicidial-agent-interface-with-a-custom-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I completely replace the VICIdial agent interface with a custom UI?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-pass-custom-field-data-to-a-web-form" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I pass custom field data to a web form?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-agents-use-keyboard-shortcuts-beyond-hotkeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can agents use keyboard shortcuts beyond hotkeys?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-make-the-web-form-auto-update-when-a-new-call-connects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I make the web form auto-update when a new call connects?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-integrate-salesforcehubspotzoho-directly-into-the-agent-screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I integrate Salesforce/HubSpot/Zoho directly into the agent screen?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-test-agent-screen-customizations-without-affecting-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I test agent screen customizations without affecting production?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-performance-impact-of-heavy-javascript-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the performance impact of heavy JavaScript customization?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-customize-the-manageradmin-interface-the-same-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I customize the manager/admin interface the same way?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-agent-screen-customization-guide">VICIdial Agent Screen Customization Guide<a class="headerlink" href="#vicidial-agent-screen-customization-guide" title="Permanent link">&para;</a></h1>
+<p><em>Your agents spend 8 hours a day staring at the VICIdial agent screen. If it's cluttered with fields they don't need, missing the data they do need, and forces them to click through three tabs to enter a disposition, you're burning 10-15 minutes per agent per hour on interface friction alone. Multiply that across your floor and the cost is staggering.</em></p>
+<p><em>VICIdial's <a href="/glossary/agent-screen/">agent screen</a> is more customizable than most operators realize. The problem isn't capability — it's documentation. This guide fixes that.</em></p>
+<p>The VICIdial agent interface is a PHP-generated web application that runs in the browser. It's not a modern single-page application. There's no React, no Vue, no component library. It's server-rendered HTML with inline JavaScript, and it looks like it was designed in 2006 — because it was. But what it lacks in visual polish, it makes up for in flexibility. You can embed custom forms, inject JavaScript, load external applications via IFRAME, relabel every field, configure hotkeys, and completely reshape the agent experience without touching VICIdial's source code.</p>
+<p>This guide covers every customization method available in VICIdial: web forms, script tabs, screen labels, IFRAME integration, hotkey configuration, layout options, ViciPhone panel management, button visibility, custom transfer lists, and JavaScript injection. We include working code examples and document the limitations you'll hit so you don't waste time on approaches that can't work.</p>
+<hr />
+<h2 id="understanding-the-agent-screen-architecture">Understanding the Agent Screen Architecture<a class="headerlink" href="#understanding-the-agent-screen-architecture" title="Permanent link">&para;</a></h2>
+<p>Before customizing anything, you need to understand how the agent screen works technically.</p>
+<h3 id="how-its-built">How It's Built<a class="headerlink" href="#how-its-built" title="Permanent link">&para;</a></h3>
+<p>The agent screen is generated by <code>vicidial.php</code> (for the primary agent interface) or <code>agc/vicidial.php</code> in the web root. When an agent logs in, the server generates a single HTML page containing:</p>
+<ul>
+<li>The complete interface layout (header, call info panel, script tab, form tab, etc.)</li>
+<li>Inline JavaScript for all client-side interactions (call controls, disposition, transfers)</li>
+<li>AJAX calls to update call data, agent state, and campaign information in real-time</li>
+<li>IFRAMEs for web forms and custom content</li>
+</ul>
+<p>The page does not reload during a shift. Once loaded, everything happens via JavaScript and AJAX calls to VICIdial's API endpoints. This is important because it means:</p>
+<ol>
+<li>Custom CSS and JavaScript injected at load time persist for the entire session</li>
+<li>DOM modifications via JavaScript work, but page reloads reset everything</li>
+<li>Web forms in IFRAMEs can communicate with the parent frame via JavaScript (with caveats)</li>
+</ol>
+<h3 id="the-three-customization-layers">The Three Customization Layers<a class="headerlink" href="#the-three-customization-layers" title="Permanent link">&para;</a></h3>
+<p>VICIdial gives you three distinct layers for customization:</p>
+<ol>
+<li><strong>Admin-level configuration</strong> — Settings in the admin GUI that control what agents see (screen labels, button visibility, layout options). No code required.</li>
+<li><strong>Web forms and script tabs</strong> — HTML/PHP/JavaScript content embedded in the agent screen via IFRAMEs. Moderate technical skill needed.</li>
+<li><strong>JavaScript injection</strong> — Custom JS loaded via screen labels or web forms that modifies the agent screen DOM directly. Advanced technical skill needed.</li>
+</ol>
+<p>Each layer has different capabilities and limitations. We'll cover all three.</p>
+<hr />
+<h2 id="screen-labels-the-easiest-customization">Screen Labels: The Easiest Customization<a class="headerlink" href="#screen-labels-the-easiest-customization" title="Permanent link">&para;</a></h2>
+<p>Screen Labels is VICIdial's built-in mechanism for renaming fields, hiding elements, and injecting small amounts of custom code into the agent screen. It's accessible from Admin → Screen Labels.</p>
+<h3 id="what-screen-labels-can-do">What Screen Labels Can Do<a class="headerlink" href="#what-screen-labels-can-do" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Rename any field label visible to agents (e.g., change "Address 1" to "Service Address")</li>
+<li>Hide fields that aren't relevant to your campaign</li>
+<li>Inject custom CSS to restyle the interface</li>
+<li>Inject custom JavaScript that runs when the agent screen loads</li>
+<li>Add custom header/footer content</li>
+</ul>
+<h3 id="creating-a-screen-label-set">Creating a Screen Label Set<a class="headerlink" href="#creating-a-screen-label-set" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Navigate to Admin → Screen Labels</li>
+<li>Click "ADD A NEW SCREEN LABELS ENTRY"</li>
+<li>Give it a descriptive name (e.g., "Insurance Campaign Labels")</li>
+<li>Modify the fields you want to change</li>
+</ol>
+<p>Each label field has a corresponding agent screen element. The most commonly customized:</p>
+<table>
+<thead>
+<tr>
+<th>Screen Label Field</th>
+<th>Default Text</th>
+<th>Common Customization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>agent_screen_title</td>
+<td>Agent Screen</td>
+<td>Your Company Name</td>
+</tr>
+<tr>
+<td>first_name_label</td>
+<td>First Name</td>
+<td>Client First Name</td>
+</tr>
+<tr>
+<td>last_name_label</td>
+<td>Last Name</td>
+<td>Client Last Name</td>
+</tr>
+<tr>
+<td>address1_label</td>
+<td>Address 1</td>
+<td>Property Address</td>
+</tr>
+<tr>
+<td>phone_number_label</td>
+<td>Phone</td>
+<td>Primary Phone</td>
+</tr>
+<tr>
+<td>alt_phone_label</td>
+<td>Alt Phone</td>
+<td>Cell Phone</td>
+</tr>
+<tr>
+<td>email_label</td>
+<td>Email</td>
+<td>Client Email</td>
+</tr>
+<tr>
+<td>comments_label</td>
+<td>Comments</td>
+<td>Qualification Notes</td>
+</tr>
+<tr>
+<td>vendor_lead_code_label</td>
+<td>Vendor Lead Code</td>
+<td>Policy Number</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hiding-unnecessary-fields">Hiding Unnecessary Fields<a class="headerlink" href="#hiding-unnecessary-fields" title="Permanent link">&para;</a></h3>
+<p>To hide a field entirely, set its label to a single space (<code></code>) and the field will still exist in the DOM but won't be visible. For more aggressive hiding, use the CSS injection capability:</p>
+<p>In the <code>label_header</code> or a custom header field, inject:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="c">/* Hide the address fields */</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">address1Label</span><span class="o">,</span><span class="w"> </span><span class="p">#</span><span class="nn">address1Field</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="w"> </span><span class="cp">!important</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">address2Label</span><span class="o">,</span><span class="w"> </span><span class="p">#</span><span class="nn">address2Field</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="w"> </span><span class="cp">!important</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">address3Label</span><span class="o">,</span><span class="w"> </span><span class="p">#</span><span class="nn">address3Field</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="w"> </span><span class="cp">!important</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c">/* Hide the date of birth field */</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">date_of_birthLabel</span><span class="o">,</span><span class="w"> </span><span class="p">#</span><span class="nn">date_of_birthField</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="w"> </span><span class="cp">!important</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p><strong>Caveat:</strong> The exact element IDs vary slightly between VICIdial versions and layouts. Use your browser's developer tools (F12 → Inspect Element) to find the correct IDs for your version.</p>
+<h3 id="assigning-screen-labels-to-campaigns">Assigning Screen Labels to Campaigns<a class="headerlink" href="#assigning-screen-labels-to-campaigns" title="Permanent link">&para;</a></h3>
+<p>Once created, assign a Screen Label set to a <a href="/glossary/campaign/">campaign</a>:</p>
+<ol>
+<li>Go to Admin → Campaigns → [your campaign]</li>
+<li>Find the "Screen Labels" dropdown</li>
+<li>Select your custom label set</li>
+<li>Save</li>
+</ol>
+<p>Different campaigns can use different screen label sets. A health insurance campaign might relabel "Comments" to "Medical History Notes" while a solar campaign relabels it to "Roof Type / Panel Interest."</p>
+<blockquote>
+<p><strong>Your Agents Shouldn't Have to Decode Field Names.</strong>
+ViciStack configures custom screen labels for every campaign type — insurance, solar, home services, debt — so agents see exactly the data they need in language they understand. <a href="/pricing/">See Our Optimization Process →</a></p>
+</blockquote>
+<hr />
+<h2 id="custom-web-forms-the-primary-customization-method">Custom Web Forms: The Primary Customization Method<a class="headerlink" href="#custom-web-forms-the-primary-customization-method" title="Permanent link">&para;</a></h2>
+<p>Web forms are VICIdial's most powerful customization mechanism. They allow you to embed any HTML/PHP/JavaScript application directly within the agent screen interface, giving agents access to custom forms, external data, calculations, and integrations without leaving the dialer.</p>
+<h3 id="how-web-forms-work">How Web Forms Work<a class="headerlink" href="#how-web-forms-work" title="Permanent link">&para;</a></h3>
+<p>VICIdial loads web forms in an IFRAME within the agent screen. When a call connects, VICIdial passes lead data to the web form URL as query parameters. The web form can then:</p>
+<ul>
+<li>Display the data in any format you choose</li>
+<li>Collect additional information from the agent</li>
+<li>Submit data to external systems (CRM, order management, etc.)</li>
+<li>Communicate back to the parent VICIdial frame via JavaScript</li>
+</ul>
+<h3 id="configuring-web-forms">Configuring Web Forms<a class="headerlink" href="#configuring-web-forms" title="Permanent link">&para;</a></h3>
+<p>Web forms are configured at the campaign level:</p>
+<ol>
+<li>Go to Admin → Campaigns → [your campaign] → Detail</li>
+<li>Find the <strong>Web Form</strong> field</li>
+<li>Enter the URL of your web form</li>
+</ol>
+<p>VICIdial supports up to three web forms per campaign (Web Form, Web Form 2, Web Form 3). Each can have different content.</p>
+<h3 id="variable-substitution-in-web-form-urls">Variable Substitution in Web Form URLs<a class="headerlink" href="#variable-substitution-in-web-form-urls" title="Permanent link">&para;</a></h3>
+<p>VICIdial replaces special variables in the web form URL with live call data. This is how your web form receives lead information:</p>
+<div class="codehilite"><pre><span></span><code>https://your-crm.example.com/lead-form.php?first=--A--first_name--B--&amp;last=--A--last_name--B--&amp;phone=--A--phone_number--B--&amp;lead_id=--A--lead_id--B--
+</code></pre></div>
+
+<p>The <code>--A--fieldname--B--</code> syntax gets replaced with actual values when the call connects. Available variables include:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--A--first_name--B--</code></td>
+<td>Lead first name</td>
+</tr>
+<tr>
+<td><code>--A--last_name--B--</code></td>
+<td>Lead last name</td>
+</tr>
+<tr>
+<td><code>--A--phone_number--B--</code></td>
+<td>Phone being dialed</td>
+</tr>
+<tr>
+<td><code>--A--lead_id--B--</code></td>
+<td>VICIdial lead ID</td>
+</tr>
+<tr>
+<td><code>--A--vendor_lead_code--B--</code></td>
+<td>Vendor lead code</td>
+</tr>
+<tr>
+<td><code>--A--list_id--B--</code></td>
+<td>List ID</td>
+</tr>
+<tr>
+<td><code>--A--address1--B--</code></td>
+<td>Address line 1</td>
+</tr>
+<tr>
+<td><code>--A--city--B--</code></td>
+<td>City</td>
+</tr>
+<tr>
+<td><code>--A--state--B--</code></td>
+<td>State</td>
+</tr>
+<tr>
+<td><code>--A--postal_code--B--</code></td>
+<td>ZIP/postal code</td>
+</tr>
+<tr>
+<td><code>--A--email--B--</code></td>
+<td>Email address</td>
+</tr>
+<tr>
+<td><code>--A--campaign--B--</code></td>
+<td>Campaign ID</td>
+</tr>
+<tr>
+<td><code>--A--user--B--</code></td>
+<td>Agent username</td>
+</tr>
+<tr>
+<td><code>--A--uniqueid--B--</code></td>
+<td>Call unique ID</td>
+</tr>
+<tr>
+<td><code>--A--call_id--B--</code></td>
+<td>VICIdial call ID</td>
+</tr>
+<tr>
+<td><code>--A--recording_filename--B--</code></td>
+<td>Recording file name</td>
+</tr>
+<tr>
+<td><code>--A--agent_log_id--B--</code></td>
+<td>Agent log entry ID</td>
+</tr>
+<tr>
+<td><code>--A--did_id--B--</code></td>
+<td>DID ID for inbound</td>
+</tr>
+<tr>
+<td><code>--A--did_extension--B--</code></td>
+<td>DID extension</td>
+</tr>
+</tbody>
+</table>
+<p>Custom fields (added via Admin → Custom Fields) are also available using their field name.</p>
+<h3 id="example-custom-lead-qualification-form">Example: Custom Lead Qualification Form<a class="headerlink" href="#example-custom-lead-qualification-form" title="Permanent link">&para;</a></h3>
+<p>Here's a complete example of a custom web form for an insurance lead qualification campaign:</p>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Lead Qualification<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="o">*</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="k">box-sizing</span><span class="p">:</span><span class="w"> </span><span class="kc">border-box</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nt">body</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="o">-</span><span class="n">apple-system</span><span class="p">,</span><span class="w"> </span><span class="n">BlinkMacSystemFont</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Segoe UI&#39;</span><span class="p">,</span><span class="w"> </span><span class="kc">sans-serif</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">13</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#f8f9fa</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">form-grid</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="k">grid</span><span class="p">;</span>
+<span class="w">    </span><span class="k">grid-template-columns</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="n">fr</span><span class="w"> </span><span class="mi">1</span><span class="n">fr</span><span class="p">;</span>
+<span class="w">    </span><span class="k">gap</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">form-group</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nt">label</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">block</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#333</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">text-transform</span><span class="p">:</span><span class="w"> </span><span class="kc">uppercase</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nt">input</span><span class="o">,</span><span class="w"> </span><span class="nt">select</span><span class="o">,</span><span class="w"> </span><span class="nt">textarea</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#ccc</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">13</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nt">select</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">32</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">lead-info</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#fff</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#ddd</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">lead-info</span><span class="w"> </span><span class="nt">h3</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#1a73e8</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">lead-name</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">18</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="mi">700</span><span class="p">;</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#111</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">lead-phone</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#666</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">btn</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">cursor</span><span class="p">:</span><span class="w"> </span><span class="kc">pointer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">13</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">btn-primary</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#1a73e8</span><span class="p">;</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#fff</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">btn-success</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#0d8a4e</span><span class="p">;</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#fff</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">btn-danger</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#dc3545</span><span class="p">;</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#fff</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">status-bar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin-top</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">status-success</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#d4edda</span><span class="p">;</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#155724</span><span class="p">;</span><span class="w"> </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">block</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">full-width</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">grid-column</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lead-info&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Current Lead<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lead-name&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;leadName&quot;</span><span class="p">&gt;</span>Loading...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lead-phone&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;leadPhone&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;margin-top: 6px;&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;leadCity&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;leadState&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;leadZip&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">form</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;qualForm&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;lead_id&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;lead_id&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;agent&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;agent&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;call_id&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;call_id&quot;</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-grid&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-group&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Insurance Type<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">select</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;insurance_type&quot;</span> <span class="na">required</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">&gt;</span>-- Select --<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;medicare_advantage&quot;</span><span class="p">&gt;</span>Medicare Advantage<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;medicare_supplement&quot;</span><span class="p">&gt;</span>Medicare Supplement<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;prescription_drug&quot;</span><span class="p">&gt;</span>Prescription Drug Plan<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;dental_vision&quot;</span><span class="p">&gt;</span>Dental/Vision<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-group&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Current Coverage<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">select</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;current_coverage&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">&gt;</span>-- Select --<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;original_medicare&quot;</span><span class="p">&gt;</span>Original Medicare Only<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;medicare_advantage&quot;</span><span class="p">&gt;</span>Has Medicare Advantage<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;medigap&quot;</span><span class="p">&gt;</span>Has Medigap/Supplement<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;employer&quot;</span><span class="p">&gt;</span>Employer Coverage<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">&gt;</span>No Current Coverage<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-group&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Date of Birth<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;date&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;dob&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-group&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Medicare Effective Date<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;date&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;medicare_effective&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-group&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Primary Doctor<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;primary_doctor&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Doctor name&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-group&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Monthly Budget<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">select</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;monthly_budget&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">&gt;</span>-- Select --<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span>$0 - Looking for $0 premium<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;50&quot;</span><span class="p">&gt;</span>Up to $50/month<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;100&quot;</span><span class="p">&gt;</span>Up to $100/month<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;200&quot;</span><span class="p">&gt;</span>Up to $200/month<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;200+&quot;</span><span class="p">&gt;</span>Over $200/month<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-group full-width&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Agent Notes<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">textarea</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;notes&quot;</span> <span class="na">rows</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Qualification notes...&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">textarea</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn btn-primary&quot;</span><span class="p">&gt;</span>Save Qualification<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn btn-success&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;submitAndTransfer()&quot;</span><span class="p">&gt;</span>Save <span class="err">&amp;</span> Transfer<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;statusBar&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;status-bar&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="c1">// Parse URL parameters (VICIdial passes lead data as query params)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">URLSearchParams</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">search</span><span class="p">);</span>
+
+<span class="c1">// Populate lead info display</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;leadName&#39;</span><span class="p">).</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;first&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;last&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;leadPhone&#39;</span><span class="p">).</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;phone&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;leadCity&#39;</span><span class="p">).</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;city&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;leadState&#39;</span><span class="p">).</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;leadZip&#39;</span><span class="p">).</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;zip&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+<span class="c1">// Set hidden fields</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;lead_id&#39;</span><span class="p">).</span><span class="nx">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lead_id&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;agent&#39;</span><span class="p">).</span><span class="nx">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;call_id&#39;</span><span class="p">).</span><span class="nx">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">params</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;call_id&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+<span class="c1">// Form submission</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;qualForm&#39;</span><span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;submit&#39;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+<span class="w">  </span><span class="nx">saveQualification</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">saveQualification</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">formData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">FormData</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;qualForm&#39;</span><span class="p">));</span>
+
+<span class="w">  </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/custom/save_qualification.php&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nx">formData</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">bar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;statusBar&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">bar</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Qualification saved successfully&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">bar</span><span class="p">.</span><span class="nx">className</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;status-bar status-success&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">setTimeout</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">bar</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;none&#39;</span><span class="p">;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="mf">3000</span><span class="p">);</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="w">  </span><span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Save failed:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">submitAndTransfer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">saveQualification</span><span class="p">();</span>
+<span class="w">  </span><span class="c1">// Trigger transfer in parent VICIdial frame</span>
+<span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">parent</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;MainXfeRButtoN&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Transfer trigger failed — different origin or element not found&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>Save this as a PHP or HTML file on your web server (e.g., <code>/var/www/html/custom/insurance_qual.html</code>), then set the campaign Web Form URL to:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">/custom/insurance_qual</span><span class="nt">.</span><span class="c">html?first=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">first_name</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;last=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">last_name</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;phone=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">phone_number</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;lead_id=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">lead_id</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;user=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">user</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;call_id=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">call_id</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;city=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">city</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;state=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">state</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span><span class="c">&amp;zip=</span><span class="nb">--</span><span class="c">A</span><span class="nb">--</span><span class="c">postal_code</span><span class="nb">--</span><span class="c">B</span><span class="nb">--</span>
+</code></pre></div>
+
+<h3 id="web-form-display-options">Web Form Display Options<a class="headerlink" href="#web-form-display-options" title="Permanent link">&para;</a></h3>
+<p>Control when and how the web form appears:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Location</th>
+<th>Options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Web Form Target</td>
+<td>Campaign Detail</td>
+<td>IFRAME (embedded), _blank (new tab)</td>
+</tr>
+<tr>
+<td>Web Form Popup</td>
+<td>Campaign Detail</td>
+<td>Disabled, On Connect, On Disposition</td>
+</tr>
+<tr>
+<td>Auto-Open Web Form</td>
+<td>Campaign Detail</td>
+<td>Y/N — automatically open on call connect</td>
+</tr>
+</tbody>
+</table>
+<p>For most operations, set Web Form Target to <strong>IFRAME</strong> (embedded in the agent screen) and enable auto-open on connect. This ensures agents see the web form data immediately without clicking.</p>
+<hr />
+<h2 id="script-tab-configuration">Script Tab Configuration<a class="headerlink" href="#script-tab-configuration" title="Permanent link">&para;</a></h2>
+<p>The Script tab is a built-in IFRAME within the agent screen designed for call scripts — the text agents read or reference during calls. Unlike web forms, the script tab is always visible (when the Script tab is selected) and supports the same variable substitution.</p>
+<h3 id="creating-scripts">Creating Scripts<a class="headerlink" href="#creating-scripts" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Go to Admin → Scripts</li>
+<li>Click "ADD A NEW SCRIPT"</li>
+<li>Enter the script content as HTML</li>
+</ol>
+<p>Scripts support the same <code>--A--fieldname--B--</code> variable substitution as web forms. Here's an example:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;font-family: Arial, sans-serif; padding: 15px; line-height: 1.6;&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h2</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;color: #333;&quot;</span><span class="p">&gt;</span>Medicare Advantage Enrollment Script<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Opening:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>&quot;Hi, is this <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;color: #1a73e8; font-weight: bold;&quot;</span><span class="p">&gt;</span>--A--first_name--B--<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>?
+  Great! My name is [your name] and I&#39;m calling from [company].
+  I&#39;m reaching out because you may qualify for additional Medicare benefits
+  in <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;color: #1a73e8; font-weight: bold;&quot;</span><span class="p">&gt;</span>--A--state--B--<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  that could save you money on your healthcare costs.
+  Do you have about 2 minutes?&quot;<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Qualification Questions:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ol</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Are you currently enrolled in Medicare Parts A and B?<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Are you happy with your current Medicare coverage?<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Would you be open to learning about plans with $0 premiums that include dental, vision, and hearing?<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Do you have a preferred doctor you&#39;d like to keep?<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ol</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Objection: &quot;I&#39;m happy with what I have&quot;<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>&quot;I completely understand, --A--first_name--B--. Most of the people I help felt the same way before
+  they realized they were paying more than they needed to. Can I just ask — are you currently paying
+  a monthly premium for your Medicare coverage?&quot;<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Transfer Script:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>&quot;--A--first_name--B--, based on what you&#39;ve told me, I think one of our licensed
+  benefits specialists can find you a better plan. I&#39;m going to connect you right now.
+  Please hold for just a moment.&quot;<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<h3 id="assigning-scripts-to-campaigns">Assigning Scripts to Campaigns<a class="headerlink" href="#assigning-scripts-to-campaigns" title="Permanent link">&para;</a></h3>
+<p>Campaign Detail → Script → select your script from the dropdown.</p>
+<p>You can also assign different scripts to different inbound groups, which is useful for blended campaigns where agents handle both outbound and inbound calls.</p>
+<hr />
+<h2 id="iframe-integration-for-external-crmtools">IFRAME Integration for External CRM/Tools<a class="headerlink" href="#iframe-integration-for-external-crmtools" title="Permanent link">&para;</a></h2>
+<p>One of VICIdial's most underutilized features is the ability to embed external applications directly within the agent screen via IFRAMEs. This allows agents to interact with your CRM, order management system, knowledge base, or any web-based tool without switching windows.</p>
+<h3 id="methods-of-iframe-integration">Methods of IFRAME Integration<a class="headerlink" href="#methods-of-iframe-integration" title="Permanent link">&para;</a></h3>
+<p><strong>Method 1: Web Form as CRM IFRAME</strong></p>
+<p>Set your campaign's Web Form URL to your CRM's lead detail page, passing the lead ID:</p>
+<div class="codehilite"><pre><span></span><code>https://your-crm.example.com/lead/view?id=--A--vendor_lead_code--B--&amp;agent=--A--user--B--
+</code></pre></div>
+
+<p>The CRM opens in the web form IFRAME with the correct lead loaded. When the call ends and a new call connects, VICIdial refreshes the IFRAME with the new lead's data.</p>
+<p><strong>Method 2: Custom Tab via Screen Labels</strong></p>
+<p>Using the label header injection, you can create additional tabs in the agent interface that load external content:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="c1">// Add a custom &quot;CRM&quot; tab to the agent screen</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Find the tab bar</span>
+<span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">tabBar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;agent_tab_bar&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">tabBar</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">newTab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">newTab</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;a href=&quot;#&quot; onclick=&quot;showCustomTab(); return false;&quot; style=&quot;padding: 5px 15px; background: #eee; border: 1px solid #ccc; margin-left: 5px; text-decoration: none; color: #333;&quot;&gt;CRM&lt;/a&gt;&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">tabBar</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">newTab</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">showCustomTab</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Hide other tab content</span>
+<span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">panels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;.tab-panel&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">panels</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;none&#39;</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// Show or create our custom iframe</span>
+<span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">crmFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;custom_crm_frame&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">crmFrame</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">crmFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;iframe&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">crmFrame</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;custom_crm_frame&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">crmFrame</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://your-crm.example.com&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">crmFrame</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;100%&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">crmFrame</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;400px&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">crmFrame</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">border</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;none&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;agent_main_content&#39;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">crmFrame</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nx">crmFrame</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;block&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p><strong>Method 3: Persistent CRM panel alongside agent controls</strong></p>
+<p>For operations where agents need the CRM visible at all times (not in a tab):</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="c">/* Resize the agent screen to make room for CRM panel */</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">agent_main_container</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="kt">%</span><span class="w"> </span><span class="cp">!important</span><span class="p">;</span><span class="w"> </span><span class="k">float</span><span class="p">:</span><span class="w"> </span><span class="kc">left</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;persistent_crm&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;width: 38%; float: right; position: fixed; right: 10px; top: 60px; bottom: 10px;&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">iframe</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://your-crm.example.com&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;width: 100%; height: 100%; border: 1px solid #ccc;&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">iframe</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<h3 id="cross-origin-limitations">Cross-Origin Limitations<a class="headerlink" href="#cross-origin-limitations" title="Permanent link">&para;</a></h3>
+<p>If your CRM is on a different domain than your VICIdial server, browser same-origin policy prevents JavaScript communication between the IFRAME and the parent VICIdial frame. This means:</p>
+<ul>
+<li>The CRM can't programmatically click VICIdial buttons (disposition, transfer, etc.)</li>
+<li>VICIdial can't read data from the CRM IFRAME</li>
+<li>You can't inject VICIdial call data into the CRM via DOM manipulation</li>
+</ul>
+<p><strong>Workarounds:</strong>
+1. <strong>postMessage API:</strong> Both the CRM and VICIdial frame can use <code>window.postMessage()</code> for cross-origin communication. Your CRM needs to implement a message listener.
+2. <strong>Host the CRM on the same domain</strong> as VICIdial (or use a reverse proxy to make it appear same-origin).
+3. <strong>Use VICIdial's API</strong> instead of DOM manipulation: your CRM can call VICIdial's non-agent API to trigger dispositions, transfers, etc.</p>
+<hr />
+<h2 id="hotkey-configuration-for-dispositions">Hotkey Configuration for Dispositions<a class="headerlink" href="#hotkey-configuration-for-dispositions" title="Permanent link">&para;</a></h2>
+<p>Hotkeys let agents disposition calls with a single keypress instead of clicking through dropdown menus. For high-volume campaigns, this saves 3-5 seconds per call — which adds up to 15-25 minutes per shift per agent.</p>
+<h3 id="setting-up-hotkeys">Setting Up Hotkeys<a class="headerlink" href="#setting-up-hotkeys" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Go to Admin → Campaigns → [your campaign] → Statuses</li>
+<li>For each <a href="/glossary/disposition/">disposition</a> status, assign a hotkey (1-9, 0)</li>
+</ol>
+<p>Example hotkey mapping for a lead generation campaign:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Disposition</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SALE</td>
+<td>Qualified lead / appointment set</td>
+</tr>
+<tr>
+<td>2</td>
+<td>NI</td>
+<td>Not Interested</td>
+</tr>
+<tr>
+<td>3</td>
+<td>CALLBK</td>
+<td>Callback requested</td>
+</tr>
+<tr>
+<td>4</td>
+<td>DNC</td>
+<td>Do Not Call</td>
+</tr>
+<tr>
+<td>5</td>
+<td>NA</td>
+<td>No Answer (manual disposition)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>WRONG</td>
+<td>Wrong Number</td>
+</tr>
+<tr>
+<td>7</td>
+<td>DEAD</td>
+<td>Dead Lead / Disconnected</td>
+</tr>
+<tr>
+<td>8</td>
+<td>XFER</td>
+<td>Live Transfer (dispositioned after transfer)</td>
+</tr>
+<tr>
+<td>9</td>
+<td>NQ</td>
+<td>Not Qualified</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hotkey-behavior-settings">Hotkey Behavior Settings<a class="headerlink" href="#hotkey-behavior-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HotKey Active</td>
+<td>Campaign Detail</td>
+<td>Enables/disables hotkey functionality</td>
+</tr>
+<tr>
+<td>HotKey Disposition</td>
+<td>Campaign Detail</td>
+<td>Agent can use hotkeys during/after call</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best practice:</strong> Enable hotkeys for all high-volume outbound campaigns. Train agents on the mappings. Print a hotkey reference card they can keep at their desk. The productivity gain is immediate and measurable.</p>
+<hr />
+<h2 id="agent-screen-layout-options">Agent Screen Layout Options<a class="headerlink" href="#agent-screen-layout-options" title="Permanent link">&para;</a></h2>
+<p>VICIdial offers three agent screen layouts that control the overall structure of the interface.</p>
+<h3 id="layout-1-standard-default">Layout 1: Standard (Default)<a class="headerlink" href="#layout-1-standard-default" title="Permanent link">&para;</a></h3>
+<p>The classic VICIdial layout with call information at the top, a tabbed panel in the middle (Script, Web Form, lead data), and call controls at the bottom. This is what most VICIdial installations use and what most documentation assumes.</p>
+<h3 id="layout-2-slim">Layout 2: Slim<a class="headerlink" href="#layout-2-slim" title="Permanent link">&para;</a></h3>
+<p>A more compact layout designed for operations where screen real estate is limited (single monitor agents, smaller displays). The call info and controls are compressed, and the IFRAME/script area gets more vertical space.</p>
+<h3 id="layout-3-wide">Layout 3: Wide<a class="headerlink" href="#layout-3-wide" title="Permanent link">&para;</a></h3>
+<p>A horizontal layout that puts call information on the left and the script/web form panel on the right side-by-side instead of stacked. Useful for dual-monitor setups or wide-screen displays where agents have horizontal space to spare.</p>
+<p><strong>Changing layouts:</strong> Campaign Detail → Agent Screen Layout</p>
+<p><strong>Per-campaign layouts:</strong> Different campaigns can use different layouts. A simple callback campaign might use the Slim layout, while a complex insurance qualification campaign uses Wide to give agents more room for the custom form.</p>
+<hr />
+<h2 id="controlling-agent-interface-elements">Controlling Agent Interface Elements<a class="headerlink" href="#controlling-agent-interface-elements" title="Permanent link">&para;</a></h2>
+<p>VICIdial provides granular control over which buttons, tabs, and features agents can see and use.</p>
+<h3 id="button-visibility-settings">Button Visibility Settings<a class="headerlink" href="#button-visibility-settings" title="Permanent link">&para;</a></h3>
+<p>These settings are scattered across Campaign Detail, In-Group settings, and System Settings:</p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Setting Location</th>
+<th>Controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transfer button</td>
+<td>Campaign Detail → Allow Transfer</td>
+<td>Show/hide the transfer button</td>
+</tr>
+<tr>
+<td>Manual dial</td>
+<td>Campaign Detail → Manual Dial</td>
+<td>Allow agents to dial manually</td>
+</tr>
+<tr>
+<td>Pause codes</td>
+<td>Campaign Detail → <a href="/settings/agent-pause-codes-active/">Agent Pause Codes Active</a></td>
+<td>Require agents to select a reason when pausing</td>
+</tr>
+<tr>
+<td>Callback button</td>
+<td>Campaign Detail → <a href="/settings/scheduled-callbacks/">Scheduled Callbacks</a></td>
+<td>Allow agents to schedule callbacks</td>
+</tr>
+<tr>
+<td>Script tab</td>
+<td>Campaign Detail → Script</td>
+<td>Only shows if a script is assigned</td>
+</tr>
+<tr>
+<td>Web Form button</td>
+<td>Campaign Detail → Web Form</td>
+<td>Only shows if a web form URL is set</td>
+</tr>
+<tr>
+<td>Park/Hold</td>
+<td>Campaign Detail → Park Extension</td>
+<td>Show/hide park/hold functionality</td>
+</tr>
+<tr>
+<td>3-way call</td>
+<td>Campaign Detail → <a href="/settings/concurrent-transfers/">Concurrent Transfers</a></td>
+<td>Allow 3-way calling</td>
+</tr>
+<tr>
+<td>Recording control</td>
+<td>Campaign Detail → <a href="/settings/campaign-recording/">Campaign Recording</a></td>
+<td>Show recording start/stop buttons (if set to ALLFORCE, agents can't control recording)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="restricting-agent-actions">Restricting Agent Actions<a class="headerlink" href="#restricting-agent-actions" title="Permanent link">&para;</a></h3>
+<p>For compliance-sensitive campaigns, restrict agents to only the actions they need:</p>
+<p><strong>Lock down a TCPA-compliant campaign:</strong>
+- Manual Dial: N (agents can't choose who to call)
+- Allow Transfer: Y (for live transfers to closers)
+- Callback: Y (for scheduled callbacks only)
+- Web Form: Y (for qualification form)
+- Park Extension: N (no need for hold)
+- Recording: ALLFORCE (all calls recorded, agents can't stop it)</p>
+<p><strong>Lock down a collections campaign:</strong>
+- Manual Dial: Y (agents may need to call specific accounts)
+- Allow Transfer: Y
+- Callback: Y
+- Script: Y (compliance scripts with required disclosures)
+- Recording: ALLFORCE</p>
+<hr />
+<h2 id="viciphone-panel-configuration">ViciPhone Panel Configuration<a class="headerlink" href="#viciphone-panel-configuration" title="Permanent link">&para;</a></h2>
+<p>ViciPhone — VICIdial's <a href="/glossary/webrtc/">WebRTC</a> softphone — adds a browser-based phone panel to the agent screen. When enabled, agents don't need a separate SIP phone or softphone application.</p>
+<h3 id="viciphone-position-and-sizing">ViciPhone Position and Sizing<a class="headerlink" href="#viciphone-position-and-sizing" title="Permanent link">&para;</a></h3>
+<p>The ViciPhone panel's position is controlled in System Settings → WebRTC Settings:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Options</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ViciPhone Position</td>
+<td>Top, Bottom, Left, Right</td>
+<td>Where the phone panel appears relative to the agent screen</td>
+</tr>
+<tr>
+<td>ViciPhone Width</td>
+<td>Pixels</td>
+<td>Width of the panel</td>
+</tr>
+<tr>
+<td>ViciPhone Height</td>
+<td>Pixels</td>
+<td>Height of the panel</td>
+</tr>
+</tbody>
+</table>
+<p>For most deployments, <strong>Bottom</strong> position works best — it keeps the ViciPhone panel below the agent screen and doesn't compete for horizontal space with the script/form tabs.</p>
+<h3 id="hiding-viciphone-for-sip-phone-users">Hiding ViciPhone for SIP Phone Users<a class="headerlink" href="#hiding-viciphone-for-sip-phone-users" title="Permanent link">&para;</a></h3>
+<p>If some agents use hardware SIP phones and others use ViciPhone, you can control visibility at the user level. In Admin → Users → [user] → Phone Login, set the phone type. Agents with hardware phones don't need the ViciPhone panel.</p>
+<p>At the campaign level, you can also control whether ViciPhone is offered as an option during agent login by configuring the phone settings per campaign.</p>
+<hr />
+<h2 id="custom-javascript-injection">Custom JavaScript Injection<a class="headerlink" href="#custom-javascript-injection" title="Permanent link">&para;</a></h2>
+<p>For advanced customizations that go beyond what Screen Labels, web forms, and admin settings provide, you can inject custom JavaScript that modifies the agent screen DOM at runtime.</p>
+<h3 id="injection-points">Injection Points<a class="headerlink" href="#injection-points" title="Permanent link">&para;</a></h3>
+<p><strong>Via Screen Labels:</strong></p>
+<p>The <code>label_header</code> field in Screen Labels supports arbitrary HTML, including <code>&lt;script&gt;</code> tags. Any JavaScript here executes when the agent screen loads:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="c1">// Custom JS injected via Screen Labels</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Wait for the agent screen to fully render</span>
+<span class="w">  </span><span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Example: Add a timer showing how long the current call has been active</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">timerDiv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">timerDiv</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;custom_call_timer&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">timerDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;position:fixed; top:5px; right:10px; font-size:18px; font-weight:bold; color:#333; z-index:9999; background:#fff; padding:5px 10px; border:1px solid #ccc; border-radius:4px;&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">timerDiv</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;00:00&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">timerDiv</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">seconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">timerInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Watch for call state changes</span>
+<span class="w">    </span><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">var</span><span class="w"> </span><span class="nx">statusEl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;MainStatuSSpan&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">statusEl</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">statusEl</span><span class="p">.</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">trim</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;INCALL&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="nx">timerInterval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nx">seconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">          </span><span class="nx">timerInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">seconds</span><span class="o">++</span><span class="p">;</span>
+<span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="nx">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">seconds</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">60</span><span class="p">).</span><span class="nx">toString</span><span class="p">().</span><span class="nx">padStart</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">);</span>
+<span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="nx">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">seconds</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">60</span><span class="p">).</span><span class="nx">toString</span><span class="p">().</span><span class="nx">padStart</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">);</span>
+<span class="w">            </span><span class="nx">timerDiv</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">m</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">s</span><span class="p">;</span>
+<span class="w">          </span><span class="p">},</span><span class="w"> </span><span class="mf">1000</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">status</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="s1">&#39;INCALL&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">timerInterval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nx">clearInterval</span><span class="p">(</span><span class="nx">timerInterval</span><span class="p">);</span>
+<span class="w">          </span><span class="nx">timerInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">          </span><span class="nx">timerDiv</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;00:00&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span><span class="w"> </span><span class="mf">500</span><span class="p">);</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="mf">2000</span><span class="p">);</span>
+<span class="p">})();</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p><strong>Via Web Forms:</strong></p>
+<p>JavaScript in a web form IFRAME can communicate with the parent VICIdial frame if they're on the same origin:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// From within a web form IFRAME (same origin)</span>
+<span class="c1">// Read agent data from parent frame</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">agentUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">parent</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;agentUser&#39;</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+
+<span class="c1">// Trigger a disposition in the parent frame</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">triggerDisposition</span><span class="p">(</span><span class="nx">statusCode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">parent</span><span class="p">.</span><span class="nx">DispoSelectContent_create</span><span class="p">(</span><span class="nx">statusCode</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Listen for call events</span>
+<span class="nx">parent</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Handle call connect/disconnect events</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<h3 id="common-javascript-customizations">Common JavaScript Customizations<a class="headerlink" href="#common-javascript-customizations" title="Permanent link">&para;</a></h3>
+<p><strong>Auto-populate fields from external data:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Fetch additional lead data from your API and display it</span>
+<span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/lead-details/&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">leadId</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Display previous call history, account balance, etc.</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">infoPanel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">infoPanel</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;b&gt;Account Balance:&lt;/b&gt; $&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">balance</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                          </span><span class="s1">&#39;&lt;br&gt;&lt;b&gt;Last Call:&lt;/b&gt; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">last_call_date</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                          </span><span class="s1">&#39;&lt;br&gt;&lt;b&gt;Previous Agent:&lt;/b&gt; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">previous_agent</span><span class="p">;</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;custom_info_area&#39;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">infoPanel</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+</code></pre></div>
+
+<p><strong>Color-code the agent screen based on lead data:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Change background color based on lead priority</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;address3&#39;</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span><span class="w"> </span><span class="c1">// state field</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">highValueStates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;TX&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;FL&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NY&#39;</span><span class="p">];</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">highValueStates</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">state</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;#e8f5e9&#39;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Light green = high value</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Custom notification sounds:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Play a sound when a call connects</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">connectSound</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Audio</span><span class="p">(</span><span class="s1">&#39;/sounds/call-connect.mp3&#39;</span><span class="p">);</span>
+<span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;MainStatuSSpan&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">status</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">status</span><span class="p">.</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;INCALL&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">connectSound</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">},</span><span class="w"> </span><span class="mf">1000</span><span class="p">);</span>
+</code></pre></div>
+
+<hr />
+<h2 id="custom-transfer-lists">Custom Transfer Lists<a class="headerlink" href="#custom-transfer-lists" title="Permanent link">&para;</a></h2>
+<p>Transfer lists control which extensions/groups agents can transfer calls to. Customizing these is essential for operations with multiple departments, closers, or external transfer destinations.</p>
+<h3 id="configuring-transfer-groups">Configuring Transfer Groups<a class="headerlink" href="#configuring-transfer-groups" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Go to Admin → In-Groups (for queue-based transfers) or Admin → Presets (for direct transfers)</li>
+<li>Create <a href="/glossary/inbound-group/">In-Groups</a> for each transfer destination</li>
+<li>In Campaign Detail → <a href="/settings/closer-campaigns/">Closer Campaigns</a>, select which In-Groups agents can transfer to</li>
+</ol>
+<h3 id="custom-transfer-presets">Custom Transfer Presets<a class="headerlink" href="#custom-transfer-presets" title="Permanent link">&para;</a></h3>
+<p>For quick-dial transfers (direct to a phone number or extension):</p>
+<ol>
+<li>Admin → System Presets or Campaign Presets</li>
+<li>Create presets with descriptive names and destination numbers</li>
+</ol>
+<p>Example for an insurance operation:</p>
+<table>
+<thead>
+<tr>
+<th>Preset Name</th>
+<th>Destination</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Medicare Closer</td>
+<td>8501 (In-Group extension)</td>
+<td>Transfer qualified Medicare leads</td>
+</tr>
+<tr>
+<td>Supervisor</td>
+<td>SIP/1001</td>
+<td>Escalation to floor supervisor</td>
+</tr>
+<tr>
+<td>Spanish Queue</td>
+<td>8502</td>
+<td>Transfer to Spanish-speaking closer</td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td>SIP/1005</td>
+<td>Compliance department transfer</td>
+</tr>
+<tr>
+<td>Warm Transfer</td>
+<td>8503</td>
+<td>Warm transfer queue (agent stays on line)</td>
+</tr>
+</tbody>
+</table>
+<p>Agents see these as buttons in the transfer dialog, eliminating the need to remember extension numbers.</p>
+<hr />
+<h2 id="limitations-and-workarounds">Limitations and Workarounds<a class="headerlink" href="#limitations-and-workarounds" title="Permanent link">&para;</a></h2>
+<p>The VICIdial agent screen has real limitations that you should understand before investing significant development effort.</p>
+<h3 id="the-fundamental-architecture-constraint">The Fundamental Architecture Constraint<a class="headerlink" href="#the-fundamental-architecture-constraint" title="Permanent link">&para;</a></h3>
+<p>The agent interface is a single PHP-generated page that loads once per session. It's not a modern SPA with a component architecture, reactive data binding, or a design system. You cannot:</p>
+<ul>
+<li>Replace the interface wholesale with a React/Vue/Angular application (without forking VICIdial)</li>
+<li>Use CSS frameworks like Tailwind or Bootstrap without conflicts with VICIdial's existing styles</li>
+<li>Guarantee that DOM modifications via JavaScript will persist across all state transitions</li>
+</ul>
+<h3 id="css-injection-limitations">CSS Injection Limitations<a class="headerlink" href="#css-injection-limitations" title="Permanent link">&para;</a></h3>
+<p>VICIdial's agent screen uses inline styles heavily. Your CSS overrides need <code>!important</code> on almost everything. Some elements are dynamically regenerated during call state transitions, resetting your CSS modifications. For persistent styling, use MutationObserver:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">observer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MutationObserver</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">mutations</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Re-apply custom styles when the DOM changes</span>
+<span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">elements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;.your-target&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">elements</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;#f0f0f0&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+<span class="nx">observer</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">childList</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">subtree</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">});</span>
+</code></pre></div>
+
+<h3 id="iframe-communication-constraints">IFRAME Communication Constraints<a class="headerlink" href="#iframe-communication-constraints" title="Permanent link">&para;</a></h3>
+<p>Web forms in IFRAMEs have full JavaScript access to the parent frame <em>only if they're on the same origin</em>. If your web form is hosted on a different domain, you're limited to <code>postMessage</code>. This means most external CRM integrations require either:</p>
+<ol>
+<li>Hosting the CRM interface on the same domain (via reverse proxy)</li>
+<li>Building a lightweight proxy page on the VICIdial domain that communicates with the CRM via API</li>
+<li>Using VICIdial's own API endpoints from the CRM side</li>
+</ol>
+<h3 id="mobile-responsiveness">Mobile Responsiveness<a class="headerlink" href="#mobile-responsiveness" title="Permanent link">&para;</a></h3>
+<p>The VICIdial agent screen is not responsive. It's designed for desktop browsers at 1024px+ width. Remote agents on tablets or small laptops will have a degraded experience. The Wide layout helps on wide screens, but there's no mobile layout. If you have remote agents on small screens, consider building a custom web form that is responsive and handles the data collection portion of the agent workflow.</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>Custom agent screen configurations are part of every ViciStack deployment. We build campaign-specific web forms, configure screen labels, set up hotkeys, integrate CRM systems via IFRAMEs, and ensure agents see exactly the data they need — nothing more, nothing less.</p>
+<p>The agent interface is where your staff lives. Every unnecessary click, every confusing label, every missing piece of data costs you talk time and conversion rate. We've optimized agent screens for insurance, solar, home services, debt settlement, and B2B lead gen operations. We know which customizations matter for each vertical because we've deployed them across hundreds of centers.</p>
+<p><strong>ViciStack handles the customization so your agents can handle the calls.</strong></p>
+<p><a href="/free-audit/">Get a free agent experience audit →</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial releases add new customization capabilities. Last updated: March 2026.</em></p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="can-i-completely-replace-the-vicidial-agent-interface-with-a-custom-ui">Can I completely replace the VICIdial agent interface with a custom UI?<a class="headerlink" href="#can-i-completely-replace-the-vicidial-agent-interface-with-a-custom-ui" title="Permanent link">&para;</a></h3>
+<p>Not without forking VICIdial's code — which creates a maintenance nightmare on every SVN update. The supported approach is to customize within the existing framework using web forms, screen labels, and JavaScript injection. A common compromise: build an elaborate custom web form that handles 90% of what agents interact with, and use the native VICIdial interface only for call controls (answer, transfer, disposition, hangup). The web form IFRAME can be sized to dominate the screen while the VICIdial controls remain available.</p>
+<h3 id="how-do-i-pass-custom-field-data-to-a-web-form">How do I pass custom field data to a web form?<a class="headerlink" href="#how-do-i-pass-custom-field-data-to-a-web-form" title="Permanent link">&para;</a></h3>
+<p>Custom fields created in Admin → Custom Fields are available using the same <code>--A--fieldname--B--</code> syntax. If you created a custom field called <code>policy_number</code>, use <code>--A--policy_number--B--</code> in your web form URL. The field name in the variable must match exactly what you entered in the Custom Fields configuration. Test with a simple web form that displays all received parameters before building your full form.</p>
+<h3 id="can-agents-use-keyboard-shortcuts-beyond-hotkeys">Can agents use keyboard shortcuts beyond hotkeys?<a class="headerlink" href="#can-agents-use-keyboard-shortcuts-beyond-hotkeys" title="Permanent link">&para;</a></h3>
+<p>VICIdial's built-in hotkey system is limited to disposition codes. For broader keyboard shortcuts (transfer, pause, callback), you'll need JavaScript injection. The challenge is that VICIdial's JavaScript already captures some key events, so your custom shortcuts need to be bound carefully to avoid conflicts. Use key combinations (Ctrl+Shift+T for transfer, etc.) rather than single keys to minimize conflicts.</p>
+<h3 id="how-do-i-make-the-web-form-auto-update-when-a-new-call-connects">How do I make the web form auto-update when a new call connects?<a class="headerlink" href="#how-do-i-make-the-web-form-auto-update-when-a-new-call-connects" title="Permanent link">&para;</a></h3>
+<p>VICIdial automatically refreshes the web form IFRAME URL with new lead data when a call connects — as long as the Web Form URL contains <code>--A--</code> variable placeholders. If your web form isn't updating, check that: (1) the URL contains at least one <code>--A--..--B--</code> variable, (2) the Web Form Target is set to IFRAME (not _blank), and (3) Auto-Open Web Form is enabled on the campaign.</p>
+<h3 id="can-i-integrate-salesforcehubspotzoho-directly-into-the-agent-screen">Can I integrate Salesforce/HubSpot/Zoho directly into the agent screen?<a class="headerlink" href="#can-i-integrate-salesforcehubspotzoho-directly-into-the-agent-screen" title="Permanent link">&para;</a></h3>
+<p>Yes, via IFRAME. Set your Web Form URL to the CRM's record page URL, passing the lead identifier. For Salesforce: <code>https://yourorg.salesforce.com/lightning/r/Lead/--A--vendor_lead_code--B--/view</code>. For HubSpot: <code>https://app.hubspot.com/contacts/your-account/contact/--A--vendor_lead_code--B--</code>. The CRM loads inside the agent screen IFRAME. Cross-origin restrictions prevent JavaScript communication between the CRM and VICIdial, but most CRM integrations only need one-directional data display. For bidirectional integration (CRM triggering VICIdial actions), use VICIdial's non-agent API.</p>
+<h3 id="how-do-i-test-agent-screen-customizations-without-affecting-production">How do I test agent screen customizations without affecting production?<a class="headerlink" href="#how-do-i-test-agent-screen-customizations-without-affecting-production" title="Permanent link">&para;</a></h3>
+<p>Create a test campaign with your custom screen labels, web forms, and scripts. Only assign test agents to it. This lets you iterate on customizations without impacting production campaigns. For JavaScript injection testing, use your browser's developer console (F12) to test DOM manipulations before committing them to a Screen Labels entry. Once verified, apply the same configuration to your production campaign.</p>
+<h3 id="whats-the-performance-impact-of-heavy-javascript-customization">What's the performance impact of heavy JavaScript customization?<a class="headerlink" href="#whats-the-performance-impact-of-heavy-javascript-customization" title="Permanent link">&para;</a></h3>
+<p>Minimal for most customizations. The agent screen is a single long-lived page, so JavaScript initialization overhead happens once per session. However, aggressive use of <code>setInterval</code> for polling (like the call timer example) can add up. Each setInterval running at 500ms or less adds a small CPU cost. On modern browsers and hardware, 5-10 simultaneous intervals are fine. If you notice the agent screen becoming sluggish, check for runaway intervals or memory leaks in custom JavaScript.</p>
+<h3 id="can-i-customize-the-manageradmin-interface-the-same-way">Can I customize the manager/admin interface the same way?<a class="headerlink" href="#can-i-customize-the-manageradmin-interface-the-same-way" title="Permanent link">&para;</a></h3>
+<p>The admin interface has different (more limited) customization options. Screen Labels only affect the agent screen. The admin interface can be modified via direct PHP file editing, but this breaks on VICIdial SVN updates. For admin customizations, the best approach is building separate custom admin pages that query VICIdial's database directly and embedding them as links in the admin sidebar. This keeps your customizations independent of VICIdial's update cycle.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-agent-screen-customization">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

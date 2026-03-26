@@ -1,0 +1,4163 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-caller-id-reputation/">
+      
+      
+        <link rel="prev" href="../vicidial-callback-automation/">
+      
+      
+        <link rel="next" href="../vicidial-carrier-selection/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Caller ID Reputation Monitoring and Recovery Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-caller-id-reputation-monitoring-and-recovery-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Caller ID Reputation Monitoring and Recovery Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-caller-id-gets-flagged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Caller ID Gets Flagged
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Caller ID Gets Flagged">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pathway-1-carrier-analytics-engines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pathway 1: Carrier Analytics Engines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pathway-2-consumer-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pathway 2: Consumer Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pathway-3-stirshaken-attestation-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pathway 3: STIR/SHAKEN Attestation Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-your-caller-id-reputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Your Caller ID Reputation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Your Caller ID Reputation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#free-caller-registry-fcr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Free Caller Registry (FCR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stirshaken-attestation-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STIR/SHAKEN Attestation Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-specific-reputation-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier-Specific Reputation Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#third-party-monitoring-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Third-Party Monitoring Tools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-your-own-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building Your Own Monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-rotation-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Rotation Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID Rotation Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-dids-do-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many DIDs Do You Need?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-did-rotation-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring DID Rotation in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-rotation-weighted-by-reputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Rotation: Weighted by Reputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cool-down-periods-and-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cool-Down Periods and Recovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cool-Down Periods and Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cool-down-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cool-Down Timeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#active-recovery-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Active Recovery Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automating-cool-down-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automating Cool-Down Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-presence-dialing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Presence Dialing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Local Presence Dialing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-local-presence-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Local Presence in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-presence-compliance-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Presence Compliance Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inbound-routing-for-local-presence-dids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inbound Routing for Local Presence DIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-reputation-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Reputation Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated Reputation Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-management-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Management Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preventive-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventive Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-caller-id-gets-flagged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Caller ID Gets Flagged
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Caller ID Gets Flagged">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pathway-1-carrier-analytics-engines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pathway 1: Carrier Analytics Engines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pathway-2-consumer-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pathway 2: Consumer Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pathway-3-stirshaken-attestation-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pathway 3: STIR/SHAKEN Attestation Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-your-caller-id-reputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Your Caller ID Reputation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Your Caller ID Reputation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#free-caller-registry-fcr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Free Caller Registry (FCR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stirshaken-attestation-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STIR/SHAKEN Attestation Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carrier-specific-reputation-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier-Specific Reputation Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#third-party-monitoring-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Third-Party Monitoring Tools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-your-own-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building Your Own Monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-rotation-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Rotation Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID Rotation Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-dids-do-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many DIDs Do You Need?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-did-rotation-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring DID Rotation in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-rotation-weighted-by-reputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Rotation: Weighted by Reputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cool-down-periods-and-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cool-Down Periods and Recovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cool-Down Periods and Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cool-down-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cool-Down Timeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#active-recovery-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Active Recovery Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automating-cool-down-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automating Cool-Down Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-presence-dialing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Presence Dialing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Local Presence Dialing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-local-presence-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Local Presence in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-presence-compliance-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Presence Compliance Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inbound-routing-for-local-presence-dids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inbound Routing for Local Presence DIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-reputation-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Reputation Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated Reputation Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-management-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Management Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preventive-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preventive Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-caller-id-reputation-monitoring-and-recovery-guide">VICIdial Caller ID Reputation Monitoring and Recovery Guide<a class="headerlink" href="#vicidial-caller-id-reputation-monitoring-and-recovery-guide" title="Permanent link">&para;</a></h1>
+<p>Your VICIdial dialer can have perfect AMD tuning, optimized agent routing, and the best scripts in the industry -- but none of it matters if your calls are not being answered. And the number one reason calls go unanswered in 2026 is caller ID reputation.</p>
+<p>When your outbound DIDs get flagged as "Spam Likely," "Scam Probable," or "Telemarketer" by carrier analytics systems, your answer rates collapse. We have seen centers go from 45% answer rates to 12% in a matter of days because their caller IDs got flagged. At 200 dials per agent per hour, that is the difference between 90 live connections per hour and 24. Your agents sit idle, your cost per acquisition triples, and your campaign bleeds money.</p>
+<p>This guide covers how caller IDs get flagged, how to monitor your reputation before it tanks, how to implement DID rotation and cool-down strategies in VICIdial, and how to build automated reputation management that keeps your answer rates high.</p>
+<h2 id="how-caller-id-gets-flagged">How Caller ID Gets Flagged<a class="headerlink" href="#how-caller-id-gets-flagged" title="Permanent link">&para;</a></h2>
+<p>Understanding the flagging ecosystem is essential to managing it. There are three major pathways by which your outbound DIDs get labeled as spam.</p>
+<h3 id="pathway-1-carrier-analytics-engines">Pathway 1: Carrier Analytics Engines<a class="headerlink" href="#pathway-1-carrier-analytics-engines" title="Permanent link">&para;</a></h3>
+<p>The major US carriers (AT&amp;T, Verizon, T-Mobile) run analytics engines that score every inbound call:</p>
+<ul>
+<li><strong>AT&amp;T:</strong> Uses Hiya (formerly TrustID) to analyze call patterns and flag suspicious numbers</li>
+<li><strong>Verizon:</strong> Uses TNS (Transaction Network Services) Call Guardian</li>
+<li><strong>T-Mobile:</strong> Uses their own Scam Shield system with multiple data sources</li>
+</ul>
+<p>These engines analyze:</p>
+<ul>
+<li><strong>Call volume patterns.</strong> A DID that originates 500+ calls per day raises flags. Normal consumer phone usage is 5-20 calls per day.</li>
+<li><strong>Short duration calls.</strong> High volumes of calls lasting under 10 seconds (hangups, voicemails) signal robocalling.</li>
+<li><strong>Low answer rates.</strong> If most people do not answer your calls, that is a negative signal.</li>
+<li><strong>Complaint velocity.</strong> When recipients press "Report Spam" on their phone or register complaints through carrier apps, each complaint accelerates flagging.</li>
+<li><strong>Geographic patterns.</strong> Calling patterns that are geographically inconsistent (a Miami number calling thousands of people in Oregon) trigger scrutiny.</li>
+<li><strong>Number age.</strong> Newly provisioned DIDs that immediately start high-volume calling are suspicious.</li>
+</ul>
+<h3 id="pathway-2-consumer-reporting">Pathway 2: Consumer Reporting<a class="headerlink" href="#pathway-2-consumer-reporting" title="Permanent link">&para;</a></h3>
+<p>Individual consumers can report numbers as spam through:</p>
+<ul>
+<li><strong>Carrier apps:</strong> T-Mobile Scam Shield, Verizon Call Filter, AT&amp;T Call Protect</li>
+<li><strong>Third-party apps:</strong> Truecaller, Hiya, Nomorobo, RoboKiller</li>
+<li><strong>FTC complaints:</strong> Consumers filing complaints at donotcall.gov</li>
+<li><strong>Community databases:</strong> Online forums and spam reporting websites</li>
+</ul>
+<p>Each report feeds back into the carrier analytics engines, creating a negative feedback loop. It takes surprisingly few reports to trigger flagging -- as few as 3-5 reports within a 24-hour period can flag a number on some platforms.</p>
+<h3 id="pathway-3-stirshaken-attestation-failures">Pathway 3: STIR/SHAKEN Attestation Failures<a class="headerlink" href="#pathway-3-stirshaken-attestation-failures" title="Permanent link">&para;</a></h3>
+<p>STIR/SHAKEN (Secure Telephone Identity Revisited / Signature-based Handling of Asserted information using toKENs) is a framework that cryptographically signs calls to verify caller identity. Every call now carries an attestation level:</p>
+<ul>
+<li><strong>Full Attestation (A):</strong> The carrier has verified the calling party's identity and their right to use the calling number. These calls are rarely flagged.</li>
+<li><strong>Partial Attestation (B):</strong> The carrier has verified the calling party but cannot confirm they have the right to use the specific calling number. These calls receive moderate scrutiny.</li>
+<li><strong>Gateway Attestation (C):</strong> The carrier received the call from an international gateway or cannot verify the origin. These calls receive maximum scrutiny.</li>
+</ul>
+<p>If your SIP carrier provides only B or C attestation for your outbound DIDs, you start with a disadvantage. Carriers are increasingly using attestation level as a primary input to their spam scoring.</p>
+<div class="codehilite"><pre><span></span><code><span class="o">;</span><span class="w"> </span><span class="nt">Example</span><span class="w"> </span><span class="nt">STIR</span><span class="o">/</span><span class="nt">SHAKEN</span><span class="w"> </span><span class="nt">header</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nt">a</span><span class="w"> </span><span class="nt">SIP</span><span class="w"> </span><span class="nt">INVITE</span>
+<span class="nt">Identity</span><span class="o">:</span><span class="w"> </span><span class="nt">eyJhbGciOiJFUzI1NiIsInBwdCI6InNoYWtlbiIsInR5cCI6InBhc3Nwb3J0</span><span class="o">...</span>
+<span class="o">;</span><span class="nt">info</span><span class="o">=&lt;</span><span class="nt">https</span><span class="o">://</span><span class="nt">cert</span><span class="p">.</span><span class="nc">example</span><span class="p">.</span><span class="nc">com</span><span class="o">/</span><span class="nt">cert</span><span class="p">.</span><span class="nc">pem</span><span class="o">&gt;;</span><span class="nt">alg</span><span class="o">=</span><span class="nt">ES256</span><span class="o">;</span><span class="nt">ppt</span><span class="o">=</span><span class="nt">shaken</span>
+<span class="o">;</span><span class="w"> </span><span class="nt">The</span><span class="w"> </span><span class="s1">&#39;attest&#39;</span><span class="w"> </span><span class="nt">field</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nt">the</span><span class="w"> </span><span class="nt">decoded</span><span class="w"> </span><span class="nt">token</span><span class="w"> </span><span class="nt">shows</span><span class="w"> </span><span class="nt">A</span><span class="o">,</span><span class="w"> </span><span class="nt">B</span><span class="o">,</span><span class="w"> </span><span class="nt">or</span><span class="w"> </span><span class="nt">C</span>
+</code></pre></div>
+
+<p>To check what attestation your carrier provides:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Capture a SIP INVITE from your carrier and decode the Identity header</span>
+<span class="c1"># Or ask your carrier directly what attestation level they provide for your DIDs</span>
+sngrep<span class="w"> </span>-c<span class="w"> </span>-d<span class="w"> </span>eth0<span class="w"> </span>port<span class="w"> </span><span class="m">5060</span>
+<span class="c1"># Look for the Identity header in outgoing INVITEs</span>
+</code></pre></div>
+
+<h2 id="monitoring-your-caller-id-reputation">Monitoring Your Caller ID Reputation<a class="headerlink" href="#monitoring-your-caller-id-reputation" title="Permanent link">&para;</a></h2>
+<p>You cannot manage what you do not measure. Set up monitoring before problems occur.</p>
+<h3 id="free-caller-registry-fcr">Free Caller Registry (FCR)<a class="headerlink" href="#free-caller-registry-fcr" title="Permanent link">&para;</a></h3>
+<p>The Free Caller Registry (https://freecallerregistry.com) is run by the major analytics providers. You can register your business and your DIDs, which signals to the analytics engines that you are a legitimate caller. This does not guarantee you will not be flagged, but it establishes a baseline identity.</p>
+<p>Steps to register:
+1. Create an account at freecallerregistry.com
+2. Verify your business identity (requires EIN, business address)
+3. Register all your outbound DIDs
+4. Set your business name and calling purpose
+5. Monitor the dashboard for reputation changes</p>
+<h3 id="stirshaken-attestation-verification">STIR/SHAKEN Attestation Verification<a class="headerlink" href="#stirshaken-attestation-verification" title="Permanent link">&para;</a></h3>
+<p>Check what attestation level your calls receive:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># check_attestation.sh - Verify STIR/SHAKEN attestation on outbound calls</span>
+<span class="c1"># Requires sngrep or a SIP capture tool</span>
+
+<span class="c1"># Capture an outbound INVITE</span>
+tshark<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;udp port 5060&quot;</span><span class="w"> </span>-Y<span class="w"> </span><span class="s2">&quot;sip.Method == INVITE&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-T<span class="w"> </span>fields<span class="w"> </span>-e<span class="w"> </span>sip.Identity<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-c<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+
+<span class="c1"># Decode the JWT token (base64 decode the middle section)</span>
+<span class="c1"># The &#39;attest&#39; field shows your attestation level</span>
+</code></pre></div>
+
+<p>Alternatively, use your SIP carrier's portal. Most carriers now show attestation information in their dashboards.</p>
+<h3 id="carrier-specific-reputation-checks">Carrier-Specific Reputation Checks<a class="headerlink" href="#carrier-specific-reputation-checks" title="Permanent link">&para;</a></h3>
+<p>Each major carrier offers tools to check your number's status:</p>
+<p><strong>T-Mobile / Sprint:</strong>
+- Scam Shield app: Call your own number from a T-Mobile phone
+- Business Portal: https://www.t-mobile.com/business/solutions/scam-shield</p>
+<p><strong>AT&amp;T:</strong>
+- Call Protect app: Call your own number from an AT&amp;T phone
+- Business request form for removing incorrect labels</p>
+<p><strong>Verizon:</strong>
+- Call Filter app: Call your own number from a Verizon phone
+- Business portal: https://voicefilter.verizon.com</p>
+<h3 id="third-party-monitoring-tools">Third-Party Monitoring Tools<a class="headerlink" href="#third-party-monitoring-tools" title="Permanent link">&para;</a></h3>
+<p>For automated, ongoing monitoring across all carriers:</p>
+<ul>
+<li><strong>Numeracle:</strong> Entity Identity Management (EIM) platform that monitors your DID reputation across all major carriers and analytics engines</li>
+<li><strong>Quality Voice &amp; Data (QVD):</strong> Monitors caller ID display across 200+ carriers</li>
+<li><strong>CallerID Reputation:</strong> Automated monitoring and alerting service</li>
+</ul>
+<h3 id="building-your-own-monitor">Building Your Own Monitor<a class="headerlink" href="#building-your-own-monitor" title="Permanent link">&para;</a></h3>
+<p>For a quick and dirty internal monitoring system, track your answer rates per DID in VICIdial:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Monitor answer rate by caller ID (DID)</span>
+<span class="c1">-- Run daily to catch reputation drops early</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">dl</span><span class="p">.</span><span class="n">outbound_cid</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">caller_id</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_dials</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">answer_rate_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;AA&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">amd_machine</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;SALE&#39;</span><span class="p">,</span><span class="s1">&#39;XFER&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">live_connects</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_dial_log</span><span class="w"> </span><span class="n">dl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dl</span><span class="p">.</span><span class="n">uniqueid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">HOUR</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">dl</span><span class="p">.</span><span class="n">outbound_cid</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">total_dials</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">50</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">answer_rate_pct</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Red flag:</strong> If a DID's answer rate drops below 25% when your campaign average is 40%+, that DID is likely flagged.</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># did_reputation_alert.sh - Alert on sudden answer rate drops</span>
+<span class="c1"># Run hourly via cron</span>
+
+<span class="nv">MYSQL</span><span class="o">=</span><span class="s2">&quot;mysql -u monitor -pmonitorpass -D asterisk -N -e&quot;</span>
+<span class="nv">ALERT_EMAIL</span><span class="o">=</span><span class="s2">&quot;ops@yourdomain.com&quot;</span>
+<span class="nv">THRESHOLD</span><span class="o">=</span><span class="m">25</span><span class="w">  </span><span class="c1"># Answer rate below this triggers alert</span>
+
+<span class="nv">FLAGGED_DIDS</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    SELECT dl.outbound_cid,</span>
+<span class="s2">           ROUND(SUM(CASE WHEN vl.status NOT IN (&#39;NA&#39;,&#39;B&#39;,&#39;DC&#39;,&#39;N&#39;) THEN 1 ELSE 0 END) / COUNT(*) * 100, 1) as ar</span>
+<span class="s2">    FROM vicidial_dial_log dl</span>
+<span class="s2">    JOIN vicidial_log vl ON dl.uniqueid = vl.uniqueid</span>
+<span class="s2">    WHERE vl.call_date &gt; DATE_SUB(NOW(), INTERVAL 4 HOUR)</span>
+<span class="s2">    GROUP BY dl.outbound_cid</span>
+<span class="s2">    HAVING COUNT(*) &gt; 30 AND ar &lt; </span><span class="nv">$THRESHOLD</span><span class="s2">;</span>
+<span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$FLAGGED_DIDS</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;The following DIDs have answer rates below </span><span class="si">${</span><span class="nv">THRESHOLD</span><span class="si">}</span><span class="s2">% in the last 4 hours:&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/did_alert.txt
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/tmp/did_alert.txt
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$FLAGGED_DIDS</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/tmp/did_alert.txt
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/tmp/did_alert.txt
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;These DIDs may be flagged as spam. Consider pulling them from rotation.&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/tmp/did_alert.txt
+
+<span class="w">    </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;WARNING: Low answer rate DIDs detected&quot;</span><span class="w"> </span><span class="nv">$ALERT_EMAIL</span><span class="w"> </span>&lt;<span class="w"> </span>/tmp/did_alert.txt
+<span class="k">fi</span>
+</code></pre></div>
+
+<h2 id="did-rotation-strategies">DID Rotation Strategies<a class="headerlink" href="#did-rotation-strategies" title="Permanent link">&para;</a></h2>
+<p>DID rotation is the primary tactical response to caller ID degradation. The concept is simple: spread your call volume across many DIDs so that no single DID exceeds the volume thresholds that trigger flagging.</p>
+<h3 id="how-many-dids-do-you-need">How Many DIDs Do You Need?<a class="headerlink" href="#how-many-dids-do-you-need" title="Permanent link">&para;</a></h3>
+<p>The rule of thumb is <strong>1 DID per 50-100 daily calls</strong>. If your center makes 10,000 dials per day, you need 100-200 DIDs in rotation. This keeps each DID under the radar of carrier analytics engines.</p>
+<p>More conservative targets for premium campaigns (insurance, financial services):
+- <strong>1 DID per 30-50 daily calls</strong> for maximum protection
+- <strong>Local presence DIDs</strong> matching the area code of the called number</p>
+<h3 id="configuring-did-rotation-in-vicidial">Configuring DID Rotation in VICIdial<a class="headerlink" href="#configuring-did-rotation-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports CID Group rotation natively. Here is how to set it up.</p>
+<p><strong>Step 1: Create a CID Group in VICIdial Admin.</strong></p>
+<p>Navigate to Admin &gt; CID Groups &gt; Add New CID Group:</p>
+<div class="codehilite"><pre><span></span><code>CID Group Name: main_rotation_pool
+CID Group Description: Primary outbound DID rotation pool
+</code></pre></div>
+
+<p><strong>Step 2: Add DIDs to the CID Group.</strong></p>
+<p>Add each DID with its associated area codes. VICIdial can automatically select a DID matching the area code of the called number (local presence):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Add DIDs to the CID group</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">vicidial_campaign_cid_areacodes</span>
+<span class="w">    </span><span class="p">(</span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">areacode</span><span class="p">,</span><span class="w"> </span><span class="n">outbound_cid</span><span class="p">,</span><span class="w"> </span><span class="n">active</span><span class="p">,</span><span class="w"> </span><span class="n">cid_description</span><span class="p">)</span>
+<span class="k">VALUES</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;main_rotation_pool&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;212&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2125551001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC DID 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;main_rotation_pool&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;212&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2125551002&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC DID 2&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;main_rotation_pool&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;212&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2125551003&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC DID 3&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;main_rotation_pool&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;213&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2135551001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;LA DID 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;main_rotation_pool&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;213&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2135551002&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;LA DID 2&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;main_rotation_pool&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;312&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3125551001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Chicago DID 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;main_rotation_pool&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;312&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3125551002&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Chicago DID 2&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Step 3: Assign the CID Group to your campaign.</strong></p>
+<p>In Campaign Settings, set:
+- <strong>Use CID Group:</strong> <code>main_rotation_pool</code>
+- <strong>CID Group Rotation:</strong> <code>ROUND_ROBIN</code> or <code>RANDOM</code></p>
+<h3 id="advanced-rotation-weighted-by-reputation">Advanced Rotation: Weighted by Reputation<a class="headerlink" href="#advanced-rotation-weighted-by-reputation" title="Permanent link">&para;</a></h3>
+<p>Standard round-robin rotation treats all DIDs equally. A smarter approach weights rotation by each DID's current reputation score:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Add a reputation score column to track DID health</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_campaign_cid_areacodes</span>
+<span class="w">    </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">reputation_score</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">last_reputation_check</span><span class="w"> </span><span class="n">DATETIME</span><span class="p">,</span>
+<span class="w">    </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">daily_call_count</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c1">-- Update reputation scores based on answer rates</span>
+<span class="c1">-- Run this hourly</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_campaign_cid_areacodes</span><span class="w"> </span><span class="n">cid</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">SELECT</span>
+<span class="w">        </span><span class="n">dl</span><span class="p">.</span><span class="n">outbound_cid</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">            </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;DC&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">            </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">answer_rate</span>
+<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_dial_log</span><span class="w"> </span><span class="n">dl</span>
+<span class="w">    </span><span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">vl</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dl</span><span class="p">.</span><span class="n">uniqueid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">uniqueid</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">HOUR</span><span class="p">)</span>
+<span class="w">    </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">dl</span><span class="p">.</span><span class="n">outbound_cid</span>
+<span class="w">    </span><span class="k">HAVING</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">20</span>
+<span class="p">)</span><span class="w"> </span><span class="n">stats</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">cid</span><span class="p">.</span><span class="n">outbound_cid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stats</span><span class="p">.</span><span class="n">outbound_cid</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">cid</span><span class="p">.</span><span class="n">reputation_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stats</span><span class="p">.</span><span class="n">answer_rate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cid</span><span class="p">.</span><span class="n">last_reputation_check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">();</span>
+</code></pre></div>
+
+<h2 id="cool-down-periods-and-recovery">Cool-Down Periods and Recovery<a class="headerlink" href="#cool-down-periods-and-recovery" title="Permanent link">&para;</a></h2>
+<p>When a DID gets flagged, pulling it from rotation is only half the battle. You need a structured cool-down and recovery process.</p>
+<h3 id="cool-down-timeline">Cool-Down Timeline<a class="headerlink" href="#cool-down-timeline" title="Permanent link">&para;</a></h3>
+<p>Based on our experience managing DIDs across 100+ call centers:</p>
+<table>
+<thead>
+<tr>
+<th>Flagging Severity</th>
+<th>Cool-Down Period</th>
+<th>Recovery Likelihood</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Soft flag (1-2 carriers)</td>
+<td>7-14 days</td>
+<td>85-90%</td>
+</tr>
+<tr>
+<td>Hard flag (all major carriers)</td>
+<td>30-60 days</td>
+<td>60-70%</td>
+</tr>
+<tr>
+<td>Persistent flag (&gt; 60 days active)</td>
+<td>90+ days or retire</td>
+<td>30-40%</td>
+</tr>
+</tbody>
+</table>
+<p>During the cool-down period, the DID should make <strong>zero outbound calls</strong>. Any activity resets the clock.</p>
+<h3 id="active-recovery-steps">Active Recovery Steps<a class="headerlink" href="#active-recovery-steps" title="Permanent link">&para;</a></h3>
+<p>While a DID is cooling down, take these steps to accelerate recovery:</p>
+<p><strong>1. Register with Free Caller Registry.</strong> If you have not already, register the DID and your business. This signals legitimacy to analytics providers.</p>
+<p><strong>2. Request carrier reviews.</strong> Each carrier has a process for reviewing flagged numbers:</p>
+<ul>
+<li><strong>T-Mobile:</strong> Submit a request through their business portal or email ip.support@t-mobile.com</li>
+<li><strong>AT&amp;T/Hiya:</strong> Submit through the Hiya portal (hiya.com) for reputation review</li>
+<li><strong>Verizon/TNS:</strong> Submit through the TNS portal for Call Guardian review</li>
+</ul>
+<p><strong>3. Verify STIR/SHAKEN attestation.</strong> Ensure the DID receives Full Attestation (A) from your carrier. If it is getting B or C attestation, work with your carrier to resolve it.</p>
+<p><strong>4. Send legitimate traffic first.</strong> When re-introducing a recovered DID, start with low-volume, high-answer-rate traffic. Make 20-30 calls per day to known-good numbers (existing customers, warm leads) for 1-2 weeks before adding it back to cold outbound campaigns.</p>
+<h3 id="automating-cool-down-management">Automating Cool-Down Management<a class="headerlink" href="#automating-cool-down-management" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># did_cooldown_manager.sh</span>
+<span class="c1"># Run daily via cron to manage DID rotation and cool-down</span>
+
+<span class="nv">MYSQL</span><span class="o">=</span><span class="s2">&quot;mysql -u cron -pcronpass -D asterisk -N -e&quot;</span>
+<span class="nv">MIN_ANSWER_RATE</span><span class="o">=</span><span class="m">25</span>
+<span class="nv">COOLDOWN_DAYS</span><span class="o">=</span><span class="m">14</span>
+
+<span class="c1"># Step 1: Identify DIDs that need cool-down</span>
+<span class="nv">FLAGGED</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    SELECT outbound_cid</span>
+<span class="s2">    FROM vicidial_campaign_cid_areacodes</span>
+<span class="s2">    WHERE reputation_score &lt; </span><span class="nv">$MIN_ANSWER_RATE</span>
+<span class="s2">    AND active = &#39;Y&#39;</span>
+<span class="s2">    AND daily_call_count &gt; 50;</span>
+<span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="c1"># Step 2: Deactivate flagged DIDs</span>
+<span class="k">for</span><span class="w"> </span>DID<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$FLAGGED</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;UPDATE vicidial_campaign_cid_areacodes</span>
+<span class="s2">            SET active = &#39;N&#39;,</span>
+<span class="s2">                cooldown_start = NOW()</span>
+<span class="s2">            WHERE outbound_cid = &#39;</span><span class="nv">$DID</span><span class="s2">&#39;;&quot;</span>
+<span class="w">    </span>logger<span class="w"> </span><span class="s2">&quot;DID COOLDOWN: Deactivated </span><span class="nv">$DID</span><span class="s2"> (low answer rate)&quot;</span>
+<span class="k">done</span>
+
+<span class="c1"># Step 3: Check if any DIDs have completed cool-down</span>
+<span class="nv">RECOVERED</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    SELECT outbound_cid</span>
+<span class="s2">    FROM vicidial_campaign_cid_areacodes</span>
+<span class="s2">    WHERE active = &#39;N&#39;</span>
+<span class="s2">    AND cooldown_start IS NOT NULL</span>
+<span class="s2">    AND cooldown_start &lt; DATE_SUB(NOW(), INTERVAL </span><span class="nv">$COOLDOWN_DAYS</span><span class="s2"> DAY);</span>
+<span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="c1"># Step 4: Re-activate recovered DIDs with low volume limit</span>
+<span class="k">for</span><span class="w"> </span>DID<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$RECOVERED</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;UPDATE vicidial_campaign_cid_areacodes</span>
+<span class="s2">            SET active = &#39;Y&#39;,</span>
+<span class="s2">                daily_call_count = 0,</span>
+<span class="s2">                reputation_score = 50.0,</span>
+<span class="s2">                cooldown_start = NULL</span>
+<span class="s2">            WHERE outbound_cid = &#39;</span><span class="nv">$DID</span><span class="s2">&#39;;&quot;</span>
+<span class="w">    </span>logger<span class="w"> </span><span class="s2">&quot;DID RECOVERY: Re-activated </span><span class="nv">$DID</span><span class="s2"> after </span><span class="si">${</span><span class="nv">COOLDOWN_DAYS</span><span class="si">}</span><span class="s2">-day cool-down&quot;</span>
+<span class="k">done</span>
+
+<span class="c1"># Step 5: Report</span>
+<span class="nv">ACTIVE_COUNT</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_campaign_cid_areacodes WHERE active = &#39;Y&#39;;&quot;</span><span class="k">)</span>
+<span class="nv">COOLDOWN_COUNT</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_campaign_cid_areacodes WHERE active = &#39;N&#39; AND cooldown_start IS NOT NULL;&quot;</span><span class="k">)</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;DID Pool Status: </span><span class="nv">$ACTIVE_COUNT</span><span class="s2"> active, </span><span class="nv">$COOLDOWN_COUNT</span><span class="s2"> in cool-down&quot;</span>
+</code></pre></div>
+
+<h2 id="local-presence-dialing">Local Presence Dialing<a class="headerlink" href="#local-presence-dialing" title="Permanent link">&para;</a></h2>
+<p>Local presence dialing -- showing a caller ID with the same area code as the called party -- consistently produces 15-30% higher answer rates compared to a non-local number. VICIdial supports this natively through CID Groups with area code matching.</p>
+<h3 id="setting-up-local-presence-in-vicidial">Setting Up Local Presence in VICIdial<a class="headerlink" href="#setting-up-local-presence-in-vicidial" title="Permanent link">&para;</a></h3>
+<p><strong>Step 1: Acquire DIDs in target area codes.</strong> You need at least 2-3 DIDs per target area code for rotation. If you dial into 50 area codes, that is 100-150 DIDs minimum.</p>
+<p><strong>Step 2: Build the CID Group with area code mappings.</strong> Each DID is mapped to its corresponding area code:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Local presence CID group</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">vicidial_campaign_cid_areacodes</span>
+<span class="w">    </span><span class="p">(</span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">areacode</span><span class="p">,</span><span class="w"> </span><span class="n">outbound_cid</span><span class="p">,</span><span class="w"> </span><span class="n">active</span><span class="p">,</span><span class="w"> </span><span class="n">cid_description</span><span class="p">)</span>
+<span class="k">VALUES</span>
+<span class="w">    </span><span class="c1">-- New York metro</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;212&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2125559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC Manhattan 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;212&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2125559002&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC Manhattan 2&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;718&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;7185559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC Brooklyn 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;718&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;7185559002&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC Brooklyn 2&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;917&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;9175559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NYC Mobile 1&#39;</span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">-- Los Angeles metro</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;213&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2135559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;LA Downtown 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;213&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2135559002&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;LA Downtown 2&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;310&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3105559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;LA West 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;323&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3235559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;LA Central 1&#39;</span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">-- Chicago metro</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;312&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3125559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Chicago Loop 1&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;312&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3125559002&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Chicago Loop 2&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="s1">&#39;local_presence&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;773&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;7735559001&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Chicago North 1&#39;</span><span class="p">);</span>
+
+<span class="c1">-- For area codes without local DIDs, use a nearby regional number</span>
+<span class="c1">-- or a toll-free as fallback</span>
+</code></pre></div>
+
+<p><strong>Step 3: Configure campaign CID selection.</strong></p>
+<p>In VICIdial Campaign Settings:
+- <strong>Use CID Group:</strong> <code>local_presence</code>
+- <strong>CID Group Rotation:</strong> <code>AREACODE</code> (matches called party's area code)
+- <strong>Default CID:</strong> Your toll-free number (fallback for area codes without matching DIDs)</p>
+<h3 id="local-presence-compliance-notes">Local Presence Compliance Notes<a class="headerlink" href="#local-presence-compliance-notes" title="Permanent link">&para;</a></h3>
+<p>Local presence dialing is legal under current FCC regulations, but there are important compliance considerations:</p>
+<ol>
+<li><strong>The DID must be able to receive calls.</strong> If a called party calls back the displayed number, they must reach your business. Configure inbound routing for all local presence DIDs.</li>
+<li><strong>CNAM registration.</strong> Register your business name with the CNAM database for each DID so that recipients see your business name, not "Unknown Caller."</li>
+<li><strong>State regulations.</strong> Some states have additional requirements for outbound caller ID display. Consult your compliance team.</li>
+</ol>
+<h3 id="inbound-routing-for-local-presence-dids">Inbound Routing for Local Presence DIDs<a class="headerlink" href="#inbound-routing-for-local-presence-dids" title="Permanent link">&para;</a></h3>
+<p>Every DID you use for outbound local presence must have inbound routing configured. Prospects will call back these numbers.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; Asterisk dial plan for handling inbound calls to local presence DIDs</span>
+<span class="k">[from-local-presence]</span>
+<span class="c1">; Route all local presence DID callbacks to the same IVR/queue</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _NXXNXXXXXX,1,NoOp(Callback to local presence DID ${EXTEN})</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _NXXNXXXXXX,n,Set(CDR(did)=${EXTEN})</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _NXXNXXXXXX,n,Goto(callback-ivr,s,1)</span>
+
+<span class="k">[callback-ivr]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,1,Answer()</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,n,Playback(thank-you-for-calling)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,n,Queue(callback_queue,t,,,120)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,n,Voicemail(callback@default)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; s,n,Hangup()</span>
+</code></pre></div>
+
+<p>In VICIdial, configure each local presence DID as an inbound DID routing to your callback queue or IVR.</p>
+<h2 id="automated-reputation-management">Automated Reputation Management<a class="headerlink" href="#automated-reputation-management" title="Permanent link">&para;</a></h2>
+<p>Putting it all together, here is a complete automated reputation management system for VICIdial.</p>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="nb">+------------------+</span><span class="c">     </span><span class="nb">+-------------------+</span><span class="c">     </span><span class="nb">+------------------+</span>
+<span class="c">| VICIdial Dialer  |</span><span class="nb">----</span><span class="nv">&gt;</span><span class="c">| Reputation Engine |</span><span class="nb">----</span><span class="nv">&gt;</span><span class="c">| DID Pool Manager |</span>
+<span class="c">| (vicidial_log)   |     | (hourly cron)     |     | (daily cron)     |</span>
+<span class="nb">+------------------+</span><span class="c">     </span><span class="nb">+-------------------+</span><span class="c">     </span><span class="nb">+------------------+</span>
+<span class="c">                                |                          |</span>
+<span class="c">                                v                          v</span>
+<span class="c">                         </span><span class="nb">+-------------+</span><span class="c">            </span><span class="nb">+-------------+</span>
+<span class="c">                         | Alert System|            | Cool</span><span class="nb">-</span><span class="c">Down   |</span>
+<span class="c">                         | (email/SMS) |            | Tracker     |</span>
+<span class="c">                         </span><span class="nb">+-------------+</span><span class="c">            </span><span class="nb">+-------------+</span>
+</code></pre></div>
+
+<h3 id="complete-management-script">Complete Management Script<a class="headerlink" href="#complete-management-script" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># did_reputation_manager.sh</span>
+<span class="c1"># Complete DID reputation management for VICIdial</span>
+<span class="c1"># Run hourly via cron</span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+<span class="nv">MYSQL</span><span class="o">=</span><span class="s2">&quot;mysql -u cron -pcronpass -D asterisk -N -e&quot;</span>
+<span class="nv">LOG</span><span class="o">=</span><span class="s2">&quot;/var/log/did_reputation.log&quot;</span>
+<span class="nv">ALERT_EMAIL</span><span class="o">=</span><span class="s2">&quot;ops@yourdomain.com&quot;</span>
+<span class="nv">TIMESTAMP</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span><span class="s1">&#39;+%Y-%m-%d %H:%M:%S&#39;</span><span class="k">)</span>
+
+log<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TIMESTAMP</span><span class="s2"> </span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="nv">$LOG</span>
+<span class="o">}</span>
+
+<span class="c1"># === PHASE 1: Collect Metrics ===</span>
+log<span class="w"> </span><span class="s2">&quot;Starting reputation check&quot;</span>
+
+<span class="c1"># Get per-DID metrics for last 4 hours</span>
+<span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    CREATE TEMPORARY TABLE tmp_did_metrics AS</span>
+<span class="s2">    SELECT</span>
+<span class="s2">        dl.outbound_cid,</span>
+<span class="s2">        COUNT(*) as calls_4h,</span>
+<span class="s2">        SUM(CASE WHEN vl.status NOT IN (&#39;NA&#39;,&#39;B&#39;,&#39;DC&#39;,&#39;N&#39;) THEN 1 ELSE 0 END) as answered_4h,</span>
+<span class="s2">        ROUND(</span>
+<span class="s2">            SUM(CASE WHEN vl.status NOT IN (&#39;NA&#39;,&#39;B&#39;,&#39;DC&#39;,&#39;N&#39;) THEN 1 ELSE 0 END) /</span>
+<span class="s2">            NULLIF(COUNT(*), 0) * 100, 1</span>
+<span class="s2">        ) as answer_rate_4h,</span>
+<span class="s2">        AVG(vl.length_in_sec) as avg_duration</span>
+<span class="s2">    FROM vicidial_dial_log dl</span>
+<span class="s2">    JOIN vicidial_log vl ON dl.uniqueid = vl.uniqueid</span>
+<span class="s2">    WHERE vl.call_date &gt; DATE_SUB(NOW(), INTERVAL 4 HOUR)</span>
+<span class="s2">    AND dl.outbound_cid IS NOT NULL</span>
+<span class="s2">    AND dl.outbound_cid != &#39;&#39;</span>
+<span class="s2">    GROUP BY dl.outbound_cid</span>
+<span class="s2">    HAVING calls_4h &gt; 20;</span>
+<span class="s2">&quot;</span>
+
+<span class="c1"># === PHASE 2: Score and Flag ===</span>
+
+<span class="c1"># Update reputation scores</span>
+<span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    UPDATE vicidial_campaign_cid_areacodes cid</span>
+<span class="s2">    JOIN tmp_did_metrics m ON cid.outbound_cid = m.outbound_cid</span>
+<span class="s2">    SET cid.reputation_score = CASE</span>
+<span class="s2">        WHEN m.answer_rate_4h &gt;= 40 THEN LEAST(cid.reputation_score + 5, 100)</span>
+<span class="s2">        WHEN m.answer_rate_4h &gt;= 30 THEN cid.reputation_score</span>
+<span class="s2">        WHEN m.answer_rate_4h &gt;= 20 THEN GREATEST(cid.reputation_score - 10, 0)</span>
+<span class="s2">        ELSE GREATEST(cid.reputation_score - 25, 0)</span>
+<span class="s2">    END,</span>
+<span class="s2">    cid.last_reputation_check = NOW(),</span>
+<span class="s2">    cid.daily_call_count = cid.daily_call_count + m.calls_4h;</span>
+<span class="s2">&quot;</span>
+
+<span class="c1"># === PHASE 3: Take Action ===</span>
+
+<span class="c1"># Deactivate critically low reputation DIDs</span>
+<span class="nv">DEACTIVATED</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    SELECT outbound_cid, reputation_score</span>
+<span class="s2">    FROM vicidial_campaign_cid_areacodes</span>
+<span class="s2">    WHERE reputation_score &lt; 20</span>
+<span class="s2">    AND active = &#39;Y&#39;;</span>
+<span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DEACTIVATED</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">        UPDATE vicidial_campaign_cid_areacodes</span>
+<span class="s2">        SET active = &#39;N&#39;, cooldown_start = NOW()</span>
+<span class="s2">        WHERE reputation_score &lt; 20 AND active = &#39;Y&#39;;</span>
+<span class="s2">    &quot;</span>
+<span class="w">    </span>log<span class="w"> </span><span class="s2">&quot;DEACTIVATED DIDs: </span><span class="nv">$DEACTIVATED</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="c1"># Alert</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;The following DIDs have been deactivated due to low reputation:&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/rep_alert.txt
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DEACTIVATED</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/tmp/rep_alert.txt
+<span class="w">    </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;DID Reputation Alert: DIDs Deactivated&quot;</span><span class="w"> </span><span class="nv">$ALERT_EMAIL</span><span class="w"> </span>&lt;<span class="w"> </span>/tmp/rep_alert.txt
+<span class="k">fi</span>
+
+<span class="c1"># === PHASE 4: Daily Volume Reset ===</span>
+<span class="nv">HOUR</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%H<span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOUR</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;00&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;UPDATE vicidial_campaign_cid_areacodes SET daily_call_count = 0;&quot;</span>
+<span class="w">    </span>log<span class="w"> </span><span class="s2">&quot;Reset daily call counts&quot;</span>
+<span class="k">fi</span>
+
+<span class="c1"># === PHASE 5: Pool Health Report ===</span>
+<span class="nv">ACTIVE</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_campaign_cid_areacodes WHERE active = &#39;Y&#39;;&quot;</span><span class="k">)</span>
+<span class="nv">COOLDOWN</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_campaign_cid_areacodes WHERE active = &#39;N&#39; AND cooldown_start IS NOT NULL;&quot;</span><span class="k">)</span>
+<span class="nv">AVG_REP</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT ROUND(AVG(reputation_score),1) FROM vicidial_campaign_cid_areacodes WHERE active = &#39;Y&#39;;&quot;</span><span class="k">)</span>
+
+log<span class="w"> </span><span class="s2">&quot;Pool status: </span><span class="nv">$ACTIVE</span><span class="s2"> active, </span><span class="nv">$COOLDOWN</span><span class="s2"> cooling down, avg reputation: </span><span class="nv">$AVG_REP</span><span class="s2">&quot;</span>
+
+<span class="c1"># Alert if active pool is getting thin</span>
+<span class="nv">TOTAL</span><span class="o">=</span><span class="k">$((</span><span class="nv">$ACTIVE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">$COOLDOWN</span><span class="k">))</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TOTAL</span><span class="s2">&quot;</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">ACTIVE_PCT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;scale=0; </span><span class="nv">$ACTIVE</span><span class="s2"> * 100 / </span><span class="nv">$TOTAL</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bc<span class="k">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$ACTIVE_PCT</span><span class="s2">&quot;</span><span class="w"> </span>-lt<span class="w"> </span><span class="m">60</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WARNING: Only </span><span class="si">${</span><span class="nv">ACTIVE_PCT</span><span class="si">}</span><span class="s2">% of DID pool is active (</span><span class="nv">$ACTIVE</span><span class="s2"> of </span><span class="nv">$TOTAL</span><span class="s2">). Order more DIDs.&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;WARNING: DID Pool Running Low&quot;</span><span class="w"> </span><span class="nv">$ALERT_EMAIL</span>
+<span class="w">        </span>log<span class="w"> </span><span class="s2">&quot;WARNING: Active DID pool at </span><span class="si">${</span><span class="nv">ACTIVE_PCT</span><span class="si">}</span><span class="s2">%&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">fi</span>
+
+log<span class="w"> </span><span class="s2">&quot;Reputation check complete&quot;</span>
+</code></pre></div>
+
+<p>Add to cron:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Run reputation manager hourly</span>
+<span class="m">0</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/local/bin/did_reputation_manager.sh
+</code></pre></div>
+
+<h2 id="preventive-best-practices">Preventive Best Practices<a class="headerlink" href="#preventive-best-practices" title="Permanent link">&para;</a></h2>
+<p>Prevention is far cheaper than recovery. Follow these practices to keep your DIDs clean:</p>
+<ol>
+<li>
+<p><strong>Start low, ramp slow.</strong> When provisioning new DIDs, start with 20-30 calls per day and ramp up over 2 weeks to your target volume.</p>
+</li>
+<li>
+<p><strong>Maintain a DID-to-call ratio of at least 1:100.</strong> For every 100 daily dials, have at least 1 DID in rotation.</p>
+</li>
+<li>
+<p><strong>Register every DID with Free Caller Registry</strong> before using it for outbound dialing.</p>
+</li>
+<li>
+<p><strong>Register CNAM</strong> for every outbound DID. A business name appearing on caller ID significantly reduces spam reports.</p>
+</li>
+<li>
+<p><strong>Configure inbound routing</strong> for every outbound DID. Unroutable numbers get flagged faster.</p>
+</li>
+<li>
+<p><strong>Monitor daily.</strong> Do not wait for answer rates to crater. Catch reputation drops within hours, not days.</p>
+</li>
+<li>
+<p><strong>Separate DID pools by campaign type.</strong> Do not use the same DIDs for cold outbound and warm callback campaigns. If cold outbound flags a DID, it drags down your warm callback answer rates too.</p>
+</li>
+<li>
+<p><strong>Ensure Full STIR/SHAKEN attestation.</strong> Work with your SIP carrier to verify you receive A-level attestation on all outbound calls. Switch carriers if necessary.</p>
+</li>
+</ol>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>Caller ID reputation management is one of the highest-ROI optimizations we perform for VICIdial call centers. Most centers are losing 15-30% of their potential live connections to spam labeling without realizing it.</p>
+<p>ViciStack's managed optimization includes:</p>
+<ul>
+<li><strong>Full DID reputation audit</strong> across all major carriers and analytics platforms</li>
+<li><strong>Automated rotation and cool-down management</strong> deployed and monitored 24/7</li>
+<li><strong>Local presence DID provisioning</strong> with area code coverage for your target markets</li>
+<li><strong>STIR/SHAKEN attestation verification</strong> and carrier escalation for attestation issues</li>
+<li><strong>CNAM registration</strong> for all outbound DIDs</li>
+<li><strong>Monthly reputation reporting</strong> with trend analysis and proactive recommendations</li>
+</ul>
+<p>All included in the flat $150/agent/month. No per-DID surcharges, no per-minute fees.</p>
+<p><strong><a href="https://vicistack.com/proof/">Get your free caller ID reputation analysis -- we will check every one of your outbound DIDs across all major carriers and show you exactly which ones are flagged.</a></strong></p>
+<p>We respond within 5 minutes. No commitment, no credit card. Just a clear picture of your caller ID health.</p>
+<h2 id="further-reading">Further Reading<a class="headerlink" href="#further-reading" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-amd-false-positive-reduction">How to Reduce VICIdial AMD False Positives from 20% to Under 5%</a> -- AMD accuracy is meaningless if calls are not being answered in the first place</li>
+<li><a href="/blog/vicidial-sip-trunk-failover">VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide</a> -- carrier selection affects STIR/SHAKEN attestation levels</li>
+<li><a href="/blog/vicidial-amd-vs-ai-amd">VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?</a> -- optimizing what happens after the call is answered</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-caller-id-reputation">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

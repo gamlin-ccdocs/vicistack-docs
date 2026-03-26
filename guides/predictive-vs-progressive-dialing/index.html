@@ -1,0 +1,4813 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/predictive-vs-progressive-dialing/">
+      
+      
+        <link rel="prev" href="../open-source-call-center-software/">
+      
+      
+        <link rel="next" href="../stir-shaken-vicidial-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Predictive vs Progressive vs Preview Dialing: When to Use Each - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#predictive-vs-progressive-vs-preview-dialing-when-to-use-each" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Predictive vs Progressive vs Preview Dialing: When to Use Each
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-each-dialing-mode-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Each Dialing Mode Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Each Dialing Mode Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#predictive-dialing-the-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Dialing: The Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progressive-dialing-one-call-one-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progressive Dialing: One Call, One Agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preview-dialing-agent-initiated-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preview Dialing: Agent-Initiated Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidials-implementation-of-each-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Implementation of Each Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial&#39;s Implementation of Each Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dial-method-settings-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dial Method Settings in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#true-predictive-dialing-in-vicidial-ratio-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        True Predictive Dialing in VICIdial: RATIO + Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptive-progressive-like-dialing-adapt-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive (Progressive-Like) Dialing: ADAPT Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-vicidial-settings-for-each-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical VICIdial Settings for Each Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-each-mode-the-decision-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use Each Mode: The Decision Framework
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When to Use Each Mode: The Decision Framework">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#predictive-dialing-maximum-throughput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Dialing: Maximum Throughput
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progressive-dialing-the-compliance-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progressive Dialing: The Compliance Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preview-dialing-quality-over-quantity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preview Dialing: Quality Over Quantity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-decision-flowchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Decision Flowchart
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-implications-by-dialing-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Implications by Dialing Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Implications by Dialing Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fcc-abandoned-call-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FCC Abandoned Call Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcpa-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Implications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-level-regulations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Level Regulations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hybrid-approaches-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hybrid Approaches in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hybrid Approaches in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ratio-dialing-with-adapt-modifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ratio Dialing with ADAPT Modifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-level-mode-switching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign-Level Mode Switching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blended-campaigns-inbound-outbound-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blended Campaigns: Inbound + Outbound Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#power-dialing-the-fourth-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Power Dialing: The Fourth Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-comparison-real-world-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Comparison: Real-World Numbers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Comparison: Real-World Numbers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#side-by-side-comparison-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Side-by-Side Comparison Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-volume-vs-value-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Volume vs. Value Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-campaign-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Campaign Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World Campaign Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-1-high-volume-medicare-lead-generation-predictive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 1: High-Volume Medicare Lead Generation (Predictive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-2-b2b-software-demo-booking-progressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 2: B2B Software Demo Booking (Progressive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-3-wealth-management-client-outreach-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 3: Wealth Management Client Outreach (Preview)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-4-blended-insurance-campaign-hybrid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 4: Blended Insurance Campaign (Hybrid)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switching-modes-when-and-how" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching Modes: When and How
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Switching Modes: When and How">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signals-its-time-to-switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signals It's Time to Switch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-switch-in-vicidial-without-disrupting-active-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Switch in VICIdial Without Disrupting Active Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-economics-of-each-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Economics of Each Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Economics of Each Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#revenue-per-agent-hour-by-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Revenue Per Agent Hour by Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#but-revenue-per-agent-hour-isnt-the-whole-story" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        But Revenue Per Agent Hour Isn't the Whole Story
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#break-even-analysis-when-does-predictive-beat-progressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Break-Even Analysis: When Does Predictive Beat Progressive?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-minimum-number-of-agents-for-predictive-dialing-to-work-effectively" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the minimum number of agents for predictive dialing to work effectively?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-predictive-dialing-for-cell-phone-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use predictive dialing for cell phone lists?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-amd-interact-with-dialing-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does AMD interact with dialing mode?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-does-vicidials-adapt_tapered-actually-do-differently-from-adapt_average" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does VICIdial's "ADAPT_TAPERED" actually do differently from "ADAPT_AVERAGE"?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-current-dial-method-is-costing-me-money" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my current dial method is costing me money?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-different-dialing-modes-on-different-campaigns-simultaneously" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run different dialing modes on different campaigns simultaneously?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-list-quality-affect-the-choice-between-predictive-and-progressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does list quality affect the choice between predictive and progressive?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-impact-of-switching-dialing-modes-on-agent-morale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the impact of switching dialing modes on agent morale?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-each-dialing-mode-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Each Dialing Mode Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Each Dialing Mode Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#predictive-dialing-the-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Dialing: The Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progressive-dialing-one-call-one-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progressive Dialing: One Call, One Agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preview-dialing-agent-initiated-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preview Dialing: Agent-Initiated Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidials-implementation-of-each-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Implementation of Each Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial&#39;s Implementation of Each Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dial-method-settings-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dial Method Settings in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#true-predictive-dialing-in-vicidial-ratio-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        True Predictive Dialing in VICIdial: RATIO + Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptive-progressive-like-dialing-adapt-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive (Progressive-Like) Dialing: ADAPT Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-vicidial-settings-for-each-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical VICIdial Settings for Each Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-each-mode-the-decision-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use Each Mode: The Decision Framework
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When to Use Each Mode: The Decision Framework">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#predictive-dialing-maximum-throughput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Dialing: Maximum Throughput
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progressive-dialing-the-compliance-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progressive Dialing: The Compliance Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preview-dialing-quality-over-quantity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preview Dialing: Quality Over Quantity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-decision-flowchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Decision Flowchart
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-implications-by-dialing-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Implications by Dialing Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Implications by Dialing Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fcc-abandoned-call-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FCC Abandoned Call Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcpa-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Implications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-level-regulations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Level Regulations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hybrid-approaches-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hybrid Approaches in VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hybrid Approaches in VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ratio-dialing-with-adapt-modifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ratio Dialing with ADAPT Modifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-level-mode-switching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign-Level Mode Switching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blended-campaigns-inbound-outbound-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blended Campaigns: Inbound + Outbound Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#power-dialing-the-fourth-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Power Dialing: The Fourth Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-comparison-real-world-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Comparison: Real-World Numbers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Comparison: Real-World Numbers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#side-by-side-comparison-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Side-by-Side Comparison Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-volume-vs-value-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Volume vs. Value Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-campaign-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Campaign Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World Campaign Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-1-high-volume-medicare-lead-generation-predictive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 1: High-Volume Medicare Lead Generation (Predictive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-2-b2b-software-demo-booking-progressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 2: B2B Software Demo Booking (Progressive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-3-wealth-management-client-outreach-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 3: Wealth Management Client Outreach (Preview)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-4-blended-insurance-campaign-hybrid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration 4: Blended Insurance Campaign (Hybrid)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switching-modes-when-and-how" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching Modes: When and How
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Switching Modes: When and How">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signals-its-time-to-switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signals It's Time to Switch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-switch-in-vicidial-without-disrupting-active-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Switch in VICIdial Without Disrupting Active Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-economics-of-each-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Economics of Each Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Economics of Each Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#revenue-per-agent-hour-by-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Revenue Per Agent Hour by Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#but-revenue-per-agent-hour-isnt-the-whole-story" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        But Revenue Per Agent Hour Isn't the Whole Story
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#break-even-analysis-when-does-predictive-beat-progressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Break-Even Analysis: When Does Predictive Beat Progressive?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-vicistack-fits-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where ViciStack Fits In
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-minimum-number-of-agents-for-predictive-dialing-to-work-effectively" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the minimum number of agents for predictive dialing to work effectively?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-predictive-dialing-for-cell-phone-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use predictive dialing for cell phone lists?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-amd-interact-with-dialing-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does AMD interact with dialing mode?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-does-vicidials-adapt_tapered-actually-do-differently-from-adapt_average" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does VICIdial's "ADAPT_TAPERED" actually do differently from "ADAPT_AVERAGE"?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-know-if-my-current-dial-method-is-costing-me-money" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I know if my current dial method is costing me money?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-run-different-dialing-modes-on-different-campaigns-simultaneously" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I run different dialing modes on different campaigns simultaneously?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-list-quality-affect-the-choice-between-predictive-and-progressive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does list quality affect the choice between predictive and progressive?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-impact-of-switching-dialing-modes-on-agent-morale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the impact of switching dialing modes on agent morale?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="predictive-vs-progressive-vs-preview-dialing-when-to-use-each">Predictive vs Progressive vs Preview Dialing: When to Use Each<a class="headerlink" href="#predictive-vs-progressive-vs-preview-dialing-when-to-use-each" title="Permanent link">&para;</a></h1>
+<p>The dialing mode you choose for a campaign is the single most impactful configuration decision in outbound calling. It determines how many contacts your agents make per hour, how much idle time they endure between calls, how many leads you burn through per shift, and whether your operation stays on the right side of FCC and <a href="/glossary/tcpa/">TCPA</a> regulations. Get it wrong and you either leave money on the table (too conservative) or catch a compliance violation that costs more than a month of revenue (too aggressive).</p>
+<p>Despite this, most call center operators either stick with whatever their dialer defaulted to, or switch to "predictive" because someone told them it was faster — without understanding the trade-offs, the agent count thresholds, or the compliance implications.</p>
+<p>This guide covers the three primary dialing modes in depth: <a href="/glossary/predictive-dialing/">predictive</a>, <a href="/glossary/progressive-dialing/">progressive</a>, and <a href="/glossary/preview-dialing/">preview</a>. For each mode, we explain how it works technically, how VICIdial implements it, when to use it, and what performance to expect. We also cover hybrid approaches, VICIdial-specific configurations, compliance considerations, and a decision framework you can apply to any campaign.</p>
+<hr />
+<h2 id="how-each-dialing-mode-works">How Each Dialing Mode Works<a class="headerlink" href="#how-each-dialing-mode-works" title="Permanent link">&para;</a></h2>
+<h3 id="predictive-dialing-the-algorithm">Predictive Dialing: The Algorithm<a class="headerlink" href="#predictive-dialing-the-algorithm" title="Permanent link">&para;</a></h3>
+<p>Predictive dialing is exactly what the name implies — the dialer <strong>predicts</strong> when agents will become available and places calls in advance so a live call is waiting when the agent finishes their current one.</p>
+<p>The algorithm continuously calculates the optimal number of lines to dial per available agent (the "dial ratio") based on several real-time inputs:</p>
+<ul>
+<li><strong>Agent availability:</strong> How many agents are currently available or about to become available</li>
+<li><strong>Average talk time:</strong> How long agents typically spend on connected calls</li>
+<li><strong><a href="/glossary/wrap-time/">Average wrap time</a>:</strong> How long agents spend in after-call work</li>
+<li><strong><a href="/glossary/answer-rate/">Answer rate</a>:</strong> What percentage of dialed calls actually get answered</li>
+<li><strong>Current <a href="/glossary/abandon-rate/">abandon rate</a>:</strong> What percentage of answered calls are dropped because no agent was available</li>
+</ul>
+<p>Here's the simplified logic: If the algorithm knows 5 agents will be available in 30 seconds (based on their average talk time), and the historical answer rate is 25%, and dial-to-connect takes an average of 15 seconds, it needs to place approximately 20 calls right now so that 5 of them answer just as the agents become free.</p>
+<p>In VICIdial, this algorithm runs as a Perl script called <code>AST_VDadapt.pl</code>. It recalculates every 15 seconds — examining the current state of all agents, all active calls, recent abandon rates, and campaign performance metrics — and adjusts the dial level up or down accordingly.</p>
+<p><strong>The fundamental trade-off:</strong> Predictive dialing maximizes agent talk time but creates a non-zero probability that a call will be answered with no agent available. This "abandoned" call is a compliance risk under FCC regulations, which mandate a maximum 3% <a href="/settings/abandon-rate-target/">abandon rate</a> measured across a rolling 30-day period.</p>
+<h3 id="progressive-dialing-one-call-one-agent">Progressive Dialing: One Call, One Agent<a class="headerlink" href="#progressive-dialing-one-call-one-agent" title="Permanent link">&para;</a></h3>
+<p>Progressive dialing places <strong>exactly one call per available agent.</strong> When an agent becomes available, the dialer places one call for that agent. If the call is answered, the agent handles it. If it's not answered (busy, no answer, voicemail), the dialer immediately places another call for that agent.</p>
+<p>There's no prediction involved. No algorithm calculating future agent availability. No risk of answered calls with nobody to handle them.</p>
+<p><strong>The mechanical simplicity is the point.</strong> Progressive dialing guarantees:
+- Zero abandoned calls (every answered call has an agent waiting)
+- Every agent gets connected to every answered call (no algorithmic drops)
+- Compliance with all outbound calling regulations by design</p>
+<p>The trade-off is lower throughput. Agents spend more time waiting between calls because the dialer isn't proactively filling the pipeline. Instead of hearing a connected call within 1-2 seconds of finishing the previous one (predictive), agents wait 10-20 seconds while the dialer places a call, waits for it to ring, determines it won't be answered, and tries the next number.</p>
+<h3 id="preview-dialing-agent-initiated-calls">Preview Dialing: Agent-Initiated Calls<a class="headerlink" href="#preview-dialing-agent-initiated-calls" title="Permanent link">&para;</a></h3>
+<p>Preview dialing shows the agent a lead's information <strong>before</strong> the call is placed. The agent reviews the data — name, company, notes from previous calls, account status — and then manually initiates the call when ready. Some implementations include a countdown timer that auto-dials if the agent doesn't act within a set period.</p>
+<p><strong>This isn't dialing at all in the traditional sense.</strong> The agent is in control. They decide when to call, can skip leads they're not prepared for, and can research the contact before initiating conversation.</p>
+<p>The productivity hit is significant: agents spend 30-120 seconds reviewing each lead before calling, plus the ring/answer time, plus the actual conversation. But for complex sales cycles, high-value accounts, or situations requiring pre-call research, that preparation time pays for itself in conversion rate.</p>
+<hr />
+<h2 id="vicidials-implementation-of-each-mode">VICIdial's Implementation of Each Mode<a class="headerlink" href="#vicidials-implementation-of-each-mode" title="Permanent link">&para;</a></h2>
+<p>VICIdial doesn't use the terms "predictive," "progressive," and "preview" in quite the way the industry does. Understanding the mapping between industry terminology and VICIdial's actual settings is crucial for configuring the right behavior.</p>
+<h3 id="dial-method-settings-in-vicidial">Dial Method Settings in VICIdial<a class="headerlink" href="#dial-method-settings-in-vicidial" title="Permanent link">&para;</a></h3>
+<p>The primary control is <strong>Campaign Detail → Dial Method.</strong> Here's how VICIdial's options map to industry-standard dialing modes:</p>
+<table>
+<thead>
+<tr>
+<th>VICIdial Dial Method</th>
+<th>Industry Equivalent</th>
+<th>How It Works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RATIO</strong></td>
+<td>Fixed-ratio dialing</td>
+<td>Dials at a fixed ratio you set (e.g., 3 lines per agent). Not truly predictive — doesn't adapt to conditions.</td>
+</tr>
+<tr>
+<td><strong>ADAPT_AVERAGE</strong></td>
+<td>Progressive / Adaptive</td>
+<td>Adjusts dial ratio based on campaign stats, targets average performance. Conservative.</td>
+</tr>
+<tr>
+<td><strong>ADAPT_TAPERED</strong></td>
+<td>Adaptive progressive</td>
+<td>Similar to ADAPT_AVERAGE but tapers off more aggressively when approaching drop limits. Most conservative adaptive mode.</td>
+</tr>
+<tr>
+<td><strong>ADAPT_HARD_LIMIT</strong></td>
+<td>Predictive with safety net</td>
+<td>Adapts aggressively but enforces a hard drop rate ceiling.</td>
+</tr>
+<tr>
+<td><strong>INBOUND_MAN</strong></td>
+<td>Preview / Manual</td>
+<td>Agents see lead data and initiate calls manually.</td>
+</tr>
+<tr>
+<td><strong>MANUAL</strong></td>
+<td>Manual dialing</td>
+<td>No auto-dialing at all. Agent manually enters numbers.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="true-predictive-dialing-in-vicidial-ratio-tuning">True Predictive Dialing in VICIdial: RATIO + Tuning<a class="headerlink" href="#true-predictive-dialing-in-vicidial-ratio-tuning" title="Permanent link">&para;</a></h3>
+<p><strong>Here's the industry secret that vendor marketing departments don't tell you:</strong> VICIdial's RATIO mode with a skilled administrator is functionally predictive dialing. Set the <a href="/settings/auto-dial-level/">auto dial level</a> to <code>3.0-5.0</code>, enable <a href="/settings/available-only-ratio-tally/">available only ratio tally</a> = <code>Y</code>, and configure the <a href="/settings/dial-timeout/">dial timeout</a> appropriately — and you have a predictive dialer that's manually tuned rather than algorithmically adaptive.</p>
+<p>The difference between RATIO at 4.0 and a commercial "predictive dialer" like Convoso's is that RATIO holds steady at 4:1 regardless of conditions, while a predictive algorithm adjusts that ratio second by second. In practice, an experienced administrator monitoring the campaign can adjust RATIO periodically and achieve similar results — it's just not hands-free.</p>
+<h3 id="adaptive-progressive-like-dialing-adapt-modes">Adaptive (Progressive-Like) Dialing: ADAPT Modes<a class="headerlink" href="#adaptive-progressive-like-dialing-adapt-modes" title="Permanent link">&para;</a></h3>
+<p>The three ADAPT modes are where VICIdial implements genuine algorithmic dialing — and they're closer to progressive than predictive in most configurations.</p>
+<p><strong>ADAPT_AVERAGE:</strong>
+- Calculates dial ratio based on average campaign metrics
+- Adjusts every 15 seconds via <code>AST_VDadapt.pl</code>
+- Default behavior keeps the dial ratio relatively conservative
+- Won't exceed the <a href="/settings/adaptive-dl-level/">Adaptive Maximum Dial Level</a> you set</p>
+<p><strong>ADAPT_TAPERED:</strong>
+- Same as ADAPT_AVERAGE but reduces dial ratio more aggressively as the campaign's drop rate approaches the ceiling
+- This is the safest auto-dial mode for compliance-sensitive campaigns
+- Typically produces 30-40 minutes of talk time per agent per hour</p>
+<p><strong>ADAPT_HARD_LIMIT:</strong>
+- Adapts aggressively toward the maximum dial level
+- Enforces a hard ceiling on drop rate — if drops exceed the target, the algorithm immediately reduces the dial level
+- Most aggressive adaptive mode — closest to true predictive behavior</p>
+<h3 id="critical-vicidial-settings-for-each-mode">Critical VICIdial Settings for Each Mode<a class="headerlink" href="#critical-vicidial-settings-for-each-mode" title="Permanent link">&para;</a></h3>
+<p><strong>For Predictive (RATIO) Campaigns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="/settings/auto-dial-level/">Auto Dial Level</a></td>
+<td>3.0-5.0</td>
+<td>Lines per available agent</td>
+</tr>
+<tr>
+<td><a href="/settings/available-only-ratio-tally/">Available Only Ratio Tally</a></td>
+<td>Y</td>
+<td>Only count truly available agents in ratio calculation</td>
+</tr>
+<tr>
+<td><a href="/settings/dial-timeout/">Dial Timeout</a></td>
+<td>18-22 seconds</td>
+<td>How long to ring before giving up</td>
+</tr>
+<tr>
+<td><a href="/settings/drop-rate-group/">Drop Rate Group</a></td>
+<td>CAMPAIGN_ONLY</td>
+<td>Monitor drops per-campaign</td>
+</tr>
+<tr>
+<td><a href="/settings/hopper-level/">Hopper Level</a></td>
+<td>200-500</td>
+<td>Leads pre-loaded for immediate dialing</td>
+</tr>
+<tr>
+<td><a href="/settings/amd-type/">AMD Type</a></td>
+<td>CPD or AMD</td>
+<td>Answering machine detection mode</td>
+</tr>
+</tbody>
+</table>
+<p><strong>For Progressive (ADAPT) Campaigns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dial Method</td>
+<td>ADAPT_TAPERED</td>
+<td>Progressive-like behavior</td>
+</tr>
+<tr>
+<td><a href="/settings/adaptive-dl-level/">Adaptive DL Level</a></td>
+<td>1.5-2.5</td>
+<td>Maximum ratio the algorithm can reach</td>
+</tr>
+<tr>
+<td><a href="/settings/abandon-rate-target/">Abandon Rate Target</a></td>
+<td>1-2%</td>
+<td>Conservative drop target</td>
+</tr>
+<tr>
+<td><a href="/settings/drop-lockout-time/">Drop Lockout Time</a></td>
+<td>1 day</td>
+<td>How long a dropped lead is locked from redialing</td>
+</tr>
+<tr>
+<td>Auto Dial Level</td>
+<td>1.0</td>
+<td>Starting dial ratio (algorithm adapts up)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>For Preview (MANUAL/INBOUND_MAN) Campaigns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dial Method</td>
+<td>INBOUND_MAN</td>
+<td>Shows lead data, agent initiates call</td>
+</tr>
+<tr>
+<td>Manual Dial</td>
+<td>Y</td>
+<td>Agent has dial button</td>
+</tr>
+<tr>
+<td><a href="/settings/lead-order/">Lead Order</a></td>
+<td>UP_LAST_NAME_ASC or MANUAL</td>
+<td>How leads are presented to agents</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Not Sure Which Mode Your Campaign Needs?</strong>
+ViciStack configures every campaign for the optimal dial method based on your agent count, vertical, and compliance requirements. <a href="/free-audit/">Get Your Free Campaign Assessment →</a></p>
+</blockquote>
+<hr />
+<h2 id="when-to-use-each-mode-the-decision-framework">When to Use Each Mode: The Decision Framework<a class="headerlink" href="#when-to-use-each-mode-the-decision-framework" title="Permanent link">&para;</a></h2>
+<h3 id="predictive-dialing-maximum-throughput">Predictive Dialing: Maximum Throughput<a class="headerlink" href="#predictive-dialing-maximum-throughput" title="Permanent link">&para;</a></h3>
+<p><strong>Use predictive when:</strong></p>
+<ul>
+<li>You have <strong>15+ agents</strong> on a single campaign. Below 15, the algorithm doesn't have enough statistical data to predict accurately, and the dial ratio becomes erratic.</li>
+<li>Your campaign is <strong>high-volume, low-complexity</strong> — consumer outbound, appointment setting, surveys, debt collection reminders.</li>
+<li>Your operation can tolerate a <strong>1-3% abandon rate</strong> (within FCC limits).</li>
+<li><a href="/blog/vicidial-list-management/">Lead lists</a> are large enough that burning through contacts quickly is acceptable.</li>
+<li>Revenue per contact is <strong>moderate</strong> — you make money on volume, not individual deal size.</li>
+<li>Your compliance team and <a href="/glossary/tcpa/">TCPA</a> exposure are managed.</li>
+</ul>
+<p><strong>Don't use predictive when:</strong>
+- You have fewer than 10 agents per campaign
+- You're calling cell phones in a TCPA-sensitive context (prior express consent not clearly documented)
+- Your leads are high-value and limited — predictive's speed burns through lists fast
+- You're in a heavily regulated vertical where any abandoned call creates liability</p>
+<p><strong>Performance benchmarks (predictive):</strong>
+- Agent talk time: <strong>45-55 minutes per hour</strong> at 25+ agents
+- Agent talk time: <strong>38-45 minutes per hour</strong> at 15-25 agents
+- Contacts per hour: <strong>8-15</strong> (depending on answer rate and talk time)
+- List burn rate: <strong>200-400 dials per agent per 8-hour shift</strong></p>
+<h3 id="progressive-dialing-the-compliance-default">Progressive Dialing: The Compliance Default<a class="headerlink" href="#progressive-dialing-the-compliance-default" title="Permanent link">&para;</a></h3>
+<p><strong>Use progressive when:</strong></p>
+<ul>
+<li>You have <strong>fewer than 15 agents</strong> per campaign. Progressive works well at any scale — even 3 agents.</li>
+<li><strong>B2B campaigns</strong> where contact rates are lower and each contact is more valuable.</li>
+<li><strong>Compliance is a primary concern</strong> — TCPA-sensitive campaigns, cell phone lists without clear consent documentation, financial services under CFPB oversight.</li>
+<li><strong>High-value leads</strong> where you want agents to handle every answered call — no algorithmic drops.</li>
+<li>You need to <strong>preserve lead quality</strong> by not over-dialing your list.</li>
+<li>The campaign is in a <strong>state with strict calling regulations</strong> (California, Florida, etc.)</li>
+</ul>
+<p><strong>Performance benchmarks (progressive):</strong>
+- Agent talk time: <strong>30-40 minutes per hour</strong>
+- Contacts per hour: <strong>5-10</strong>
+- List burn rate: <strong>100-200 dials per agent per 8-hour shift</strong>
+- Abandon rate: <strong>0%</strong> (inherently compliant)</p>
+<h3 id="preview-dialing-quality-over-quantity">Preview Dialing: Quality Over Quantity<a class="headerlink" href="#preview-dialing-quality-over-quantity" title="Permanent link">&para;</a></h3>
+<p><strong>Use preview when:</strong></p>
+<ul>
+<li>Each call requires <strong>pre-call research</strong> — reviewing account history, looking up previous notes, checking external data sources.</li>
+<li><strong>Complex B2B sales</strong> where the agent needs to understand the prospect's business before calling.</li>
+<li><strong>High-value accounts</strong> where a poorly prepared call damages the relationship (enterprise sales, wealth management, executive-level outreach).</li>
+<li><strong>Callback campaigns</strong> where the agent needs context from the previous interaction.</li>
+<li><strong>Collections</strong> where the agent needs to review the account balance, payment history, and applicable regulations before initiating contact.</li>
+<li>Your agents are <strong>highly skilled and expensive</strong> — paying them to research is worth it because their conversion rate on prepared calls justifies the lower throughput.</li>
+</ul>
+<p><strong>Performance benchmarks (preview):</strong>
+- Agent talk time: <strong>15-25 minutes per hour</strong>
+- Contacts per hour: <strong>3-6</strong>
+- List burn rate: <strong>30-80 dials per agent per 8-hour shift</strong>
+- Conversion rate: <strong>1.5-3x higher than predictive</strong> on the same leads (because agents are prepared)</p>
+<h3 id="the-decision-flowchart">The Decision Flowchart<a class="headerlink" href="#the-decision-flowchart" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">START</span><span class="o">:</span><span class="w"> </span><span class="n">How</span><span class="w"> </span><span class="n">many</span><span class="w"> </span><span class="n">agents</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="n">campaign</span><span class="o">?</span>
+<span class="err">│</span>
+<span class="err">├─</span><span class="w"> </span><span class="n">Less</span><span class="w"> </span><span class="n">than</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Progressive</span><span class="w"> </span><span class="o">(</span><span class="n">ADAPT_TAPERED</span><span class="o">)</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="n">Are</span><span class="w"> </span><span class="n">leads</span><span class="w"> </span><span class="n">high</span><span class="o">-</span><span class="n">value</span><span class="o">/</span><span class="n">complex</span><span class="o">?</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Yes</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Preview</span><span class="w"> </span><span class="o">(</span><span class="n">INBOUND_MAN</span><span class="o">)</span>
+<span class="err">│</span>
+<span class="err">├─</span><span class="w"> </span><span class="mi">10</span><span class="o">-</span><span class="mi">15</span><span class="w"> </span><span class="n">agents</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├─</span><span class="w"> </span><span class="n">B2B</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">compliance</span><span class="o">-</span><span class="n">sensitive</span><span class="o">?</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Yes</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Progressive</span><span class="w"> </span><span class="o">(</span><span class="n">ADAPT_AVERAGE</span><span class="o">)</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="n">B2C</span><span class="w"> </span><span class="n">high</span><span class="o">-</span><span class="n">volume</span><span class="o">?</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Progressive</span><span class="w"> </span><span class="o">(</span><span class="n">ADAPT_HARD_LIMIT</span><span class="o">)</span>
+<span class="err">│</span>
+<span class="err">└─</span><span class="w"> </span><span class="mi">15</span><span class="o">+</span><span class="w"> </span><span class="n">agents</span>
+<span class="w">    </span><span class="err">├─</span><span class="w"> </span><span class="n">TCPA</span><span class="o">-</span><span class="n">sensitive</span><span class="w"> </span><span class="o">(</span><span class="n">cell</span><span class="w"> </span><span class="n">phones</span><span class="o">,</span><span class="w"> </span><span class="n">uncertain</span><span class="w"> </span><span class="n">consent</span><span class="o">)?</span>
+<span class="w">    </span><span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="n">Yes</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Progressive</span><span class="w"> </span><span class="o">(</span><span class="n">ADAPT_TAPERED</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="mi">1</span><span class="o">%</span><span class="w"> </span><span class="n">drop</span><span class="w"> </span><span class="n">target</span><span class="o">)</span>
+<span class="w">    </span><span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="n">No</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Continue</span><span class="w"> </span><span class="n">below</span>
+<span class="w">    </span><span class="err">├─</span><span class="w"> </span><span class="n">Lead</span><span class="w"> </span><span class="n">volume</span><span class="w"> </span><span class="n">unlimited</span><span class="o">,</span><span class="w"> </span><span class="n">moderate</span><span class="w"> </span><span class="n">deal</span><span class="w"> </span><span class="n">value</span><span class="o">?</span>
+<span class="w">    </span><span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="n">Yes</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Predictive</span><span class="w"> </span><span class="o">(</span><span class="n">RATIO</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="mf">3.0</span><span class="o">-</span><span class="mf">5.0</span><span class="o">)</span>
+<span class="w">    </span><span class="err">├─</span><span class="w"> </span><span class="n">Lead</span><span class="w"> </span><span class="n">volume</span><span class="w"> </span><span class="n">limited</span><span class="o">,</span><span class="w"> </span><span class="n">high</span><span class="w"> </span><span class="n">deal</span><span class="w"> </span><span class="n">value</span><span class="o">?</span>
+<span class="w">    </span><span class="err">│</span><span class="w">   </span><span class="err">└─</span><span class="w"> </span><span class="n">Yes</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Progressive</span><span class="w"> </span><span class="o">(</span><span class="n">ADAPT_AVERAGE</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="n">max</span><span class="o">)</span>
+<span class="w">    </span><span class="err">└─</span><span class="w"> </span><span class="n">Complex</span><span class="w"> </span><span class="n">sale</span><span class="w"> </span><span class="n">requiring</span><span class="w"> </span><span class="n">research</span><span class="o">?</span>
+<span class="w">        </span><span class="err">└─</span><span class="w"> </span><span class="n">Yes</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Preview</span><span class="w"> </span><span class="o">(</span><span class="n">INBOUND_MAN</span><span class="o">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="compliance-implications-by-dialing-mode">Compliance Implications by Dialing Mode<a class="headerlink" href="#compliance-implications-by-dialing-mode" title="Permanent link">&para;</a></h2>
+<p>The compliance differences between dialing modes aren't academic — they're measured in six-figure penalties and class-action lawsuits.</p>
+<h3 id="fcc-abandoned-call-rules">FCC Abandoned Call Rules<a class="headerlink" href="#fcc-abandoned-call-rules" title="Permanent link">&para;</a></h3>
+<p>The FCC's Telemarketing Sales Rule requires that no more than <strong>3% of answered calls may be abandoned</strong> (no agent available within 2 seconds of the consumer saying "hello"), measured across a <strong>30-day rolling period</strong> per campaign.</p>
+<table>
+<thead>
+<tr>
+<th>Dialing Mode</th>
+<th>Abandon Risk</th>
+<th>Compliance Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Predictive</td>
+<td><strong>Inherent risk</strong> — abandoned calls are a mathematical certainty at high dial ratios</td>
+<td>Monitor and enforce 3% ceiling via <a href="/settings/drop-rate-group/">drop rate group</a> settings. Use <a href="/settings/safe-harbor-message/">safe harbor message</a> on abandoned calls.</td>
+</tr>
+<tr>
+<td>Progressive</td>
+<td><strong>Zero risk</strong> — one call per agent means no abandoned calls</td>
+<td>Inherently compliant</td>
+</tr>
+<tr>
+<td>Preview</td>
+<td><strong>Zero risk</strong> — agent initiates every call</td>
+<td>Inherently compliant</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tcpa-implications">TCPA Implications<a class="headerlink" href="#tcpa-implications" title="Permanent link">&para;</a></h3>
+<p>The Telephone Consumer Protection Act restricts automated dialing to cell phones without prior express consent. The legal definition of an "automatic telephone dialing system" (ATDS) has been the subject of extensive litigation.</p>
+<p><strong>Predictive dialing</strong> clearly uses an ATDS — the system selects numbers from a list and dials them automatically without human intervention in the dialing decision.</p>
+<p><strong>Progressive dialing</strong> is less clear. The system automatically dials, but at a 1:1 ratio triggered by agent availability. Some courts have ruled this constitutes an ATDS; others disagree.</p>
+<p><strong>Preview dialing</strong> is the safest. The agent reviews the lead and initiates the call. This is generally not considered ATDS-driven dialing because a human is making the dialing decision.</p>
+<p><strong>Practical guidance for VICIdial operators:</strong>
+- For cell phone lists with documented prior express consent: predictive is defensible
+- For cell phone lists without clear consent: progressive (ADAPT_TAPERED) minimizes ATDS exposure
+- For cell phone lists where consent is uncertain: preview is the only defensible mode
+- For landline-only lists: predictive is fine (TCPA ATDS restrictions apply primarily to cell phones)</p>
+<h3 id="state-level-regulations">State-Level Regulations<a class="headerlink" href="#state-level-regulations" title="Permanent link">&para;</a></h3>
+<p>Some states impose calling restrictions beyond federal law:</p>
+<ul>
+<li><strong>California (CCPA/CPRA):</strong> Additional consent requirements for data usage</li>
+<li><strong>Florida:</strong> Strict registration and bonding requirements for telemarketers</li>
+<li><strong>Indiana/Ohio/etc.:</strong> State-level Do Not Call restrictions with shorter cure periods</li>
+</ul>
+<p>Dialing mode doesn't directly affect these, but the volume of calls placed (predictive &gt;&gt; progressive &gt;&gt; preview) determines how quickly a compliance failure scales into a catastrophe.</p>
+<hr />
+<h2 id="hybrid-approaches-in-vicidial">Hybrid Approaches in VICIdial<a class="headerlink" href="#hybrid-approaches-in-vicidial" title="Permanent link">&para;</a></h2>
+<p>VICIdial's dialing engine is flexible enough to implement hybrid strategies that don't fit neatly into the three standard categories.</p>
+<h3 id="ratio-dialing-with-adapt-modifiers">Ratio Dialing with ADAPT Modifiers<a class="headerlink" href="#ratio-dialing-with-adapt-modifiers" title="Permanent link">&para;</a></h3>
+<p>Set the Dial Method to RATIO but configure ADAPT settings as a safety net:</p>
+<div class="codehilite"><pre><span></span><code>Dial Method: RATIO
+Auto Dial Level: 3.5
+Adaptive DL Level: 4.0 (maximum the algorithm can reach)
+Drop Rate Group: CAMPAIGN_ONLY
+Max Abandon Rate: 2.5%
+</code></pre></div>
+
+<p>This gives you fixed-ratio dialing at 3.5:1 with an ADAPT ceiling that prevents the ratio from exceeding 4.0. If abandon rates spike, the ADAPT logic can override the manual ratio downward. It's predictive dialing with a safety valve.</p>
+<h3 id="campaign-level-mode-switching">Campaign-Level Mode Switching<a class="headerlink" href="#campaign-level-mode-switching" title="Permanent link">&para;</a></h3>
+<p>In VICIdial, you can change the dial method mid-shift without restarting the campaign. A common pattern:</p>
+<ol>
+<li><strong>Morning (high staffing):</strong> Switch to RATIO 4.0 — maximum throughput with 30+ agents available</li>
+<li><strong>Afternoon (staffing drops):</strong> Switch to ADAPT_HARD_LIMIT — let the algorithm handle the reduced agent pool</li>
+<li><strong>Evening (skeleton crew):</strong> Switch to ADAPT_TAPERED — conservative dialing with 5-8 agents</li>
+</ol>
+<p>This is done in Campaign Detail → Dial Method or via VICIdial's API:</p>
+<div class="codehilite"><pre><span></span><code>/vicidial/non_agent_api.php?function=update_campaign&amp;campaign_id=YOUR_CAMP&amp;dial_method=ADAPT_TAPERED&amp;auto_dial_level=1.0
+</code></pre></div>
+
+<h3 id="blended-campaigns-inbound-outbound-modes">Blended Campaigns: Inbound + Outbound Modes<a class="headerlink" href="#blended-campaigns-inbound-outbound-modes" title="Permanent link">&para;</a></h3>
+<p>VICIdial supports blended campaigns where agents handle both inbound and outbound calls. The dialing mode for outbound interacts with inbound queue management:</p>
+<ul>
+<li>When an inbound call arrives for a <a href="/settings/closer-campaigns/">closer campaign</a>, the agent is pulled from the outbound pool</li>
+<li>The predictive/progressive algorithm recalculates with one fewer available agent</li>
+<li>When the inbound call ends, the agent returns to the outbound pool</li>
+</ul>
+<p>For blended operations, ADAPT modes work better than fixed RATIO because the constantly changing agent pool requires adaptive dial-level calculations. RATIO mode doesn't account for agents being pulled into inbound — it keeps dialing at the fixed ratio, causing spikes in abandoned outbound calls when several agents simultaneously take inbound calls.</p>
+<h3 id="power-dialing-the-fourth-mode">Power Dialing: The Fourth Mode<a class="headerlink" href="#power-dialing-the-fourth-mode" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/power-dialing/">Power dialing</a> — sometimes called "ratio dialing at 1:1" — places one call per available agent but immediately places the next call when the first attempt fails (busy, no answer, disconnected). Unlike progressive, which has the algorithm controlling the timing, power dialing is a simple loop: dial, fail, dial, fail, dial, answer, connect.</p>
+<p>In VICIdial, power dialing is implemented as:
+- Dial Method: RATIO
+- <a href="/settings/auto-dial-level/">Auto Dial Level</a>: 1.0
+- <a href="/settings/power-dial-mode/">Power Dial Mode</a>: Y (if available in your version)</p>
+<p>This produces roughly the same throughput as progressive but with slightly different timing behavior — calls are placed more rapidly after failures.</p>
+<hr />
+<h2 id="performance-comparison-real-world-numbers">Performance Comparison: Real-World Numbers<a class="headerlink" href="#performance-comparison-real-world-numbers" title="Permanent link">&para;</a></h2>
+<p>These benchmarks are aggregated from ViciStack deployments across multiple verticals. They represent average performance for well-configured campaigns on optimized infrastructure — not theoretical maximums or vendor marketing claims.</p>
+<h3 id="side-by-side-comparison-table">Side-by-Side Comparison Table<a class="headerlink" href="#side-by-side-comparison-table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Predictive (25+ agents)</th>
+<th>Progressive (any size)</th>
+<th>Preview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Talk time per hour</strong></td>
+<td>45-55 min</td>
+<td>30-40 min</td>
+<td>15-25 min</td>
+</tr>
+<tr>
+<td><strong>Idle time per hour</strong></td>
+<td>5-15 min</td>
+<td>20-30 min</td>
+<td>35-45 min</td>
+</tr>
+<tr>
+<td><strong>Contacts per hour</strong></td>
+<td>8-15</td>
+<td>5-10</td>
+<td>3-6</td>
+</tr>
+<tr>
+<td><strong>Dials per hour</strong></td>
+<td>50-80</td>
+<td>25-45</td>
+<td>8-20</td>
+</tr>
+<tr>
+<td><strong>Leads consumed per hour</strong></td>
+<td>40-65</td>
+<td>20-35</td>
+<td>8-15</td>
+</tr>
+<tr>
+<td><strong>Typical abandon rate</strong></td>
+<td>1-3%</td>
+<td>0%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td><strong>Conversion rate</strong></td>
+<td>Baseline</td>
+<td>+5-15% vs predictive</td>
+<td>+30-100% vs predictive</td>
+</tr>
+<tr>
+<td><strong>Revenue per contact</strong></td>
+<td>Baseline</td>
+<td>Similar</td>
+<td>Higher (prepared calls)</td>
+</tr>
+<tr>
+<td><strong>Revenue per agent hour</strong></td>
+<td>Highest (volume)</td>
+<td>Moderate</td>
+<td>Varies (deal-size dependent)</td>
+</tr>
+<tr>
+<td><strong><a href="/glossary/cost-per-lead/">Cost per lead</a></strong></td>
+<td>Lowest (at scale)</td>
+<td>Moderate</td>
+<td>Highest (but offset by quality)</td>
+</tr>
+<tr>
+<td><strong>Compliance risk</strong></td>
+<td>Moderate</td>
+<td>Very low</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td><strong>Minimum recommended agents</strong></td>
+<td>15</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Best for</strong></td>
+<td>High volume B2C</td>
+<td>Small teams, B2B, compliance</td>
+<td>Complex sales, high-value</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-volume-vs-value-matrix">The Volume vs. Value Matrix<a class="headerlink" href="#the-volume-vs-value-matrix" title="Permanent link">&para;</a></h3>
+<p>The right dialing mode depends on where your campaign falls on two axes: <strong>contact volume needed</strong> and <strong>value per contact</strong>.</p>
+<div class="codehilite"><pre><span></span><code>                    HIGH VOLUME NEEDED
+                          │
+     Predictive           │           Predictive
+     (Standard B2C)       │           + AMD
+                          │           (Insurance, Solar)
+                          │
+   LOW VALUE ─────────────┼───────────── HIGH VALUE
+                          │
+     Progressive          │           Preview
+     (B2B mid-market,     │           (Enterprise sales,
+      compliance)         │            wealth management)
+                          │
+                    LOW VOLUME OK
+</code></pre></div>
+
+<p>Campaigns in the upper-right quadrant (high volume + high value) benefit most from predictive dialing with <a href="/glossary/amd/">AMD</a> — because you need the throughput of predictive but the value per contact justifies the AMD investment and <a href="/blog/vicidial-did-management/">DID management</a> effort to maximize answer rates.</p>
+<hr />
+<h2 id="real-world-campaign-configurations">Real-World Campaign Configurations<a class="headerlink" href="#real-world-campaign-configurations" title="Permanent link">&para;</a></h2>
+<h3 id="configuration-1-high-volume-medicare-lead-generation-predictive">Configuration 1: High-Volume Medicare Lead Generation (Predictive)<a class="headerlink" href="#configuration-1-high-volume-medicare-lead-generation-predictive" title="Permanent link">&para;</a></h3>
+<p>50 agents, B2C, moderate-value leads ($50-$80 per qualified lead), cell phones with documented consent.</p>
+<div class="codehilite"><pre><span></span><code>Campaign Settings:
+  Dial Method: RATIO
+  Auto Dial Level: 4.0
+  Available Only Ratio Tally: Y
+  Dial Timeout: 21 seconds
+  AMD Type: CPD (Asterisk native)
+  AMD Agent Route: PROG (route to agent if human, message if machine)
+  Hopper Level: 500
+  Drop Rate Group: CAMPAIGN_ONLY
+  Drop Action: MESSAGE (play safe harbor message on abandon)
+  Abandon Rate Target: 2.5%
+</code></pre></div>
+
+<p>Expected performance: 48 min talk time/hour, 12 contacts/hour, ~900 leads qualified per day across the floor.</p>
+<h3 id="configuration-2-b2b-software-demo-booking-progressive">Configuration 2: B2B Software Demo Booking (Progressive)<a class="headerlink" href="#configuration-2-b2b-software-demo-booking-progressive" title="Permanent link">&para;</a></h3>
+<p>12 agents, B2B, high-value leads ($500+ per booked demo), mix of cell and landline.</p>
+<div class="codehilite"><pre><span></span><code>Campaign Settings:
+  Dial Method: ADAPT_AVERAGE
+  Adaptive DL Level: 1.8
+  Auto Dial Level: 1.0
+  Dial Timeout: 24 seconds (B2B phones ring longer)
+  AMD Type: DISABLED (agents handle VMs manually — many B2B VMs are worth leaving a message)
+  Hopper Level: 100
+  Drop Rate Group: CAMPAIGN_ONLY
+  Abandon Rate Target: 0.5%
+  Scheduled Callbacks: Y
+</code></pre></div>
+
+<p>Expected performance: 35 min talk time/hour, 7 contacts/hour, ~85 demos booked per day.</p>
+<h3 id="configuration-3-wealth-management-client-outreach-preview">Configuration 3: Wealth Management Client Outreach (Preview)<a class="headerlink" href="#configuration-3-wealth-management-client-outreach-preview" title="Permanent link">&para;</a></h3>
+<p>5 agents, high-net-worth individuals, $2,000+ revenue per appointment set.</p>
+<div class="codehilite"><pre><span></span><code>Campaign Settings:
+  Dial Method: INBOUND_MAN
+  Manual Dial: Y
+  Script: Y (personalized talking points per client tier)
+  Web Form: Y (CRM embedded showing full client portfolio)
+  Scheduled Callbacks: Y
+  Lead Order: UP_LAST_NAME_ASC
+  Campaign Recording: ALLFORCE
+</code></pre></div>
+
+<p>Expected performance: 20 min talk time/hour, 4 contacts/hour, conversion rate 15-20%. Revenue per agent hour: $1,200+ (at $2,000/appointment × 15% conversion × 4 contacts).</p>
+<h3 id="configuration-4-blended-insurance-campaign-hybrid">Configuration 4: Blended Insurance Campaign (Hybrid)<a class="headerlink" href="#configuration-4-blended-insurance-campaign-hybrid" title="Permanent link">&para;</a></h3>
+<p>35 outbound agents + 10 inbound-capable agents, mixed cell/landline, transfers to closers.</p>
+<div class="codehilite"><pre><span></span><code>Campaign Settings:
+  Dial Method: ADAPT_HARD_LIMIT
+  Adaptive DL Level: 3.5
+  Auto Dial Level: 1.0 (algorithm ramps up from here)
+  Campaign Allow Inbound: Y
+  Closer Campaigns: INSURANCE_CLOSER
+  Dial Timeout: 20 seconds
+  AMD Type: CPD
+  Hopper Level: 300
+  Abandon Rate Target: 2.0%
+</code></pre></div>
+
+<p>Expected performance: 42 min talk time/hour (outbound), blended agents handle 3-5 inbound calls per hour during lulls. Total floor throughput: ~400 contacts/hour across all modes.</p>
+<hr />
+<h2 id="switching-modes-when-and-how">Switching Modes: When and How<a class="headerlink" href="#switching-modes-when-and-how" title="Permanent link">&para;</a></h2>
+<p>Campaign conditions change. Lists get older, agent counts fluctuate, compliance requirements shift. Knowing when to switch dialing modes is as important as choosing the right one initially.</p>
+<h3 id="signals-its-time-to-switch">Signals It's Time to Switch<a class="headerlink" href="#signals-its-time-to-switch" title="Permanent link">&para;</a></h3>
+<p><strong>Switch FROM predictive TO progressive when:</strong>
+- Agent count drops below 12 for the campaign
+- Abandon rate consistently exceeds 2.5% (algorithm can't keep up)
+- You're entering a compliance-sensitive period (audit, regulatory inquiry)
+- Lead volume is running low and you need to preserve remaining leads</p>
+<p><strong>Switch FROM progressive TO predictive when:</strong>
+- Agent count exceeds 15 for the campaign
+- Progressive idle time exceeds 25 min/hour (agents waiting too much)
+- You have a surplus of leads and need to maximize throughput
+- The campaign's compliance posture is clean and well-documented</p>
+<p><strong>Switch FROM either TO preview when:</strong>
+- You're entering a high-value lead segment that requires research
+- Conversion rate drops significantly and you suspect agent preparation is the issue
+- You're recycling already-called leads where context from previous calls matters
+- Regulatory changes restrict automated dialing for your contact method</p>
+<h3 id="how-to-switch-in-vicidial-without-disrupting-active-calls">How to Switch in VICIdial Without Disrupting Active Calls<a class="headerlink" href="#how-to-switch-in-vicidial-without-disrupting-active-calls" title="Permanent link">&para;</a></h3>
+<p>VICIdial allows real-time dial method changes:</p>
+<ol>
+<li>Go to Campaign Detail → Dial Method</li>
+<li>Change the method</li>
+<li>Click Update</li>
+</ol>
+<p>Active calls are not affected. The new dial method takes effect on the next dial cycle (within 15 seconds). Agents don't need to log out or do anything different — the change is transparent to them.</p>
+<p>For API-driven switching (useful for scheduled mode changes):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Switch to predictive at 8 AM when full staff arrives</span>
+<span class="m">0</span><span class="w"> </span><span class="m">8</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span><span class="m">1</span>-5<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://your-vicidial.com/vicidial/non_agent_api.php?source=api&amp;user=apiuser&amp;pass=apipass&amp;function=update_campaign&amp;campaign_id=INSURANCE&amp;dial_method=RATIO&amp;auto_dial_level=4.0&quot;</span>
+
+<span class="c1"># Switch to progressive at 5 PM when staff thins out</span>
+<span class="m">0</span><span class="w"> </span><span class="m">17</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span><span class="m">1</span>-5<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://your-vicidial.com/vicidial/non_agent_api.php?source=api&amp;user=apiuser&amp;pass=apipass&amp;function=update_campaign&amp;campaign_id=INSURANCE&amp;dial_method=ADAPT_TAPERED&amp;auto_dial_level=1.0&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="the-economics-of-each-mode">The Economics of Each Mode<a class="headerlink" href="#the-economics-of-each-mode" title="Permanent link">&para;</a></h2>
+<p>Dialing mode choice isn't just a technical or compliance decision — it's a financial one. Let's quantify the economic impact.</p>
+<h3 id="revenue-per-agent-hour-by-mode">Revenue Per Agent Hour by Mode<a class="headerlink" href="#revenue-per-agent-hour-by-mode" title="Permanent link">&para;</a></h3>
+<p>Using our standard model (50-agent floor, $65/qualified lead, 10% qualification rate):</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Contacts/Hour</th>
+<th>Qualification Rate</th>
+<th>Revenue/Agent/Hour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Predictive</td>
+<td>12</td>
+<td>10%</td>
+<td>$78.00</td>
+</tr>
+<tr>
+<td>Progressive</td>
+<td>7</td>
+<td>12%</td>
+<td>$54.60</td>
+</tr>
+<tr>
+<td>Preview</td>
+<td>4</td>
+<td>18%</td>
+<td>$46.80</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Predictive wins on revenue per agent hour</strong> for this campaign type — and it's not close. The volume advantage overwhelms the conversion rate improvement of progressive and preview.</p>
+<h3 id="but-revenue-per-agent-hour-isnt-the-whole-story">But Revenue Per Agent Hour Isn't the Whole Story<a class="headerlink" href="#but-revenue-per-agent-hour-isnt-the-whole-story" title="Permanent link">&para;</a></h3>
+<p>Factor in the cost of compliance violations:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Annual Compliance Risk Cost (estimated)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Predictive</td>
+<td>$15,000-$50,000 (potential TCPA/FCC fines, legal fees)</td>
+</tr>
+<tr>
+<td>Progressive</td>
+<td>$2,000-$5,000 (minimal — mostly procedural)</td>
+</tr>
+<tr>
+<td>Preview</td>
+<td>$500-$1,000 (nearly zero automated-dialing risk)</td>
+</tr>
+</tbody>
+</table>
+<p>And the cost of lead consumption:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Leads Consumed Per Agent Per Day</th>
+<th>Effective Lead Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Predictive</td>
+<td>350-500</td>
+<td>$0.02-$0.10/lead (assuming $50-100/1000 leads)</td>
+</tr>
+<tr>
+<td>Progressive</td>
+<td>150-250</td>
+<td>$0.02-$0.10/lead</td>
+</tr>
+<tr>
+<td>Preview</td>
+<td>50-100</td>
+<td>$0.02-$0.10/lead</td>
+</tr>
+</tbody>
+</table>
+<p>When leads cost $0.05 each, the difference is modest. When leads cost $1.00+ each (B2B data), predictive dialing burns through $350-$500 of leads per agent per day vs. preview's $50-$100. For lead-constrained campaigns, the per-lead economics can flip the ROI math entirely.</p>
+<h3 id="break-even-analysis-when-does-predictive-beat-progressive">Break-Even Analysis: When Does Predictive Beat Progressive?<a class="headerlink" href="#break-even-analysis-when-does-predictive-beat-progressive" title="Permanent link">&para;</a></h3>
+<p>Predictive dialing produces roughly 70% more contacts per hour than progressive. But it also:
+- Consumes leads ~100% faster
+- Carries compliance risk that progressive doesn't
+- Requires 15+ agents to function properly</p>
+<p><strong>Predictive breaks even with progressive when:</strong>
+- You have 15+ agents per campaign
+- Lead cost is under $0.25 per lead
+- Compliance risk is managed (proper consent documentation, FCC-compliant <a href="/settings/safe-harbor-message/">safe harbor message</a>, <a href="/settings/drop-rate-group/">drop rate monitoring</a>)
+- Revenue per contact is moderate ($25-$200)</p>
+<p><strong>Progressive beats predictive when:</strong>
+- Fewer than 15 agents per campaign (predictive algorithm is unreliable)
+- Lead cost exceeds $0.50 per lead (predictive burns leads too fast)
+- Compliance exposure is uncertain (cell phones without clear consent)
+- Revenue per contact exceeds $500 (quality matters more than quantity)</p>
+<hr />
+<h2 id="where-vicistack-fits-in">Where ViciStack Fits In<a class="headerlink" href="#where-vicistack-fits-in" title="Permanent link">&para;</a></h2>
+<p>Every ViciStack deployment starts with a campaign analysis. We look at your agent count, your leads, your vertical, your compliance requirements, and your revenue model — and we configure the dial method that maximizes your <a href="/blog/call-center-roi-formula/">ROI</a>, not just your talk time.</p>
+<p>We've seen operations running predictive at 5 agents (the algorithm is basically random at that scale) and operations running preview at 50 agents (leaving 60% of their agent time on the table). Both are leaving money on the table. The right dial method for your campaign probably isn't the one you're using right now.</p>
+<p>ViciStack configures every campaign with the optimal dial method, the correct ADAPT settings, the right <a href="/settings/hopper-level/">hopper level</a>, and the AMD configuration that matches your specific workflow. When your agent count changes or your campaign shifts, we adjust.</p>
+<p><a href="/free-audit/">Get a free dialing mode assessment →</a></p>
+<hr />
+<p><em>This guide is maintained by the ViciStack team and updated as VICIdial's dialing algorithms and compliance requirements evolve. Last updated: March 2026.</em></p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="whats-the-minimum-number-of-agents-for-predictive-dialing-to-work-effectively">What's the minimum number of agents for predictive dialing to work effectively?<a class="headerlink" href="#whats-the-minimum-number-of-agents-for-predictive-dialing-to-work-effectively" title="Permanent link">&para;</a></h3>
+<p>15 is the practical minimum. Below 15, the predictive algorithm doesn't have enough statistical data (simultaneous call outcomes, talk time variance) to make accurate predictions. The dial ratio becomes erratic — over-dialing when two agents happen to finish calls simultaneously, then under-dialing when the algorithm over-corrects. At 10 agents, you'll see frequent spikes in abandon rate alternating with periods of agent idle time. At 5 agents, the algorithm is essentially guessing. Use progressive (ADAPT modes) for campaigns under 15 agents.</p>
+<h3 id="can-i-use-predictive-dialing-for-cell-phone-lists">Can I use predictive dialing for cell phone lists?<a class="headerlink" href="#can-i-use-predictive-dialing-for-cell-phone-lists" title="Permanent link">&para;</a></h3>
+<p>Legally, it depends on your consent documentation. The TCPA restricts the use of automatic telephone dialing systems (ATDS) to call cell phones without prior express consent. Predictive dialing clearly qualifies as an ATDS. If your leads provided prior express consent to be called (and you can document it), predictive is legally defensible. If consent is ambiguous, progressive is safer. If consent is undocumented, preview is the only defensible option. Consult your compliance team or legal counsel — the TCPA landscape changes frequently and the cost of getting it wrong is severe ($500-$1,500 per violation).</p>
+<h3 id="how-does-amd-interact-with-dialing-mode">How does AMD interact with dialing mode?<a class="headerlink" href="#how-does-amd-interact-with-dialing-mode" title="Permanent link">&para;</a></h3>
+<p><a href="/glossary/amd/">AMD (Answering Machine Detection)</a> works with all dialing modes but has the biggest impact on predictive campaigns. In predictive mode, AMD filters out answering machines before they reach agents, increasing productive talk time by 15-25%. In progressive mode, AMD has less impact because agents already handle fewer calls per hour — filtering machines saves time but the agents weren't at maximum throughput anyway. In preview mode, AMD is typically disabled because agents expect to handle every call themselves, including leaving voicemails when appropriate.</p>
+<h3 id="what-does-vicidials-adapt_tapered-actually-do-differently-from-adapt_average">What does VICIdial's "ADAPT_TAPERED" actually do differently from "ADAPT_AVERAGE"?<a class="headerlink" href="#what-does-vicidials-adapt_tapered-actually-do-differently-from-adapt_average" title="Permanent link">&para;</a></h3>
+<p>Both modes use VICIdial's adaptive algorithm (<code>AST_VDadapt.pl</code>) to adjust the dial ratio dynamically. ADAPT_AVERAGE targets the campaign's average performance metrics and adjusts smoothly. ADAPT_TAPERED adds a tapering function that reduces the dial ratio more aggressively as the current drop rate approaches the campaign's <a href="/settings/abandon-rate-target/">abandon rate target</a>. In practice, ADAPT_TAPERED produces about 5-10% lower throughput than ADAPT_AVERAGE but virtually eliminates drop rate spikes. Use TAPERED for compliance-sensitive campaigns and AVERAGE for campaigns where you want more aggressive dialing while still having adaptive control.</p>
+<h3 id="how-do-i-know-if-my-current-dial-method-is-costing-me-money">How do I know if my current dial method is costing me money?<a class="headerlink" href="#how-do-i-know-if-my-current-dial-method-is-costing-me-money" title="Permanent link">&para;</a></h3>
+<p>Two metrics tell you: <strong>agent idle time</strong> and <strong>abandon rate</strong>. If agents are idle more than 30% of the hour on a predictive campaign, your dial level is too low or you need more leads in the <a href="/glossary/hopper/">hopper</a>. If your abandon rate is above 2% consistently, you're probably losing leads you could have converted. If agents are idle more than 40% on progressive, you should consider predictive (if you have 15+ agents). Pull these metrics from VICIdial's real-time reports and agent performance reports — they're available out of the box.</p>
+<h3 id="can-i-run-different-dialing-modes-on-different-campaigns-simultaneously">Can I run different dialing modes on different campaigns simultaneously?<a class="headerlink" href="#can-i-run-different-dialing-modes-on-different-campaigns-simultaneously" title="Permanent link">&para;</a></h3>
+<p>Absolutely. Each VICIdial <a href="/glossary/campaign/">campaign</a> has its own independent dial method, dial level, and ADAPT settings. You can run predictive on your high-volume B2C campaign, progressive on your B2B campaign, and preview on your VIP client outreach — all simultaneously with agents logged into different campaigns. You can even move agents between campaigns mid-shift, and they'll automatically operate under whatever dialing mode that campaign uses.</p>
+<h3 id="how-does-list-quality-affect-the-choice-between-predictive-and-progressive">How does list quality affect the choice between predictive and progressive?<a class="headerlink" href="#how-does-list-quality-affect-the-choice-between-predictive-and-progressive" title="Permanent link">&para;</a></h3>
+<p>Dramatically. Predictive dialing magnifies list quality — both good and bad. A high-quality list (fresh, verified numbers, high contact rate) produces excellent results on predictive because the algorithm maintains a high dial ratio with low abandonment. A low-quality list (old data, many disconnects, low answer rate) forces the predictive algorithm to dial more aggressively to compensate, which burns through leads faster and increases abandon rates. For low-quality or recycled lists, progressive dialing is often more economical because it doesn't burn leads as quickly and gives agents time to handle each contact carefully.</p>
+<h3 id="whats-the-impact-of-switching-dialing-modes-on-agent-morale">What's the impact of switching dialing modes on agent morale?<a class="headerlink" href="#whats-the-impact-of-switching-dialing-modes-on-agent-morale" title="Permanent link">&para;</a></h3>
+<p>Real and often underestimated. Agents who are accustomed to predictive dialing (constant call flow, minimal idle time) often resist switching to progressive because the increased idle time between calls feels unproductive and boring. Conversely, agents accustomed to preview or progressive mode can feel overwhelmed by predictive's relentless pace — calls connecting before they've finished their notes on the previous call. When switching modes, communicate the reason to your team, adjust expectations for talk time metrics, and give agents 2-3 days to adapt before evaluating performance under the new mode.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/predictive-vs-progressive-dialing">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

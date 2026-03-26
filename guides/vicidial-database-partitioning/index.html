@@ -1,0 +1,4203 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-database-partitioning/">
+      
+      
+        <link rel="prev" href="../vicidial-custom-mysql-reports/">
+      
+      
+        <link rel="next" href="../vicidial-did-management/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Database Partitioning for High-Volume Call Centers - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-database-partitioning-for-high-volume-call-centers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Database Partitioning for High-Volume Call Centers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#when-the-database-becomes-the-bottleneck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When the Database Becomes the Bottleneck
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When the Database Becomes the Bottleneck">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptoms-of-a-database-bottleneck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symptoms of a Database Bottleneck
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-tables-that-grow-unbounded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Tables That Grow Unbounded
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partitioning-vicidial_log-by-date" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partitioning vicidial_log by Date
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partitioning vicidial_log by Date">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-assess-the-current-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Assess the Current Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-backup-before-any-schema-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Backup Before Any Schema Change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-the-partitioned-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create the Partitioned Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-verify-partition-pruning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Verify Partition Pruning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-automate-future-partitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Automate Future Partitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#archiving-old-cdr-and-log-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archiving Old CDR and Log Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Archiving Old CDR and Log Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#archive-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archive Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply-the-same-pattern-to-other-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apply the Same Pattern to Other Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-performance-tuning-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Performance Tuning for VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Performance Tuning for VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#innodb-buffer-pool-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InnoDB Buffer Pool Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#innodb-log-file-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InnoDB Log File Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Write Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-cache-mariadb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Cache (MariaDB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-and-thread-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection and Thread Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-optimization-for-large-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Optimization for Large Datasets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Query Optimization for Large Datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-hopper-refill-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hopper Refill Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-time-report-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-Time Report Queries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-summary-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Summary Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slow-query-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Query Log
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-database-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Database Performance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Database Performance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-metrics-to-track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics to Track
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-health-check-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Health Check Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-lag-if-using-read-replicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replication Lag (If Using Read Replicas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Pitfalls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Pitfalls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#do-not-partition-vicidial_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do Not Partition vicidial_list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-not-run-alter-table-during-dialing-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do Not Run ALTER TABLE During Dialing Hours
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-not-skip-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do Not Skip Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#when-the-database-becomes-the-bottleneck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When the Database Becomes the Bottleneck
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="When the Database Becomes the Bottleneck">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptoms-of-a-database-bottleneck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symptoms of a Database Bottleneck
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-tables-that-grow-unbounded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Tables That Grow Unbounded
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partitioning-vicidial_log-by-date" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partitioning vicidial_log by Date
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partitioning vicidial_log by Date">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-assess-the-current-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Assess the Current Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-backup-before-any-schema-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Backup Before Any Schema Change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-the-partitioned-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create the Partitioned Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-verify-partition-pruning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Verify Partition Pruning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-automate-future-partitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Automate Future Partitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#archiving-old-cdr-and-log-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archiving Old CDR and Log Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Archiving Old CDR and Log Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#archive-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archive Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply-the-same-pattern-to-other-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apply the Same Pattern to Other Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-performance-tuning-for-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL Performance Tuning for VICIdial
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL Performance Tuning for VICIdial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#innodb-buffer-pool-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InnoDB Buffer Pool Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#innodb-log-file-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InnoDB Log File Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Write Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-cache-mariadb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Cache (MariaDB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-and-thread-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection and Thread Tuning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-optimization-for-large-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Optimization for Large Datasets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Query Optimization for Large Datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-hopper-refill-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hopper Refill Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-time-report-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-Time Report Queries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaign-summary-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Summary Reports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slow-query-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Query Log
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-database-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Database Performance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Database Performance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-metrics-to-track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics to Track
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-health-check-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Health Check Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-lag-if-using-read-replicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replication Lag (If Using Read Replicas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Pitfalls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Pitfalls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#do-not-partition-vicidial_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do Not Partition vicidial_list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-not-run-alter-table-during-dialing-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do Not Run ALTER TABLE During Dialing Hours
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-not-skip-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do Not Skip Backups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-database-partitioning-for-high-volume-call-centers">VICIdial Database Partitioning for High-Volume Call Centers<a class="headerlink" href="#vicidial-database-partitioning-for-high-volume-call-centers" title="Permanent link">&para;</a></h1>
+<p>Every VICIdial deployment eventually hits the same wall: the database becomes the bottleneck. When your <code>vicidial_log</code> table has 50 million rows, your <code>recording_log</code> has grown to 30 GB, and your real-time reports take 15 seconds to load, you are past the point where adding more CPU or RAM to the dialer solves the problem. The database is doing full table scans on tables that were never designed for this volume.</p>
+<p>This guide covers the practical steps to partition VICIdial's MySQL database, archive old data, tune InnoDB for high-volume dialing, and optimize the queries that matter most for daily operations.</p>
+<h2 id="when-the-database-becomes-the-bottleneck">When the Database Becomes the Bottleneck<a class="headerlink" href="#when-the-database-becomes-the-bottleneck" title="Permanent link">&para;</a></h2>
+<p>VICIdial uses MySQL (typically MariaDB on modern installs) as its sole data store. Every call event, agent status change, lead update, and recording reference writes to MySQL in real time. For a 25-agent center making 500 calls per agent per day, that is 12,500 new rows per day in <code>vicidial_log</code> alone. Add in <code>vicidial_agent_log</code>, <code>call_log</code>, <code>vicidial_closer_log</code>, <code>recording_log</code>, and <code>vicidial_did_log</code>, and you are easily generating 50,000+ rows per day.</p>
+<p>At that rate, you hit 1 million rows in three weeks. After a year, you have 18 million rows in <code>vicidial_log</code>. After two years, you are approaching 40 million. The table does not partition itself.</p>
+<h3 id="symptoms-of-a-database-bottleneck">Symptoms of a Database Bottleneck<a class="headerlink" href="#symptoms-of-a-database-bottleneck" title="Permanent link">&para;</a></h3>
+<p>Watch for these warning signs:</p>
+<ul>
+<li><strong>Real-time reports lag</strong>: The agent performance screen takes 5+ seconds to load</li>
+<li><strong>Outbound dialing hesitates</strong>: The hopper refill query takes longer, causing gaps between calls</li>
+<li><strong>Recordings page is slow</strong>: Searching recordings by date range takes 30+ seconds</li>
+<li><strong>Server load spikes during reports</strong>: Running a campaign summary report pins a CPU core</li>
+<li><strong><code>SHOW PROCESSLIST</code> shows long-running queries</strong>: Queries against <code>vicidial_log</code> or <code>call_log</code> running for 10+ seconds</li>
+</ul>
+<p>Verify with:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check table sizes</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="n">data_length</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">data_mb</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="n">index_length</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">index_mb</span><span class="p">,</span>
+<span class="w">       </span><span class="n">table_rows</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">tables</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">table_schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;asterisk&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">data_length</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+</code></pre></div>
+
+<p>If <code>vicidial_log</code>, <code>call_log</code>, or <code>recording_log</code> are over 1 GB or over 10 million rows, you need partitioning and archiving.</p>
+<h2 id="vicidial-tables-that-grow-unbounded">VICIdial Tables That Grow Unbounded<a class="headerlink" href="#vicidial-tables-that-grow-unbounded" title="Permanent link">&para;</a></h2>
+<p>Not every VICIdial table needs attention. These are the ones that grow continuously and cause performance issues:</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Grows By</th>
+<th>Contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vicidial_log</code></td>
+<td>Every outbound call attempt</td>
+<td>Dial results, talk time, status</td>
+</tr>
+<tr>
+<td><code>vicidial_closer_log</code></td>
+<td>Every inbound/transfer call</td>
+<td>Closer call details</td>
+</tr>
+<tr>
+<td><code>call_log</code></td>
+<td>Every call (CDR)</td>
+<td>Asterisk CDR records</td>
+</tr>
+<tr>
+<td><code>vicidial_agent_log</code></td>
+<td>Every agent state change</td>
+<td>Login, pause, wait, talk times</td>
+</tr>
+<tr>
+<td><code>recording_log</code></td>
+<td>Every recorded call</td>
+<td>Recording file paths and metadata</td>
+</tr>
+<tr>
+<td><code>vicidial_did_log</code></td>
+<td>Every inbound DID call</td>
+<td>DID routing log</td>
+</tr>
+<tr>
+<td><code>vicidial_carrier_log</code></td>
+<td>Every carrier event</td>
+<td>SIP trunk activity</td>
+</tr>
+<tr>
+<td><code>server_performance</code></td>
+<td>Every update interval</td>
+<td>Server metrics over time</td>
+</tr>
+<tr>
+<td><code>vicidial_dial_log</code></td>
+<td>Every dial attempt</td>
+<td>Raw dial events</td>
+</tr>
+</tbody>
+</table>
+<h2 id="partitioning-vicidial_log-by-date">Partitioning vicidial_log by Date<a class="headerlink" href="#partitioning-vicidial_log-by-date" title="Permanent link">&para;</a></h2>
+<p>MySQL partition pruning allows queries that filter by date to scan only the relevant partition instead of the entire table. For <code>vicidial_log</code>, which is almost always queried with a date filter, this is a massive performance win.</p>
+<h3 id="step-1-assess-the-current-table">Step 1: Assess the Current Table<a class="headerlink" href="#step-1-assess-the-current-table" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check current table structure</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="err">\</span><span class="k">G</span>
+
+<span class="c1">-- Check row count and size</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">ROUND</span><span class="p">(</span><span class="n">data_length</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">size_mb</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">tables</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;vicidial_log&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">table_schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;asterisk&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="step-2-backup-before-any-schema-change">Step 2: Backup Before Any Schema Change<a class="headerlink" href="#step-2-backup-before-any-schema-change" title="Permanent link">&para;</a></h3>
+<p>This is non-negotiable. A failed ALTER TABLE on a multi-million row table can leave you with no data and no dialer.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Full backup of the asterisk database</span>
+mysqldump<span class="w"> </span>--single-transaction<span class="w"> </span>--routines<span class="w"> </span>--triggers<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>asterisk<span class="w"> </span>vicidial_log<span class="w"> </span>&gt;<span class="w"> </span>/backup/vicidial_log_<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
+
+<span class="c1"># Verify the backup</span>
+mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_log;&quot;</span><span class="w"> </span>asterisk
+wc<span class="w"> </span>-l<span class="w"> </span>/backup/vicidial_log_<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
+</code></pre></div>
+
+<h3 id="step-3-create-the-partitioned-table">Step 3: Create the Partitioned Table<a class="headerlink" href="#step-3-create-the-partitioned-table" title="Permanent link">&para;</a></h3>
+<p>VICIdial's <code>vicidial_log</code> uses <code>call_date</code> as its primary time column. We partition by RANGE on this column, using monthly partitions:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- First, check if the primary key includes call_date</span>
+<span class="c1">-- MySQL requires the partition column to be part of every unique index</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span><span class="p">;</span>
+</code></pre></div>
+
+<p>If <code>call_date</code> is not part of the primary key, you need to modify the key. This is the trickiest part. VICIdial typically uses <code>uniqueid</code> as the primary key for <code>vicidial_log</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Modify primary key to include call_date (required for partitioning)</span>
+<span class="c1">-- WARNING: This locks the table. Do this during off-hours.</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="w">  </span><span class="k">DROP</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="k">ADD</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">uniqueid</span><span class="p">,</span><span class="w"> </span><span class="n">call_date</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Now add partitions:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">PARTITION</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">RANGE</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="n">call_date</span><span class="p">))</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_01</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-02-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_02</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-03-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_03</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-04-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_04</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-05-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_05</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-06-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_06</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-07-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_07</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-08-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_08</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-09-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_09</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-10-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_10</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-11-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_11</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2025-12-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025_12</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2026-01-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2026_01</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2026-02-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2026_02</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2026-03-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2026_03</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2026-04-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2026_04</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2026-05-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_future</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="k">MAXVALUE</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="step-4-verify-partition-pruning">Step 4: Verify Partition Pruning<a class="headerlink" href="#step-4-verify-partition-pruning" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- This should only scan one partition</span>
+<span class="k">EXPLAIN</span><span class="w"> </span><span class="n">PARTITIONS</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;2026-03-19&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Look for &quot;partitions: p2026_03&quot; in the output</span>
+<span class="c1">-- NOT &quot;partitions: p2025_01,p2025_02,...,p_future&quot;</span>
+</code></pre></div>
+
+<h3 id="step-5-automate-future-partitions">Step 5: Automate Future Partitions<a class="headerlink" href="#step-5-automate-future-partitions" title="Permanent link">&para;</a></h3>
+<p>Create a cron job that adds new partitions before the <code>p_future</code> catchall is needed:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Run monthly: reorganize p_future to add next month</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="n">REORGANIZE</span><span class="w"> </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_future</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2026_05</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">&#39;2026-06-01&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_future</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="k">MAXVALUE</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p>Script this:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /opt/vicistack/add_partition.sh</span>
+<span class="c1"># Run via cron on the 15th of each month</span>
+
+<span class="nv">NEXT_MONTH</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;next month&quot;</span><span class="w"> </span>+%Y_%m<span class="k">)</span>
+<span class="nv">NEXT_MONTH_START</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;next month&quot;</span><span class="w"> </span>+%Y-%m-01<span class="k">)</span>
+<span class="nv">FOLLOWING_MONTH_START</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;2 months&quot;</span><span class="w"> </span>+%Y-%m-01<span class="k">)</span>
+
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">ALTER TABLE vicidial_log REORGANIZE PARTITION p_future INTO (</span>
+<span class="s2">  PARTITION p</span><span class="si">${</span><span class="nv">NEXT_MONTH</span><span class="si">}</span><span class="s2"> VALUES LESS THAN (TO_DAYS(&#39;</span><span class="si">${</span><span class="nv">FOLLOWING_MONTH_START</span><span class="si">}</span><span class="s2">&#39;)),</span>
+<span class="s2">  PARTITION p_future VALUES LESS THAN MAXVALUE</span>
+<span class="s2">);</span>
+<span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">: Added partition p</span><span class="si">${</span><span class="nv">NEXT_MONTH</span><span class="si">}</span><span class="s2"> for vicidial_log&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/log/vicistack-partitions.log
+</code></pre></div>
+
+<h2 id="archiving-old-cdr-and-log-data">Archiving Old CDR and Log Data<a class="headerlink" href="#archiving-old-cdr-and-log-data" title="Permanent link">&para;</a></h2>
+<p>Partitioning makes archiving trivial. Instead of running a slow <code>DELETE FROM vicidial_log WHERE call_date &lt; '2025-01-01'</code> that locks the table and generates massive binary log entries, you drop entire partitions instantly:</p>
+<h3 id="archive-process">Archive Process<a class="headerlink" href="#archive-process" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /opt/vicistack/archive_partition.sh</span>
+<span class="c1"># Archive and drop partitions older than 6 months</span>
+
+<span class="nv">ARCHIVE_DIR</span><span class="o">=</span><span class="s2">&quot;/backup/vicidial_archive&quot;</span>
+<span class="nv">CUTOFF</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;6 months ago&quot;</span><span class="w"> </span>+%Y_%m<span class="k">)</span>
+
+<span class="c1"># Export the partition data first</span>
+mysqldump<span class="w"> </span>--single-transaction<span class="w"> </span>asterisk<span class="w"> </span>vicidial_log<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--where<span class="o">=</span><span class="s2">&quot;call_date &lt; &#39;</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;6 months ago&#39;</span><span class="w"> </span>+%Y-%m-01<span class="k">)</span><span class="s2">&#39;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">ARCHIVE_DIR</span><span class="si">}</span>/vicidial_log_archive_<span class="si">${</span><span class="nv">CUTOFF</span><span class="si">}</span>.sql
+
+<span class="c1"># Compress the archive</span>
+gzip<span class="w"> </span><span class="si">${</span><span class="nv">ARCHIVE_DIR</span><span class="si">}</span>/vicidial_log_archive_<span class="si">${</span><span class="nv">CUTOFF</span><span class="si">}</span>.sql
+
+<span class="c1"># Drop the old partition (instant, no table lock)</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;ALTER TABLE vicidial_log DROP PARTITION p</span><span class="si">${</span><span class="nv">CUTOFF</span><span class="si">}</span><span class="s2">;&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">: Archived and dropped partition p</span><span class="si">${</span><span class="nv">CUTOFF</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/log/vicistack-archive.log
+</code></pre></div>
+
+<p>Dropping a partition is an O(1) operation -- it removes the data file instantly regardless of how many rows are in it. Compare this to <code>DELETE</code> which would need to scan every row, update indexes, and write to the binary log.</p>
+<h3 id="apply-the-same-pattern-to-other-tables">Apply the Same Pattern to Other Tables<a class="headerlink" href="#apply-the-same-pattern-to-other-tables" title="Permanent link">&para;</a></h3>
+<p>Repeat the partitioning process for <code>call_log</code>, <code>vicidial_closer_log</code>, <code>vicidial_agent_log</code>, and <code>recording_log</code>. The process is identical -- just change the table name and the date column (most use <code>call_date</code> or <code>event_time</code>).</p>
+<h2 id="mysql-performance-tuning-for-vicidial">MySQL Performance Tuning for VICIdial<a class="headerlink" href="#mysql-performance-tuning-for-vicidial" title="Permanent link">&para;</a></h2>
+<p>Beyond partitioning, MySQL configuration has an outsized impact on VICIdial performance. Most installs run with default or near-default settings, which are tuned for general-purpose workloads, not for the write-heavy, real-time pattern VICIdial demands.</p>
+<h3 id="innodb-buffer-pool-optimization">InnoDB Buffer Pool Optimization<a class="headerlink" href="#innodb-buffer-pool-optimization" title="Permanent link">&para;</a></h3>
+<p>The InnoDB buffer pool is MySQL's in-memory cache for table data and indexes. This single setting has the largest impact on database performance.</p>
+<p><strong>Rule of thumb</strong>: Set the buffer pool to 60-70% of total system RAM on a dedicated database server, or 40-50% if MySQL shares the server with Asterisk.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/my.cnf.d/vicidial-tuning.cnf</span>
+
+<span class="k">[mysqld]</span>
+<span class="c1"># Buffer pool - set to 60-70% of RAM on dedicated DB server</span>
+<span class="c1"># 8 GB example (on a 12 GB server)</span>
+<span class="na">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8G</span>
+<span class="na">innodb_buffer_pool_instances</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8</span><span class="w">    </span><span class="c1"># 1 instance per GB</span>
+
+<span class="c1"># Buffer pool dump/load for fast restarts</span>
+<span class="na">innodb_buffer_pool_dump_at_shutdown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ON</span>
+<span class="na">innodb_buffer_pool_load_at_startup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ON</span>
+</code></pre></div>
+
+<p>Verify your buffer pool hit rate (should be &gt; 99%):</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">STATUS</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;Innodb_buffer_pool_read%&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Calculate hit rate:</span>
+<span class="c1">-- hit_rate = 1 - (Innodb_buffer_pool_reads / Innodb_buffer_pool_read_requests) * 100</span>
+<span class="c1">-- If below 99%, increase buffer pool size</span>
+</code></pre></div>
+
+<h3 id="innodb-log-file-tuning">InnoDB Log File Tuning<a class="headerlink" href="#innodb-log-file-tuning" title="Permanent link">&para;</a></h3>
+<p>InnoDB write performance depends on the redo log configuration:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="c1"># Larger log files = less checkpoint flushing = faster writes</span>
+<span class="c1"># Set to 25% of buffer pool size</span>
+<span class="na">innodb_log_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2G</span>
+<span class="na">innodb_log_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64M</span>
+
+<span class="c1"># Flush behavior (trade-off: durability vs. performance)</span>
+<span class="c1"># 1 = flush every commit (safest, slowest)</span>
+<span class="c1"># 2 = flush to OS cache every commit, flush to disk every second (good balance)</span>
+<span class="c1"># 0 = flush to OS cache every second (fastest, risk losing 1 sec of data on crash)</span>
+<span class="na">innodb_flush_log_at_trx_commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+
+<span class="c1"># For VICIdial, setting 2 is the right balance. The data being written</span>
+<span class="c1"># (call logs, agent events) can be reconstructed from Asterisk logs if</span>
+<span class="c1"># the worst happens.</span>
+</code></pre></div>
+
+<h3 id="write-optimization">Write Optimization<a class="headerlink" href="#write-optimization" title="Permanent link">&para;</a></h3>
+<p>VICIdial writes constantly. Optimize for that workload:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="c1"># Reduce fsync overhead</span>
+<span class="na">innodb_flush_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">O_DIRECT</span>
+
+<span class="c1"># Increase write throughput</span>
+<span class="na">innodb_io_capacity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2000</span><span class="w">            </span><span class="c1"># for SSD</span>
+<span class="na">innodb_io_capacity_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4000</span>
+<span class="na">innodb_write_io_threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8</span>
+<span class="na">innodb_read_io_threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8</span>
+
+<span class="c1"># Adaptive flushing</span>
+<span class="na">innodb_adaptive_flushing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ON</span>
+<span class="na">innodb_adaptive_flushing_lwm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10</span>
+
+<span class="c1"># Change buffer (for secondary index updates)</span>
+<span class="na">innodb_change_buffering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">all</span>
+<span class="na">innodb_change_buffer_max_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">25</span>
+</code></pre></div>
+
+<h3 id="query-cache-mariadb">Query Cache (MariaDB)<a class="headerlink" href="#query-cache-mariadb" title="Permanent link">&para;</a></h3>
+<p>For MariaDB (which VICIdial commonly runs on), the query cache can help with repetitive reads like real-time report queries:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">query_cache_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">query_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">query_cache_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4M</span>
+<span class="na">query_cache_min_res_unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2048</span>
+</code></pre></div>
+
+<p>Note: MySQL 8.0 removed the query cache entirely. If you are on MySQL 8.0+, skip this and rely on buffer pool caching instead.</p>
+<h3 id="connection-and-thread-tuning">Connection and Thread Tuning<a class="headerlink" href="#connection-and-thread-tuning" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">500</span><span class="w">              </span><span class="c1"># VICIdial opens many connections</span>
+<span class="na">thread_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">50</span>
+<span class="na">table_open_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4000</span>
+<span class="na">table_definition_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2000</span>
+
+<span class="c1"># Temporary tables (for complex reports)</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+</code></pre></div>
+
+<h2 id="query-optimization-for-large-datasets">Query Optimization for Large Datasets<a class="headerlink" href="#query-optimization-for-large-datasets" title="Permanent link">&para;</a></h2>
+<p>Even with partitioning and tuning, poorly optimized queries can still cause problems. Here are the VICIdial queries that most commonly cause issues and how to fix them.</p>
+<h3 id="the-hopper-refill-query">The Hopper Refill Query<a class="headerlink" href="#the-hopper-refill-query" title="Permanent link">&para;</a></h3>
+<p>VICIdial's hopper (the queue of numbers to dial) is refilled by a query that joins <code>vicidial_list</code> with <code>vicidial_hopper</code> and several exclusion tables. On a large list, this query can take 10+ seconds:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check if the hopper refill is slow</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">PROCESSLIST</span><span class="p">;</span>
+<span class="c1">-- Look for queries hitting vicidial_list with long Time values</span>
+</code></pre></div>
+
+<p><strong>Optimization</strong>: Ensure proper indexes exist:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Critical indexes for hopper performance</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_list_hopper</span>
+<span class="w">  </span><span class="p">(</span><span class="n">list_id</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">called_since_last_reset</span><span class="p">,</span><span class="w"> </span><span class="n">phone_number</span><span class="p">);</span>
+
+<span class="c1">-- If you use GMT offset filtering</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_gmt</span>
+<span class="w">  </span><span class="p">(</span><span class="n">gmt_offset_now</span><span class="p">,</span><span class="w"> </span><span class="n">list_id</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="real-time-report-queries">Real-Time Report Queries<a class="headerlink" href="#real-time-report-queries" title="Permanent link">&para;</a></h3>
+<p>The real-time agent screen queries <code>vicidial_live_agents</code> and <code>vicidial_auto_calls</code>. These tables are small but queried constantly:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- These should be in memory. Verify:</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">engine</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">tables</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;vicidial_live_agents&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;vicidial_auto_calls&#39;</span><span class="p">)</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">table_schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;asterisk&#39;</span><span class="p">;</span>
+
+<span class="c1">-- If engine is MEMORY, good. If InnoDB, they&#39;ll still be cached in buffer pool.</span>
+</code></pre></div>
+
+<h3 id="campaign-summary-reports">Campaign Summary Reports<a class="headerlink" href="#campaign-summary-reports" title="Permanent link">&para;</a></h3>
+<p>Reports that aggregate across <code>vicidial_log</code> benefit enormously from partitioning. But also add covering indexes:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Index for campaign reports by date</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vicidial_log</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_campaign_date</span>
+<span class="w">  </span><span class="p">(</span><span class="n">campaign_id</span><span class="p">,</span><span class="w"> </span><span class="n">call_date</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">length_in_sec</span><span class="p">);</span>
+
+<span class="c1">-- This lets the report query use an index scan instead of a table scan</span>
+<span class="c1">-- for queries like:</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SALES&#39;</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">&#39;2026-03-01&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;2026-03-19&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="slow-query-log">Slow Query Log<a class="headerlink" href="#slow-query-log" title="Permanent link">&para;</a></h3>
+<p>Enable the slow query log to catch problematic queries:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">slow_query_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ON</span>
+<span class="na">slow_query_log_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/log/mysql/slow-query.log</span>
+<span class="na">long_query_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span><span class="w">     </span><span class="c1"># log queries taking &gt; 2 seconds</span>
+<span class="na">log_queries_not_using_indexes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ON</span>
+</code></pre></div>
+
+<p>Review regularly:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Find the most common slow queries</span>
+mysqldumpslow<span class="w"> </span>-s<span class="w"> </span>c<span class="w"> </span>-t<span class="w"> </span><span class="m">10</span><span class="w"> </span>/var/log/mysql/slow-query.log
+</code></pre></div>
+
+<h2 id="monitoring-database-performance">Monitoring Database Performance<a class="headerlink" href="#monitoring-database-performance" title="Permanent link">&para;</a></h2>
+<h3 id="key-metrics-to-track">Key Metrics to Track<a class="headerlink" href="#key-metrics-to-track" title="Permanent link">&para;</a></h3>
+<p>Set up monitoring (Zabbix, Nagios, Prometheus, or a simple script) for these metrics:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Buffer pool hit rate (should be &gt; 99%)</span>
+<span class="k">SELECT</span>
+<span class="w">  </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">VARIABLE_VALUE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">GLOBAL_STATUS</span>
+<span class="w">     </span><span class="k">WHERE</span><span class="w"> </span><span class="n">VARIABLE_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Innodb_buffer_pool_reads&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">    </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">VARIABLE_VALUE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">GLOBAL_STATUS</span>
+<span class="w">     </span><span class="k">WHERE</span><span class="w"> </span><span class="n">VARIABLE_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Innodb_buffer_pool_read_requests&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">buffer_pool_hit_rate</span><span class="p">;</span>
+
+<span class="c1">-- Active connections</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">STATUS</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;Threads_connected&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Queries per second</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">STATUS</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;Questions&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Slow queries count</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">STATUS</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;Slow_queries&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Table lock waits (should be near zero with InnoDB)</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">STATUS</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;Table_locks_waited&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="automated-health-check-script">Automated Health Check Script<a class="headerlink" href="#automated-health-check-script" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /opt/vicistack/db_health_check.sh</span>
+
+<span class="nv">MYSQL</span><span class="o">=</span><span class="s2">&quot;mysql -u root asterisk -N -e&quot;</span>
+
+<span class="c1"># Check buffer pool hit rate</span>
+<span class="nv">READS</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SHOW GLOBAL STATUS LIKE &#39;Innodb_buffer_pool_reads&#39;;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+<span class="nv">REQUESTS</span><span class="o">=</span><span class="k">$(</span><span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SHOW GLOBAL STATUS LIKE &#39;Innodb_buffer_pool_read_requests&#39;;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+<span class="nv">HIT_RATE</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;scale=2; (1 - (</span><span class="nv">$READS</span><span class="s2"> / </span><span class="nv">$REQUESTS</span><span class="s2">)) * 100&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bc<span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Buffer pool hit rate: </span><span class="si">${</span><span class="nv">HIT_RATE</span><span class="si">}</span><span class="s2">%&quot;</span>
+
+<span class="c1"># Check table sizes</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Top 10 tables by size ---&quot;</span>
+<span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT table_name, ROUND((data_length + index_length)/1024/1024, 2) AS size_mb, table_rows</span>
+<span class="s2">FROM information_schema.tables</span>
+<span class="s2">WHERE table_schema = &#39;asterisk&#39;</span>
+<span class="s2">ORDER BY data_length + index_length DESC LIMIT 10;&quot;</span>
+
+<span class="c1"># Check for long-running queries</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Queries running &gt; 5 seconds ---&quot;</span>
+<span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT id, user, host, db, time, state, LEFT(info, 100)</span>
+<span class="s2">FROM information_schema.processlist</span>
+<span class="s2">WHERE time &gt; 5 AND command != &#39;Sleep&#39;;&quot;</span>
+
+<span class="c1"># Check partition status</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Partition status for vicidial_log ---&quot;</span>
+<span class="nv">$MYSQL</span><span class="w"> </span><span class="s2">&quot;SELECT partition_name, table_rows, ROUND(data_length/1024/1024, 2) AS size_mb</span>
+<span class="s2">FROM information_schema.partitions</span>
+<span class="s2">WHERE table_name = &#39;vicidial_log&#39; AND table_schema = &#39;asterisk&#39;</span>
+<span class="s2">ORDER BY partition_ordinal_position;&quot;</span>
+</code></pre></div>
+
+<h3 id="replication-lag-if-using-read-replicas">Replication Lag (If Using Read Replicas)<a class="headerlink" href="#replication-lag-if-using-read-replicas" title="Permanent link">&para;</a></h3>
+<p>For centers that run reporting queries on a read replica:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- On the replica</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">SLAVE</span><span class="w"> </span><span class="n">STATUS</span><span class="err">\</span><span class="k">G</span>
+<span class="c1">-- Check Seconds_Behind_Master - should be &lt; 5 for real-time reports</span>
+</code></pre></div>
+
+<h2 id="common-pitfalls">Common Pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
+<h3 id="do-not-partition-vicidial_list">Do Not Partition vicidial_list<a class="headerlink" href="#do-not-partition-vicidial_list" title="Permanent link">&para;</a></h3>
+<p>The <code>vicidial_list</code> table (your lead data) might be the largest table, but partitioning it is dangerous. VICIdial queries this table by <code>lead_id</code> (not date), and the hopper refill uses complex multi-column filters. Partitioning by date would actually make these queries slower because MySQL cannot prune partitions when the query does not filter on the partition key.</p>
+<p>Instead, manage <code>vicidial_list</code> size by:
+- Archiving completed lists to a separate table or database
+- Using <code>DELETE</code> with proper indexing for old, fully-worked leads
+- Keeping active campaign lists under 1 million leads each</p>
+<h3 id="do-not-run-alter-table-during-dialing-hours">Do Not Run ALTER TABLE During Dialing Hours<a class="headerlink" href="#do-not-run-alter-table-during-dialing-hours" title="Permanent link">&para;</a></h3>
+<p><code>ALTER TABLE</code> on a multi-million row table takes time and can lock the table depending on the operation. Schedule all schema changes for maintenance windows:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check current call volume before making schema changes</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM vicidial_auto_calls;&quot;</span>
+<span class="c1"># If &gt; 0, wait for a maintenance window</span>
+</code></pre></div>
+
+<h3 id="do-not-skip-backups">Do Not Skip Backups<a class="headerlink" href="#do-not-skip-backups" title="Permanent link">&para;</a></h3>
+<p>Every database operation in this guide should be preceded by a backup. One failed ALTER TABLE can corrupt an entire table. The 20 minutes a backup takes is cheap insurance against rebuilding your call log history from Asterisk CDR files.</p>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>Database performance is the foundation of everything in VICIdial. Slow queries mean delayed hopper refills, which mean fewer dials per hour, which mean fewer live connections, which directly hits your revenue. A 25-agent center losing even 5% of dials to database lag is leaving tens of thousands of dollars on the table every month.</p>
+<p>ViciStack handles the entire database optimization stack for VICIdial call centers:</p>
+<ul>
+<li><strong>Table partitioning</strong> implemented with zero downtime using online DDL where possible</li>
+<li><strong>Automated archiving</strong> with partition rotation and compressed backup storage</li>
+<li><strong>MySQL/MariaDB tuning</strong> specifically calibrated for VICIdial's write-heavy workload</li>
+<li><strong>Query analysis</strong> identifying the specific queries slowing your campaigns</li>
+<li><strong>Buffer pool and InnoDB tuning</strong> based on actual workload profiling, not generic rules of thumb</li>
+<li><strong>Ongoing monitoring</strong> with alerts when table sizes, query times, or hit rates cross thresholds</li>
+<li><strong>Capacity planning</strong> so you know when to move to a dedicated database server before you hit the wall</li>
+</ul>
+<p>At $150/agent/month flat rate, this is included in the optimization service -- not an add-on billable at hourly rates.</p>
+<p><strong>Get a free database performance analysis for your VICIdial deployment.</strong> We will connect, profile your top 10 queries, check your table sizes, and show you exactly where the bottleneck is.</p>
+<p><a href="https://vicistack.com/proof/">Request your free ViciStack analysis</a> -- response in under 5 minutes.</p>
+<h2 id="related-articles">Related Articles<a class="headerlink" href="#related-articles" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-remote-agent-setup">VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration</a> -- optimize the connections hitting your database</li>
+<li><a href="/blog/vicidial-qa-scoring">VICIdial Quality Assurance Scoring with Call Recordings</a> -- recording_log is one of the fastest-growing tables</li>
+<li><a href="/blog/vicidial-cnam-lookup-inbound">VICIdial CNAM Lookup Integration for Inbound Routing</a> -- inbound call data adds to database volume</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-database-partitioning">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

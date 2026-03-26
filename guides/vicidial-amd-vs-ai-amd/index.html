@@ -1,0 +1,3832 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-amd-vs-ai-amd/">
+      
+      
+        <link rel="prev" href="../vicidial-amd-guide/">
+      
+      
+        <link rel="next" href="../vicidial-api-integration/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better? - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-answering-machine-detection-vs-ai-based-amd-which-is-better" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-traditional-cpdamd-works-in-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Traditional CPD/AMD Works in Asterisk
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Traditional CPD/AMD Works in Asterisk">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-detection-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Detection Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-detection-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Detection Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strengths-of-traditional-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strengths of Traditional AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weaknesses-of-traditional-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weaknesses of Traditional AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-world-accuracy-traditional-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Accuracy: Traditional AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-ai-based-amd-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How AI-Based AMD Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How AI-Based AMD Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-detection-process_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Detection Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-model-learns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Model Learns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-world-accuracy-ai-based-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Accuracy: AI-Based AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#head-to-head-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Head-to-Head Comparison
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Head-to-Head Comparison">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reliability-and-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reliability and Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision-framework-when-to-use-each-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision Framework: When to Use Each Approach
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision Framework: When to Use Each Approach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-traditional-amd-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Traditional AMD When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-ai-based-amd-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use AI-Based AMD When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-both-hybrid-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Both (Hybrid Approach):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-future-of-amd-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Future of AMD in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-traditional-cpdamd-works-in-asterisk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Traditional CPD/AMD Works in Asterisk
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Traditional CPD/AMD Works in Asterisk">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-detection-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Detection Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-detection-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Detection Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strengths-of-traditional-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strengths of Traditional AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weaknesses-of-traditional-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weaknesses of Traditional AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-world-accuracy-traditional-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Accuracy: Traditional AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-ai-based-amd-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How AI-Based AMD Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How AI-Based AMD Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-detection-process_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Detection Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-model-learns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Model Learns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-world-accuracy-ai-based-amd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Accuracy: AI-Based AMD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#head-to-head-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Head-to-Head Comparison
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Head-to-Head Comparison">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reliability-and-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reliability and Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision-framework-when-to-use-each-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision Framework: When to Use Each Approach
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision Framework: When to Use Each Approach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-traditional-amd-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Traditional AMD When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-ai-based-amd-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use AI-Based AMD When:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-both-hybrid-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Both (Hybrid Approach):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-future-of-amd-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Future of AMD in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-answering-machine-detection-vs-ai-based-amd-which-is-better">VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?<a class="headerlink" href="#vicidial-answering-machine-detection-vs-ai-based-amd-which-is-better" title="Permanent link">&para;</a></h1>
+<p>Answering machine detection is the single most impactful technology in an outbound call center's stack. A good AMD system connects your agents to live humans and filters out voicemail boxes. A bad one either drops live calls (false positives) or wastes agent time on answering machines (false negatives). Either way, you lose money.</p>
+<p>VICIdial ships with traditional CPD-based (Call Progress Detection) AMD built into Asterisk. It has been the standard for over a decade. In the last few years, AI-based AMD systems have emerged that use machine learning models to analyze audio in real time. These systems promise significantly higher accuracy -- but they come with tradeoffs in latency, cost, and integration complexity.</p>
+<p>This article provides a detailed technical comparison. We will examine how each approach works at the signal-processing level, compare real-world accuracy numbers, analyze latency impacts on agent utilization, break down the cost math, and help you decide which approach fits your operation.</p>
+<h2 id="how-traditional-cpdamd-works-in-asterisk">How Traditional CPD/AMD Works in Asterisk<a class="headerlink" href="#how-traditional-cpdamd-works-in-asterisk" title="Permanent link">&para;</a></h2>
+<p>VICIdial's AMD relies on Asterisk's <code>AMD()</code> application, which implements Call Progress Detection using audio signal analysis. Here is what happens at the technical level when an outbound call is answered.</p>
+<h3 id="the-detection-process">The Detection Process<a class="headerlink" href="#the-detection-process" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Call answer detection.</strong> Asterisk detects that the far end has answered (SIP 200 OK or energy detection on analog lines). The CPD engine begins listening.</p>
+</li>
+<li>
+<p><strong>Energy detection.</strong> The CPD engine monitors audio energy levels. When energy exceeds the silence threshold, it marks the start of a "sound event" -- what it considers a word or speech segment.</p>
+</li>
+<li>
+<p><strong>Silence detection.</strong> When energy drops below the threshold and stays there for <code>cpd_amd_between_words_silence</code> milliseconds, the current sound event ends. The silence gap is counted as a word boundary.</p>
+</li>
+<li>
+<p><strong>Word counting.</strong> Each sound event that lasts longer than <code>cpd_amd_minimum_word_length</code> milliseconds is counted as a word. Sound events shorter than this are discarded as noise.</p>
+</li>
+<li>
+<p><strong>Decision logic.</strong> If the number of words exceeds <code>cpd_amd_maximum_number_of_words</code>, or if any single word exceeds <code>cpd_amd_maximum_word_length</code>, the call is classified as a machine. Otherwise, it is classified as human.</p>
+</li>
+<li>
+<p><strong>Timeout.</strong> If the CPD engine cannot reach a decision within the total analysis window (typically 2-5 seconds), it applies a default classification.</p>
+</li>
+</ol>
+<h3 id="the-detection-parameters">The Detection Parameters<a class="headerlink" href="#the-detection-parameters" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c">; VICIdial AMD parameter defaults</span>
+cpd_amd_maximum_word_length = 5000      ; Max ms for a single word
+cpd_amd_minimum_word_length = 100       ; Min ms to count as a word
+cpd_amd_between_words_silence = 50      ; Ms of silence between words
+cpd_amd_maximum_number_of_words = 3     ; Max words before machine classification
+cpd_amd_minimum_number_of_words = 1     ; Min words before human classification
+cpd_amd_silence_threshold = 256         ; Energy threshold for silence vs speech
+</code></pre></div>
+
+<h3 id="strengths-of-traditional-amd">Strengths of Traditional AMD<a class="headerlink" href="#strengths-of-traditional-amd" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Zero external dependencies.</strong> Runs entirely within Asterisk. No API calls, no network hops, no third-party services.</li>
+<li><strong>Zero per-call cost.</strong> The CPU overhead of running AMD on a modern server is negligible.</li>
+<li><strong>Deterministic behavior.</strong> Given the same audio input and parameters, you always get the same result. This makes debugging straightforward.</li>
+<li><strong>Sub-second detection.</strong> For clearly human answers ("Hello"), the system makes a decision in 500-800ms. For clearly machine answers (long greetings), it decides as soon as the word count exceeds the threshold.</li>
+<li><strong>Tunable.</strong> The parameters are well-understood and can be adjusted per campaign, per carrier, and per time of day. See our <a href="/blog/vicidial-amd-false-positive-reduction">detailed AMD tuning guide</a>.</li>
+</ul>
+<h3 id="weaknesses-of-traditional-amd">Weaknesses of Traditional AMD<a class="headerlink" href="#weaknesses-of-traditional-amd" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>No semantic understanding.</strong> The system does not know what is being said -- only how many words there are and how long they are. A human saying "Hello, this is Michael from accounting" (6 words) looks identical to a short voicemail greeting to the CPD engine.</li>
+<li><strong>Sensitive to audio quality.</strong> Network jitter, codec compression artifacts, background noise, and silence suppression all affect word boundary detection. Different carriers require different parameter tuning.</li>
+<li><strong>Cannot distinguish voicemail types.</strong> A cell phone voicemail ("Hey, it's Sarah, leave a message") and a human answering informally ("Hey, it's Sarah, what's up") have very similar acoustic profiles.</li>
+<li><strong>Fixed analysis window.</strong> The system must make a decision within a few seconds. Some modern voicemail greetings are very short (1-2 words), making them indistinguishable from human answers based on word count alone.</li>
+</ul>
+<h3 id="real-world-accuracy-traditional-amd">Real-World Accuracy: Traditional AMD<a class="headerlink" href="#real-world-accuracy-traditional-amd" title="Permanent link">&para;</a></h3>
+<p>Across more than 100 VICIdial deployments we have managed, here are the accuracy ranges we observe:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Default Parameters</th>
+<th>Tuned Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overall accuracy</td>
+<td>75-82%</td>
+<td>85-92%</td>
+</tr>
+<tr>
+<td>False positive rate</td>
+<td>15-25%</td>
+<td>4-8%</td>
+</tr>
+<tr>
+<td>False negative rate</td>
+<td>10-15%</td>
+<td>8-12%</td>
+</tr>
+<tr>
+<td>Detection latency</td>
+<td>800-2000ms</td>
+<td>600-1500ms</td>
+</tr>
+</tbody>
+</table>
+<p>"Tuned parameters" means per-carrier calibration with the methodology described in our <a href="/blog/vicidial-amd-false-positive-reduction">AMD tuning guide</a>.</p>
+<h2 id="how-ai-based-amd-works">How AI-Based AMD Works<a class="headerlink" href="#how-ai-based-amd-works" title="Permanent link">&para;</a></h2>
+<p>AI-based AMD systems take a fundamentally different approach. Instead of counting words and measuring silence gaps, they analyze the audio signal using machine learning models trained on millions of call recordings.</p>
+<h3 id="the-detection-process_1">The Detection Process<a class="headerlink" href="#the-detection-process_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Audio capture.</strong> When the call is answered, the system begins capturing the audio stream. This is typically done by forking the media to an external analysis service.</p>
+</li>
+<li>
+<p><strong>Feature extraction.</strong> The raw audio is converted into features that a machine learning model can process. Common features include Mel-frequency cepstral coefficients (MFCCs), spectral characteristics, pitch contours, and speech rate patterns.</p>
+</li>
+<li>
+<p><strong>Model inference.</strong> The features are fed into a trained neural network (typically a convolutional neural network or transformer model) that has been trained on millions of labeled recordings. The model outputs a probability score: the likelihood that the audio is from a human versus a machine.</p>
+</li>
+<li>
+<p><strong>Confidence thresholding.</strong> If the human probability exceeds a threshold (typically 0.7-0.85), the call is classified as human. If the machine probability exceeds its threshold, it is classified as machine. If neither threshold is met, the system continues listening or returns an uncertain classification.</p>
+</li>
+<li>
+<p><strong>Continuous analysis.</strong> Unlike traditional AMD which makes a single binary decision, AI-based systems continuously update their classification as more audio arrives. The confidence score typically stabilizes within 1-2 seconds.</p>
+</li>
+</ol>
+<h3 id="what-the-model-learns">What the Model Learns<a class="headerlink" href="#what-the-model-learns" title="Permanent link">&para;</a></h3>
+<p>AI-based AMD models learn features that traditional CPD cannot detect:</p>
+<ul>
+<li><strong>Speech prosody.</strong> Humans answering a ringing phone have a rising intonation ("Hello?"). Voicemail greetings tend to have a flat or falling intonation ("Hi, you've reached...").</li>
+<li><strong>Background characteristics.</strong> Voicemail greetings are typically recorded in quiet environments. Live answers often have ambient noise, TV, traffic, or other people.</li>
+<li><strong>Microphone characteristics.</strong> Voicemail greetings are often recorded on the phone's internal microphone at close range. Live answers come through the earpiece microphone at variable distances.</li>
+<li><strong>Beep detection.</strong> AI models learn to detect the voicemail beep with high accuracy, even when it has not played yet, based on the greeting patterns that precede it.</li>
+<li><strong>Carrier-specific voicemail patterns.</strong> The model learns that Verizon's voicemail system sounds different from AT&amp;T's, which sounds different from T-Mobile's.</li>
+</ul>
+<h3 id="integration-with-vicidial">Integration with VICIdial<a class="headerlink" href="#integration-with-vicidial" title="Permanent link">&para;</a></h3>
+<p>AI-based AMD systems integrate with VICIdial through one of two approaches:</p>
+<p><strong>Approach 1: Media forking.</strong> The Asterisk dial plan forks the media stream to an external analysis service. The service returns the classification via an AMI event or AGI callback. This approach keeps the call flow within Asterisk and VICIdial.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; Example: Fork media to AI AMD service</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,1,Answer()</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,Set(AUDIOHOOK_INHERIT(MixMonitor)=yes)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,MixMonitor(/tmp/amd_${UNIQUEID}.wav)</span>
+<span class="c1">; Send audio to AI service via WebSocket or HTTP stream</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,AGI(ai_amd.agi)</span>
+<span class="c1">; ai_amd.agi reads the stream, calls the API, returns result</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,GotoIf($[&quot;${AMD_RESULT}&quot; = &quot;MACHINE&quot;]?machine:human)</span>
+</code></pre></div>
+
+<p><strong>Approach 2: SIP REFER.</strong> The call is initially routed to the AI AMD service, which analyzes the audio, makes a classification, and then transfers the call back to VICIdial with the classification result in a SIP header. This approach is cleaner but requires more complex SIP routing.</p>
+<h3 id="real-world-accuracy-ai-based-amd">Real-World Accuracy: AI-Based AMD<a class="headerlink" href="#real-world-accuracy-ai-based-amd" title="Permanent link">&para;</a></h3>
+<p>Based on published benchmarks and our own testing across multiple AI AMD providers:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>AI-Based AMD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overall accuracy</td>
+<td>92-96%</td>
+</tr>
+<tr>
+<td>False positive rate</td>
+<td>2-4%</td>
+</tr>
+<tr>
+<td>False negative rate</td>
+<td>4-8%</td>
+</tr>
+<tr>
+<td>Detection latency</td>
+<td>1000-2500ms</td>
+</tr>
+</tbody>
+</table>
+<h2 id="head-to-head-comparison">Head-to-Head Comparison<a class="headerlink" href="#head-to-head-comparison" title="Permanent link">&para;</a></h2>
+<h3 id="accuracy">Accuracy<a class="headerlink" href="#accuracy" title="Permanent link">&para;</a></h3>
+<p>This is where AI-based AMD clearly wins. The jump from 85-92% (tuned traditional) to 92-96% (AI) may seem modest in percentage terms, but at scale the impact is significant.</p>
+<p>For a center running 50 agents at 200 dials/hour:</p>
+<ul>
+<li><strong>Traditional AMD (tuned, 8% FP rate):</strong> 10,000 dials -&gt; 4,000 answered -&gt; 320 false positives = 320 lost live connections/day</li>
+<li><strong>AI AMD (3% FP rate):</strong> 10,000 dials -&gt; 4,000 answered -&gt; 120 false positives = 120 lost live connections/day</li>
+</ul>
+<p>That is 200 additional live connections per day reaching agents. At $5 per live connection, that is $1,000/day or $22,000/month in recovered value.</p>
+<p>But the accuracy advantage diminishes with excellent traditional AMD tuning. If you have already optimized your CPD parameters per carrier and implemented adaptive thresholds (getting your false positive rate to 4-5%), the incremental gain from AI AMD drops to 50-80 additional live connections per day.</p>
+<h3 id="latency">Latency<a class="headerlink" href="#latency" title="Permanent link">&para;</a></h3>
+<p>This is where traditional AMD has the advantage. Here is why it matters.</p>
+<p>When AMD is running, the called party has picked up and is hearing silence (or ringback, depending on your configuration). Every millisecond of AMD processing is a millisecond where the prospect is saying "Hello? Hello?" into silence. If the AMD latency is too high, the prospect hangs up before the agent connects -- creating a different kind of lost connection.</p>
+<table>
+<thead>
+<tr>
+<th>AMD Type</th>
+<th>Detection Latency</th>
+<th>Agent Connection Delay</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Traditional (clear human)</td>
+<td>500-800ms</td>
+<td>1-1.5 seconds</td>
+</tr>
+<tr>
+<td>Traditional (machine)</td>
+<td>800-2000ms</td>
+<td>N/A (dropped)</td>
+</tr>
+<tr>
+<td>AI-based (clear human)</td>
+<td>1000-1500ms</td>
+<td>1.5-2.5 seconds</td>
+</tr>
+<tr>
+<td>AI-based (ambiguous)</td>
+<td>2000-3000ms</td>
+<td>2.5-3.5 seconds</td>
+</tr>
+</tbody>
+</table>
+<p>The 500-1000ms additional delay with AI AMD is noticeable. Studies show that each additional second of silence after the called party answers reduces the conversation rate by 5-8%. At 2.5 seconds of total delay, some prospects hang up, defeating the purpose of the AMD system entirely.</p>
+<p>Some AI AMD providers mitigate this with "early classification" -- making a preliminary decision at 800ms based on initial audio features and refining it as more audio arrives. This helps but introduces the risk of premature misclassification.</p>
+<h3 id="cost">Cost<a class="headerlink" href="#cost" title="Permanent link">&para;</a></h3>
+<p>Traditional AMD costs nothing beyond the Asterisk server CPU it runs on. AI-based AMD introduces per-call costs.</p>
+<table>
+<thead>
+<tr>
+<th>Provider Type</th>
+<th>Cost Per Analyzed Call</th>
+<th>Monthly Cost (10,000 calls/day)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Traditional (Asterisk built-in)</td>
+<td>$0.00</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>AI AMD SaaS (budget tier)</td>
+<td>$0.005 - $0.01</td>
+<td>$1,500 - $3,000</td>
+</tr>
+<tr>
+<td>AI AMD SaaS (premium tier)</td>
+<td>$0.01 - $0.03</td>
+<td>$3,000 - $9,000</td>
+</tr>
+<tr>
+<td>Self-hosted AI AMD</td>
+<td>$0.001 - $0.003</td>
+<td>$300 - $900 (+ server costs)</td>
+</tr>
+</tbody>
+</table>
+<p>Self-hosted AI AMD (running your own ML model on a GPU server) is the most cost-effective option if you have the engineering capability to deploy and maintain it. But the GPU server itself costs $500-2,000/month depending on specs.</p>
+<h3 id="reliability-and-dependencies">Reliability and Dependencies<a class="headerlink" href="#reliability-and-dependencies" title="Permanent link">&para;</a></h3>
+<p>Traditional AMD has no external dependencies. If Asterisk is running, AMD is running.</p>
+<p>AI-based AMD introduces dependencies:</p>
+<ul>
+<li><strong>Network connectivity</strong> to the AMD service (for SaaS solutions)</li>
+<li><strong>Service availability</strong> of the AMD provider</li>
+<li><strong>API latency</strong> which varies with provider load</li>
+<li><strong>Model updates</strong> which can change classification behavior without warning</li>
+</ul>
+<p>If the AI AMD service goes down or becomes unreachable, you need a fallback -- which is typically traditional AMD. So you end up maintaining both systems.</p>
+<h3 id="maintenance">Maintenance<a class="headerlink" href="#maintenance" title="Permanent link">&para;</a></h3>
+<p>Traditional AMD requires ongoing parameter tuning as carriers change and call patterns shift. This is manual work that requires VICIdial expertise.</p>
+<p>AI-based AMD models are typically maintained by the provider. They retrain on new data and push model updates. This is hands-off from your perspective, but it also means you have limited control over changes to classification behavior.</p>
+<h2 id="decision-framework-when-to-use-each-approach">Decision Framework: When to Use Each Approach<a class="headerlink" href="#decision-framework-when-to-use-each-approach" title="Permanent link">&para;</a></h2>
+<h3 id="use-traditional-amd-when">Use Traditional AMD When:<a class="headerlink" href="#use-traditional-amd-when" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Your center has fewer than 50 agents.</strong> The cost of AI AMD does not justify the incremental accuracy gain at lower volumes.</li>
+<li><strong>You have per-carrier AMD tuning in place.</strong> Tuned traditional AMD at 4-5% false positive rate provides diminishing returns from AI.</li>
+<li><strong>Latency is critical.</strong> If your campaigns target demographics that hang up quickly (B2C cold calls), the additional 500-1000ms of AI AMD latency may cost more connections than it saves.</li>
+<li><strong>You want zero external dependencies.</strong> For mission-critical operations, keeping AMD entirely within your infrastructure eliminates a class of failure modes.</li>
+<li><strong>Budget is constrained.</strong> Traditional AMD is free. AI AMD at $3,000-9,000/month is a meaningful expense.</li>
+</ol>
+<h3 id="use-ai-based-amd-when">Use AI-Based AMD When:<a class="headerlink" href="#use-ai-based-amd-when" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Your center has 100+ agents.</strong> The accuracy improvement translates to hundreds of additional live connections per day, easily justifying the cost.</li>
+<li><strong>Your campaigns have high per-connection value.</strong> If each live connection is worth $10+ (insurance, solar, real estate), the 2-4% false positive reduction from AI AMD pays for itself many times over.</li>
+<li><strong>You dial cell phones predominantly.</strong> Cell phone voicemail greetings are shorter and more conversational than landline voicemails, making them harder for traditional AMD to distinguish. AI AMD handles this better.</li>
+<li><strong>You have already exhausted traditional tuning.</strong> If you have per-carrier tuning, adaptive thresholds, and recording-validated parameters and still see 6-8% false positives, AI AMD is the next step.</li>
+<li><strong>Your agents handle inbound transfers.</strong> If the called party hears a brief IVR message or hold music during the AMD analysis window (masking the silence), the latency penalty is eliminated.</li>
+</ol>
+<h3 id="use-both-hybrid-approach">Use Both (Hybrid Approach):<a class="headerlink" href="#use-both-hybrid-approach" title="Permanent link">&para;</a></h3>
+<p>The optimal setup for large centers is a hybrid approach:</p>
+<ol>
+<li>Run traditional AMD as the primary detector with aggressive tuning</li>
+<li>For calls where traditional AMD confidence is low (borderline decisions), route the audio to AI AMD for a second opinion</li>
+<li>Use AI AMD exclusively for cell phone-only campaigns where traditional AMD struggles</li>
+</ol>
+<p>This hybrid approach gives you the speed of traditional AMD for clear-cut cases (which are 70-80% of calls) and the accuracy of AI AMD for ambiguous cases.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; Hybrid AMD dial plan example</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,1,AMD()</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,Set(TRADITIONAL_RESULT=${AMDSTATUS})</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,Set(TRADITIONAL_CAUSE=${AMDCAUSE})</span>
+
+<span class="c1">; If traditional AMD is uncertain (borderline word count, borderline timing)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,GotoIf($[&quot;${TRADITIONAL_CAUSE}&quot; = &quot;TOOLONG-3-3000&quot;]?ai_check)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,GotoIf($[&quot;${TRADITIONAL_CAUSE}&quot; = &quot;MAXWORDS-3-2800&quot;]?ai_check)</span>
+
+<span class="c1">; Clear traditional result - use it</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,GotoIf($[&quot;${TRADITIONAL_RESULT}&quot; = &quot;MACHINE&quot;]?machine:human)</span>
+
+<span class="c1">; Borderline - get AI second opinion</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n(ai_check),AGI(ai_amd_check.agi)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,GotoIf($[&quot;${AI_RESULT}&quot; = &quot;MACHINE&quot;]?machine:human)</span>
+
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n(human),NoOp(HUMAN - connecting to agent)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,Goto(agent_connect,s,1)</span>
+
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n(machine),NoOp(MACHINE - sending to voicemail drop)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _1NXXNXXXXXX,n,Goto(vm_drop,s,1)</span>
+</code></pre></div>
+
+<h2 id="the-future-of-amd-in-vicidial">The Future of AMD in VICIdial<a class="headerlink" href="#the-future-of-amd-in-vicidial" title="Permanent link">&para;</a></h2>
+<p>The trajectory is clear: AI-based AMD will eventually replace traditional CPD for most call centers. Model inference costs are dropping rapidly (50% year-over-year for the past three years). Latency is improving as edge-deployed models eliminate network round trips. And accuracy continues to improve as training datasets grow.</p>
+<p>However, traditional AMD will remain relevant for:
+- Small centers where the cost-benefit does not justify AI
+- Environments with strict data sovereignty requirements (no audio leaving the premise)
+- As a fallback when AI services are unreachable</p>
+<p>The winning strategy today is to master traditional AMD tuning first -- it is free and immediately impactful -- and layer AI AMD on top when your scale and per-connection value justify the investment.</p>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>ViciStack manages AMD optimization as part of our flat-rate VICIdial optimization service. For every client, we:</p>
+<ul>
+<li><strong>Audit current AMD performance</strong> with recording-level false positive analysis</li>
+<li><strong>Deploy per-carrier traditional AMD tuning</strong> to get false positives below 5%</li>
+<li><strong>Evaluate AI AMD ROI</strong> based on your specific call volume and per-connection value</li>
+<li><strong>Integrate AI AMD</strong> when the math supports it, handling all technical integration</li>
+<li><strong>Monitor ongoing performance</strong> and adjust parameters as conditions change</li>
+</ul>
+<p>We have deployed both traditional and AI AMD across more than 100 VICIdial call centers. We know when each approach delivers ROI and when it does not -- and we will tell you honestly which one is right for your operation.</p>
+<p><strong>All included at $150/agent/month. No per-minute charges. No AI AMD surcharges.</strong></p>
+<p><strong><a href="https://vicistack.com/proof/">Get your free AMD analysis -- we will measure your current false positive rate and calculate exactly how many live connections you are losing.</a></strong></p>
+<p>5-minute response time. No commitment, no sales pitch. Just your data.</p>
+<h2 id="further-reading">Further Reading<a class="headerlink" href="#further-reading" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-amd-false-positive-reduction">How to Reduce VICIdial AMD False Positives from 20% to Under 5%</a> -- the complete traditional AMD tuning guide</li>
+<li><a href="/blog/vicidial-sip-trunk-failover">VICIdial SIP Trunk Failover and Redundancy: Complete Setup Guide</a> -- carrier changes that affect AMD performance</li>
+<li><a href="/blog/vicidial-caller-id-reputation">VICIdial Caller ID Reputation Monitoring and Recovery Guide</a> -- caller ID impacts answer rates, which impacts AMD performance</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-amd-vs-ai-amd">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

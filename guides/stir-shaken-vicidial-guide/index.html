@@ -1,0 +1,3311 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/stir-shaken-vicidial-guide/">
+      
+      
+        <link rel="prev" href="../predictive-vs-progressive-dialing/">
+      
+      
+        <link rel="next" href="../vicidial-34-new-features/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#stirshaken-for-vicidial-the-complete-2026-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-stirshaken-actually-does-and-what-it-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What STIR/SHAKEN Actually Does (and What It Doesn't)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-three-attestation-levels-and-why-only-one-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three Attestation Levels and Why Only One Matters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#your-carrier-choice-is-the-whole-ballgame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Carrier Choice Is the Whole Ballgame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-scam-likely-problem-is-worse-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Scam Likely" Problem Is Worse Than You Think
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#your-vicidial-settings-are-feeding-the-spam-algorithms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your VICIdial Settings Are Feeding the Spam Algorithms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-canada-us-cross-border-problem-nobody-mentions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Canada-US Cross-Border Problem Nobody Mentions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-complete-compliance-stack-13-layers-not-just-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Complete Compliance Stack: 13 Layers, Not Just 1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-coming-in-2026-2027-that-you-need-to-prepare-for-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Coming in 2026-2027 That You Need to Prepare For Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-vicidial-implementation-path-what-to-do-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The VICIdial Implementation Path: What to Do Right Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-stirshaken-actually-does-and-what-it-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What STIR/SHAKEN Actually Does (and What It Doesn't)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-three-attestation-levels-and-why-only-one-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three Attestation Levels and Why Only One Matters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#your-carrier-choice-is-the-whole-ballgame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Carrier Choice Is the Whole Ballgame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-scam-likely-problem-is-worse-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Scam Likely" Problem Is Worse Than You Think
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#your-vicidial-settings-are-feeding-the-spam-algorithms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your VICIdial Settings Are Feeding the Spam Algorithms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-canada-us-cross-border-problem-nobody-mentions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Canada-US Cross-Border Problem Nobody Mentions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-complete-compliance-stack-13-layers-not-just-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Complete Compliance Stack: 13 Layers, Not Just 1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-coming-in-2026-2027-that-you-need-to-prepare-for-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Coming in 2026-2027 That You Need to Prepare For Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-vicidial-implementation-path-what-to-do-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The VICIdial Implementation Path: What to Do Right Now
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="stirshaken-for-vicidial-the-complete-2026-implementation-guide">STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide<a class="headerlink" href="#stirshaken-for-vicidial-the-complete-2026-implementation-guide" title="Permanent link">&para;</a></h1>
+<p><em>Published by ViciStack — the managed VICIdial platform built by operators, for operators.</em></p>
+<hr />
+<p>If you're running a VICIdial call center in 2026 and you think STIR/SHAKEN is just another compliance checkbox you can safely ignore — congratulations, you're about to learn what a 50% drop in answer rates feels like.</p>
+<p>The uncomfortable reality that nobody in the VICIdial community is spelling out clearly: <strong>STIR/SHAKEN compliance is necessary but nowhere near sufficient.</strong> Getting your calls signed with A-level attestation is Layer 1 of a 13-layer compliance and reputation stack. Most VICIdial operators stop at Layer 1 and then wonder why their numbers are getting flagged as "Scam Likely" six days into a campaign.</p>
+<p>We manage over 100 VICIdial-based contact centers processing roughly 600,000 dials per month across solar, roofing, and home services verticals. We've watched this landscape evolve from "it'll never affect us" to "our calls aren't connecting and we don't know why" to "we need to rebuild everything from the ground up."</p>
+<p>This guide is the rebuild manual. Every word is backed by data. No hedging, no filler, no "consult your legal team" cop-outs at the point where it actually gets useful.</p>
+<p>Let's get into it.</p>
+<hr />
+<h2 id="what-stirshaken-actually-does-and-what-it-doesnt">What STIR/SHAKEN Actually Does (and What It Doesn't)<a class="headerlink" href="#what-stirshaken-actually-does-and-what-it-doesnt" title="Permanent link">&para;</a></h2>
+<p>STIR/SHAKEN is a cryptographic call authentication framework. That's it. STIR (Secure Telephone Identity Revisited) defines the IETF standards (RFC 8224, 8225, 8226) for digitally signing phone calls. SHAKEN (Signature-based Handling of Asserted information using toKENs) is the North American deployment framework built on top of those standards.</p>
+<p>When your VICIdial server fires off a SIP INVITE through Asterisk, that call hits your SIP trunk provider. Their Authentication Service (STI-AS) looks at three things: Do they know who you are (KYC)? Did they assign you this phone number? Did the call originate on their network?</p>
+<p>If the answer to all three is yes, they generate a PASSporT token — a three-part JSON Web Signature containing your originating number, the destination, a timestamp, and a cryptographic signature — and inject it as a SIP Identity header. That call now carries a digital passport proving its identity.</p>
+<p>The terminating carrier's Verification Service (STI-VS) checks the signature, validates the certificate, and slaps a <code>verstat</code> parameter on the call: <code>TN-Validation-Passed</code>, <code>TN-Validation-Failed</code>, or <code>No-TN-Validation</code>. That result gets fed to analytics engines, and those engines decide whether your call rings through normally, gets a "Spam Likely" label, or goes straight to voicemail jail.</p>
+<p><strong>The critical misconception costing VICIdial operators money every single day</strong>: STIR/SHAKEN does NOT block calls. It does NOT label calls as spam. It authenticates identity. Period.</p>
+<p>The actual blocking and labeling decisions? Those are made by carrier analytics engines — T-Mobile's Scam Shield (powered by First Orion), AT&amp;T's ActiveArmor (powered by Hiya), and Verizon's Call Filter (powered by TNS). These three systems control call reputation for over 200 million US wireless subscribers, and they update their models <strong>every six minutes</strong>.</p>
+<p>A-level attestation tells these engines "this caller is who they say they are." It does NOT tell them "this caller is someone you should trust." The difference between those two statements is where most outbound call centers are losing the game.</p>
+<blockquote>
+<p><strong>STIR/SHAKEN Is Layer 1 of 13. Are You Stuck There?</strong>
+ViciStack manages the full compliance and reputation stack so your calls actually connect. <a href="/free-audit/">Get Your Free Audit →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-three-attestation-levels-and-why-only-one-matters">The Three Attestation Levels and Why Only One Matters<a class="headerlink" href="#the-three-attestation-levels-and-why-only-one-matters" title="Permanent link">&para;</a></h2>
+<p><strong>Full Attestation (A):</strong> Your carrier verified your identity, you own the number, and the call started on their network. This is the only level that moves the needle on deliverability. Some devices show a "Verified" checkmark. Analytics engines treat it as a positive (but not conclusive) signal.</p>
+<p><strong>Partial Attestation (B):</strong> Your carrier knows who you are, but can't confirm you own the specific number. This is the default for most call centers using DIDs from one carrier routed through another. Bandwidth says B-attested calls "should not automatically be blocked," but industry data shows B and C attested calls are roughly <strong>three times more likely</strong> to be flagged as robocalls, triggering significantly heavier scrutiny from analytics engines.</p>
+<p><strong>Gateway Attestation (C):</strong> Your carrier doesn't know where the call came from. C-level calls are functionally dead on arrival. Some carriers block all C traffic outright. VICIdial community veterans say it plainly: calls with C attestation end up in voicemail.</p>
+<p><strong>The golden rule:</strong> Buy your DIDs directly from your SIP trunk provider. If the carrier assigned the number and you're sending the call from their network, that's automatic A-level. The moment you introduce numbers from an external source without a signed Letter of Authorization (LOA), you're looking at B-level at best.</p>
+<blockquote>
+<p><strong>B-Level Attestation Is Costing You Calls.</strong>
+ViciStack ensures A-level attestation on every DID, every carrier, every call. <a href="/free-audit/">Fix Your Attestation →</a></p>
+</blockquote>
+<hr />
+<h2 id="your-carrier-choice-is-the-whole-ballgame">Your Carrier Choice Is the Whole Ballgame<a class="headerlink" href="#your-carrier-choice-is-the-whole-ballgame" title="Permanent link">&para;</a></h2>
+<p>VICIdial doesn't implement STIR/SHAKEN. Your carrier does.</p>
+<p>When Asterisk generates a SIP INVITE, it sends a standard, unsigned call to your SIP trunk. The carrier's signing infrastructure handles everything — constructing the PASSporT, signing with their private key, injecting the Identity header. No VICIdial configuration changes. No Asterisk module tweaks. The call leaves your server unsigned and arrives at the carrier's Session Border Controller where the magic happens.</p>
+<p>This means your carrier selection is literally the most important decision you'll make for call deliverability. What to look for:</p>
+<p><strong>They must have their own SPC token and certificate.</strong> As of September 18, 2025, the FCC banned third-party STIR/SHAKEN certificates. Every provider must now obtain their own Service Provider Code from iconectiv and sign calls with their own credentials. Before this rule, shady carriers were borrowing certificates from downstream providers and slapping A-level attestation on calls they couldn't properly vet. The Lingo Telecom case — a <strong>$1 million fine</strong> for giving A-level attestation to spoofed deepfake Biden robocalls — was the wake-up call. Ask your carrier for their SPC token registration. If they can't produce it, run.</p>
+<p><strong>They must be on the Robocall Mitigation Database (RMD).</strong> This isn't optional. Under 47 CFR § 64.6305, every intermediate and voice service provider is legally required to <strong>cease accepting traffic</strong> from any provider not listed in the RMD. In August 2025, the FCC removed 1,388 providers from the RMD in a single month — 185 on August 6th and 1,203 on August 25th. Call centers using those carriers saw their operations cease within 48 hours. No workaround. No grace period. Verify your carrier's RMD status and check quarterly.</p>
+<p><strong>They should be a CLEC with their own numbering resources.</strong> A Competitive Local Exchange Carrier that owns its own number blocks can assign DIDs that automatically qualify for A-level attestation. You want the carrier that knows you, assigned the number, and can prove both under audit.</p>
+<p><strong>They need infrastructure built for predictive dialers.</strong> VICIdial's <a href="/blog/vicidial-predictive-dialer-settings/">predictive dialer</a> needs 2-3x more concurrent channels than active agents. A 50-seat center at peak can easily require 150+ simultaneous channels. Your carrier needs serious capacity, multiple Points of Presence for redundancy, and support for G.711 ulaw codec, RFC 2833 DTMF, and IP-based authentication.</p>
+<hr />
+<h2 id="the-scam-likely-problem-is-worse-than-you-think">The "Scam Likely" Problem Is Worse Than You Think<a class="headerlink" href="#the-scam-likely-problem-is-worse-than-you-think" title="Permanent link">&para;</a></h2>
+<p>Let's talk about what's actually killing your answer rates.</p>
+<p>Hiya's 2024 data shows <strong>28% of all unknown calls</strong> are flagged as spam or fraud. YouMail counted <strong>52.5 billion robocalls in 2025</strong>, with unwanted calls surging 15.4% year-over-year. Consumer behavior has shifted accordingly: <strong>48% of consumers now never answer unidentified calls</strong>.</p>
+<p>For outbound call centers, the numbers are grim. Realistic daily connection rates sit at <strong>15-25%</strong> on fresh, consented lists with healthy DIDs. The elite operations — running automated DID rotation, real-time reputation monitoring, and branded calling — hit 60-70%. Everyone else? Single digits.</p>
+<p>PhoneBurner surveyed 351 sales professionals and found <strong>81% believe their company has lost revenue</strong> from incorrect spam flags. <strong>15% reported losses exceeding $100,000.</strong> And the number that should make every call center owner sit up: <strong>53% reported more than 10 positions eliminated</strong> directly due to incorrect flagging.</p>
+<p>But it gets sneakier. Carrier analytics engines don't just flag or not-flag. They operate on a <strong>reputation spectrum</strong> — a continuous scoring system where your numbers can appear "clean" in monitoring tools while the carrier algorithms quietly deprioritize your calls. Your calls might ring fewer times, route directly to voicemail, or display with lower caller ID confidence. You'd never know unless you're tracking answer rates by carrier at the per-DID level, which almost nobody does.</p>
+<blockquote>
+<p><strong>48% of Consumers Never Answer Unknown Calls.</strong>
+That number only goes down from here. ViciStack's reputation management keeps your DIDs clean. <a href="/pricing/">See How →</a></p>
+</blockquote>
+<hr />
+<h2 id="your-vicidial-settings-are-feeding-the-spam-algorithms">Your VICIdial Settings Are Feeding the Spam Algorithms<a class="headerlink" href="#your-vicidial-settings-are-feeding-the-spam-algorithms" title="Permanent link">&para;</a></h2>
+<p>The connection nobody makes explicitly enough: <strong>your VICIdial campaign configuration generates specific call patterns that carrier analytics engines interpret as spam signatures.</strong></p>
+<p><strong><a href="/blog/vicidial-amd-guide/">AMD</a> is the stealth reputation killer.</strong> When Asterisk's AMD module detects a voicemail greeting and disconnects after 2-3 seconds of audio analysis, it generates massive volumes of very short-duration calls. Calls under 30 seconds are the single strongest spam signal in carrier algorithms. With AMD accuracy hovering at 65-80% out of the box, real humans frequently pick up, hear silence, and get hung up on. That generates both consumer complaints AND short-duration call data. Double whammy.</p>
+<p><strong>Your dial method matters more than you think.</strong> RATIO at 3:1 with 10 agents fires 30 simultaneous calls when all agents are ready. If your contact rate is 40%, roughly 12 calls answer, 2 agents are available, and 10 calls get abandoned. That creates a steady stream of short-duration, high-volume calls — textbook robocall signature. ADAPT_HARD_LIMIT creates a sawtooth pattern (aggressive → spike → drop to 1:1 → recover → aggressive again) that ML models are trained to flag. <strong>ADAPT_AVERAGE</strong> produces the smoothest traffic pattern because it maintains drop rate as a running average instead of a hard limit.</p>
+<p><strong>The <a href="/blog/vicidial-did-management/">DID rotation</a> trap.</strong> Matt Florell himself warns that aggressive rotation "in scenarios where people are dialing to wireless numbers more often can cause the big four to tag the caller ID as 'Scam Likely' prematurely." The industry consensus on calls-per-DID-per-day converges around <strong>50-100 calls</strong>, with 75 as the sweet spot.</p>
+<p><strong>Optimal VICIdial settings for reputation management:</strong></p>
+<ul>
+<li>Dial method: <strong>ADAPT_AVERAGE</strong> for 35+ agents, RATIO at 1.5-2.0 for smaller teams</li>
+<li>Drop percentage limit: <strong>1-3%</strong> (the FCC cap is 3%, but analytics engines start penalizing well before that)</li>
+<li>Drop action: <strong>IN_GROUP or MESSAGE</strong> — never HANGUP. Playing a 15-20 second safe harbor recording extends call duration past the short-duration penalty threshold</li>
+<li>AMD: Either disabled, or configured to leave a voicemail instead of hanging up immediately</li>
+<li>Dial timeout: <strong>26-30 seconds</strong> — shorter timeouts generate masses of very short call attempts</li>
+<li>Available Only Tally: <strong>Y</strong> (critical for accurate adapt calculations)</li>
+</ul>
+<p>Example campaign settings in the VICIdial admin (Campaigns &gt; Campaign Detail):</p>
+<div class="codehilite"><pre><span></span><code>Dial Method:           ADAPT_AVERAGE
+Auto Dial Level:       1.0  (let adapt raise it)
+Adaptive Drop %:       2.0
+Drop Action:           MESSAGE
+Drop Exten:            8304  (safe harbor recording)
+Dial Timeout:          28
+Available Only Tally:  Y
+Calls per DID per day: 75   (under DID Rotation settings)
+</code></pre></div>
+
+<blockquote>
+<p><strong>Your Campaign Settings Are a Spam Signature.</strong>
+RATIO at 3:1 + AMD + aggressive rotation = carrier blacklist. Let us fix your config. <a href="/free-audit/">Get Your Free Audit →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-canada-us-cross-border-problem-nobody-mentions">The Canada-US Cross-Border Problem Nobody Mentions<a class="headerlink" href="#the-canada-us-cross-border-problem-nobody-mentions" title="Permanent link">&para;</a></h2>
+<p>If you're running VICIdial operations from Canada and calling US numbers — and a lot of operations in Ottawa, Toronto, and Montreal are — you've got an extra layer of complexity.</p>
+<p>Canada implemented STIR/SHAKEN under CRTC Decision 2021-123, effective November 30, 2021, with <strong>no exemptions for small carriers</strong> (unlike the US). The governance structure mirrors the US but uses separate authorities: the Canadian Secure Token Governance Authority (CST-GA) and TransUnion/Neustar as the Canadian STI-PA.</p>
+<p>The problem: <strong>there is no formal bilateral agreement between Canadian and US authorities for STIR/SHAKEN interoperability.</strong> Each country maintains a separate list of approved Certificate Authorities. When a call signed by a Canadian CA arrives at a US terminating carrier, that carrier checks the certificate against its US-approved CA list. If the Canadian CA isn't recognized, verification fails automatically — your beautiful A-level attestation arrives looking like an unsigned call.</p>
+<p>The workaround: since October 2021, both PAs have made their CA lists publicly available, allowing terminating providers to optionally merge foreign lists with their own. TransUnion/Neustar announced that carriers using their Certified Caller platform can verify cross-border calls at no additional cost. But this is a <strong>provider-by-provider decision</strong>, not a guarantee.</p>
+<p>For Canadian VICIdial operators calling US numbers, either use a carrier with explicit cross-border STIR/SHAKEN support, or route US-bound calls through a US-based SIP trunk provider with US certificates. Don't gamble that your Canadian attestation will survive the border crossing.</p>
+<hr />
+<h2 id="the-complete-compliance-stack-13-layers-not-just-1">The Complete Compliance Stack: 13 Layers, Not Just 1<a class="headerlink" href="#the-complete-compliance-stack-13-layers-not-just-1" title="Permanent link">&para;</a></h2>
+<p>No competitor in this space has ever published the complete picture. They all treat STIR/SHAKEN in isolation. The full stack a VICIdial operator needs:</p>
+<p><strong>The Deliverability Chain:</strong>
+1. STIR/SHAKEN A-level attestation (carrier-side)
+2. CNAM registration ($0.15-$2/number, 15 characters, covers landlines)
+3. Free Caller Registry enrollment (freecallerregistry.com — free, submits to all three analytics engines)
+4. Individual analytics engine registration (Hiya, First Orion/CallTransparency, TNS/VoiceSpamFeedback)
+5. Continuous number reputation monitoring (Numeracle, CallerID Reputation, or similar)
+6. Branded calling (optional but increasingly important — CTIA BCID at ~$0.12/call)</p>
+<p><strong>The Legal Compliance Chain:</strong>
+7. Consent documentation (TrustedForm or Jornaya, $0.15-$0.50/lead)
+8. Federal DNC scrubbing ($1,886/month for all area codes)
+9. State DNC scrubbing (11-13 states maintain separate lists)
+10. Cell phone identification and TCPA compliance
+11. Reassigned Numbers Database queries
+12. Litigator scrubbing ($500-$2,000/month)
+13. Internal DNC management and call recording (VICIdial handles this natively)</p>
+<p><strong>For a 50-seat center</strong>, minimum viable compliance runs <strong>$3,000-$5,000/month</strong>. The recommended full stack hits <strong>$10,000-$18,000/month</strong> ($200-$360/seat). The largest variable is consent management — TrustedForm alone can exceed $10,000/month at volume.</p>
+<p>That sounds expensive until you calculate the alternative. Non-compliance costs a 50-seat center an estimated <strong>$143,000-$768,000 per month</strong> in lost connections, wasted agent wages, accelerated DID burnout, and remediation costs. TCPA class action filings hit <strong>507 in Q1 2025</strong> — a 112% year-over-year increase — with average settlements running <strong>$6.6 million</strong>.</p>
+<p>The math isn't even close.</p>
+<blockquote>
+<p><strong>$143K-$768K/Month in Lost Revenue. That's the Cost of Ignoring This.</strong>
+ViciStack builds the full 13-layer stack so you don't have to. <a href="/pricing/">See Our Compliance Package →</a></p>
+</blockquote>
+<hr />
+<h2 id="whats-coming-in-2026-2027-that-you-need-to-prepare-for-now">What's Coming in 2026-2027 That You Need to Prepare For Now<a class="headerlink" href="#whats-coming-in-2026-2027-that-you-need-to-prepare-for-now" title="Permanent link">&para;</a></h2>
+<p>Three FCC proceedings will reshape this landscape within 18 months:</p>
+<p><strong>Mandatory branded calling (FCC 25-76, October 2025).</strong> The FCC unanimously proposed requiring terminating carriers to display verified caller names alongside A-level attestation. This effectively makes branded calling — showing your business name and logo on the recipient's phone — a regulatory requirement, not just a nice-to-have. Comments closed February 2026. Final rules expected H2 2026.</p>
+<p><strong>The non-IP gap closure (FCC 25-25, April 2025).</strong> The FCC proposed requiring all providers with TDM network segments to implement caller ID authentication or complete IP transition within two years. This addresses the "TDM-in-the-middle" problem where STIR/SHAKEN attestation gets stripped when calls cross legacy SS7 infrastructure — currently affecting roughly <strong>57-62% of signed calls</strong> that arrive at the terminating end without verification data intact.</p>
+<p><strong>Higher RMD fines and state-level action.</strong> New rules establish <strong>$10,000 fines</strong> for false RMD information. Virginia has introduced legislation with a <strong>$5,000-per-call private right of action</strong>. Multiple states are pushing their own caller ID and STIR/SHAKEN mandates, creating a potential patchwork of compliance requirements.</p>
+<p>The FCC is also exploring whether verified caller identity should become <strong>a condition of A-level attestation itself</strong> — creating a distinction between basic A (number authenticated) and enhanced A (number + identity verified). The trajectory is clear: unsigned, unbranded calls from unverified callers will increasingly never reach consumers at all.</p>
+<hr />
+<h2 id="the-vicidial-implementation-path-what-to-do-right-now">The VICIdial Implementation Path: What to Do Right Now<a class="headerlink" href="#the-vicidial-implementation-path-what-to-do-right-now" title="Permanent link">&para;</a></h2>
+<p>Your 90-day playbook, no ambiguity:</p>
+<p><strong>Week 1-2: Carrier Audit</strong>
+- Verify your carrier's RMD status
+- Confirm they have their own SPC token and certificate (not borrowed — this is now illegal)
+- Request attestation level confirmation for your specific DIDs
+- If your carrier can't confirm A-level for carrier-assigned DIDs, start evaluating alternatives</p>
+<p><strong>Week 3-4: Number Hygiene</strong>
+- Register every outbound DID on FreeCallerRegistry.com
+- Set up CNAM for all numbers (15 characters, your business name)
+- Run a baseline reputation check across all three analytics engines
+- Flag and retire any currently spam-labeled numbers. Don't try to remediate them — replace and move on</p>
+<p><strong>Week 5-8: VICIdial Configuration</strong>
+- Switch to ADAPT_AVERAGE if you're running RATIO above 2.0
+- Set drop percentage to 2% maximum
+- Change Drop Action from HANGUP to MESSAGE or IN_GROUP
+- Set dial timeout to 28 seconds minimum
+- Either disable AMD or configure voicemail-leave instead of immediate hangup
+- Limit calls per DID per day to 75 maximum. Set up rotation accordingly</p>
+<p><strong>Week 9-12: Monitoring and Optimization</strong>
+- Implement daily tracking of answer rates by carrier (parse <code>vicidial_carrier_log</code> channel field)
+- Track short-duration call ratio (answered calls ≤ 6 seconds as % of total). Keep under 15%
+- Monitor SIP 603 response codes in carrier logs — a sudden spike means active blocking
+- Set up weekly per-DID reputation checks through your monitoring service
+- Establish a DID retirement/replacement pipeline for flagged numbers</p>
+<blockquote>
+<p><strong>90 Days Is a Long Time. We Can Do It in 48 Hours.</strong>
+ViciStack migrates your entire operation to compliant, optimized infrastructure overnight. <a href="/free-audit/">Start Your Migration →</a></p>
+</blockquote>
+<hr />
+<h2 id="the-bottom-line">The Bottom Line<a class="headerlink" href="#the-bottom-line" title="Permanent link">&para;</a></h2>
+<p>STIR/SHAKEN is the operating system of modern call deliverability. It's not the whole story — it's Layer 1 of 13 — but without it, nothing else matters. The VICIdial community has been navigating this largely without institutional support, relying on forum threads and Matt Florell's guidance. That's not sustainable when the FCC is removing 1,388 carriers from the network in a month and fining companies millions for improper attestation.</p>
+<p>The operators who build the full compliance and reputation management stack now will see answer rates, conversion rates, and revenue per seat that make the investment self-evident. The operators who keep treating STIR/SHAKEN as somebody else's problem will find themselves spending more money to reach fewer people until the economics collapse entirely.</p>
+<p>We built ViciStack because this is exactly the problem we solve. We manage the carrier relationships, the reputation monitoring, the compliance stack, and the VICIdial configuration optimization so you can focus on what you're actually good at: running campaigns and closing deals.</p>
+<p>The future belongs to operators who treat call deliverability as a competitive advantage, not a regulatory burden.</p>
+<p><strong>Stop guessing. Start building.</strong> <a href="/free-audit/">Contact ViciStack →</a></p>
+<hr />
+<p><em>ViciStack is the managed VICIdial platform that handles STIR/SHAKEN compliance, carrier optimization, number reputation management, and dialer configuration — so your calls actually connect.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/stir-shaken-vicidial-guide">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

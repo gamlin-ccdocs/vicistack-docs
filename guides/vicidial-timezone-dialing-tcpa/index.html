@@ -1,0 +1,4233 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-timezone-dialing-tcpa/">
+      
+      
+        <link rel="prev" href="../vicidial-tcpa-compliance/">
+      
+      
+        <link rel="next" href="../vicidial-training-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-timezone-aware-dialing-and-tcpa-safe-hours-compliance" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tcpa-calling-window-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Calling Window Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TCPA Calling Window Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#federal-rules-fcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federal Rules (FCC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-specific-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Specific Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-indiana-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Indiana Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-arizona-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Arizona Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidials-built-in-timezone-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-in Timezone Detection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial&#39;s Built-in Timezone Detection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#postal-code-to-gmt-offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Postal Code to GMT Offset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-calculates-local-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Calculates Local Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gmt_offset_now-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The gmt_offset_now Field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifying-timezone-data-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying Timezone Data Accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-call_time-and-state_call_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring call_time and state_call_time
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring call_time and state_call_time">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-a-call_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defining a call_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assigning-call_time-to-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning call_time to Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-state_call_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring state_call_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifying-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handling-dst-transitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handling DST Transitions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Handling DST Transitions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-handles-dst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Handles DST
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dst-safety-buffer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DST Safety Buffer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dst-transition-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DST Transition Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forcing-a-timezone-recalculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forcing a Timezone Recalculation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-specific-restrictions-edge-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Specific Restrictions: Edge Cases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State-Specific Restrictions: Edge Cases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#oklahoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oklahoma
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indiana-split-timezone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indiana Split Timezone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hawaii-and-alaska" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hawaii and Alaska
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#us-territories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        US Territories
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documenting-compliance-for-audits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documenting Compliance for Audits
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documenting Compliance for Audits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-compliance-audit-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Compliance Audit Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retention
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Best Practices Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tcpa-calling-window-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Calling Window Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TCPA Calling Window Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#federal-rules-fcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federal Rules (FCC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-specific-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Specific Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-indiana-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Indiana Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-arizona-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Arizona Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidials-built-in-timezone-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial's Built-in Timezone Detection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial&#39;s Built-in Timezone Detection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#postal-code-to-gmt-offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Postal Code to GMT Offset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-calculates-local-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Calculates Local Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gmt_offset_now-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The gmt_offset_now Field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifying-timezone-data-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying Timezone Data Accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-call_time-and-state_call_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring call_time and state_call_time
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring call_time and state_call_time">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-a-call_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defining a call_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assigning-call_time-to-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning call_time to Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-state_call_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring state_call_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifying-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handling-dst-transitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handling DST Transitions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Handling DST Transitions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-vicidial-handles-dst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How VICIdial Handles DST
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dst-safety-buffer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DST Safety Buffer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dst-transition-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DST Transition Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forcing-a-timezone-recalculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forcing a Timezone Recalculation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-specific-restrictions-edge-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Specific Restrictions: Edge Cases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State-Specific Restrictions: Edge Cases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#oklahoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oklahoma
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indiana-split-timezone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indiana Split Timezone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hawaii-and-alaska" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hawaii and Alaska
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#us-territories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        US Territories
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documenting-compliance-for-audits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documenting Compliance for Audits
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documenting Compliance for Audits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-compliance-audit-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Compliance Audit Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retention
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Best Practices Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-vicistack-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How ViciStack Helps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-timezone-aware-dialing-and-tcpa-safe-hours-compliance">VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance<a class="headerlink" href="#vicidial-timezone-aware-dialing-and-tcpa-safe-hours-compliance" title="Permanent link">&para;</a></h1>
+<p>One TCPA violation costs $500 per call. Willful violations cost $1,500 per call. A single dialing session that calls 200 leads outside of safe hours could generate $100,000 to $300,000 in liability. This is not theoretical -- class action TCPA lawsuits are a thriving industry, and plaintiff attorneys actively look for call centers that dial outside legal windows.</p>
+<p>VICIdial has built-in timezone detection and call time enforcement. But "built-in" does not mean "configured correctly out of the box." Most VICIdial installations we audit have gaps in their timezone configuration -- missing state-specific rules, incorrect DST handling, or call_time definitions that do not account for every edge case.</p>
+<p>This guide covers every aspect of timezone-compliant dialing in VICIdial: federal and state TCPA requirements, VICIdial's timezone detection system, configuring <code>call_time</code> and <code>state_call_time</code>, handling daylight saving time transitions, state-specific restrictions, and building an audit trail that protects you when (not if) someone challenges your compliance.</p>
+<h2 id="tcpa-calling-window-requirements">TCPA Calling Window Requirements<a class="headerlink" href="#tcpa-calling-window-requirements" title="Permanent link">&para;</a></h2>
+<h3 id="federal-rules-fcc">Federal Rules (FCC)<a class="headerlink" href="#federal-rules-fcc" title="Permanent link">&para;</a></h3>
+<p>The Telephone Consumer Protection Act, as implemented by FCC regulations (47 CFR 64.1200), establishes the baseline:</p>
+<ul>
+<li><strong>Permitted calling hours</strong>: 8:00 AM to 9:00 PM <strong>in the called party's local time</strong></li>
+<li><strong>This applies to</strong>: Telemarketing calls, prerecorded messages, and autodial calls</li>
+<li><strong>The critical detail</strong>: The time zone is the <em>recipient's</em> time zone, not the caller's</li>
+</ul>
+<p>This means if your call center is in Phoenix (MST, no DST) and you are dialing New York (EST), you must track New York's local time, including when New York shifts to EDT in spring.</p>
+<h3 id="state-specific-rules">State-Specific Rules<a class="headerlink" href="#state-specific-rules" title="Permanent link">&para;</a></h3>
+<p>Several states have calling windows that are more restrictive than the federal 8 AM - 9 PM rule. These state rules override the federal standard:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Permitted Hours (Local Time)</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Federal (default)</strong></td>
+<td>8:00 AM - 9:00 PM</td>
+<td>Baseline</td>
+</tr>
+<tr>
+<td><strong>Oklahoma</strong></td>
+<td>8:00 AM - 8:00 PM</td>
+<td>1 hour earlier cutoff</td>
+</tr>
+<tr>
+<td><strong>Oregon</strong></td>
+<td>9:00 AM - 9:00 PM</td>
+<td>1 hour later start (proposed)</td>
+</tr>
+<tr>
+<td><strong>Washington</strong></td>
+<td>8:00 AM - 8:00 PM</td>
+<td>1 hour earlier cutoff</td>
+</tr>
+<tr>
+<td><strong>Indiana</strong></td>
+<td>Complex -- see below</td>
+<td>Split timezone state</td>
+</tr>
+<tr>
+<td><strong>Florida</strong></td>
+<td>8:00 AM - 9:00 PM</td>
+<td>Same as federal, but state-enforced</td>
+</tr>
+<tr>
+<td><strong>Texas</strong></td>
+<td>8:00 AM - 9:00 PM (noon on Sunday)</td>
+<td>Sunday restriction</td>
+</tr>
+<tr>
+<td><strong>Louisiana</strong></td>
+<td>8:00 AM - 9:00 PM</td>
+<td>Prohibits calls on certain holidays</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important</strong>: State laws change. This table reflects common restrictions as of this writing. Always verify current requirements with legal counsel. The FTC's Telemarketing Sales Rule (TSR) also applies to outbound telemarketing and mirrors the 8 AM - 9 PM window.</p>
+<h3 id="the-indiana-problem">The Indiana Problem<a class="headerlink" href="#the-indiana-problem" title="Permanent link">&para;</a></h3>
+<p>Indiana is the poster child for timezone complexity. Until 2006, most of Indiana did not observe daylight saving time. Today, the state is split:</p>
+<ul>
+<li><strong>Most of Indiana</strong>: Eastern time (observes DST)</li>
+<li><strong>Northwest Indiana</strong> (near Chicago): Central time (observes DST)</li>
+<li><strong>Southwest Indiana</strong> (near Evansville): Central time (observes DST)</li>
+</ul>
+<p>This means Indiana zip codes can be in either Eastern or Central time. VICIdial's postal code-to-timezone lookup handles this correctly if you have the right timezone data loaded, but verify it. A wrong timezone assignment for Gary, Indiana (Central time) vs. Indianapolis (Eastern time) means you might call Gary an hour early.</p>
+<h3 id="the-arizona-problem">The Arizona Problem<a class="headerlink" href="#the-arizona-problem" title="Permanent link">&para;</a></h3>
+<p>Arizona does not observe daylight saving time, except for the Navajo Nation, which does. For most call centers:</p>
+<ul>
+<li><strong>Standard time</strong>: Arizona is MST year-round (same as Mountain Standard)</li>
+<li><strong>During DST months</strong>: Arizona is the same as Pacific Daylight Time (PDT), not MDT</li>
+<li><strong>Navajo Nation</strong>: Observes DST (MDT during summer)</li>
+</ul>
+<p>VICIdial typically handles Arizona as a fixed offset, but verify your timezone data accounts for the DST non-participation.</p>
+<h2 id="vicidials-built-in-timezone-detection">VICIdial's Built-in Timezone Detection<a class="headerlink" href="#vicidials-built-in-timezone-detection" title="Permanent link">&para;</a></h2>
+<p>VICIdial determines each lead's timezone using the postal code (zip code) stored in the <code>vicidial_list</code> table. Here is how the system works:</p>
+<h3 id="postal-code-to-gmt-offset">Postal Code to GMT Offset<a class="headerlink" href="#postal-code-to-gmt-offset" title="Permanent link">&para;</a></h3>
+<p>VICIdial maintains a <code>vicidial_postal_codes</code> table that maps zip codes to GMT offsets:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check the postal code table</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">postal_code</span><span class="p">,</span><span class="w"> </span><span class="k">state</span><span class="p">,</span><span class="w"> </span><span class="n">GMT_offset</span><span class="p">,</span><span class="w"> </span><span class="n">DST</span><span class="p">,</span><span class="w"> </span><span class="n">DST_range</span><span class="p">,</span><span class="w"> </span><span class="n">country</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_postal_codes</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">postal_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;10001&#39;</span><span class="w">  </span><span class="c1">-- Manhattan, NY</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Expected output:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">postal_code</span><span class="o">:</span><span class="w"> </span><span class="mi">10001</span>
+<span class="n">state</span><span class="o">:</span><span class="w"> </span><span class="n">NY</span>
+<span class="n">GMT_offset</span><span class="o">:</span><span class="w"> </span><span class="o">-</span><span class="mf">5.00</span>
+<span class="n">DST</span><span class="o">:</span><span class="w"> </span><span class="n">Y</span>
+<span class="n">DST_range</span><span class="o">:</span><span class="w"> </span><span class="n">SSM</span><span class="o">-</span><span class="n">FSN</span>
+<span class="n">country</span><span class="o">:</span><span class="w"> </span><span class="n">USA</span>
+</code></pre></div>
+
+<ul>
+<li><strong>GMT_offset</strong>: The standard (non-DST) offset from GMT. New York is GMT-5 (Eastern Standard Time).</li>
+<li><strong>DST</strong>: Whether this postal code observes daylight saving time (Y/N).</li>
+<li><strong>DST_range</strong>: When DST is in effect. <code>SSM-FSN</code> means Second Sunday of March to First Sunday of November.</li>
+</ul>
+<h3 id="how-vicidial-calculates-local-time">How VICIdial Calculates Local Time<a class="headerlink" href="#how-vicidial-calculates-local-time" title="Permanent link">&para;</a></h3>
+<p>When the hopper evaluates a lead for dialing eligibility:</p>
+<ol>
+<li>Read the lead's postal code from <code>vicidial_list</code></li>
+<li>Look up GMT_offset and DST flag from <code>vicidial_postal_codes</code></li>
+<li>Calculate the lead's current local time:</li>
+<li>If DST=Y and current date is within DST_range: local_time = server_GMT + GMT_offset + 1</li>
+<li>If DST=N or outside DST_range: local_time = server_GMT + GMT_offset</li>
+<li>Compare local_time against the campaign's <code>call_time</code> definition</li>
+<li>Only add the lead to the hopper if local_time is within the permitted window</li>
+</ol>
+<h3 id="the-gmt_offset_now-field">The gmt_offset_now Field<a class="headerlink" href="#the-gmt_offset_now-field" title="Permanent link">&para;</a></h3>
+<p>VICIdial also maintains a real-time field <code>gmt_offset_now</code> in <code>vicidial_list</code> that reflects the lead's current GMT offset (including DST adjustment). This is updated by the <code>AST_VDhopper.pl</code> script:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check a lead&#39;s current timezone data</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">lead_id</span><span class="p">,</span><span class="w"> </span><span class="n">phone_number</span><span class="p">,</span><span class="w"> </span><span class="n">postal_code</span><span class="p">,</span><span class="w"> </span><span class="k">state</span><span class="p">,</span>
+<span class="w">       </span><span class="n">gmt_offset_now</span><span class="p">,</span><span class="w"> </span><span class="n">called_since_last_reset</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">lead_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The <code>gmt_offset_now</code> value is what the hopper actually uses for time filtering. If this field is wrong, leads will be dialed at the wrong time regardless of your <code>call_time</code> settings.</p>
+<h3 id="verifying-timezone-data-accuracy">Verifying Timezone Data Accuracy<a class="headerlink" href="#verifying-timezone-data-accuracy" title="Permanent link">&para;</a></h3>
+<p>Run this audit query to check for problems:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Find leads with missing or suspicious timezone data</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">postal_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="n">postal_code</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">no_zip</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">gmt_offset_now</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="n">gmt_offset_now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">no_offset</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">state</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">no_state</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_lists</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+<p>If <code>no_zip</code> is greater than zero, those leads have <strong>no timezone protection</strong>. VICIdial will either skip them entirely (safe) or assign them a default timezone (potentially unsafe, depending on configuration). Fix this by enriching your lead data before loading.</p>
+<h2 id="configuring-call_time-and-state_call_time">Configuring call_time and state_call_time<a class="headerlink" href="#configuring-call_time-and-state_call_time" title="Permanent link">&para;</a></h2>
+<p>VICIdial uses two systems for call time enforcement: <code>call_time</code> (the primary window) and <code>state_call_time</code> (per-state overrides).</p>
+<h3 id="defining-a-call_time">Defining a call_time<a class="headerlink" href="#defining-a-call_time" title="Permanent link">&para;</a></h3>
+<p>In VICIdial Admin, go to <strong>Admin &gt; Call Times</strong> to define calling windows:</p>
+<div class="codehilite"><pre><span></span><code>Call Time ID: TCPA_STANDARD
+Call Time Name: TCPA Compliant 8am-9pm
+Default Start: 800     (8:00 AM)
+Default Stop: 2100     (9:00 PM)
+
+Sunday Start: 800
+Sunday Stop: 2100
+
+Monday Start: 800
+Monday Stop: 2100
+
+Tuesday Start: 800
+Tuesday Stop: 2100
+
+Wednesday Start: 800
+Wednesday Stop: 2100
+
+Thursday Start: 800
+Thursday Stop: 2100
+
+Friday Start: 800
+Friday Stop: 2100
+
+Saturday Start: 800
+Saturday Stop: 2100
+</code></pre></div>
+
+<p>Each day can have different hours. Some centers choose not to dial on Sundays:</p>
+<div class="codehilite"><pre><span></span><code>Sunday Start: 0
+Sunday Stop: 0     (No dialing on Sunday)
+</code></pre></div>
+
+<h3 id="assigning-call_time-to-campaigns">Assigning call_time to Campaigns<a class="headerlink" href="#assigning-call_time-to-campaigns" title="Permanent link">&para;</a></h3>
+<p>In <strong>Campaigns &gt; [Your Campaign] &gt; Detail</strong>:</p>
+<div class="codehilite"><pre><span></span><code>Local Call Time: TCPA_STANDARD
+</code></pre></div>
+
+<p>This tells VICIdial: "Only dial leads whose local time falls within this call_time definition."</p>
+<h3 id="configuring-state_call_time">Configuring state_call_time<a class="headerlink" href="#configuring-state_call_time" title="Permanent link">&para;</a></h3>
+<p>For states with restrictions tighter than your base <code>call_time</code>, use <strong>State Call Times</strong>. In VICIdial Admin, go to <strong>Admin &gt; Call Times &gt; State Call Times</strong>:</p>
+<div class="codehilite"><pre><span></span><code>State Call Time ID: TCPA_STATES
+State Call Time Name: State-Specific TCPA Overrides
+
+Oklahoma:
+  Start: 800
+  Stop: 2000     (8:00 PM, not 9:00 PM)
+
+Washington:
+  Start: 800
+  Stop: 2000     (8:00 PM)
+
+Texas (Sunday):
+  Sunday Start: 1200    (Noon)
+  Sunday Stop: 2100     (9:00 PM)
+</code></pre></div>
+
+<p>Assign the state_call_time to your campaign:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Campaigns</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">[</span><span class="n">Campaign</span><span class="o">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nl">Detail</span><span class="p">:</span>
+<span class="w">  </span><span class="k">State</span><span class="w"> </span><span class="k">Call</span><span class="w"> </span><span class="nc">Time</span><span class="err">:</span><span class="w"> </span><span class="n">TCPA_STATES</span>
+</code></pre></div>
+
+<p>VICIdial evaluates both <code>call_time</code> AND <code>state_call_time</code>. The more restrictive rule wins. So if your <code>call_time</code> says 8 AM - 9 PM, but <code>state_call_time</code> for Oklahoma says 8 AM - 8 PM, Oklahoma leads will stop dialing at 8 PM local time.</p>
+<h3 id="verifying-configuration">Verifying Configuration<a class="headerlink" href="#verifying-configuration" title="Permanent link">&para;</a></h3>
+<p>Test your call_time configuration with this SQL query:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Simulate timezone filtering for your active campaign</span>
+<span class="c1">-- This shows how many leads are currently dialable by timezone</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">gmt_offset_now</span><span class="p">,</span>
+<span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">leads</span><span class="p">,</span>
+<span class="w">       </span><span class="n">TIME_FORMAT</span><span class="p">(</span>
+<span class="w">         </span><span class="n">ADDTIME</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="n">SEC_TO_TIME</span><span class="p">(</span><span class="n">gmt_offset_now</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="p">)),</span>
+<span class="w">         </span><span class="s1">&#39;%H:%i&#39;</span>
+<span class="w">       </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">local_time_now</span><span class="p">,</span>
+<span class="w">       </span><span class="k">CASE</span>
+<span class="w">         </span><span class="k">WHEN</span><span class="w"> </span><span class="n">TIME_FORMAT</span><span class="p">(</span><span class="n">ADDTIME</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="n">SEC_TO_TIME</span><span class="p">(</span><span class="n">gmt_offset_now</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;%H%i&#39;</span><span class="p">)</span>
+<span class="w">              </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">&#39;0800&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;2100&#39;</span>
+<span class="w">         </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;DIALABLE&#39;</span>
+<span class="w">         </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;BLOCKED&#39;</span>
+<span class="w">       </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">status</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_list</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">list_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_lists</span>
+<span class="w">  </span><span class="k">WHERE</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_CAMPAIGN&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span>
+<span class="p">)</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;NEW&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;CALLBK&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;NA&#39;</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">gmt_offset_now</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">gmt_offset_now</span><span class="p">;</span>
+</code></pre></div>
+
+<h2 id="handling-dst-transitions">Handling DST Transitions<a class="headerlink" href="#handling-dst-transitions" title="Permanent link">&para;</a></h2>
+<p>Daylight saving time transitions are the most dangerous time for TCPA compliance. On the "spring forward" Sunday, 2:00 AM becomes 3:00 AM, meaning there are only 23 hours in the day. On the "fall back" Sunday, 1:00 AM happens twice.</p>
+<h3 id="how-vicidial-handles-dst">How VICIdial Handles DST<a class="headerlink" href="#how-vicidial-handles-dst" title="Permanent link">&para;</a></h3>
+<p>VICIdial's timezone system uses the <code>DST</code> and <code>DST_range</code> fields in <code>vicidial_postal_codes</code> to determine if a lead's area is currently in DST. The <code>AST_VDhopper.pl</code> script recalculates <code>gmt_offset_now</code> for each lead during hopper refills.</p>
+<p>The DST transition happens at 2:00 AM local time, but VICIdial's hopper recalculation may not update instantly for all leads. This creates a window where some leads might have stale timezone data.</p>
+<h3 id="dst-safety-buffer">DST Safety Buffer<a class="headerlink" href="#dst-safety-buffer" title="Permanent link">&para;</a></h3>
+<p>Add a safety buffer around DST transitions:</p>
+<div class="codehilite"><pre><span></span><code>#<span class="w"> </span><span class="nv">Instead</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="mi">8</span>:<span class="mi">00</span><span class="w"> </span><span class="nv">AM</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">9</span>:<span class="mi">00</span><span class="w"> </span><span class="nv">PM</span>,<span class="w"> </span><span class="nv">use</span>:
+<span class="k">Call</span><span class="w"> </span><span class="nl">Time</span>:<span class="w"> </span><span class="mi">8</span>:<span class="mi">15</span><span class="w"> </span><span class="nv">AM</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">8</span>:<span class="mi">45</span><span class="w"> </span><span class="nv">PM</span>
+
+#<span class="w"> </span><span class="nv">This</span><span class="w"> </span><span class="nv">gives</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="mi">15</span><span class="o">-</span><span class="nv">minute</span><span class="w"> </span><span class="nv">buffer</span><span class="w"> </span><span class="nv">on</span><span class="w"> </span><span class="nv">each</span><span class="w"> </span><span class="k">end</span>
+#<span class="w"> </span><span class="nv">Cost</span>:<span class="w"> </span><span class="o">~</span><span class="mi">30</span><span class="w"> </span><span class="nv">minutes</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="nv">reduced</span><span class="w"> </span><span class="nv">dialing</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">day</span>
+#<span class="w"> </span><span class="nv">Benefit</span>:<span class="w"> </span><span class="nv">protection</span><span class="w"> </span><span class="nv">during</span><span class="w"> </span><span class="nv">DST</span><span class="w"> </span><span class="nv">transitions</span><span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="nv">clock</span><span class="w"> </span><span class="nv">skew</span>
+</code></pre></div>
+
+<p>Many compliance-conscious centers use 8:05 AM - 8:55 PM as a standard buffer even outside DST transitions. The lost dialing time is trivial compared to the risk.</p>
+<h3 id="dst-transition-checklist">DST Transition Checklist<a class="headerlink" href="#dst-transition-checklist" title="Permanent link">&para;</a></h3>
+<p>Run this verification the week before each DST transition:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /opt/vicistack/dst_check.sh</span>
+<span class="c1"># Run before DST transitions (March and November)</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== DST Transition Verification ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Current server time: </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Server timezone: </span><span class="k">$(</span>cat<span class="w"> </span>/etc/timezone<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>timedatectl<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;Time zone&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== VICIdial Postal Code DST Flags ===&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT DST, COUNT(*) AS zip_codes</span>
+<span class="s2">FROM vicidial_postal_codes</span>
+<span class="s2">WHERE country = &#39;USA&#39;</span>
+<span class="s2">GROUP BY DST;</span>
+<span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Sample DST=N States (should be AZ, HI) ===&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT DISTINCT state</span>
+<span class="s2">FROM vicidial_postal_codes</span>
+<span class="s2">WHERE DST = &#39;N&#39; AND country = &#39;USA&#39;;</span>
+<span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Leads with DST=Y that should be N (Arizona check) ===&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT vl.lead_id, vl.phone_number, vl.postal_code, vl.state, vl.gmt_offset_now,</span>
+<span class="s2">       vpc.DST</span>
+<span class="s2">FROM vicidial_list vl</span>
+<span class="s2">JOIN vicidial_postal_codes vpc ON vl.postal_code = vpc.postal_code</span>
+<span class="s2">WHERE vl.state = &#39;AZ&#39; AND vpc.DST = &#39;Y&#39;</span>
+<span class="s2">LIMIT 10;</span>
+<span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Current Active Campaigns Call Times ===&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT campaign_id, local_call_time</span>
+<span class="s2">FROM vicidial_campaigns</span>
+<span class="s2">WHERE active = &#39;Y&#39;;</span>
+<span class="s2">&quot;</span>
+</code></pre></div>
+
+<h3 id="forcing-a-timezone-recalculation">Forcing a Timezone Recalculation<a class="headerlink" href="#forcing-a-timezone-recalculation" title="Permanent link">&para;</a></h3>
+<p>After a DST transition, or if you suspect timezone data is stale, force a recalculation:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Restart the hopper script (it recalculates on startup)</span>
+<span class="c1"># On the VICIdial server:</span>
+screen<span class="w"> </span>-r�<span class="w"> </span>AST_VDhopper
+<span class="c1"># Or restart the VICIdial services:</span>
+/usr/share/astguiclient/ADMIN_keepalive_ALL.pl<span class="w"> </span>--cu3way
+</code></pre></div>
+
+<p>Or manually update <code>gmt_offset_now</code> for a specific list:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Recalculate gmt_offset_now for all leads in list 1001</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">vicidial_list</span><span class="w"> </span><span class="n">vl</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_postal_codes</span><span class="w"> </span><span class="n">vpc</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">postal_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vpc</span><span class="p">.</span><span class="n">postal_code</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">gmt_offset_now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">CASE</span>
+<span class="w">  </span><span class="k">WHEN</span><span class="w"> </span><span class="n">vpc</span><span class="p">.</span><span class="n">DST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Y&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span><span class="w"> </span><span class="k">BETWEEN</span>
+<span class="w">      </span><span class="c1">-- Approximate DST start: second Sunday of March</span>
+<span class="w">      </span><span class="n">DATE_ADD</span><span class="p">(</span><span class="n">MAKEDATE</span><span class="p">(</span><span class="k">YEAR</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">()),</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="p">(</span><span class="mi">13</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">MAKEDATE</span><span class="p">(</span><span class="k">YEAR</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">()),</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">DAY</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">MONTH</span><span class="p">)</span>
+<span class="w">      </span><span class="k">AND</span>
+<span class="w">      </span><span class="c1">-- Approximate DST end: first Sunday of November</span>
+<span class="w">      </span><span class="n">DATE_ADD</span><span class="p">(</span><span class="n">MAKEDATE</span><span class="p">(</span><span class="k">YEAR</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">()),</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">MAKEDATE</span><span class="p">(</span><span class="k">YEAR</span><span class="p">(</span><span class="n">CURDATE</span><span class="p">()),</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">DAY</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">MONTH</span><span class="p">)</span>
+<span class="w">  </span><span class="k">THEN</span><span class="w"> </span><span class="n">vpc</span><span class="p">.</span><span class="n">GMT_offset</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="k">ELSE</span><span class="w"> </span><span class="n">vpc</span><span class="p">.</span><span class="n">GMT_offset</span>
+<span class="k">END</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">vl</span><span class="p">.</span><span class="n">list_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1001</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Note: This SQL approximation is for illustration. VICIdial's own DST calculation logic is more precise. Prefer restarting the hopper script over manual SQL updates.</p>
+<h2 id="state-specific-restrictions-edge-cases">State-Specific Restrictions: Edge Cases<a class="headerlink" href="#state-specific-restrictions-edge-cases" title="Permanent link">&para;</a></h2>
+<h3 id="oklahoma">Oklahoma<a class="headerlink" href="#oklahoma" title="Permanent link">&para;</a></h3>
+<p>Oklahoma's Do Not Call statute (15 O.S. Section 775B.4) restricts telemarketing calls to 8:00 AM - 8:00 PM Central Time. This is straightforward to implement in <code>state_call_time</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Oklahoma</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Start</span><span class="o">:</span><span class="w"> </span><span class="mi">800</span>
+<span class="w">  </span><span class="n">Stop</span><span class="o">:</span><span class="w"> </span><span class="mi">2000</span>
+</code></pre></div>
+
+<h3 id="indiana-split-timezone">Indiana Split Timezone<a class="headerlink" href="#indiana-split-timezone" title="Permanent link">&para;</a></h3>
+<p>Indiana has counties in both Eastern and Central time. The VICIdial <code>vicidial_postal_codes</code> table should correctly map Indiana zip codes to their respective time zones:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Verify Indiana timezone assignments</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">postal_code</span><span class="p">,</span><span class="w"> </span><span class="k">state</span><span class="p">,</span><span class="w"> </span><span class="n">GMT_offset</span><span class="p">,</span><span class="w"> </span><span class="n">DST</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_postal_codes</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;IN&#39;</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">GMT_offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">6</span><span class="p">.</span><span class="mi">00</span><span class="w">   </span><span class="c1">-- Central time</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">postal_code</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Central Time Indiana zip codes include areas around Gary (464xx), Hammond, and Evansville (476xx-477xx). If your <code>vicidial_postal_codes</code> table does not differentiate these, all Indiana leads will be assigned Eastern time, and you will call Central time Indiana leads an hour early.</p>
+<h3 id="hawaii-and-alaska">Hawaii and Alaska<a class="headerlink" href="#hawaii-and-alaska" title="Permanent link">&para;</a></h3>
+<p>Hawaii does not observe DST and is GMT-10. Alaska is GMT-9 with DST. Common mistake: dialing Hawaii at 8 AM EST (which is 3 AM HST). Ensure your <code>call_time</code> enforcement works for these extreme offsets:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check that Hawaiian leads are properly classified</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">postal_code</span><span class="p">,</span><span class="w"> </span><span class="k">state</span><span class="p">,</span><span class="w"> </span><span class="n">GMT_offset</span><span class="p">,</span><span class="w"> </span><span class="n">DST</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_postal_codes</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;HI&#39;</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+
+<span class="c1">-- Should show GMT_offset = -10.00, DST = N</span>
+</code></pre></div>
+
+<h3 id="us-territories">US Territories<a class="headerlink" href="#us-territories" title="Permanent link">&para;</a></h3>
+<p>Puerto Rico (GMT-4, no DST), Guam (GMT+10), US Virgin Islands (GMT-4), American Samoa (GMT-11): if your lists contain these postal codes, verify they are in your <code>vicidial_postal_codes</code> table with correct offsets.</p>
+<h2 id="documenting-compliance-for-audits">Documenting Compliance for Audits<a class="headerlink" href="#documenting-compliance-for-audits" title="Permanent link">&para;</a></h2>
+<p>When a TCPA complaint or lawsuit arrives, you need to prove that you had compliant systems in place AND that they were functioning correctly at the time of the alleged violation.</p>
+<h3 id="what-to-document">What to Document<a class="headerlink" href="#what-to-document" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Call time configuration</strong>: Screenshot or export your <code>call_time</code> and <code>state_call_time</code> settings</li>
+<li><strong>Timezone data accuracy</strong>: Periodic audit of <code>vicidial_postal_codes</code> table</li>
+<li><strong>Hopper logs</strong>: VICIdial logs which leads were added to the hopper and when</li>
+<li><strong>Call detail records</strong>: <code>vicidial_log</code> records the exact time of every dial attempt</li>
+<li><strong>System time accuracy</strong>: NTP sync verification</li>
+</ol>
+<h3 id="automated-compliance-audit-script">Automated Compliance Audit Script<a class="headerlink" href="#automated-compliance-audit-script" title="Permanent link">&para;</a></h3>
+<p>Run this daily and archive the output:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># /opt/vicistack/compliance_audit.sh</span>
+<span class="c1"># Run daily via cron. Archive output for legal review.</span>
+
+<span class="nv">AUDIT_DIR</span><span class="o">=</span><span class="s2">&quot;/var/log/vicistack/compliance&quot;</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="si">${</span><span class="nv">AUDIT_DIR</span><span class="si">}</span>
+<span class="nv">AUDIT_FILE</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">AUDIT_DIR</span><span class="si">}</span><span class="s2">/audit_</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M<span class="k">)</span><span class="s2">.txt&quot;</span>
+
+<span class="o">{</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;==========================================&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;TCPA Compliance Audit - </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;==========================================&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Server Time Verification ---&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;System time: </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;NTP sync status:&quot;</span>
+chronyc<span class="w"> </span>tracking<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>ntpstat<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;NTP status unavailable&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Call Time Definitions ---&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT call_time_id, call_time_name,</span>
+<span class="s2">       ct_default_start, ct_default_stop,</span>
+<span class="s2">       ct_sunday_start, ct_sunday_stop</span>
+<span class="s2">FROM vicidial_call_times;&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- State Call Time Overrides ---&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT state_call_time_id, state_call_time_state,</span>
+<span class="s2">       sct_default_start, sct_default_stop</span>
+<span class="s2">FROM vicidial_state_call_times</span>
+<span class="s2">WHERE state_call_time_state != &#39;&#39;;&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Active Campaign Call Time Assignments ---&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT campaign_id, campaign_name, local_call_time</span>
+<span class="s2">FROM vicidial_campaigns</span>
+<span class="s2">WHERE active = &#39;Y&#39;;&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Calls Made Outside 8am-9pm Local Time (Past 24h) ---&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;(These should be zero. Any results indicate a compliance issue.)&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT vl.uniqueid, vl.call_date, vl.phone_number, vl.campaign_id,</span>
+<span class="s2">       vl.user, vlist.state, vlist.postal_code, vlist.gmt_offset_now,</span>
+<span class="s2">       TIME_FORMAT(</span>
+<span class="s2">         ADDTIME(vl.call_date, SEC_TO_TIME(vlist.gmt_offset_now * 3600)),</span>
+<span class="s2">         &#39;%H:%i&#39;</span>
+<span class="s2">       ) AS local_call_time</span>
+<span class="s2">FROM vicidial_log vl</span>
+<span class="s2">JOIN vicidial_list vlist ON vl.lead_id = vlist.lead_id</span>
+<span class="s2">WHERE vl.call_date &gt;= DATE_SUB(NOW(), INTERVAL 24 HOUR)</span>
+<span class="s2">AND (</span>
+<span class="s2">  TIME_FORMAT(ADDTIME(vl.call_date, SEC_TO_TIME(vlist.gmt_offset_now * 3600)), &#39;%H%i&#39;) &lt; &#39;0800&#39;</span>
+<span class="s2">  OR</span>
+<span class="s2">  TIME_FORMAT(ADDTIME(vl.call_date, SEC_TO_TIME(vlist.gmt_offset_now * 3600)), &#39;%H%i&#39;) &gt; &#39;2100&#39;</span>
+<span class="s2">)</span>
+<span class="s2">LIMIT 50;&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- Leads with Missing Timezone Data ---&quot;</span>
+mysql<span class="w"> </span>asterisk<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT list_id, COUNT(*) AS leads_no_tz</span>
+<span class="s2">FROM vicidial_list</span>
+<span class="s2">WHERE (postal_code = &#39;&#39; OR postal_code IS NULL)</span>
+<span class="s2">AND status IN (&#39;NEW&#39;, &#39;CALLBK&#39;, &#39;A&#39;, &#39;B&#39;, &#39;NA&#39;)</span>
+<span class="s2">AND list_id IN (SELECT list_id FROM vicidial_lists WHERE active = &#39;Y&#39;)</span>
+<span class="s2">GROUP BY list_id;&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;==========================================&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Audit complete.&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;==========================================&quot;</span>
+
+<span class="o">}</span><span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">AUDIT_FILE</span><span class="si">}</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+
+<span class="c1"># Compress audits older than 30 days</span>
+find<span class="w"> </span><span class="si">${</span><span class="nv">AUDIT_DIR</span><span class="si">}</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;audit_*.txt&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+30<span class="w"> </span>-exec<span class="w"> </span>gzip<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+
+<span class="c1"># Alert if any out-of-window calls were found</span>
+<span class="nv">OUT_OF_WINDOW</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;rows in set&quot;</span><span class="w"> </span><span class="si">${</span><span class="nv">AUDIT_FILE</span><span class="si">}</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">AUDIT_FILE</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">&quot;Calls Made Outside&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="c1"># More precise check would parse the SQL output</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Compliance audit saved to </span><span class="si">${</span><span class="nv">AUDIT_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">fi</span>
+</code></pre></div>
+
+<p>Cron entry:</p>
+<div class="codehilite"><pre><span></span><code><span class="mf">0</span><span class="w"> </span><span class="mf">22</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">vicistack</span><span class="o">/</span><span class="n">compliance_audit</span><span class="mf">.</span><span class="n">sh</span>
+</code></pre></div>
+
+<h3 id="retention">Retention<a class="headerlink" href="#retention" title="Permanent link">&para;</a></h3>
+<p>Keep compliance audit logs for a minimum of <strong>4 years</strong> (the TCPA statute of limitations). Compress and archive monthly:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Monthly archive</span>
+tar<span class="w"> </span>-czf<span class="w"> </span>/backup/compliance/compliance_<span class="k">$(</span>date<span class="w"> </span>+%Y%m<span class="k">)</span>.tar.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/var/log/vicistack/compliance/audit_<span class="k">$(</span>date<span class="w"> </span>+%Y%m<span class="k">)</span>*.txt.gz
+</code></pre></div>
+
+<h2 id="best-practices-summary">Best Practices Summary<a class="headerlink" href="#best-practices-summary" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Never rely solely on VICIdial defaults.</strong> Configure <code>call_time</code> and <code>state_call_time</code> explicitly for every active campaign.</p>
+</li>
+<li>
+<p><strong>Add a time buffer.</strong> Use 8:05 AM - 8:55 PM instead of 8:00 AM - 9:00 PM. The 10 minutes of lost dialing is insignificant compared to one violation.</p>
+</li>
+<li>
+<p><strong>Validate postal code data on lead import.</strong> Reject or flag leads with missing or invalid zip codes. No zip code means no timezone protection.</p>
+</li>
+<li>
+<p><strong>Audit weekly.</strong> Run the compliance audit script and review the "calls outside window" section. Any non-zero result needs investigation.</p>
+</li>
+<li>
+<p><strong>Track DST transitions.</strong> Mark the second Sunday of March and the first Sunday of November on your calendar. Verify timezone data on the Monday after each transition.</p>
+</li>
+<li>
+<p><strong>Keep state restrictions current.</strong> State telemarketing laws change. Review at least quarterly with legal counsel.</p>
+</li>
+<li>
+<p><strong>Use NTP.</strong> If your server clock drifts even 5 minutes, you could dial early or late. Ensure NTP is running and synced:</p>
+</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Verify NTP sync</span>
+chronyc<span class="w"> </span>tracking
+<span class="c1"># Should show: &quot;Leap status: Normal&quot; and &quot;System time: 0.000... seconds&quot;</span>
+
+<span class="c1"># Or with ntpd</span>
+ntpq<span class="w"> </span>-p
+<span class="c1"># Should show at least one server with * (active sync)</span>
+</code></pre></div>
+
+<ol>
+<li><strong>Document everything.</strong> If you cannot prove compliance, you were not compliant. Auditors and courts want records, not verbal assurances.</li>
+</ol>
+<h2 id="how-vicistack-helps">How ViciStack Helps<a class="headerlink" href="#how-vicistack-helps" title="Permanent link">&para;</a></h2>
+<p>TCPA compliance is not a set-it-and-forget-it task. State laws change, DST transitions create risk windows, lead data quality varies, and VICIdial's timezone system has edge cases that are easy to miss. A single audit gap can cost more than a year of operational budget.</p>
+<p>ViciStack manages TCPA-compliant timezone dialing for VICIdial call centers:</p>
+<ul>
+<li><strong>Complete call_time and state_call_time configuration</strong> covering all 50 states plus territories</li>
+<li><strong>Postal code data validation</strong> on every lead import, with automatic timezone enrichment</li>
+<li><strong>DST transition management</strong> with pre- and post-transition verification</li>
+<li><strong>Daily compliance auditing</strong> with automated alerting for any out-of-window dials</li>
+<li><strong>Quarterly compliance reviews</strong> incorporating state law changes</li>
+<li><strong>Audit-ready documentation</strong> that satisfies legal teams and regulatory inquiries</li>
+</ul>
+<p>At $150/agent/month, compliance management is included -- not an add-on. Compare that to a single TCPA violation at $500-$1,500 per call.</p>
+<p><strong>Get a free TCPA compliance audit for your VICIdial deployment.</strong> We will review your call_time settings, timezone data accuracy, and check for out-of-window dial attempts in your recent call history.</p>
+<p><a href="https://vicistack.com/proof/">Request your free ViciStack analysis</a> -- response in under 5 minutes.</p>
+<h2 id="related-articles">Related Articles<a class="headerlink" href="#related-articles" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/blog/vicidial-qa-scoring">VICIdial Quality Assurance Scoring with Call Recordings</a> -- compliance extends to recording disclosures and agent behavior</li>
+<li><a href="/blog/vicidial-cnam-lookup-inbound">VICIdial CNAM Lookup Integration for Inbound Routing</a> -- handle the callbacks generated by your compliant outbound dialing</li>
+<li><a href="/blog/vicidial-database-partitioning">VICIdial Database Partitioning for High-Volume Call Centers</a> -- manage the vicidial_log data that documents your compliance</li>
+</ul>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-timezone-dialing-tcpa">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

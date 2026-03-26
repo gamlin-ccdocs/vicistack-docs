@@ -1,0 +1,4897 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-webrtc-setup/">
+      
+      
+        <link rel="prev" href="../vicidial-vs-xencall/">
+      
+      
+        <link rel="next" href="../../about/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial WebRTC Setup Guide for Remote Agents - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-webrtc-setup-guide-for-remote-agents" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial WebRTC Setup Guide for Remote Agents
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-webrtc-works-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How WebRTC Works in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Server Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operating-system-and-asterisk-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operating System and Asterisk Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#https-and-ssl-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS and SSL Certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apache-https-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache HTTPS Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pjsip-vs-sip-channel-driver-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PJSIP vs. SIP Channel Driver for WebRTC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-configuration-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Configuration for WebRTC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Configuration for WebRTC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#httpconf-enable-the-http-server-and-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        http.conf — Enable the HTTP Server and WebSocket
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pjsipconf-websocket-transport-and-endpoint-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pjsip.conf — WebSocket Transport and Endpoint Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pjsip.conf — WebSocket Transport and Endpoint Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transport-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transport Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#webrtc-endpoint-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebRTC Endpoint Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-endpoint-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Endpoint Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-admin-configuration-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Admin Configuration for WebRTC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial Admin Configuration for WebRTC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#system-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phone-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phone Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-interface-viciphone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Interface — ViciPhone
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nat-traversal-stun-and-turn-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Traversal: STUN and TURN Servers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NAT Traversal: STUN and TURN Servers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stun-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STUN Servers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#turn-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TURN Servers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#codec-selection-opus-vs-g722-vs-g711" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Selection: Opus vs. G.722 vs. G.711
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Codec Selection: Opus vs. G.722 vs. G.711">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#codec-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bandwidth Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scaling-webrtc-for-50-remote-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling WebRTC for 50+ Remote Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scaling WebRTC for 50+ Remote Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-capacity-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Capacity Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster-architecture-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster Architecture for WebRTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#websocket-connection-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebSocket Connection Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-balancing-webrtc-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load Balancing WebRTC Connections
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-webrtc-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Common WebRTC Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Common WebRTC Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-drops-websocket-disconnects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection Drops / WebSocket Disconnects
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-errors-in-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Errors in Browser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#echo-audio-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Echo / Audio Feedback
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transport-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transport Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srtp-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRTP Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-setup-requirements-and-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Setup Requirements and Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Setup Requirements and Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimum-agent-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum Agent Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-troubleshooting-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Troubleshooting Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#do-agents-need-to-install-anything-for-vicidial-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do agents need to install anything for VICIdial WebRTC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-webrtc-and-traditional-sip-phones-in-the-same-vicidial-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use WebRTC and traditional SIP phones in the same VICIdial deployment?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-maximum-number-of-webrtc-agents-vicidial-can-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the maximum number of WebRTC agents VICIdial can support?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-does-viciphone-show-unregistered-even-though-i-can-access-the-vicidial-web-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why does ViciPhone show "Unregistered" even though I can access the VICIdial web interface?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-webrtc-audio-quality-good-enough-for-a-production-call-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is WebRTC audio quality good enough for a production call center?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-need-a-turn-server-or-is-stun-enough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need a TURN server, or is STUN enough?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-webrtc-for-outbound-calls-or-only-inbound" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use WebRTC for outbound calls or only inbound?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-browsers-work-best-with-vicidial-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What browsers work best with VICIdial WebRTC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-webrtc-works-in-vicidial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How WebRTC Works in VICIdial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Server Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operating-system-and-asterisk-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operating System and Asterisk Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#https-and-ssl-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS and SSL Certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apache-https-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apache HTTPS Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pjsip-vs-sip-channel-driver-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PJSIP vs. SIP Channel Driver for WebRTC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asterisk-configuration-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asterisk Configuration for WebRTC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Asterisk Configuration for WebRTC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#httpconf-enable-the-http-server-and-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        http.conf — Enable the HTTP Server and WebSocket
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pjsipconf-websocket-transport-and-endpoint-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pjsip.conf — WebSocket Transport and Endpoint Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pjsip.conf — WebSocket Transport and Endpoint Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transport-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transport Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#webrtc-endpoint-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebRTC Endpoint Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-endpoint-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Endpoint Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-admin-configuration-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Admin Configuration for WebRTC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial Admin Configuration for WebRTC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#system-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phone-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phone Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-interface-viciphone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Interface — ViciPhone
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nat-traversal-stun-and-turn-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Traversal: STUN and TURN Servers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NAT Traversal: STUN and TURN Servers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stun-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STUN Servers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#turn-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TURN Servers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#codec-selection-opus-vs-g722-vs-g711" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Selection: Opus vs. G.722 vs. G.711
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Codec Selection: Opus vs. G.722 vs. G.711">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#codec-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bandwidth Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scaling-webrtc-for-50-remote-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling WebRTC for 50+ Remote Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scaling WebRTC for 50+ Remote Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-capacity-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Capacity Planning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster-architecture-for-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster Architecture for WebRTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#websocket-connection-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebSocket Connection Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-balancing-webrtc-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load Balancing WebRTC Connections
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-webrtc-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Common WebRTC Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Common WebRTC Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-way-audio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Way Audio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-drops-websocket-disconnects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection Drops / WebSocket Disconnects
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificate-errors-in-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Errors in Browser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#echo-audio-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Echo / Audio Feedback
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transport-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transport Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srtp-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRTP Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-setup-requirements-and-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Setup Requirements and Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Setup Requirements and Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimum-agent-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum Agent Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-troubleshooting-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Troubleshooting Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#do-agents-need-to-install-anything-for-vicidial-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do agents need to install anything for VICIdial WebRTC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-webrtc-and-traditional-sip-phones-in-the-same-vicidial-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use WebRTC and traditional SIP phones in the same VICIdial deployment?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-maximum-number-of-webrtc-agents-vicidial-can-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the maximum number of WebRTC agents VICIdial can support?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-does-viciphone-show-unregistered-even-though-i-can-access-the-vicidial-web-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why does ViciPhone show "Unregistered" even though I can access the VICIdial web interface?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-webrtc-audio-quality-good-enough-for-a-production-call-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is WebRTC audio quality good enough for a production call center?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-need-a-turn-server-or-is-stun-enough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need a TURN server, or is STUN enough?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-webrtc-for-outbound-calls-or-only-inbound" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use WebRTC for outbound calls or only inbound?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-browsers-work-best-with-vicidial-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What browsers work best with VICIdial WebRTC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-webrtc-setup-guide-for-remote-agents">VICIdial WebRTC Setup Guide for Remote Agents<a class="headerlink" href="#vicidial-webrtc-setup-guide-for-remote-agents" title="Permanent link">&para;</a></h1>
+<p><strong>The complete technical guide to running VICIdial with WebRTC-based softphones — from SSL certificates to PJSIP configuration to the NAT traversal nightmares that make remote agent deployments interesting.</strong></p>
+<hr />
+<p>Remote agents are no longer the exception. They're the majority. In most call center operations we manage, 60-80% of agents work from home or from distributed locations. The days of a physical call center floor with IP desk phones on every desk are fading.</p>
+<p>VICIdial supports remote agents through WebRTC — specifically through <strong>ViciPhone</strong>, the built-in browser-based softphone that lets agents take calls directly in their web browser without installing any software. No SIP softphone to configure. No VPN to troubleshoot. No port forwarding on the agent's home router. The agent opens a browser, logs in, and starts taking calls.</p>
+<p>When it works, WebRTC is elegant. When it doesn't work, you'll spend hours chasing one-way audio, certificate errors, and the kind of NAT traversal problems that make experienced sysadmins question their career choices.</p>
+<p>This guide covers the full WebRTC setup for VICIdial: server requirements, SSL configuration, PJSIP vs. SIP channel driver considerations, Asterisk WebSocket configuration, ViciPhone settings, NAT traversal (STUN/TURN), codec selection, scaling for large remote workforces, and troubleshooting every common issue. For the WebRTC glossary entry, see <a href="/glossary/webrtc/">/glossary/webrtc/</a>.</p>
+<hr />
+<h2 id="how-webrtc-works-in-vicidial">How WebRTC Works in VICIdial<a class="headerlink" href="#how-webrtc-works-in-vicidial" title="Permanent link">&para;</a></h2>
+<p>Before configuring anything, understand the architecture. WebRTC in VICIdial has three components:</p>
+<p><strong>1. ViciPhone (the browser client).</strong> This is a JavaScript-based SIP client built into VICIdial's agent interface. It runs in the agent's browser and handles the audio connection. ViciPhone uses the JsSIP library (or a modified version of it) to implement SIP signaling over WebSocket and audio transport via WebRTC.</p>
+<p><strong>2. Asterisk (the media server).</strong> Asterisk handles the actual SIP registration, call routing, and media processing. For WebRTC, Asterisk must be configured to accept WebSocket connections (WSS — WebSocket Secure) for SIP signaling and DTLS-SRTP for encrypted media transport.</p>
+<p><strong>3. The signaling path.</strong> When an agent loads ViciPhone, the browser establishes a WebSocket connection to Asterisk on a designated port (typically 8089 for WSS). SIP REGISTER and INVITE messages travel over this WebSocket. Audio media (RTP) is negotiated via ICE (Interactive Connectivity Establishment) and flows as encrypted SRTP between the browser and Asterisk.</p>
+<p>The key constraint: <strong>WebRTC requires HTTPS.</strong> Modern browsers will not allow WebRTC media access (microphone) on non-secure origins. Your VICIdial web interface must be served over HTTPS with a valid SSL certificate. Self-signed certificates will cause problems — browsers either block WebRTC entirely or require users to manually accept certificate exceptions, which breaks the agent experience.</p>
+<hr />
+<h2 id="server-requirements">Server Requirements<a class="headerlink" href="#server-requirements" title="Permanent link">&para;</a></h2>
+<h3 id="operating-system-and-asterisk-version">Operating System and Asterisk Version<a class="headerlink" href="#operating-system-and-asterisk-version" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ViciBox 12.0.2+</strong> (AlmaLinux 9 based): Recommended. Comes with Asterisk 18 LTS or 20 and PJSIP compiled.</li>
+<li><strong>AlmaLinux 9 / Rocky Linux 9 with manual install:</strong> Works, but you must ensure Asterisk is compiled with <code>res_pjsip</code>, <code>res_pjsip_transport_websocket</code>, and <code>res_http_websocket</code> modules.</li>
+<li><strong>Asterisk version:</strong> 18 LTS or 20. Asterisk 16 works but has known WebSocket stability issues. Asterisk 13 requires significantly more manual configuration and is not recommended for new WebRTC deployments.</li>
+</ul>
+<p><strong>Required Asterisk modules:</strong></p>
+<div class="codehilite"><pre><span></span><code>res_pjsip.so
+res_pjsip_transport_websocket.so
+res_http_websocket.so
+res_pjsip_dtls.so
+res_pjsip_sdp_rtp.so
+codec_opus.so (recommended)
+</code></pre></div>
+
+<p>Verify modules are loaded:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show like pjsip&quot;</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show like websocket&quot;</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module show like opus&quot;</span>
+</code></pre></div>
+
+<h3 id="https-and-ssl-certificate">HTTPS and SSL Certificate<a class="headerlink" href="#https-and-ssl-certificate" title="Permanent link">&para;</a></h3>
+<p>You need a valid, publicly-trusted SSL certificate. Let's Encrypt is free and works perfectly:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install certbot</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>certbot
+
+<span class="c1"># Obtain certificate (your VICIdial server must be publicly accessible on port 80)</span>
+sudo<span class="w"> </span>certbot<span class="w"> </span>certonly<span class="w"> </span>--standalone<span class="w"> </span>-d<span class="w"> </span>vicidial.yourdomain.com
+
+<span class="c1"># Certificate files will be at:</span>
+<span class="c1"># /etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem</span>
+<span class="c1"># /etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem</span>
+</code></pre></div>
+
+<p><strong>Automatic renewal:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Add to crontab</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;0 3 * * * certbot renew --quiet --post-hook &#39;systemctl reload httpd &amp;&amp; asterisk -rx \&quot;module reload res_pjsip.so\&quot;&#39;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>crontab<span class="w"> </span>-
+</code></pre></div>
+
+<p>The <code>--post-hook</code> restarts Apache and reloads PJSIP after certificate renewal, ensuring Asterisk picks up the new certificate without a service interruption.</p>
+<p><strong>Important:</strong> The SSL certificate must cover the hostname that agents use to access VICIdial. If agents connect to <code>vicidial.yourdomain.com</code>, the certificate must be issued for that exact hostname. Wildcard certificates (<code>*.yourdomain.com</code>) also work.</p>
+<h3 id="apache-https-configuration">Apache HTTPS Configuration<a class="headerlink" href="#apache-https-configuration" title="Permanent link">&para;</a></h3>
+<p>Configure Apache to serve VICIdial over HTTPS:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># /etc/httpd/conf.d/ssl.conf (or site-specific config)</span>
+
+<span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:443</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">ServerName</span><span class="w"> </span>vicidial.yourdomain.com
+<span class="w">    </span><span class="nb">DocumentRoot</span><span class="w"> </span><span class="sx">/var/www/html</span>
+
+<span class="w">    </span><span class="nb">SSLEngine</span><span class="w"> </span><span class="k">on</span>
+<span class="w">    </span><span class="nb">SSLCertificateFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem</span>
+<span class="w">    </span><span class="nb">SSLCertificateKeyFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem</span>
+
+<span class="w">    </span><span class="c"># Recommended SSL settings</span>
+<span class="w">    </span><span class="nb">SSLProtocol</span><span class="w"> </span><span class="k">all</span><span class="w"> </span>-SSLv3<span class="w"> </span>-TLSv1<span class="w"> </span>-TLSv1.1
+<span class="w">    </span><span class="nb">SSLCipherSuite</span><span class="w"> </span>HIGH:!aNULL:!MD5
+<span class="w">    </span><span class="nb">SSLHonorCipherOrder</span><span class="w"> </span><span class="k">on</span>
+
+<span class="w">    </span><span class="c"># WebSocket proxy (if proxying through Apache)</span>
+<span class="w">    </span><span class="nb">ProxyPass</span><span class="w"> </span><span class="sx">/ws</span><span class="w"> </span>wss://127.0.0.1:8089/ws
+<span class="w">    </span><span class="nb">ProxyPassReverse</span><span class="w"> </span><span class="sx">/ws</span><span class="w"> </span>wss://127.0.0.1:8089/ws
+
+<span class="w">    </span><span class="c"># Standard VICIdial config</span>
+<span class="w">    </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="s">/var/www/html</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nb">AllowOverride</span><span class="w"> </span><span class="k">All</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span><span class="k">all</span><span class="w"> </span>granted
+<span class="w">    </span><span class="nt">&lt;/Directory&gt;</span>
+<span class="nt">&lt;/VirtualHost&gt;</span>
+
+<span class="c"># Redirect HTTP to HTTPS</span>
+<span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:80</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">ServerName</span><span class="w"> </span>vicidial.yourdomain.com
+<span class="w">    </span><span class="nb">Redirect</span><span class="w"> </span>permanent<span class="w"> </span>/<span class="w"> </span>https://vicidial.yourdomain.com/
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</code></pre></div>
+
+<p>Enable required Apache modules:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># These are typically already available on AlmaLinux 9</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>mod_ssl
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>httpd
+</code></pre></div>
+
+<hr />
+<h2 id="pjsip-vs-sip-channel-driver-for-webrtc">PJSIP vs. SIP Channel Driver for WebRTC<a class="headerlink" href="#pjsip-vs-sip-channel-driver-for-webrtc" title="Permanent link">&para;</a></h2>
+<p>VICIdial historically used the <code>chan_sip</code> channel driver. WebRTC support works with both <code>chan_sip</code> and <code>chan_pjsip</code>, but <strong>PJSIP is the recommended choice</strong> for WebRTC deployments:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>chan_sip</th>
+<th>chan_pjsip (PJSIP)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WebSocket transport</td>
+<td>Requires <code>res_http_websocket</code> + manual config</td>
+<td>Native <code>res_pjsip_transport_websocket</code></td>
+</tr>
+<tr>
+<td>DTLS-SRTP</td>
+<td>Limited support</td>
+<td>Full native support</td>
+</tr>
+<tr>
+<td>ICE negotiation</td>
+<td>Partial</td>
+<td>Full native support</td>
+</tr>
+<tr>
+<td>Multiple transports per endpoint</td>
+<td>No</td>
+<td>Yes (UDP + WSS on same endpoint)</td>
+</tr>
+<tr>
+<td>Asterisk development status</td>
+<td>Deprecated (removed in Asterisk 21)</td>
+<td>Actively maintained</td>
+</tr>
+<tr>
+<td>VICIdial compatibility</td>
+<td>Full (legacy)</td>
+<td>Full (current)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>If you're setting up a new VICIdial installation or upgrading, use PJSIP.</strong> If you're running an existing <code>chan_sip</code> installation and adding WebRTC, you can either migrate to PJSIP or configure WebRTC on <code>chan_sip</code> — but be aware that <code>chan_sip</code> is deprecated and will not be available in future Asterisk versions.</p>
+<p>The rest of this guide assumes PJSIP configuration. For <code>chan_sip</code> WebRTC setup, the concepts are similar but the configuration file format differs.</p>
+<hr />
+<h2 id="asterisk-configuration-for-webrtc">Asterisk Configuration for WebRTC<a class="headerlink" href="#asterisk-configuration-for-webrtc" title="Permanent link">&para;</a></h2>
+<h3 id="httpconf-enable-the-http-server-and-websocket">http.conf — Enable the HTTP Server and WebSocket<a class="headerlink" href="#httpconf-enable-the-http-server-and-websocket" title="Permanent link">&para;</a></h3>
+<p>Asterisk's built-in HTTP server handles WebSocket connections. Configure it in <code>/etc/asterisk/http.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">bindaddr</span><span class="o">=</span><span class="s">0.0.0.0</span>
+<span class="na">bindport</span><span class="o">=</span><span class="s">8088</span>
+<span class="na">tlsenable</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">tlsbindaddr</span><span class="o">=</span><span class="s">0.0.0.0:8089</span>
+<span class="na">tlscertfile</span><span class="o">=</span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem</span>
+<span class="na">tlsprivatekey</span><span class="o">=</span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem</span>
+</code></pre></div>
+
+<p><strong>Key settings:</strong>
+- <code>tlsenable=yes</code> — Enables HTTPS/WSS on port 8089
+- <code>tlscertfile</code> and <code>tlsprivatekey</code> — Must point to the same SSL certificate used by Apache. Using a different certificate will cause certificate mismatch errors in the browser.
+- <code>bindport=8088</code> — HTTP (non-TLS) on port 8088. Used for internal health checks but should not be exposed to the internet.
+- Port 8089 (WSS) must be accessible from agents' networks. If agents are remote, this port must be open through your firewall.</p>
+<p>Reload the HTTP module:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module reload res_http_websocket.so&quot;</span>
+</code></pre></div>
+
+<p>Verify the HTTP server is running:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;http show status&quot;</span>
+</code></pre></div>
+
+<p>You should see both HTTP (8088) and HTTPS (8089) listeners active.</p>
+<h3 id="pjsipconf-websocket-transport-and-endpoint-configuration">pjsip.conf — WebSocket Transport and Endpoint Configuration<a class="headerlink" href="#pjsipconf-websocket-transport-and-endpoint-configuration" title="Permanent link">&para;</a></h3>
+<p>The PJSIP configuration is where most of the WebRTC-specific settings live. On VICIdial/ViciBox installations, PJSIP configuration may be managed through the database (via <code>table_config</code> entries) or directly in <code>/etc/asterisk/pjsip.conf</code>. Check your installation — ViciBox uses database-driven configuration by default.</p>
+<h4 id="transport-configuration">Transport Configuration<a class="headerlink" href="#transport-configuration" title="Permanent link">&para;</a></h4>
+<p>Define a WebSocket Secure (WSS) transport:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/pjsip.conf (or via VICIdial admin → PJSIP settings)</span>
+
+<span class="k">[transport-wss]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">transport</span>
+<span class="na">protocol</span><span class="o">=</span><span class="s">wss</span>
+<span class="na">bind</span><span class="o">=</span><span class="s">0.0.0.0:8089</span>
+<span class="na">cert_file</span><span class="o">=</span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem</span>
+<span class="na">priv_key_file</span><span class="o">=</span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem</span>
+<span class="c1">; For self-signed certs during testing (not recommended for production):</span>
+<span class="c1">; verify_client=no</span>
+<span class="c1">; verify_server=no</span>
+
+<span class="c1">; Also keep your UDP transport for SIP trunks</span>
+<span class="k">[transport-udp]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">transport</span>
+<span class="na">protocol</span><span class="o">=</span><span class="s">udp</span>
+<span class="na">bind</span><span class="o">=</span><span class="s">0.0.0.0:5060</span>
+</code></pre></div>
+
+<h4 id="webrtc-endpoint-template">WebRTC Endpoint Template<a class="headerlink" href="#webrtc-endpoint-template" title="Permanent link">&para;</a></h4>
+<p>Create a template for WebRTC agent endpoints:</p>
+<div class="codehilite"><pre><span></span><code><span class="na">[webrtc-endpoint](!)</span>
+<span class="na">type</span><span class="o">=</span><span class="s">endpoint</span>
+<span class="na">transport</span><span class="o">=</span><span class="s">transport-wss</span>
+<span class="na">context</span><span class="o">=</span><span class="s">default</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">opus</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">g722</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">dtls_auto_generate_cert</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">webrtc</span><span class="o">=</span><span class="s">yes</span>
+<span class="c1">; The webrtc=yes shorthand sets:</span>
+<span class="c1">;   use_avpf=yes</span>
+<span class="c1">;   media_encryption=dtls</span>
+<span class="c1">;   dtls_verify=fingerprint</span>
+<span class="c1">;   dtls_setup=actpass</span>
+<span class="c1">;   ice_support=yes</span>
+<span class="c1">;   media_use_received_transport=yes</span>
+<span class="c1">;   rtcp_mux=yes</span>
+</code></pre></div>
+
+<p>The <code>webrtc=yes</code> setting (available in Asterisk 16+) is a convenience option that configures all the necessary DTLS, ICE, AVPF, and RTCP multiplexing settings in a single line. Without it, you'd need to set each of those individually.</p>
+<h4 id="agent-endpoint-configuration">Agent Endpoint Configuration<a class="headerlink" href="#agent-endpoint-configuration" title="Permanent link">&para;</a></h4>
+<p>For each VICIdial phone entry used by WebRTC agents, the PJSIP endpoint configuration is typically managed through VICIdial's admin interface under <strong>Admin → Phones</strong>. When creating a phone entry for a WebRTC agent:</p>
+<ul>
+<li><strong>Server:</strong> Your Asterisk server IP</li>
+<li><strong>Dialplan Number:</strong> The extension number (e.g., 8000-8999 range for WebRTC phones)</li>
+<li><strong>Protocol:</strong> PJSIP</li>
+<li><strong>Registration:</strong> Include WebRTC-specific parameters</li>
+</ul>
+<p>VICIdial generates the PJSIP configuration entries from the phone table. After adding or modifying phone entries, reload PJSIP:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;pjsip reload&quot;</span>
+</code></pre></div>
+
+<p>Verify the endpoint is configured:</p>
+<div class="codehilite"><pre><span></span><code>asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;pjsip show endpoints&quot;</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;pjsip show endpoint [endpoint-name]&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="vicidial-admin-configuration-for-webrtc">VICIdial Admin Configuration for WebRTC<a class="headerlink" href="#vicidial-admin-configuration-for-webrtc" title="Permanent link">&para;</a></h2>
+<h3 id="system-settings">System Settings<a class="headerlink" href="#system-settings" title="Permanent link">&para;</a></h3>
+<p>In <strong>Admin → System Settings</strong>, configure WebRTC-related parameters:</p>
+<ul>
+<li><strong>WebRTC Phone Enabled:</strong> Y</li>
+<li><strong>WebSocket URL:</strong> <code>wss://vicidial.yourdomain.com:8089/ws</code></li>
+</ul>
+<p>The WebSocket URL is what ViciPhone uses to establish the SIP signaling connection. It must match your Asterisk <code>http.conf</code> TLS bind address and the hostname on your SSL certificate.</p>
+<h3 id="phone-configuration">Phone Configuration<a class="headerlink" href="#phone-configuration" title="Permanent link">&para;</a></h3>
+<p>For each remote agent using WebRTC, create a Phone entry under <strong>Admin → Phones:</strong></p>
+<ul>
+<li><strong>Extension:</strong> Unique extension number (e.g., 8001)</li>
+<li><strong>Server IP:</strong> Your Asterisk/dialer server IP</li>
+<li><strong>Dialplan Number:</strong> Same as extension</li>
+<li><strong>Phone Type:</strong> Use the WebRTC-compatible type</li>
+<li><strong>Protocol:</strong> PJSIP (or SIP if using chan_sip)</li>
+<li><strong>Registration String:</strong> The PJSIP registration parameters. VICIdial auto-generates this for WebRTC-enabled phones.</li>
+</ul>
+<h3 id="agent-interface-viciphone">Agent Interface — ViciPhone<a class="headerlink" href="#agent-interface-viciphone" title="Permanent link">&para;</a></h3>
+<p>When an agent logs into the VICIdial agent interface on a WebRTC-enabled phone, ViciPhone automatically loads in the browser. The agent sees:</p>
+<ul>
+<li>A phone status indicator (registered/unregistered)</li>
+<li>Volume controls</li>
+<li>A dial pad (for manual dialing if enabled)</li>
+<li>Call state indicators</li>
+</ul>
+<p><strong>ViciPhone v3.0</strong> (available in recent SVN revisions) includes improvements over earlier versions:</p>
+<ul>
+<li>Better ICE candidate handling for NAT traversal</li>
+<li>Opus codec support for better audio quality at lower bandwidth</li>
+<li>Improved reconnection logic when WebSocket connections drop</li>
+<li>Audio level monitoring (helps diagnose one-way audio issues)</li>
+<li>Echo cancellation improvements</li>
+</ul>
+<p>The agent doesn't need to do anything special — ViciPhone initializes automatically when they log in with a WebRTC-enabled phone assignment. The browser will prompt for microphone permission on first use; the agent must click "Allow."</p>
+<hr />
+<h2 id="nat-traversal-stun-and-turn-servers">NAT Traversal: STUN and TURN Servers<a class="headerlink" href="#nat-traversal-stun-and-turn-servers" title="Permanent link">&para;</a></h2>
+<p>NAT traversal is the single biggest source of WebRTC problems in VICIdial remote agent deployments. Here's why and how to solve it.</p>
+<h3 id="the-problem">The Problem<a class="headerlink" href="#the-problem" title="Permanent link">&para;</a></h3>
+<p>Most remote agents are behind residential NAT routers. Their computer has a private IP address (192.168.x.x or 10.x.x.x) that isn't directly reachable from the internet. WebRTC needs to establish a direct media path between the agent's browser and the Asterisk server. Without NAT traversal assistance, the browser and Asterisk can't figure out how to route audio packets to each other.</p>
+<p>This manifests as:
+- <strong>One-way audio:</strong> The agent can hear the caller, but the caller can't hear the agent (or vice versa)
+- <strong>No audio at all:</strong> Call connects (SIP signaling works over WebSocket) but no audio flows
+- <strong>Audio works briefly then drops:</strong> ICE candidates expire or NAT mappings time out</p>
+<h3 id="stun-servers">STUN Servers<a class="headerlink" href="#stun-servers" title="Permanent link">&para;</a></h3>
+<p>STUN (Session Traversal Utilities for NAT) servers help WebRTC clients discover their public IP address and the type of NAT they're behind. STUN is sufficient for most residential NAT setups (cone NAT, restricted cone NAT).</p>
+<p><strong>Google's public STUN servers</strong> (free, reliable, widely used):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">stun</span><span class="o">:</span><span class="n">stun</span><span class="o">.</span><span class="na">l</span><span class="o">.</span><span class="na">google</span><span class="o">.</span><span class="na">com</span><span class="o">:</span><span class="mi">19302</span>
+<span class="n">stun</span><span class="o">:</span><span class="n">stun1</span><span class="o">.</span><span class="na">l</span><span class="o">.</span><span class="na">google</span><span class="o">.</span><span class="na">com</span><span class="o">:</span><span class="mi">19302</span>
+<span class="n">stun</span><span class="o">:</span><span class="n">stun2</span><span class="o">.</span><span class="na">l</span><span class="o">.</span><span class="na">google</span><span class="o">.</span><span class="na">com</span><span class="o">:</span><span class="mi">19302</span>
+</code></pre></div>
+
+<p>Configure STUN servers in VICIdial's WebRTC/ViciPhone settings. The specific location depends on your VICIdial version — check <strong>Admin → System Settings</strong> or the ViciPhone JavaScript configuration.</p>
+<p>In Asterisk's <code>pjsip.conf</code>, configure the STUN server for ICE:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[global]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">global</span>
+
+<span class="k">[system]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">system</span>
+
+<span class="c1">; Or in the transport section:</span>
+<span class="k">[transport-wss]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">transport</span>
+<span class="na">protocol</span><span class="o">=</span><span class="s">wss</span>
+<span class="na">bind</span><span class="o">=</span><span class="s">0.0.0.0:8089</span>
+<span class="na">cert_file</span><span class="o">=</span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem</span>
+<span class="na">priv_key_file</span><span class="o">=</span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem</span>
+<span class="na">external_media_address</span><span class="o">=</span><span class="s">YOUR_PUBLIC_IP</span>
+<span class="na">external_signaling_address</span><span class="o">=</span><span class="s">YOUR_PUBLIC_IP</span>
+</code></pre></div>
+
+<p>The <code>external_media_address</code> and <code>external_signaling_address</code> settings tell Asterisk to advertise its public IP (not its private IP) in SIP/SDP messages. This is essential when Asterisk is behind a NAT or firewall.</p>
+<h3 id="turn-servers">TURN Servers<a class="headerlink" href="#turn-servers" title="Permanent link">&para;</a></h3>
+<p>STUN doesn't work for symmetric NAT — the kind found in some corporate firewalls and carrier-grade NAT (CGNAT) deployments. For these cases, you need a TURN (Traversal Using Relays around NAT) server.</p>
+<p>TURN relays media traffic through a server when direct peer-to-peer connection fails. It's the fallback when STUN can't establish a direct path.</p>
+<p><strong>Options for TURN:</strong></p>
+<p><strong>1. Self-hosted coturn</strong> (recommended for production):</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install coturn on a separate server (or on your VICIdial web server)</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>coturn
+
+<span class="c1"># Configure /etc/turnserver.conf</span>
+listening-port<span class="o">=</span><span class="m">3478</span>
+tls-listening-port<span class="o">=</span><span class="m">5349</span>
+listening-ip<span class="o">=</span><span class="m">0</span>.0.0.0
+relay-ip<span class="o">=</span>YOUR_PUBLIC_IP
+external-ip<span class="o">=</span>YOUR_PUBLIC_IP
+min-port<span class="o">=</span><span class="m">49152</span>
+max-port<span class="o">=</span><span class="m">65535</span>
+fingerprint
+lt-cred-mech
+<span class="nv">realm</span><span class="o">=</span>vicidial.yourdomain.com
+server-name<span class="o">=</span>vicidial.yourdomain.com
+<span class="nv">user</span><span class="o">=</span>vicidial:your_turn_password
+<span class="nv">cert</span><span class="o">=</span>/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem
+<span class="nv">pkey</span><span class="o">=</span>/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem
+no-stdout-log
+syslog
+
+<span class="c1"># Start coturn</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>coturn
+</code></pre></div>
+
+<p><strong>Firewall requirements for coturn:</strong>
+- TCP/UDP 3478 (STUN/TURN)
+- TCP 5349 (TURN over TLS)
+- UDP 49152-65535 (media relay range)</p>
+<p><strong>2. Cloud TURN services</strong> (simpler, usage-based pricing):
+- Twilio Network Traversal: $0.0005/minute
+- Cloudflare Calls: Included in Workers plan
+- Xirsys: Free tier for testing, paid for production</p>
+<p><strong>Configure TURN in ViciPhone/VICIdial:</strong></p>
+<p>The STUN/TURN configuration is typically set in the ViciPhone JavaScript initialization. Look for ICE server configuration in the agent interface code:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Typical ViciPhone ICE configuration</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">iceServers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">urls</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;stun:stun.l.google.com:19302&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">urls</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;turn:vicidial.yourdomain.com:3478&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">username</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;vicidial&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">credential</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;your_turn_password&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">urls</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;turns:vicidial.yourdomain.com:5349&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">username</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;vicidial&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">credential</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;your_turn_password&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">];</span>
+</code></pre></div>
+
+<p>In VICIdial, this configuration may be set through system settings or the ViciPhone configuration section. Check your version's documentation for the exact admin path.</p>
+<hr />
+<h2 id="codec-selection-opus-vs-g722-vs-g711">Codec Selection: Opus vs. G.722 vs. G.711<a class="headerlink" href="#codec-selection-opus-vs-g722-vs-g711" title="Permanent link">&para;</a></h2>
+<p>Codec choice directly impacts audio quality and bandwidth usage for remote agents. Here's what works best for WebRTC in VICIdial:</p>
+<h3 id="codec-comparison">Codec Comparison<a class="headerlink" href="#codec-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Codec</th>
+<th>Bandwidth (per call)</th>
+<th>Audio Quality</th>
+<th>Latency</th>
+<th>Browser Support</th>
+<th>VICIdial Support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Opus</strong></td>
+<td>6-128 kbps (adaptive)</td>
+<td>Excellent (wideband/fullband)</td>
+<td>Low</td>
+<td>All modern browsers</td>
+<td>Asterisk 13+ (requires codec_opus)</td>
+</tr>
+<tr>
+<td><strong>G.722</strong></td>
+<td>64 kbps</td>
+<td>Good (wideband)</td>
+<td>Low</td>
+<td>Most browsers</td>
+<td>Native in Asterisk</td>
+</tr>
+<tr>
+<td><strong>G.711 ulaw</strong></td>
+<td>64 kbps</td>
+<td>Acceptable (narrowband)</td>
+<td>Very low</td>
+<td>All browsers</td>
+<td>Native in Asterisk</td>
+</tr>
+<tr>
+<td><strong>G.711 alaw</strong></td>
+<td>64 kbps</td>
+<td>Acceptable (narrowband)</td>
+<td>Very low</td>
+<td>All browsers</td>
+<td>Native in Asterisk</td>
+</tr>
+</tbody>
+</table>
+<h3 id="recommended-configuration">Recommended Configuration<a class="headerlink" href="#recommended-configuration" title="Permanent link">&para;</a></h3>
+<p><strong>For most remote agent deployments: Opus first, G.722 fallback, ulaw as last resort.</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; In pjsip.conf endpoint configuration</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">opus</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">g722</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+</code></pre></div>
+
+<p><strong>Why Opus is the best choice:</strong></p>
+<ol>
+<li>
+<p><strong>Adaptive bitrate.</strong> Opus automatically adjusts its bitrate based on available bandwidth. If an agent's home internet hiccups, Opus drops to 6-12 kbps and maintains intelligible audio. G.722 and G.711 are fixed bitrate — if bandwidth drops, you get packet loss and audio breakup.</p>
+</li>
+<li>
+<p><strong>Packet loss resilience.</strong> Opus includes forward error correction (FEC) that can recover from 10-20% packet loss without audible degradation. Home internet connections have variable packet loss — Opus handles this gracefully.</p>
+</li>
+<li>
+<p><strong>Lower bandwidth in normal conditions.</strong> Opus at its default 24 kbps setting uses 60% less bandwidth than G.722 or G.711 while delivering similar or better perceived audio quality. For 50+ remote agents, the bandwidth savings are meaningful.</p>
+</li>
+</ol>
+<p><strong>Installing Opus on Asterisk (if not already present):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check if codec_opus is available</span>
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;core show codecs&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>opus
+
+<span class="c1"># If not available, install the Digium Opus codec</span>
+<span class="c1"># (Asterisk 18+ on ViciBox 12 typically includes it)</span>
+<span class="c1"># For manual installation:</span>
+<span class="nb">cd</span><span class="w"> </span>/usr/lib64/asterisk/modules/
+wget<span class="w"> </span>https://downloads.digium.com/pub/telephony/codec_opus/asterisk-20.0/x86-64/codec_opus-20.0_current-x86_64.tar.gz
+tar<span class="w"> </span>xzf<span class="w"> </span>codec_opus-*.tar.gz
+cp<span class="w"> </span>codec_opus.so<span class="w"> </span>/usr/lib64/asterisk/modules/
+asterisk<span class="w"> </span>-rx<span class="w"> </span><span class="s2">&quot;module load codec_opus.so&quot;</span>
+</code></pre></div>
+
+<h3 id="bandwidth-planning">Bandwidth Planning<a class="headerlink" href="#bandwidth-planning" title="Permanent link">&para;</a></h3>
+<p>Calculate total bandwidth requirements for your remote agent deployment:</p>
+<table>
+<thead>
+<tr>
+<th>Agents</th>
+<th>Opus (24 kbps avg)</th>
+<th>G.722 (64 kbps)</th>
+<th>G.711 (64 kbps)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>~480 kbps</td>
+<td>~1.28 Mbps</td>
+<td>~1.28 Mbps</td>
+</tr>
+<tr>
+<td>50</td>
+<td>~2.4 Mbps</td>
+<td>~6.4 Mbps</td>
+<td>~6.4 Mbps</td>
+</tr>
+<tr>
+<td>100</td>
+<td>~4.8 Mbps</td>
+<td>~12.8 Mbps</td>
+<td>~12.8 Mbps</td>
+</tr>
+<tr>
+<td>200</td>
+<td>~9.6 Mbps</td>
+<td>~25.6 Mbps</td>
+<td>~25.6 Mbps</td>
+</tr>
+</tbody>
+</table>
+<p>These are media bandwidth only. Add 10-15% overhead for SIP signaling, WebSocket keepalives, and protocol overhead. Your server's internet connection must handle the total bandwidth for all concurrent WebRTC sessions.</p>
+<p><strong>Per-agent minimum bandwidth requirement:</strong> Each remote agent needs at least 1 Mbps upload and 1 Mbps download for reliable WebRTC audio. This is well within what any modern broadband or cellular connection provides, but can be a problem for agents on satellite internet, congested shared WiFi, or connections with high upload asymmetry (like some DSL plans with 256 kbps upload).</p>
+<hr />
+<h2 id="scaling-webrtc-for-50-remote-agents">Scaling WebRTC for 50+ Remote Agents<a class="headerlink" href="#scaling-webrtc-for-50-remote-agents" title="Permanent link">&para;</a></h2>
+<p>Running WebRTC at scale introduces challenges that don't exist with 5-10 agents:</p>
+<h3 id="server-capacity-planning">Server Capacity Planning<a class="headerlink" href="#server-capacity-planning" title="Permanent link">&para;</a></h3>
+<p>Each WebRTC call requires Asterisk to:
+- Maintain a WebSocket connection (persistent TCP)
+- Handle DTLS handshake and key exchange
+- Process SRTP encryption/decryption for media
+- Run ICE candidate negotiation</p>
+<p>The SRTP encryption is the most CPU-intensive part. A standard VICIdial dialer server (8-core Xeon, 32GB RAM) can typically handle:
+- <strong>200-300 concurrent SIP calls</strong> (no WebRTC, standard RTP)
+- <strong>100-150 concurrent WebRTC calls</strong> (SRTP encryption + WebSocket overhead)</p>
+<p>The roughly 2:1 ratio means WebRTC calls consume about double the server resources of standard SIP calls. For a 200-agent remote deployment, plan for dedicated WebRTC Asterisk servers in your <a href="/blog/vicidial-cluster-guide/">cluster architecture</a>.</p>
+<h3 id="cluster-architecture-for-webrtc">Cluster Architecture for WebRTC<a class="headerlink" href="#cluster-architecture-for-webrtc" title="Permanent link">&para;</a></h3>
+<p>In a multi-server VICIdial cluster, the recommended approach for large WebRTC deployments:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[Web Server] ← HTTPS → [Agents&#39; Browsers]</span>
+<span class="w">     </span><span class="na">|</span>
+<span class="w">     </span><span class="na">↓</span>
+<span class="k">[VICIdial DB Server (MySQL master)]</span>
+<span class="w">     </span><span class="na">|</span>
+<span class="w">     </span><span class="na">↓</span>
+<span class="k">[Dialer Server 1] ← SIP trunks → [Carrier]</span>
+<span class="k">[Dialer Server 2] ← SIP trunks → [Carrier]</span>
+<span class="k">[WebRTC Server 1] ← WSS → [Remote Agents 1-75]</span>
+<span class="k">[WebRTC Server 2] ← WSS → [Remote Agents 76-150]</span>
+</code></pre></div>
+
+<p>Separate your WebRTC (remote agent) traffic from your outbound dialing traffic. The dialer servers handle SIP trunk connections and predictive dialing algorithms. The WebRTC servers handle agent audio connections. Both connect to the central MySQL database.</p>
+<p>This separation ensures that SRTP encryption load from 150 remote agents doesn't degrade your outbound dialing capacity.</p>
+<h3 id="websocket-connection-limits">WebSocket Connection Limits<a class="headerlink" href="#websocket-connection-limits" title="Permanent link">&para;</a></h3>
+<p>Each WebRTC agent maintains a persistent WebSocket connection to Asterisk. Asterisk's HTTP server has connection limits that may need tuning for large deployments:</p>
+<p>In <code>/etc/asterisk/http.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[general]</span>
+<span class="c1">; Session limit - increase for large WebRTC deployments</span>
+<span class="na">session_limit</span><span class="o">=</span><span class="s">200</span>
+<span class="c1">; Session inactivity timeout - keep WebSocket connections alive</span>
+<span class="na">session_inactivity</span><span class="o">=</span><span class="s">300</span>
+</code></pre></div>
+
+<p>Also ensure your operating system's file descriptor limits are adequate:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check current limits</span>
+<span class="nb">ulimit</span><span class="w"> </span>-n
+
+<span class="c1"># If below 65535, increase in /etc/security/limits.conf</span>
+*<span class="w"> </span>soft<span class="w"> </span>nofile<span class="w"> </span><span class="m">65535</span>
+*<span class="w"> </span>hard<span class="w"> </span>nofile<span class="w"> </span><span class="m">65535</span>
+</code></pre></div>
+
+<p>And increase Asterisk's connection limit:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># In /etc/asterisk/asterisk.conf</span>
+<span class="o">[</span>options<span class="o">]</span>
+<span class="nv">maxcalls</span><span class="o">=</span><span class="m">1024</span>
+</code></pre></div>
+
+<h3 id="load-balancing-webrtc-connections">Load Balancing WebRTC Connections<a class="headerlink" href="#load-balancing-webrtc-connections" title="Permanent link">&para;</a></h3>
+<p>For 100+ WebRTC agents, distribute connections across multiple Asterisk servers. VICIdial's phone configuration assigns each phone to a specific server IP, so you can distribute agents across WebRTC servers at the phone entry level.</p>
+<p>Alternatively, use an NGINX or HAProxy load balancer for WebSocket connections:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/nginx/conf.d/vicidial-wss.conf</span>
+<span class="k">upstream</span><span class="w"> </span><span class="s">asterisk_wss</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">ip_hash</span><span class="p">;</span><span class="w">  </span><span class="c1"># Sticky sessions - same agent always hits same server</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">asterisk-webrtc-1</span><span class="p">:</span><span class="mi">8089</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">asterisk-webrtc-2</span><span class="p">:</span><span class="mi">8089</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">8089</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">vicidial.yourdomain.com</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">ssl_certificate</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/vicidial.yourdomain.com/privkey.pem</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/ws</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">https://asterisk_wss/ws</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">&quot;upgrade&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_read_timeout</span><span class="w"> </span><span class="mi">86400</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The <code>ip_hash</code> directive ensures sticky sessions — once an agent connects to a specific Asterisk server, all subsequent WebSocket connections from the same IP go to the same server. This is important because SIP registration state must stay on one server.</p>
+<hr />
+<h2 id="troubleshooting-common-webrtc-issues">Troubleshooting Common WebRTC Issues<a class="headerlink" href="#troubleshooting-common-webrtc-issues" title="Permanent link">&para;</a></h2>
+<h3 id="one-way-audio">One-Way Audio<a class="headerlink" href="#one-way-audio" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Agent can hear the caller but the caller can't hear the agent, or vice versa.</p>
+<p><strong>Causes and fixes:</strong></p>
+<ol>
+<li><strong>Missing <code>external_media_address</code> in PJSIP transport.</strong> If Asterisk is behind a NAT/firewall and doesn't know its public IP, it advertises its private IP in SDP. The remote browser can't route media to a private IP.</li>
+</ol>
+<p><strong>Fix:</strong> Add <code>external_media_address=YOUR_PUBLIC_IP</code> to your WSS transport in <code>pjsip.conf</code>.</p>
+<ol>
+<li><strong>STUN/TURN not configured or unreachable.</strong> The browser can't determine its public IP for ICE negotiation.</li>
+</ol>
+<p><strong>Fix:</strong> Configure STUN servers in ViciPhone's ICE configuration. Test STUN reachability with: <code>stunclient stun.l.google.com 19302</code></p>
+<ol>
+<li><strong>Symmetric NAT without TURN.</strong> Some carrier-grade NAT or strict corporate firewalls block direct media paths even with STUN.</li>
+</ol>
+<p><strong>Fix:</strong> Deploy a TURN server (coturn) and configure it in ViciPhone's ICE servers.</p>
+<ol>
+<li><strong>Firewall blocking RTP port range.</strong> Media packets use high-numbered UDP ports (typically 10000-20000 on Asterisk). If these are blocked by the server's firewall, media can't flow.</li>
+</ol>
+<p><strong>Fix:</strong> Open UDP ports 10000-20000 in your firewall:
+   <code>bash
+   sudo firewall-cmd --permanent --add-port=10000-20000/udp
+   sudo firewall-cmd --reload</code></p>
+<ol>
+<li><strong>Codec mismatch.</strong> The browser and Asterisk can't agree on a codec. This typically shows as no audio rather than one-way audio.</li>
+</ol>
+<p><strong>Fix:</strong> Ensure the PJSIP endpoint allows codecs that WebRTC supports (opus, g722, ulaw).</p>
+<h3 id="connection-drops-websocket-disconnects">Connection Drops / WebSocket Disconnects<a class="headerlink" href="#connection-drops-websocket-disconnects" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Agent periodically loses connection, phone shows "unregistered," calls drop mid-conversation.</p>
+<p><strong>Causes and fixes:</strong></p>
+<ol>
+<li><strong>SSL certificate expired or mismatched.</strong> The WebSocket connection fails TLS handshake.</li>
+</ol>
+<p><strong>Fix:</strong> Check certificate expiry: <code>openssl x509 -in /etc/letsencrypt/live/vicidial.yourdomain.com/fullchain.pem -noout -enddate</code>. Renew if expired. Verify the hostname matches.</p>
+<ol>
+<li><strong>WebSocket keepalive timeout.</strong> The persistent WebSocket connection times out due to idle detection at the firewall, load balancer, or Asterisk level.</li>
+</ol>
+<p><strong>Fix:</strong> Configure appropriate keepalive intervals. In Asterisk <code>http.conf</code>: <code>session_inactivity=300</code>. In any intermediary proxy (NGINX, HAProxy): set <code>proxy_read_timeout 86400;</code> for WebSocket locations.</p>
+<ol>
+<li><strong>Agent's internet connection dropping.</strong> Home WiFi instability, ISP issues, or VPN interference.</li>
+</ol>
+<p><strong>Fix:</strong> This is outside your control, but ViciPhone v3.0 includes automatic reconnection logic. Ensure agents use wired Ethernet when possible. Run a network quality test: have agents visit <code>https://speed.cloudflare.com</code> and verify they have consistent latency below 100ms and packet loss below 1%.</p>
+<ol>
+<li><strong>Asterisk HTTP server overwhelmed.</strong> Too many simultaneous WebSocket connections for the server's configuration.</li>
+</ol>
+<p><strong>Fix:</strong> Increase <code>session_limit</code> in <code>http.conf</code>. Check system resource usage (<code>top</code>, <code>htop</code>) for CPU or memory exhaustion. Consider distributing WebRTC agents across multiple Asterisk servers.</p>
+<h3 id="certificate-errors-in-browser">Certificate Errors in Browser<a class="headerlink" href="#certificate-errors-in-browser" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Browser console shows SSL/TLS errors, ViciPhone fails to connect, microphone permission prompt doesn't appear.</p>
+<p><strong>Causes and fixes:</strong></p>
+<ol>
+<li><strong>Self-signed certificate.</strong> Browsers block WebRTC on pages served with untrusted certificates.</li>
+</ol>
+<p><strong>Fix:</strong> Use a CA-signed certificate (Let's Encrypt is free). Self-signed certificates are not viable for production WebRTC deployments.</p>
+<ol>
+<li><strong>Certificate hostname mismatch.</strong> The certificate was issued for a different hostname than what the agent is connecting to.</li>
+</ol>
+<p><strong>Fix:</strong> Ensure the certificate covers the exact hostname in the browser's URL bar. If agents connect via IP address, you need a certificate for that IP (or better, use a hostname).</p>
+<ol>
+<li><strong>Mixed content.</strong> The page is served over HTTPS but ViciPhone is trying to connect to a non-TLS WebSocket (ws:// instead of wss://).</li>
+</ol>
+<p><strong>Fix:</strong> Verify the WebSocket URL in VICIdial system settings uses <code>wss://</code> not <code>ws://</code>.</p>
+<h3 id="echo-audio-feedback">Echo / Audio Feedback<a class="headerlink" href="#echo-audio-feedback" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Agent or caller hears echo of their own voice.</p>
+<p><strong>Causes and fixes:</strong></p>
+<ol>
+<li><strong>Agent using speakers instead of headset.</strong> Audio from speakers is picked up by the microphone and sent back.</li>
+</ol>
+<p><strong>Fix:</strong> Require agents to use headsets. USB headsets with built-in sound cards provide the best echo cancellation. Bluetooth headsets introduce additional latency and are not recommended for call center work.</p>
+<ol>
+<li><strong>Browser echo cancellation not engaging.</strong> Chrome and Firefox have built-in acoustic echo cancellation (AEC), but it can fail with certain audio hardware.</li>
+</ol>
+<p><strong>Fix:</strong> Ensure agents use Chrome (best WebRTC implementation). In ViciPhone configuration, verify that audio constraints include <code>echoCancellation: true</code>.</p>
+<ol>
+<li><strong>Asterisk-side echo.</strong> The SIP trunk connection to the carrier introduces echo (common with poorly configured T1/PRI connections, less common with well-configured SIP trunks).</li>
+</ol>
+<p><strong>Fix:</strong> Enable echo cancellation in Asterisk: add <code>echocancel=yes</code> and <code>echocancelwhenbridged=yes</code> in the channel configuration.</p>
+<hr />
+<h2 id="security-considerations">Security Considerations<a class="headerlink" href="#security-considerations" title="Permanent link">&para;</a></h2>
+<p>WebRTC adds network attack surface to your VICIdial deployment. Mitigate with:</p>
+<h3 id="transport-security">Transport Security<a class="headerlink" href="#transport-security" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>TLS everywhere.</strong> HTTPS for the web interface, WSS for WebSocket signaling, DTLS-SRTP for media. No unencrypted transport paths.</li>
+<li><strong>Certificate pinning.</strong> Consider certificate pinning in ViciPhone for additional protection against man-in-the-middle attacks.</li>
+<li><strong>Cipher suite hardening.</strong> Disable weak ciphers in both Apache and Asterisk SSL configurations. TLS 1.2 minimum, TLS 1.3 preferred.</li>
+</ul>
+<h3 id="access-control">Access Control<a class="headerlink" href="#access-control" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Firewall rules.</strong> Only expose the ports that need to be public: 443 (HTTPS), 8089 (WSS), 3478 (STUN/TURN), and your RTP port range. Block everything else.</li>
+<li><strong>Asterisk ACLs.</strong> Configure PJSIP ACLs to restrict WebSocket connections to expected IP ranges (if agents use fixed IPs or VPNs):</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="k">[acl]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">acl</span>
+<span class="na">permit</span><span class="o">=</span><span class="s">0.0.0.0/0</span><span class="w">  </span><span class="c1">; Allow from anywhere (for remote agents)</span>
+<span class="c1">; Or restrict to known ranges:</span>
+<span class="c1">; permit=203.0.113.0/24</span>
+<span class="c1">; deny=0.0.0.0/0</span>
+</code></pre></div>
+
+<ul>
+<li><strong>Rate limiting.</strong> Protect against SIP brute-force attacks on the WebSocket port. Use fail2ban with Asterisk log monitoring:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="c1"># /etc/fail2ban/jail.local</span>
+<span class="o">[</span>asterisk<span class="o">]</span>
+<span class="nv">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="nv">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8089</span>,5060
+<span class="nv">filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>asterisk
+<span class="nv">logpath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>/var/log/asterisk/messages
+<span class="nv">maxretry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="nv">bantime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3600</span>
+</code></pre></div>
+
+<h3 id="srtp-enforcement">SRTP Enforcement<a class="headerlink" href="#srtp-enforcement" title="Permanent link">&para;</a></h3>
+<p>Never allow unencrypted RTP for WebRTC connections:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; In pjsip.conf endpoint template</span>
+<span class="na">media_encryption</span><span class="o">=</span><span class="s">dtls</span>
+<span class="na">media_encryption_optimistic</span><span class="o">=</span><span class="s">no</span><span class="w">  </span><span class="c1">; Fail the call if encryption can&#39;t be negotiated</span>
+</code></pre></div>
+
+<p>The <code>media_encryption_optimistic=no</code> setting ensures that if DTLS negotiation fails for any reason, the call is rejected rather than falling back to unencrypted RTP. This prevents accidental cleartext media transmission.</p>
+<hr />
+<h2 id="agent-setup-requirements-and-best-practices">Agent Setup Requirements and Best Practices<a class="headerlink" href="#agent-setup-requirements-and-best-practices" title="Permanent link">&para;</a></h2>
+<p>Provide these requirements to remote agents before they go live:</p>
+<h3 id="minimum-agent-requirements">Minimum Agent Requirements<a class="headerlink" href="#minimum-agent-requirements" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Browser:</strong> Chrome 90+ (recommended), Firefox 85+, or Edge 90+. Safari support is limited — avoid it for production.</li>
+<li><strong>Internet:</strong> 5 Mbps download, 1 Mbps upload minimum. Wired Ethernet strongly preferred over WiFi.</li>
+<li><strong>Headset:</strong> USB headset with noise cancellation. Recommended: Jabra Evolve2 40, Plantronics Blackwire 3220, or similar. Avoid Bluetooth.</li>
+<li><strong>Operating system:</strong> Windows 10/11, macOS 12+, or Linux with Chrome. Chromebooks work.</li>
+<li><strong>Microphone permissions:</strong> Must allow browser microphone access for vicidial.yourdomain.com.</li>
+</ul>
+<h3 id="agent-troubleshooting-checklist">Agent Troubleshooting Checklist<a class="headerlink" href="#agent-troubleshooting-checklist" title="Permanent link">&para;</a></h3>
+<p>When an agent reports audio issues, walk through:</p>
+<ol>
+<li><strong>Is ViciPhone showing "Registered"?</strong> If not, it's a WebSocket/signaling issue. Check certificate, firewall, connectivity.</li>
+<li><strong>Did they allow microphone permission?</strong> Check browser → Site Settings → Microphone for your VICIdial URL.</li>
+<li><strong>Are they using a headset?</strong> Speakers + built-in microphone = echo and feedback.</li>
+<li><strong>Are they on WiFi or Ethernet?</strong> WiFi packet loss causes audio breakup. Switch to Ethernet.</li>
+<li><strong>Run a speed test.</strong> <code>speed.cloudflare.com</code> — look for latency under 100ms and packet loss under 1%.</li>
+<li><strong>Clear browser cache and restart.</strong> WebRTC sessions can accumulate stale ICE candidates.</li>
+<li><strong>Test with a different browser.</strong> If Chrome fails, try Firefox (or vice versa) to isolate the issue.</li>
+</ol>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="do-agents-need-to-install-anything-for-vicidial-webrtc">Do agents need to install anything for VICIdial WebRTC?<a class="headerlink" href="#do-agents-need-to-install-anything-for-vicidial-webrtc" title="Permanent link">&para;</a></h3>
+<p>No. ViciPhone runs entirely in the browser — no plugins, no extensions, no desktop software. The agent navigates to the VICIdial agent interface URL (over HTTPS), logs in with their credentials, and ViciPhone initializes automatically. The only agent action required is clicking "Allow" when the browser requests microphone permission on first use.</p>
+<h3 id="can-i-use-webrtc-and-traditional-sip-phones-in-the-same-vicidial-deployment">Can I use WebRTC and traditional SIP phones in the same VICIdial deployment?<a class="headerlink" href="#can-i-use-webrtc-and-traditional-sip-phones-in-the-same-vicidial-deployment" title="Permanent link">&para;</a></h3>
+<p>Yes. VICIdial supports mixed phone environments. Some agents can use WebRTC (ViciPhone in browser), while others use SIP desk phones, SIP softphones, or IAX phones. Each phone is configured independently in Admin → Phones. The dialer treats all phone types identically — it doesn't care whether the agent's audio is coming from WebRTC or a Polycom desk phone.</p>
+<h3 id="whats-the-maximum-number-of-webrtc-agents-vicidial-can-support">What's the maximum number of WebRTC agents VICIdial can support?<a class="headerlink" href="#whats-the-maximum-number-of-webrtc-agents-vicidial-can-support" title="Permanent link">&para;</a></h3>
+<p>On a single Asterisk server (8-core, 32GB RAM), expect 100-150 concurrent WebRTC sessions before performance degrades. For larger deployments, distribute WebRTC agents across multiple Asterisk servers in a <a href="/blog/vicidial-cluster-guide/">cluster configuration</a>. We've run VICIdial deployments with 300+ concurrent WebRTC agents using 3 dedicated WebRTC Asterisk servers behind a WebSocket load balancer.</p>
+<h3 id="why-does-viciphone-show-unregistered-even-though-i-can-access-the-vicidial-web-interface">Why does ViciPhone show "Unregistered" even though I can access the VICIdial web interface?<a class="headerlink" href="#why-does-viciphone-show-unregistered-even-though-i-can-access-the-vicidial-web-interface" title="Permanent link">&para;</a></h3>
+<p>The web interface (HTTPS) and ViciPhone (WSS) are separate connections. "Unregistered" means the WebSocket connection to Asterisk failed. Check: (1) Is port 8089 open on the server firewall? (2) Is <code>http.conf</code> configured with <code>tlsenable=yes</code>? (3) Does the SSL certificate in <code>http.conf</code> match the one used by Apache? (4) Is the WebSocket URL in VICIdial system settings correct (<code>wss://hostname:8089/ws</code>)? (5) Run <code>asterisk -rx "http show status"</code> to verify the HTTPS listener is active.</p>
+<h3 id="is-webrtc-audio-quality-good-enough-for-a-production-call-center">Is WebRTC audio quality good enough for a production call center?<a class="headerlink" href="#is-webrtc-audio-quality-good-enough-for-a-production-call-center" title="Permanent link">&para;</a></h3>
+<p>With Opus codec, WebRTC audio quality exceeds traditional G.711 SIP calls. Opus provides wideband (16kHz) or fullband (48kHz) audio compared to G.711's narrowband (8kHz). The key variable is the agent's internet connection quality — WebRTC audio is excellent on any connection with under 100ms latency and under 1% packet loss. That covers virtually all broadband connections. Agents on satellite internet (500ms+ latency) or severely congested connections will have problems regardless of codec.</p>
+<h3 id="do-i-need-a-turn-server-or-is-stun-enough">Do I need a TURN server, or is STUN enough?<a class="headerlink" href="#do-i-need-a-turn-server-or-is-stun-enough" title="Permanent link">&para;</a></h3>
+<p>For most remote agents on residential internet (cable, fiber, DSL), STUN is sufficient. STUN handles cone NAT and restricted NAT, which covers 80-90% of home networking equipment. You need a TURN server if: (1) agents are behind corporate firewalls with symmetric NAT, (2) agents are on carrier-grade NAT (CGNAT) — common with some mobile carriers and fixed wireless ISPs, or (3) you're seeing persistent one-way audio that STUN doesn't resolve. Our recommendation: deploy a TURN server (coturn) as insurance. It's cheap to run and only gets used when STUN fails, so it adds almost zero cost in normal operation.</p>
+<h3 id="can-i-use-webrtc-for-outbound-calls-or-only-inbound">Can I use WebRTC for outbound calls or only inbound?<a class="headerlink" href="#can-i-use-webrtc-for-outbound-calls-or-only-inbound" title="Permanent link">&para;</a></h3>
+<p>WebRTC in VICIdial works for all call types — outbound predictive/progressive, inbound, manual dial, transfers, and conferences. The agent's WebRTC connection is their phone endpoint. Once registered, it functions identically to a SIP phone for all VICIdial operations. The predictive dialer connects answered calls to the agent's WebRTC session the same way it would connect to a SIP extension.</p>
+<h3 id="what-browsers-work-best-with-vicidial-webrtc">What browsers work best with VICIdial WebRTC?<a class="headerlink" href="#what-browsers-work-best-with-vicidial-webrtc" title="Permanent link">&para;</a></h3>
+<p>Chrome is the best and most widely tested browser for WebRTC with VICIdial. Google maintains the WebRTC implementation in Chrome and it has the most reliable ICE negotiation, echo cancellation, and audio processing. Firefox works well as a secondary option. Edge (Chromium-based) works the same as Chrome. Safari has improved its WebRTC support significantly but still has occasional issues with SRTP negotiation and ICE candidate gathering — use it only if Chrome and Firefox are not options.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-webrtc-setup">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

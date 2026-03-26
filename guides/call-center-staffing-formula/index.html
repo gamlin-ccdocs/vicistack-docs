@@ -1,0 +1,4089 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/call-center-staffing-formula/">
+      
+      
+        <link rel="prev" href="../call-center-software-comparison/">
+      
+      
+        <link rel="next" href="../contact-center-kpis/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>The Call Center Staffing Formula: Erlang C vs Real-World Math - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-call-center-staffing-formula-erlang-c-vs-real-world-math" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The Call Center Staffing Formula: Erlang C vs Real-World Math
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-nobody-admits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem Nobody Admits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-get-your-actual-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Get Your Actual Numbers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 1: Get Your Actual Numbers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#call-volume-per-half-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Volume Per Half-Hour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#average-handle-time-aht" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Average Handle Time (AHT)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-level-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Level Target
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-the-erlang-c-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: The Erlang C Formula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-why-erlang-c-is-wrong-and-how-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Why Erlang C Is Wrong (And How Wrong)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Why Erlang C Is Wrong (And How Wrong)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#factor-1-shrinkage-usually-25-35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 1: Shrinkage (Usually 25-35%)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-2-occupancy-limits-dont-burn-your-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 2: Occupancy Limits (Don't Burn Your Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-3-call-abandonment-erlang-c-ignores-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 3: Call Abandonment (Erlang C Ignores It)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-4-multi-skill-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 4: Multi-Skill Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-5-blended-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 5: Blended Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-the-real-world-staffing-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: The Real-World Staffing Formula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-building-the-half-hour-staffing-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Building the Half-Hour Staffing Grid
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Building the Half-Hour Staffing Grid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#staggered-start-times" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Staggered Start Times
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lunch-staggering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lunch Staggering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-6-the-monday-problem-and-day-of-week-adjustment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: The Monday Problem and Day-of-Week Adjustment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-7-outbound-staffing-different-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Outbound Staffing — Different Math
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-8-validating-your-model-against-reality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Validating Your Model Against Reality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes-that-blow-up-staffing-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Mistakes That Blow Up Staffing Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-this-into-a-recurring-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building This Into a Recurring Process
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-nobody-admits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem Nobody Admits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-get-your-actual-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Get Your Actual Numbers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 1: Get Your Actual Numbers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#call-volume-per-half-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Volume Per Half-Hour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#average-handle-time-aht" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Average Handle Time (AHT)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-level-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Level Target
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-the-erlang-c-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: The Erlang C Formula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-why-erlang-c-is-wrong-and-how-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Why Erlang C Is Wrong (And How Wrong)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Why Erlang C Is Wrong (And How Wrong)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#factor-1-shrinkage-usually-25-35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 1: Shrinkage (Usually 25-35%)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-2-occupancy-limits-dont-burn-your-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 2: Occupancy Limits (Don't Burn Your Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-3-call-abandonment-erlang-c-ignores-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 3: Call Abandonment (Erlang C Ignores It)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-4-multi-skill-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 4: Multi-Skill Routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factor-5-blended-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factor 5: Blended Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-the-real-world-staffing-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: The Real-World Staffing Formula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-building-the-half-hour-staffing-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Building the Half-Hour Staffing Grid
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Building the Half-Hour Staffing Grid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#staggered-start-times" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Staggered Start Times
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lunch-staggering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lunch Staggering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-6-the-monday-problem-and-day-of-week-adjustment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: The Monday Problem and Day-of-Week Adjustment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-7-outbound-staffing-different-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Outbound Staffing — Different Math
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-8-validating-your-model-against-reality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Validating Your Model Against Reality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes-that-blow-up-staffing-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Mistakes That Blow Up Staffing Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-this-into-a-recurring-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building This Into a Recurring Process
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="the-call-center-staffing-formula-erlang-c-vs-real-world-math">The Call Center Staffing Formula: Erlang C vs Real-World Math<a class="headerlink" href="#the-call-center-staffing-formula-erlang-c-vs-real-world-math" title="Permanent link">&para;</a></h1>
+<p><strong>Erlang C gives you a number. Reality gives you a different one. This guide covers both: the math behind call center staffing, why Erlang C is wrong in predictable ways, and how to build a staffing model that accounts for shrinkage, blended campaigns, multi-skill routing, and agents who call in sick on Mondays.</strong></p>
+<hr />
+<h2 id="the-problem-nobody-admits">The Problem Nobody Admits<a class="headerlink" href="#the-problem-nobody-admits" title="Permanent link">&para;</a></h2>
+<p>Every call center manager has been in this meeting. Someone from finance asks "how many agents do we actually need?" and somebody pulls up an Erlang C calculator from a website that looks like it was built in 2003, plugs in three numbers, and says "thirty-two agents." Everyone nods. Nobody asks why Monday at 9 AM has a 12-minute wait time while Thursday at 2 PM has six agents sitting idle.</p>
+<p>The Erlang C formula is a beautiful piece of queuing theory. A.K. Erlang published it in 1917 to figure out how many telephone circuits the Copenhagen Telephone Company needed. It works. It just doesn't work the way most people use it.</p>
+<p>Here's what Erlang C assumes:</p>
+<ul>
+<li>Calls arrive randomly following a Poisson distribution</li>
+<li>All agents are identical and interchangeable</li>
+<li>No calls abandon (callers wait forever)</li>
+<li>Agents handle one call, then immediately take the next</li>
+<li>Call arrival rate is constant during the measurement period</li>
+<li>There's no wrap-up time between calls</li>
+<li>Nobody takes breaks, calls in sick, or goes to lunch</li>
+</ul>
+<p>Exactly zero of these are true in a real call center. But Erlang C is still where you start, because it gives you the mathematical floor -- the minimum number of agents you'd need in a universe where everything works perfectly. Then you adjust for the real world.</p>
+<hr />
+<h2 id="step-1-get-your-actual-numbers">Step 1: Get Your Actual Numbers<a class="headerlink" href="#step-1-get-your-actual-numbers" title="Permanent link">&para;</a></h2>
+<p>Before touching any formula, you need three numbers from your actual operation. Not your guesses. Not what the campaign manager told you last quarter. Actual numbers from your database.</p>
+<h3 id="call-volume-per-half-hour">Call Volume Per Half-Hour<a class="headerlink" href="#call-volume-per-half-hour" title="Permanent link">&para;</a></h3>
+<p>If you're running VICIdial, pull inbound call volume from the <code>vicidial_closer_log</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CONCAT</span><span class="p">(</span><span class="n">LPAD</span><span class="p">(</span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="p">,</span>
+<span class="w">           </span><span class="k">IF</span><span class="p">(</span><span class="k">MINUTE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;30&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">half_hour</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INBOUND_SALES&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">,</span><span class="w"> </span><span class="n">half_hour</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">,</span><span class="w"> </span><span class="n">half_hour</span><span class="p">;</span>
+</code></pre></div>
+
+<p>For outbound, use <code>vicidial_log</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CONCAT</span><span class="p">(</span><span class="n">LPAD</span><span class="p">(</span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="p">,</span>
+<span class="w">           </span><span class="k">IF</span><span class="p">(</span><span class="k">MINUTE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;30&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">half_hour</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk_sec</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OUTBOUND_B2B&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">,</span><span class="w"> </span><span class="n">half_hour</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">,</span><span class="w"> </span><span class="n">half_hour</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Take the average for each half-hour across at least four weeks. Two weeks of data is noisy. Eight weeks is better if your volume is seasonal.</p>
+<h3 id="average-handle-time-aht">Average Handle Time (AHT)<a class="headerlink" href="#average-handle-time-aht" title="Permanent link">&para;</a></h3>
+<p>AHT is talk time + hold time + after-call work (wrap-up/disposition time). Most people only measure talk time and wonder why they're always short-staffed.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">length_in_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">SECOND</span><span class="p">,</span><span class="w"> </span><span class="n">end_epoch_time</span><span class="p">,</span>
+<span class="w">        </span><span class="n">FROM_UNIXTIME</span><span class="p">(</span>
+<span class="w">            </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="n">UNIX_TIMESTAMP</span><span class="p">(</span><span class="n">event_time</span><span class="p">))</span>
+<span class="w">             </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">val2</span>
+<span class="w">             </span><span class="k">WHERE</span><span class="w"> </span><span class="n">val2</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="k">user</span>
+<span class="w">               </span><span class="k">AND</span><span class="w"> </span><span class="n">val2</span><span class="p">.</span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">FROM_UNIXTIME</span><span class="p">(</span><span class="n">val</span><span class="p">.</span><span class="n">end_epoch_time</span><span class="p">)</span>
+<span class="w">               </span><span class="k">AND</span><span class="w"> </span><span class="n">val2</span><span class="p">.</span><span class="n">sub_status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;READY&#39;</span><span class="p">,</span><span class="s1">&#39;INCALL&#39;</span><span class="p">))</span>
+<span class="w">        </span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_wrapup_sec</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">val</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INBOUND_SALES&#39;</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">talk_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
+
+<p>That wrap-up query is ugly. In practice, most VICIdial shops measure AHT by looking at the time between call end and the agent going back to READY status. A simpler approximation:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dispo_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_handle_time</span><span class="p">,</span>
+<span class="w">    </span><span class="n">STDDEV</span><span class="p">(</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dispo_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">handle_time_stddev</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">talk_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INBOUND_SALES&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">avg_handle_time</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The standard deviation matters here. If your average AHT is 240 seconds but the stddev is 180, you don't have one AHT -- you have a bimodal distribution. Some calls are 60 seconds (quick answers) and some are 500 seconds (complex issues). The Erlang formula can't handle bimodal distributions, and this is one of its major blind spots.</p>
+<p>For a typical inbound support campaign, expect an AHT somewhere between 180 and 420 seconds. Sales calls tend to run 240-600 seconds. Collections are usually 120-300 seconds.</p>
+<h3 id="service-level-target">Service Level Target<a class="headerlink" href="#service-level-target" title="Permanent link">&para;</a></h3>
+<p>This is the percentage of calls you want answered within a specified number of seconds. The industry standard is "80/20" -- 80% of calls answered within 20 seconds. But there's nothing sacred about 80/20. You pick the numbers based on your business:</p>
+<ul>
+<li><strong>80/20:</strong> Standard for most call centers. Reasonable balance.</li>
+<li><strong>90/10:</strong> Premium support, high-value customers. Expensive.</li>
+<li><strong>80/30:</strong> Common for non-emergency inbound. Saves money, customers don't complain much.</li>
+<li><strong>70/60:</strong> Budget operations. Callers start abandoning around 45 seconds.</li>
+</ul>
+<p>The difference between 80/20 and 90/10 can be 30-40% more agents for the same volume. That's not a typo. The relationship between service level and staffing is exponential, not linear. Going from 80% answered in 20 seconds to 90% answered in 10 seconds doesn't cost 12.5% more. It costs a lot more.</p>
+<hr />
+<h2 id="step-2-the-erlang-c-formula">Step 2: The Erlang C Formula<a class="headerlink" href="#step-2-the-erlang-c-formula" title="Permanent link">&para;</a></h2>
+<p>The Erlang C formula calculates the probability that a call has to wait in queue. Here it is in its full mathematical glory:</p>
+<div class="codehilite"><pre><span></span><code>P(wait &gt; 0) = (A^N / N!) <span class="gs">* (N / (N - A)) / [sum(k=0 to N-1) (A^k / k!) + (A^N / N!) *</span> (N / (N - A))]
+</code></pre></div>
+
+<p>Where:
+- A = traffic intensity in Erlangs = (calls per interval * AHT) / interval length
+- N = number of agents
+- P(wait &gt; 0) = probability a call waits</p>
+<p>And the service level formula:</p>
+<div class="codehilite"><pre><span></span><code>SL = 1 - P(wait &gt; 0) <span class="gs">* e^(-(N - A) *</span> (target_wait / AHT))
+</code></pre></div>
+
+<p>Where:
+- SL = service level (fraction of calls answered within target wait time)
+- target_wait = your acceptable wait time in seconds (e.g., 20)</p>
+<p>Nobody computes this by hand. Here's a Python implementation you can actually run:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">erlang_c.py — Staffing calculator using Erlang C</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">erlang_c</span><span class="p">(</span><span class="n">agents</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">traffic</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probability a call waits (Erlang C).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">agents</span> <span class="o">&lt;=</span> <span class="n">traffic</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span>  <span class="c1"># system is at or over capacity</span>
+
+    <span class="c1"># Use log-space to avoid factorial overflow</span>
+    <span class="n">log_numerator</span> <span class="o">=</span> <span class="n">traffic</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">traffic</span><span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">lgamma</span><span class="p">(</span><span class="n">agents</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">log_denominator_sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">terms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">traffic</span><span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">lgamma</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+
+    <span class="n">last_term</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_numerator</span><span class="p">)</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">traffic</span> <span class="o">/</span> <span class="n">agents</span>
+    <span class="n">last_term_adjusted</span> <span class="o">=</span> <span class="n">last_term</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span>
+
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">terms</span><span class="p">)</span> <span class="o">+</span> <span class="n">last_term_adjusted</span>
+    <span class="k">return</span> <span class="n">last_term_adjusted</span> <span class="o">/</span> <span class="n">total</span>
+
+<span class="k">def</span> <span class="nf">service_level</span><span class="p">(</span><span class="n">agents</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">calls_per_interval</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                  <span class="n">aht_sec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">interval_sec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                  <span class="n">target_wait_sec</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fraction of calls answered within target_wait_sec.&quot;&quot;&quot;</span>
+    <span class="n">traffic</span> <span class="o">=</span> <span class="p">(</span><span class="n">calls_per_interval</span> <span class="o">*</span> <span class="n">aht_sec</span><span class="p">)</span> <span class="o">/</span> <span class="n">interval_sec</span>
+    <span class="k">if</span> <span class="n">agents</span> <span class="o">&lt;=</span> <span class="n">traffic</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">pw</span> <span class="o">=</span> <span class="n">erlang_c</span><span class="p">(</span><span class="n">agents</span><span class="p">,</span> <span class="n">traffic</span><span class="p">)</span>
+    <span class="n">sl</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pw</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">agents</span> <span class="o">-</span> <span class="n">traffic</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">target_wait_sec</span> <span class="o">/</span> <span class="n">aht_sec</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sl</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">find_agents</span><span class="p">(</span><span class="n">calls_per_interval</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">aht_sec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                <span class="n">interval_sec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+                <span class="n">target_sl</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.80</span><span class="p">,</span>
+                <span class="n">target_wait_sec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find minimum agents to meet service level target.&quot;&quot;&quot;</span>
+    <span class="n">traffic</span> <span class="o">=</span> <span class="p">(</span><span class="n">calls_per_interval</span> <span class="o">*</span> <span class="n">aht_sec</span><span class="p">)</span> <span class="o">/</span> <span class="n">interval_sec</span>
+    <span class="n">min_agents</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">traffic</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_agents</span><span class="p">,</span> <span class="n">min_agents</span> <span class="o">+</span> <span class="mi">200</span><span class="p">):</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="n">service_level</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">calls_per_interval</span><span class="p">,</span> <span class="n">aht_sec</span><span class="p">,</span>
+                          <span class="n">interval_sec</span><span class="p">,</span> <span class="n">target_wait_sec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sl</span> <span class="o">&gt;=</span> <span class="n">target_sl</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;agents&#39;</span><span class="p">:</span> <span class="n">n</span><span class="p">,</span>
+                <span class="s1">&#39;traffic_erlangs&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">traffic</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="s1">&#39;service_level&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">sl</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="s1">&#39;occupancy&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">traffic</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="s1">&#39;calls_per_interval&#39;</span><span class="p">:</span> <span class="n">calls_per_interval</span><span class="p">,</span>
+                <span class="s1">&#39;aht_sec&#39;</span><span class="p">:</span> <span class="n">aht_sec</span><span class="p">,</span>
+            <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;agents&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Could not find solution in range&#39;</span><span class="p">}</span>
+
+<span class="c1"># Example: 120 calls per half-hour, 240 sec AHT, 80/20 target</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">find_agents</span><span class="p">(</span>
+        <span class="n">calls_per_interval</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+        <span class="n">aht_sec</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span>
+        <span class="n">interval_sec</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span>
+        <span class="n">target_sl</span><span class="o">=</span><span class="mf">0.80</span><span class="p">,</span>
+        <span class="n">target_wait_sec</span><span class="o">=</span><span class="mi">20</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agents needed:     </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;agents&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Traffic intensity: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;traffic_erlangs&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> Erlangs&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Service level:     </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;service_level&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Occupancy:         </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;occupancy&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Running this with 120 calls per half-hour and a 240-second AHT gives you:</p>
+<div class="codehilite"><pre><span></span><code>Agents needed:     19
+Traffic intensity: 16.0 Erlangs
+Service level:     82.1%
+Occupancy:         84.2%
+</code></pre></div>
+
+<p>Nineteen agents. Write that down, because it's wrong. It's the correct answer to the wrong question.</p>
+<hr />
+<h2 id="step-3-why-erlang-c-is-wrong-and-how-wrong">Step 3: Why Erlang C Is Wrong (And How Wrong)<a class="headerlink" href="#step-3-why-erlang-c-is-wrong-and-how-wrong" title="Permanent link">&para;</a></h2>
+<p>Here's a table showing the Erlang C result versus what you'll actually need for a range of scenarios:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Calls/30min</th>
+<th>AHT (sec)</th>
+<th>Erlang C Says</th>
+<th>You Actually Need</th>
+<th>Gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Small inbound support</td>
+<td>30</td>
+<td>300</td>
+<td>7</td>
+<td>9-10</td>
+<td>+29-43%</td>
+</tr>
+<tr>
+<td>Medium sales inbound</td>
+<td>80</td>
+<td>240</td>
+<td>14</td>
+<td>18-20</td>
+<td>+29-43%</td>
+</tr>
+<tr>
+<td>Large blended center</td>
+<td>200</td>
+<td>210</td>
+<td>26</td>
+<td>33-37</td>
+<td>+27-42%</td>
+</tr>
+<tr>
+<td>Collections floor</td>
+<td>50</td>
+<td>180</td>
+<td>7</td>
+<td>9-11</td>
+<td>+29-57%</td>
+</tr>
+<tr>
+<td>High-touch B2B sales</td>
+<td>25</td>
+<td>600</td>
+<td>11</td>
+<td>14-16</td>
+<td>+27-45%</td>
+</tr>
+</tbody>
+</table>
+<p>The gap is consistently 27-57%. That's not noise. It's the accumulated weight of everything Erlang C ignores. Let's quantify each factor.</p>
+<h3 id="factor-1-shrinkage-usually-25-35">Factor 1: Shrinkage (Usually 25-35%)<a class="headerlink" href="#factor-1-shrinkage-usually-25-35" title="Permanent link">&para;</a></h3>
+<p>Shrinkage is the percentage of paid time agents are unavailable to handle calls. It includes:</p>
+<ul>
+<li>Breaks (15 min morning + 15 min afternoon = 30 min/day)</li>
+<li>Lunch (30-60 min/day)</li>
+<li>Training and meetings (2-4 hours/week)</li>
+<li>Coaching sessions (30-60 min/week per agent)</li>
+<li>System issues (computer freezing, VPN dropping, softphone glitching)</li>
+<li>Unscheduled absences (sick days, personal emergencies, no-shows)</li>
+<li>Late arrivals and early departures</li>
+</ul>
+<p>Here's how to calculate your actual shrinkage from VICIdial data:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">event_time</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">    </span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;PAUSED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">pause_sec</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">pause_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;READY&#39;</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INCALL&#39;</span>
+<span class="w">        </span><span class="k">THEN</span><span class="w"> </span><span class="n">wait_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">talk_sec</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">productive_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="n">pause_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">wait_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dispo_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_logged_seconds</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;PAUSED&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">pause_sec</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="n">pause_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">wait_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dispo_sec</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">shrinkage_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">,</span><span class="w"> </span><span class="k">user</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">shrinkage_pct</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Most operations discover their shrinkage is higher than they thought. The industry average is 30-35% for on-site centers and 35-40% for remote agents (home distractions, internet issues, longer breaks).</p>
+<p>To adjust for shrinkage:</p>
+<div class="codehilite"><pre><span></span><code>Adjusted agents = Erlang C agents / (1 - shrinkage_rate)
+</code></pre></div>
+
+<p>So if Erlang C says 19 and your shrinkage is 32%:</p>
+<div class="codehilite"><pre><span></span><code>Adjusted = 19 / (1 - 0.32) = 19 / 0.68 = 28 agents
+</code></pre></div>
+
+<p>That's 28 scheduled agents to have 19 actually taking calls at any given moment. Already a 47% increase from the Erlang C number.</p>
+<h3 id="factor-2-occupancy-limits-dont-burn-your-agents">Factor 2: Occupancy Limits (Don't Burn Your Agents)<a class="headerlink" href="#factor-2-occupancy-limits-dont-burn-your-agents" title="Permanent link">&para;</a></h3>
+<p>Occupancy is the percentage of time an agent spends on calls versus waiting. At 84% occupancy (from our example above), agents spend 50 minutes of every hour on the phone. That sounds efficient. It's also a fast track to burnout and turnover.</p>
+<p>Sustainable occupancy depends on the type of work:</p>
+<table>
+<thead>
+<tr>
+<th>Call Type</th>
+<th>Max Sustainable Occupancy</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inbound support (simple)</td>
+<td>85-88%</td>
+<td>Repetitive but low stress</td>
+</tr>
+<tr>
+<td>Inbound sales</td>
+<td>78-82%</td>
+<td>High cognitive load, rejection</td>
+</tr>
+<tr>
+<td>Outbound cold calling</td>
+<td>75-80%</td>
+<td>Highest stress, most rejection</td>
+</tr>
+<tr>
+<td>Collections</td>
+<td>72-78%</td>
+<td>Emotionally draining</td>
+</tr>
+<tr>
+<td>Blended in/outbound</td>
+<td>80-85%</td>
+<td>Variety reduces fatigue</td>
+</tr>
+</tbody>
+</table>
+<p>If your staffing model produces 90%+ occupancy, you're going to have a turnover problem within 60 days. Agents will start calling in sick, taking longer breaks, and quitting. The cost of replacing one agent (recruiting, training, ramp-up time) is typically $3,000-8,000. Burning your agents to save on staffing is one of the most expensive mistakes a call center can make.</p>
+<h3 id="factor-3-call-abandonment-erlang-c-ignores-it">Factor 3: Call Abandonment (Erlang C Ignores It)<a class="headerlink" href="#factor-3-call-abandonment-erlang-c-ignores-it" title="Permanent link">&para;</a></h3>
+<p>Erlang C assumes callers wait forever. They don't. In practice:</p>
+<ul>
+<li>25% of callers hang up after 30 seconds</li>
+<li>50% hang up after 60 seconds</li>
+<li>70% hang up after 120 seconds</li>
+</ul>
+<p>This creates a paradox: if you're understaffed, some callers abandon, which reduces the apparent call volume, which makes Erlang C tell you that you need fewer agents. The formula rewards you for bad service.</p>
+<p>The fix is to add abandoned calls back into your volume calculation:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">CONCAT</span><span class="p">(</span><span class="n">LPAD</span><span class="p">(</span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="p">,</span>
+<span class="w">           </span><span class="k">IF</span><span class="p">(</span><span class="k">MINUTE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;30&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">half_hour</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">abandoned</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">answered</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DROP&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">abandon_pct</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INBOUND_SALES&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">half_hour</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">half_hour</span><span class="p">;</span>
+</code></pre></div>
+
+<p>If you see abandon rates above 5% in any half-hour, those intervals are understaffed. Period. Use the total calls (answered + abandoned) as your volume input, not just answered calls.</p>
+<h3 id="factor-4-multi-skill-routing">Factor 4: Multi-Skill Routing<a class="headerlink" href="#factor-4-multi-skill-routing" title="Permanent link">&para;</a></h3>
+<p>If you have agents handling multiple queues (billing, sales, tech support), Erlang C breaks down. The formula assumes all agents are interchangeable, but in reality:</p>
+<ul>
+<li>Agent A handles billing and sales</li>
+<li>Agent B handles sales only</li>
+<li>Agent C handles billing, sales, and tech support</li>
+</ul>
+<p>This creates partial pooling, which is more efficient than separate queues but less efficient than full pooling. The math for multi-skill routing requires simulation, not closed-form formulas. Erlang C will underestimate staffing needs for multi-skill environments by 8-15% because it assumes perfect pooling efficiency.</p>
+<h3 id="factor-5-blended-campaigns">Factor 5: Blended Campaigns<a class="headerlink" href="#factor-5-blended-campaigns" title="Permanent link">&para;</a></h3>
+<p>In VICIdial, blended campaigns have agents taking inbound calls when available and making outbound calls during gaps. This is efficient but makes staffing calculations harder because:</p>
+<ol>
+<li>Outbound calls have a different AHT than inbound</li>
+<li>The dialer's predictive algorithm adjusts based on available agents</li>
+<li>Switching between inbound and outbound modes has a cognitive cost</li>
+</ol>
+<p>For blended campaigns, calculate your inbound staffing needs first (that's the hard constraint), then figure out how much outbound capacity you have in the gaps. Don't try to optimize for both simultaneously in one formula -- calculate them separately and overlay.</p>
+<hr />
+<h2 id="step-4-the-real-world-staffing-formula">Step 4: The Real-World Staffing Formula<a class="headerlink" href="#step-4-the-real-world-staffing-formula" title="Permanent link">&para;</a></h2>
+<p>Here's the formula that actually works:</p>
+<div class="codehilite"><pre><span></span><code>Required staff = (Erlang_C_agents * (1 + multi_skill_factor)) /
+                 (1 - shrinkage_rate) /
+                 min(target_occupancy, 1.0)
+</code></pre></div>
+
+<p>With adjustments:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">real_world_staffing</span><span class="p">(</span><span class="n">calls_per_interval</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">aht_sec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">interval_sec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+                        <span class="n">target_sl</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.80</span><span class="p">,</span>
+                        <span class="n">target_wait_sec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="n">shrinkage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.32</span><span class="p">,</span>
+                        <span class="n">max_occupancy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.82</span><span class="p">,</span>
+                        <span class="n">multi_skill_overhead</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.10</span><span class="p">,</span>
+                        <span class="n">absenteeism_buffer</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Real-world staffing calculation layered on Erlang C.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Step 1: Get Erlang C baseline</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">find_agents</span><span class="p">(</span><span class="n">calls_per_interval</span><span class="p">,</span> <span class="n">aht_sec</span><span class="p">,</span>
+                       <span class="n">interval_sec</span><span class="p">,</span> <span class="n">target_sl</span><span class="p">,</span> <span class="n">target_wait_sec</span><span class="p">)</span>
+    <span class="n">erlang_agents</span> <span class="o">=</span> <span class="n">base</span><span class="p">[</span><span class="s1">&#39;agents&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Step 2: Adjust for multi-skill overhead</span>
+    <span class="n">skill_adjusted</span> <span class="o">=</span> <span class="n">erlang_agents</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">multi_skill_overhead</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Adjust for shrinkage</span>
+    <span class="n">shrinkage_adjusted</span> <span class="o">=</span> <span class="n">skill_adjusted</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">shrinkage</span><span class="p">)</span>
+
+    <span class="c1"># Step 4: Adjust for occupancy cap</span>
+    <span class="n">occupancy_adjusted</span> <span class="o">=</span> <span class="n">shrinkage_adjusted</span> <span class="o">/</span> <span class="n">max_occupancy</span>
+
+    <span class="c1"># Step 5: Absenteeism buffer (unplanned absences beyond shrinkage)</span>
+    <span class="n">final</span> <span class="o">=</span> <span class="n">occupancy_adjusted</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">absenteeism_buffer</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;erlang_c_raw&#39;</span><span class="p">:</span> <span class="n">erlang_agents</span><span class="p">,</span>
+        <span class="s1">&#39;after_skill_adj&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">skill_adjusted</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s1">&#39;after_shrinkage&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">shrinkage_adjusted</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s1">&#39;after_occupancy&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">occupancy_adjusted</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s1">&#39;final_required&#39;</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">final</span><span class="p">),</span>
+        <span class="s1">&#39;traffic_erlangs&#39;</span><span class="p">:</span> <span class="n">base</span><span class="p">[</span><span class="s1">&#39;traffic_erlangs&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;base_service_level&#39;</span><span class="p">:</span> <span class="n">base</span><span class="p">[</span><span class="s1">&#39;service_level&#39;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+<span class="c1"># Same scenario: 120 calls/half-hour, 240 sec AHT</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">real_world_staffing</span><span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erlang C raw:       </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;erlang_c_raw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> agents&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;+ Multi-skill:      </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;after_skill_adj&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> agents&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;+ Shrinkage (32%):  </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;after_shrinkage&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> agents&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;+ Occupancy (82%):  </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;after_occupancy&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> agents&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;+ Absenteeism (5%): </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;final_required&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> agents&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Output:</p>
+<div class="codehilite"><pre><span></span><code>Erlang C raw:       19 agents
++ Multi-skill:      20.9 agents
++ Shrinkage (32%):  30.7 agents
++ Occupancy (82%):  37.5 agents
++ Absenteeism (5%): 40 agents
+</code></pre></div>
+
+<p>Forty agents to do what Erlang C says you can do with nineteen. That's a 111% gap. And forty is the right number. Anyone who's run a 120-call-per-half-hour inbound operation knows that 19 agents would be a disaster.</p>
+<hr />
+<h2 id="step-5-building-the-half-hour-staffing-grid">Step 5: Building the Half-Hour Staffing Grid<a class="headerlink" href="#step-5-building-the-half-hour-staffing-grid" title="Permanent link">&para;</a></h2>
+<p>Your call volume isn't flat across the day. It spikes in the morning, dips at lunch, picks up in the afternoon, and drops off after 5 PM. You need a staffing grid that matches.</p>
+<p>Here's how to build one:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="c1"># Half-hour call volumes (example — use your actual data)</span>
+<span class="n">half_hours</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;08:00&#39;</span><span class="p">,</span> <span class="mi">45</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;08:30&#39;</span><span class="p">,</span> <span class="mi">72</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;09:00&#39;</span><span class="p">,</span> <span class="mi">110</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;09:30&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;10:00&#39;</span><span class="p">,</span> <span class="mi">115</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;10:30&#39;</span><span class="p">,</span> <span class="mi">105</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;11:00&#39;</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>  <span class="p">(</span><span class="s1">&#39;11:30&#39;</span><span class="p">,</span> <span class="mi">80</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;12:00&#39;</span><span class="p">,</span> <span class="mi">65</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;12:30&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;13:00&#39;</span><span class="p">,</span> <span class="mi">75</span><span class="p">),</span>  <span class="p">(</span><span class="s1">&#39;13:30&#39;</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;14:00&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;14:30&#39;</span><span class="p">,</span> <span class="mi">105</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;15:00&#39;</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>  <span class="p">(</span><span class="s1">&#39;15:30&#39;</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;16:00&#39;</span><span class="p">,</span> <span class="mi">70</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;16:30&#39;</span><span class="p">,</span> <span class="mi">55</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;17:00&#39;</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>  <span class="p">(</span><span class="s1">&#39;17:30&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Time&#39;</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Calls&#39;</span><span class="si">:</span><span class="s2">&lt;7</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Erlang&#39;</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Real&#39;</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Occ%&#39;</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">38</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">time_slot</span><span class="p">,</span> <span class="n">calls</span> <span class="ow">in</span> <span class="n">half_hours</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">real_world_staffing</span><span class="p">(</span>
+        <span class="n">calls_per_interval</span><span class="o">=</span><span class="n">calls</span><span class="p">,</span>
+        <span class="n">aht_sec</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span>
+        <span class="n">shrinkage</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span>
+        <span class="n">max_occupancy</span><span class="o">=</span><span class="mf">0.82</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">time_slot</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">calls</span><span class="si">:</span><span class="s2">&lt;7</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;erlang_c_raw&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}</span><span class="s2"> &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;final_required&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}</span><span class="s2"> &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">calls</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">240</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1800</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;final_required&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>This produces a grid showing exactly how many bodies you need on the floor at each half-hour interval. The key insight: your staffing needs might double between 8:00 and 9:30 AM, which means you need staggered start times, not everyone clocking in at 8.</p>
+<h3 id="staggered-start-times">Staggered Start Times<a class="headerlink" href="#staggered-start-times" title="Permanent link">&para;</a></h3>
+<p>If you need 25 agents at 8 AM and 40 at 9:30 AM, stagger like this:</p>
+<table>
+<thead>
+<tr>
+<th>Start Time</th>
+<th>Agents</th>
+<th>End Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7:00 AM</td>
+<td>5</td>
+<td>3:30 PM</td>
+</tr>
+<tr>
+<td>7:30 AM</td>
+<td>5</td>
+<td>4:00 PM</td>
+</tr>
+<tr>
+<td>8:00 AM</td>
+<td>10</td>
+<td>4:30 PM</td>
+</tr>
+<tr>
+<td>8:30 AM</td>
+<td>5</td>
+<td>5:00 PM</td>
+</tr>
+<tr>
+<td>9:00 AM</td>
+<td>10</td>
+<td>5:30 PM</td>
+</tr>
+<tr>
+<td>9:30 AM</td>
+<td>5</td>
+<td>6:00 PM</td>
+</tr>
+</tbody>
+</table>
+<p>That gets you 5 agents at 7 AM (pre-peak), ramping to 40 by 9:30, and naturally tapering as early shifts end. Match the ramp to your call volume curve.</p>
+<h3 id="lunch-staggering">Lunch Staggering<a class="headerlink" href="#lunch-staggering" title="Permanent link">&para;</a></h3>
+<p>Never let everyone go to lunch at the same time. If you have 40 agents, split lunch into 4 groups of 10 at 11:00, 11:30, 12:00, and 12:30. You lose 10 agents during each lunch slot instead of losing 40. This alone can drop your midday abandon rate by 60%.</p>
+<hr />
+<h2 id="step-6-the-monday-problem-and-day-of-week-adjustment">Step 6: The Monday Problem and Day-of-Week Adjustment<a class="headerlink" href="#step-6-the-monday-problem-and-day-of-week-adjustment" title="Permanent link">&para;</a></h2>
+<p>Monday call volumes are typically 15-25% higher than Friday. Every week. Here's a query to see your day-of-week distribution:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">DAYNAME</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">weekday</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">day_num</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">daily_count</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_calls</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">daily_count</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">AVG</span><span class="p">(</span><span class="n">dc</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
+<span class="w">              </span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">dc</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="w">              </span><span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">                </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INBOUND_SALES&#39;</span>
+<span class="w">              </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span>
+<span class="w">          </span><span class="p">)</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">pct_of_avg</span>
+<span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">call_day</span><span class="p">,</span>
+<span class="w">           </span><span class="n">DAYNAME</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">weekday_name</span><span class="p">,</span>
+<span class="w">           </span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">day_num</span><span class="p">,</span>
+<span class="w">           </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">daily_count</span>
+<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">        </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INBOUND_SALES&#39;</span>
+<span class="w">    </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">call_day</span>
+<span class="p">)</span><span class="w"> </span><span class="n">daily</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">weekday</span><span class="p">,</span><span class="w"> </span><span class="n">day_num</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">day_num</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Typical output:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Monday</span><span class="o">:</span><span class="w">    </span><span class="mi">122</span><span class="o">%</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">average</span>
+<span class="n">Tuesday</span><span class="o">:</span><span class="w">   </span><span class="mi">108</span><span class="o">%</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">average</span>
+<span class="n">Wednesday</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="o">%</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">average</span>
+<span class="n">Thursday</span><span class="o">:</span><span class="w">   </span><span class="mi">95</span><span class="o">%</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">average</span>
+<span class="n">Friday</span><span class="o">:</span><span class="w">     </span><span class="mi">82</span><span class="o">%</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">average</span>
+<span class="n">Saturday</span><span class="o">:</span><span class="w">   </span><span class="mi">52</span><span class="o">%</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">average</span><span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span><span class="n">open</span><span class="o">)</span>
+</code></pre></div>
+
+<p>Build a separate staffing grid for each day of the week, or at minimum for Monday/Tuesday, Wednesday/Thursday, and Friday. Using a single staffing plan for every day means you're overstaffed on Friday and drowning on Monday.</p>
+<hr />
+<h2 id="step-7-outbound-staffing-different-math">Step 7: Outbound Staffing — Different Math<a class="headerlink" href="#step-7-outbound-staffing-different-math" title="Permanent link">&para;</a></h2>
+<p>Outbound staffing follows different rules because the dialer controls the pace, not the callers. The key variables are:</p>
+<ul>
+<li><strong>Dial ratio:</strong> How many lines the dialer fires per available agent</li>
+<li><strong>Connect rate:</strong> Percentage of dials that result in a human answer</li>
+<li><strong>Talk time:</strong> Average conversation length</li>
+<li><strong>Wrap-up time:</strong> Time between calls for dispositioning</li>
+</ul>
+<p>For a VICIdial predictive campaign, the relevant numbers:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">campaign_id</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">auto_dial_level</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_dial_ratio</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span>
+<span class="w">        </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">        </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">connect_rate_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">              </span><span class="k">THEN</span><span class="w"> </span><span class="n">length_in_sec</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_talk_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_dials_per_day</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">campaign_id</span><span class="p">;</span>
+</code></pre></div>
+
+<p>For outbound, you're optimizing for throughput, not service level. The formula:</p>
+<div class="codehilite"><pre><span></span><code>Required outbound agents = target_contacts_per_hour /
+                           (connect_rate * calls_per_agent_per_hour)
+
+calls_per_agent_per_hour = 3600 / (avg_talk_sec + avg_wrapup_sec +
+                           avg_ring_sec / connect_rate)
+</code></pre></div>
+
+<p>For a typical B2B outbound campaign (10% connect rate, 180-second talk time, 30-second wrap-up, 25 seconds average ring time):</p>
+<div class="codehilite"><pre><span></span><code>calls_per_agent_per_hour = 3600 / (180 + 30 + 25/0.10) = 3600 / 460 = 7.8 contacts/hour
+</code></pre></div>
+
+<p>So if you need 60 contacts per hour, you need 60 / 7.8 = 8 agents (before shrinkage). After 32% shrinkage: 12 agents scheduled. If you want 300 contacts per day (8-hour shift), you need about 5 productive agents, or 8 scheduled.</p>
+<hr />
+<h2 id="step-8-validating-your-model-against-reality">Step 8: Validating Your Model Against Reality<a class="headerlink" href="#step-8-validating-your-model-against-reality" title="Permanent link">&para;</a></h2>
+<p>Your staffing model is a prediction. Validate it by comparing what you predicted to what actually happened.</p>
+<p>Set up a weekly validation query:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">day</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CONCAT</span><span class="p">(</span><span class="n">LPAD</span><span class="p">(</span><span class="n">HOUR</span><span class="p">(</span><span class="n">call_date</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="p">,</span>
+<span class="w">           </span><span class="k">IF</span><span class="p">(</span><span class="k">MINUTE</span><span class="p">(</span><span class="n">call_date</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;30&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">half_hour</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls_offered</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls_answered</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">queue_seconds</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">              </span><span class="k">THEN</span><span class="w"> </span><span class="n">queue_seconds</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_wait_sec</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">queue_seconds</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">20</span>
+<span class="w">              </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="o">/</span>
+<span class="w">          </span><span class="k">NULLIF</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;DROP&#39;</span><span class="p">,</span><span class="s1">&#39;XDROP&#39;</span><span class="p">)</span>
+<span class="w">                     </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">sl_pct</span><span class="p">,</span>
+<span class="w">    </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">user</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">val</span>
+<span class="w">     </span><span class="k">WHERE</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">vcl</span><span class="p">.</span><span class="n">call_date</span>
+<span class="w">       </span><span class="k">AND</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DATE_ADD</span><span class="p">(</span><span class="n">vcl</span><span class="p">.</span><span class="n">call_date</span><span class="p">,</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="k">MINUTE</span><span class="p">)</span>
+<span class="w">       </span><span class="k">AND</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;INCALL&#39;</span><span class="p">,</span><span class="s1">&#39;READY&#39;</span><span class="p">,</span><span class="s1">&#39;PAUSED&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">agents_logged_in</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_closer_log</span><span class="w"> </span><span class="n">vcl</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">call_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">campaign_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;INBOUND_SALES&#39;</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">,</span><span class="w"> </span><span class="n">half_hour</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">day</span><span class="p">,</span><span class="w"> </span><span class="n">half_hour</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Compare your predicted service level for each interval against actual. If your model predicted 80% and you got 65%, either your volume was higher than expected or your shrinkage was higher. Track the variance and adjust your assumptions quarterly.</p>
+<p>The operations that get staffing right aren't the ones with the best formula. They're the ones that measure, compare, adjust, and repeat. Every week, forever.</p>
+<hr />
+<h2 id="common-mistakes-that-blow-up-staffing-models">Common Mistakes That Blow Up Staffing Models<a class="headerlink" href="#common-mistakes-that-blow-up-staffing-models" title="Permanent link">&para;</a></h2>
+<p><strong>Using daily averages instead of half-hour intervals.</strong> If your average daily call volume is 800, you might calculate that you need 25 agents. But if 200 of those 800 calls come between 9:00 and 10:00 AM, you need 40 agents during that hour and 15 the rest of the day. Daily averages hide the peaks that kill your service level.</p>
+<p><strong>Ignoring AHT variance by agent.</strong> Your average AHT is 240 seconds, but Agent A averages 180 and Agent B averages 380. If Agent B is scheduled during peak hours and Agent A is on the quiet shift, your service level during peak will be worse than the model predicts. Match your best agents (lowest AHT, highest conversion) to your highest-volume intervals.</p>
+<p><strong>Not accounting for new agent ramp-up.</strong> New agents typically have AHTs 40-80% higher than tenured agents during their first 30 days. If you're onboarding 5 new agents and counting them as full-capacity resources, you're overstating your capacity. In VICIdial, track AHT by tenure:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="n">val</span><span class="p">.</span><span class="k">user</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vu</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DATEDIFF</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="n">vu</span><span class="p">.</span><span class="n">modify_date</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">days_active</span><span class="p">,</span>
+<span class="w">    </span><span class="k">AVG</span><span class="p">(</span><span class="n">val</span><span class="p">.</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">dispo_sec</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_aht</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">calls</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">vicidial_agent_log</span><span class="w"> </span><span class="n">val</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">vicidial_users</span><span class="w"> </span><span class="n">vu</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vu</span><span class="p">.</span><span class="k">user</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">event_time</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">WEEK</span><span class="p">)</span>
+<span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">talk_sec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">vu</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">vu</span><span class="p">.</span><span class="n">modify_date</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="n">calls</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">100</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">days_active</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Treating a blended campaign like a pure inbound or pure outbound operation.</strong> In a blended environment, the moment inbound volume spikes, agents get pulled from outbound, the outbound dial level drops, and your outbound throughput craters. Model the inbound constraint first, then see what outbound capacity remains.</p>
+<p><strong>Forgetting that breaks cluster.</strong> You schedule 15-minute breaks at 10:00 and 10:15 in two groups. But five agents take their break 8 minutes late, three come back 4 minutes late, and one disappears for 22 minutes. Your "planned" 15-minute break actually removes agents from the floor for 25-30 minutes. Build in a 50% buffer on scheduled break durations.</p>
+<hr />
+<h2 id="building-this-into-a-recurring-process">Building This Into a Recurring Process<a class="headerlink" href="#building-this-into-a-recurring-process" title="Permanent link">&para;</a></h2>
+<p>Don't calculate staffing once and forget about it. Set up a weekly cadence:</p>
+<ol>
+<li><strong>Monday morning:</strong> Pull last week's actual volume, AHT, and service level by half-hour. Compare to your model.</li>
+<li><strong>Adjust assumptions:</strong> If your model was off by more than 10%, update your shrinkage rate, AHT, or volume projection.</li>
+<li><strong>Two-week forecast:</strong> Use the adjusted model to predict staffing needs for the next two weeks.</li>
+<li><strong>Monthly recalibration:</strong> Every month, recalculate your baseline shrinkage percentage from actual data.</li>
+</ol>
+<p>If you're running VICIdial, build a Grafana dashboard that shows predicted vs. actual service level by half-hour. Our guide on <a href="https://vicistack.com/blog/vicidial-grafana-dashboards/">VICIdial Grafana dashboards</a> covers the setup. When the predicted and actual lines diverge, your model needs recalibration.</p>
+<p>For operations with 50+ agents, consider a proper workforce management tool. But for operations under 50 agents, a Python script running the adjusted Erlang C formula against a half-hour volume grid will get you 90% of the way there at zero software cost. The formulas in this guide are everything you need.</p>
+<p>The math isn't hard. The discipline to keep updating your inputs is the hard part. But a call center that gets staffing right -- not just once, but every week -- runs at lower cost with better service levels than one that throws bodies at problems. That's the whole game.</p>
+<p>If you're setting up your VICIdial operation from scratch and need help sizing your infrastructure alongside your staffing, take a look at our <a href="https://vicistack.com/blog/vicidial-setup-guide/">VICIdial setup guide</a> for the server-side capacity planning. And if your real problem isn't how many agents you have but how well they perform, our <a href="https://vicistack.com/blog/vicidial-agent-efficiency-metrics/">agent efficiency metrics guide</a> covers the KPIs that actually predict revenue.</p>
+<hr />
+<p><em>Got a staffing question that doesn't fit neatly into a formula? <a href="https://vicistack.com/contact/">Contact ViciStack</a> — we've built staffing models for call centers from 5 agents to 500.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/call-center-staffing-formula">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4868 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/hosted-vs-self-hosted-dialer-cost/">
+      
+      
+        <link rel="prev" href="../goautodial-to-vicidial-migration/">
+      
+      
+        <link rel="next" href="../how-we-built-ai-voice-agents/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers) - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-true-cost-of-hosted-dialers-vs-self-hosted-vicidial-with-real-numbers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-lie-that-hosted-is-easier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Lie That Hosted Is "Easier"
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-hosted-dialers-actually-charge-platform-by-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Hosted Dialers Actually Charge: Platform by Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What Hosted Dialers Actually Charge: Platform by Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#five9-the-enterprise-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Five9 --- The Enterprise Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convoso-outbound-specialist-opaque-pricing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Convoso --- Outbound Specialist, Opaque Pricing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nice-cxone-enterprise-at-enterprise-prices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NICE CXone --- Enterprise at Enterprise Prices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#genesys-cloud-cx-strong-platform-sneaky-telecom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Genesys Cloud CX --- Strong Platform, Sneaky Telecom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ringcentral-ringcx-deceptive-stacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RingCentral RingCX --- Deceptive Stacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#twilio-flex-the-developer-money-pit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Twilio Flex --- The Developer Money Pit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-the-transparent-option" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools --- The Transparent Option
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readymode-no-contract-unlimited-outbound" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ReadyMode --- No-Contract Unlimited Outbound
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gohighlevel-not-a-call-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GoHighLevel --- Not a Call Center
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-master-comparison-50-seats-annual-cost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Master Comparison: 50 Seats, Annual Cost
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-hidden-cost-categories-nobody-puts-on-the-pricing-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hidden Cost Categories Nobody Puts on the Pricing Page
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Hidden Cost Categories Nobody Puts on the Pricing Page">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#per-minute-telecom-fees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Minute Telecom Fees
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sms-and-a2p-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SMS and A2P Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workforce-and-quality-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workforce and Quality Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-integration-fees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM Integration Fees
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onboarding-and-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onboarding and Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-auto-renewal-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Auto-Renewal Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#self-hosted-vicidial-the-honest-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-Hosted VICIdial: The Honest TCO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Self-Hosted VICIdial: The Honest TCO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-vicidial-actually-costs-at-20-50-100-and-200-seats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What VICIdial Actually Costs at 20, 50, 100, and 200 Seats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What VICIdial Actually Costs at 20, 50, 100, and 200 Seats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20-agents-single-all-in-one-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20 Agents --- Single All-in-One Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#50-agents-db-server-2-dialers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        50 Agents --- DB Server + 2 Dialers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#100-agents-db-4-dialers-web-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100 Agents --- DB + 4 Dialers + Web Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#200-agents-full-cluster-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        200 Agents --- Full Cluster Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-per-agent-cost-curve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Per-Agent Cost Curve
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-3-year-tco-comparison-where-the-real-money-shows-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 3-Year TCO Comparison: Where the Real Money Shows Up
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 3-Year TCO Comparison: Where the Real Money Shows Up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#50-agents-3-year-head-to-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        50 Agents --- 3-Year Head-to-Head
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-same-math-at-other-scales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Same Math at Other Scales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Same Math at Other Scales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20-agents-3-year-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20 Agents --- 3-Year TCO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#100-agents-3-year-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100 Agents --- 3-Year TCO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#200-agents-3-year-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        200 Agents --- 3-Year TCO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-numbers-dont-capture-control-flexibility-and-lock-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Numbers Don't Capture: Control, Flexibility, and Lock-In
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the Numbers Don&#39;t Capture: Control, Flexibility, and Lock-In">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#carrier-arbitrage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Arbitrage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-contract-lock-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Contract Lock-In
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dialer-algorithm-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dialer Algorithm Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#database-level-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database-Level Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-hosted-wins-and-when-it-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Hosted Wins (And When It Doesn't)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-lie-that-hosted-is-easier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Lie That Hosted Is "Easier"
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-hosted-dialers-actually-charge-platform-by-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Hosted Dialers Actually Charge: Platform by Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What Hosted Dialers Actually Charge: Platform by Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#five9-the-enterprise-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Five9 --- The Enterprise Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convoso-outbound-specialist-opaque-pricing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Convoso --- Outbound Specialist, Opaque Pricing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nice-cxone-enterprise-at-enterprise-prices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NICE CXone --- Enterprise at Enterprise Prices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#genesys-cloud-cx-strong-platform-sneaky-telecom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Genesys Cloud CX --- Strong Platform, Sneaky Telecom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ringcentral-ringcx-deceptive-stacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RingCentral RingCX --- Deceptive Stacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#twilio-flex-the-developer-money-pit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Twilio Flex --- The Developer Money Pit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calltools-the-transparent-option" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CallTools --- The Transparent Option
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readymode-no-contract-unlimited-outbound" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ReadyMode --- No-Contract Unlimited Outbound
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gohighlevel-not-a-call-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GoHighLevel --- Not a Call Center
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-master-comparison-50-seats-annual-cost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Master Comparison: 50 Seats, Annual Cost
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-hidden-cost-categories-nobody-puts-on-the-pricing-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hidden Cost Categories Nobody Puts on the Pricing Page
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Hidden Cost Categories Nobody Puts on the Pricing Page">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#per-minute-telecom-fees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Minute Telecom Fees
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sms-and-a2p-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SMS and A2P Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workforce-and-quality-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workforce and Quality Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-integration-fees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM Integration Fees
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onboarding-and-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onboarding and Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-auto-renewal-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Auto-Renewal Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#self-hosted-vicidial-the-honest-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-Hosted VICIdial: The Honest TCO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Self-Hosted VICIdial: The Honest TCO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-vicidial-actually-costs-at-20-50-100-and-200-seats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What VICIdial Actually Costs at 20, 50, 100, and 200 Seats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What VICIdial Actually Costs at 20, 50, 100, and 200 Seats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20-agents-single-all-in-one-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20 Agents --- Single All-in-One Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#50-agents-db-server-2-dialers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        50 Agents --- DB Server + 2 Dialers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#100-agents-db-4-dialers-web-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100 Agents --- DB + 4 Dialers + Web Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#200-agents-full-cluster-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        200 Agents --- Full Cluster Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-per-agent-cost-curve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Per-Agent Cost Curve
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-3-year-tco-comparison-where-the-real-money-shows-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 3-Year TCO Comparison: Where the Real Money Shows Up
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 3-Year TCO Comparison: Where the Real Money Shows Up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#50-agents-3-year-head-to-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        50 Agents --- 3-Year Head-to-Head
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-same-math-at-other-scales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Same Math at Other Scales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Same Math at Other Scales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20-agents-3-year-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20 Agents --- 3-Year TCO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#100-agents-3-year-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100 Agents --- 3-Year TCO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#200-agents-3-year-tco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        200 Agents --- 3-Year TCO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-numbers-dont-capture-control-flexibility-and-lock-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Numbers Don't Capture: Control, Flexibility, and Lock-In
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the Numbers Don&#39;t Capture: Control, Flexibility, and Lock-In">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#carrier-arbitrage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carrier Arbitrage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-contract-lock-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Contract Lock-In
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dialer-algorithm-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dialer Algorithm Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#database-level-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database-Level Reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-hosted-wins-and-when-it-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Hosted Wins (And When It Doesn't)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="the-true-cost-of-hosted-dialers-vs-self-hosted-vicidial-with-real-numbers">The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)<a class="headerlink" href="#the-true-cost-of-hosted-dialers-vs-self-hosted-vicidial-with-real-numbers" title="Permanent link">&para;</a></h1>
+<p>Every call center manager has heard the pitch. "Switch to our hosted platform --- no servers to manage, no sysadmins to hire, just log in and start dialing." It sounds clean. It sounds modern. And for some operations, it genuinely makes sense.</p>
+<p>But for most outbound call centers running 30 or more seats, the "simplicity" of hosted dialers comes at a price that gets buried in add-on fees, per-minute telecom charges, multi-year contracts, and auto-renewal traps that make cable companies look transparent.</p>
+<p>This article puts real numbers on the table. We researched published pricing, verified against third-party sources, and built total cost models for nine hosted platforms and self-hosted VICIdial at multiple scales. No sales pitch --- just math.</p>
+<h2 id="the-lie-that-hosted-is-easier">The Lie That Hosted Is "Easier"<a class="headerlink" href="#the-lie-that-hosted-is-easier" title="Permanent link">&para;</a></h2>
+<p>Hosted platforms sell two things: features and simplicity. The feature comparison is real and worth having (we have written separate articles on <a href="/blog/vicidial-vs-five9/">VICIdial vs Five9</a>, <a href="/blog/vicidial-vs-convoso/">vs Convoso</a>, and <a href="/blog/vicidial-vs-genesys/">vs Genesys</a>). The simplicity argument, though, deserves scrutiny.</p>
+<p>Yes, hosted means someone else manages the infrastructure. You don't provision servers. You don't patch Asterisk. You don't tune MariaDB. That is a real benefit, and it has real value.</p>
+<p>But "simple" does not mean "cheap," and it does not mean "hassle-free."</p>
+<p>Here is what hosted platform customers actually deal with:</p>
+<ul>
+<li><strong>Opaque pricing.</strong> Convoso, NICE, and Genesys do not publish their real per-seat costs. You have to talk to sales, get a quote, and negotiate --- all before you know if the platform fits your budget.</li>
+<li><strong>Per-minute telecom stacking.</strong> Most platforms charge seat licenses <em>plus</em> per-minute voice fees <em>plus</em> SMS fees <em>plus</em> carrier surcharges. The published seat price is the starting line, not the finish.</li>
+<li><strong>Feature gatekeeping.</strong> Workforce management, quality management, advanced analytics, AI transcription --- all locked behind higher tiers or sold as per-seat add-ons. Five9's WFM is only available on the Optimum tier ($200+/seat). Genesys charges 55% more for CX 4 vs CX 3.</li>
+<li><strong>Contract lock-in.</strong> Five9 requires a 36-month contract that auto-renews for the same term length unless you email their billing team 30 days before renewal. Miss that window and you are locked for another three years.</li>
+<li><strong>Data hostage risk.</strong> Most platforms make it difficult to export call recordings, customer data, and campaign configurations. Migrating away requires significant effort and potential data loss.</li>
+</ul>
+<p>Self-hosted VICIdial has its own costs --- and we will be honest about every one of them. But you should walk into the hosted vs self-hosted decision with clear eyes about what "managed simplicity" actually costs.</p>
+<h2 id="what-hosted-dialers-actually-charge-platform-by-platform">What Hosted Dialers Actually Charge: Platform by Platform<a class="headerlink" href="#what-hosted-dialers-actually-charge-platform-by-platform" title="Permanent link">&para;</a></h2>
+<p>We researched nine platforms that compete in the outbound call center space. Here is what they charge for a 50-seat operation --- including the fees they don't put on the pricing page.</p>
+<h3 id="five9-the-enterprise-default">Five9 --- The Enterprise Default<a class="headerlink" href="#five9-the-enterprise-default" title="Permanent link">&para;</a></h3>
+<p>Five9 is the name that comes up in every RFP. Their published pricing starts at $119/seat for Core voice-only, but internal estimates put the actual tier most call centers need at $159/seat.</p>
+<p><strong>The fine print:</strong>
+- 50-seat minimum on all plans
+- 36-month contract required
+- Auto-renews for the same term unless you email billing@five9.com 30 days before renewal
+- Salesforce integration reportedly costs $13,000+
+- WFM and QM only included in Optimum ($200+) and Ultimate ($229-299) tiers
+- Each plan includes 3,000 AI minutes per seat; overages billed per-minute
+- G2 reviewers consistently flag "nickel-and-diming via add-ons"</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low</th>
+<th>High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seats (50 x $159 Core)</td>
+<td>$7,950</td>
+<td>$7,950</td>
+</tr>
+<tr>
+<td>CRM integration</td>
+<td>$400</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td>WFM add-on</td>
+<td>$500</td>
+<td>$1,500</td>
+</tr>
+<tr>
+<td>Messaging/SMS</td>
+<td>$200</td>
+<td>$500</td>
+</tr>
+<tr>
+<td>AI features</td>
+<td>$300</td>
+<td>$800</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$9,350</strong></td>
+<td><strong>$11,750</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$112,200</strong></td>
+<td><strong>$141,000</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="convoso-outbound-specialist-opaque-pricing">Convoso --- Outbound Specialist, Opaque Pricing<a class="headerlink" href="#convoso-outbound-specialist-opaque-pricing" title="Permanent link">&para;</a></h3>
+<p>Convoso is built for outbound and does it well. But their pricing model is aggressively opaque: custom quotes only, with per-agent <em>and</em> per-minute billing on top.</p>
+<p><strong>The fine print:</strong>
+- Starting price estimated at ~$90/seat/month (Capterra data --- not published by Convoso)
+- Per-minute telecom charges of $0.02-$0.10/min stacked on seat fees
+- "Adding desired features becomes too expensive due to per-agent pricing" --- G2 reviewer
+- Annual contracts typical for volume discounts
+- At 50 seats doing 330K outbound minutes, telecom alone runs $6,600-$16,500/month</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low</th>
+<th>High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seats (50 x $90 est.)</td>
+<td>$4,500</td>
+<td>$4,500</td>
+</tr>
+<tr>
+<td>Per-minute telco (~330K min)</td>
+<td>$6,600</td>
+<td>$16,500</td>
+</tr>
+<tr>
+<td>Feature add-ons</td>
+<td>$500</td>
+<td>$2,000</td>
+</tr>
+<tr>
+<td>SMS/A2P fees</td>
+<td>$200</td>
+<td>$800</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$11,800</strong></td>
+<td><strong>$23,800</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$141,600</strong></td>
+<td><strong>$285,600</strong></td>
+</tr>
+</tbody>
+</table>
+<p>A high-volume outbound shop can pay more than double what a low-volume blended center pays, and you will not know which end you fall on until Convoso sends the first invoice.</p>
+<h3 id="nice-cxone-enterprise-at-enterprise-prices">NICE CXone --- Enterprise at Enterprise Prices<a class="headerlink" href="#nice-cxone-enterprise-at-enterprise-prices" title="Permanent link">&para;</a></h3>
+<p>NICE publishes their pricing more transparently than most enterprise platforms. Their voice-only tier starts at $94/seat, scaling to $249/seat for the Ultimate Suite with full AI automation.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low (Voice)</th>
+<th>High (Complete)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seats (50)</td>
+<td>$4,700</td>
+<td>$10,450</td>
+</tr>
+<tr>
+<td>Telecom (~330K min)</td>
+<td>$2,970</td>
+<td>$4,950</td>
+</tr>
+<tr>
+<td>Implementation (amortized)</td>
+<td>$417</td>
+<td>$2,500</td>
+</tr>
+<tr>
+<td>Add-ons</td>
+<td>$200</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$8,287</strong></td>
+<td><strong>$18,900</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$99,444</strong></td>
+<td><strong>$226,800</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Implementation runs $5,000-$30,000 depending on size. The one upside: NICE offers monthly billing, no long-term contract required.</p>
+<h3 id="genesys-cloud-cx-strong-platform-sneaky-telecom">Genesys Cloud CX --- Strong Platform, Sneaky Telecom<a class="headerlink" href="#genesys-cloud-cx-strong-platform-sneaky-telecom" title="Permanent link">&para;</a></h3>
+<p>Genesys publishes clean per-seat tiers: $75 (CX 1), $115 (CX 2), $155 (CX 3), $240 (CX 4). But the telecom charges --- $0.009-$0.015/min inbound, $0.0119/min outbound --- add 20-40% to the total bill for high-volume centers.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low (CX 1)</th>
+<th>High (CX 3)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seats (50)</td>
+<td>$3,750</td>
+<td>$7,750</td>
+</tr>
+<tr>
+<td>Telecom (~330K min)</td>
+<td>$3,927</td>
+<td>$3,927</td>
+</tr>
+<tr>
+<td>Implementation (amortized)</td>
+<td>$500</td>
+<td>$2,000</td>
+</tr>
+<tr>
+<td>Add-ons</td>
+<td>$200</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$8,377</strong></td>
+<td><strong>$14,677</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$100,524</strong></td>
+<td><strong>$176,124</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Complex deployments can take 6-12 months and cost tens of thousands in professional services.</p>
+<h3 id="ringcentral-ringcx-deceptive-stacking">RingCentral RingCX --- Deceptive Stacking<a class="headerlink" href="#ringcentral-ringcx-deceptive-stacking" title="Permanent link">&para;</a></h3>
+<p>RingCentral's pricing looks reasonable at $65/seat for RingCX. What they don't emphasize: you also need RingEX as a base account at $20-35/seat. The actual per-seat cost is $85-100/month minimum before add-ons.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low</th>
+<th>High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RingEX base (50 x $25)</td>
+<td>$1,250</td>
+<td>$1,250</td>
+</tr>
+<tr>
+<td>RingCX (50 x $65)</td>
+<td>$3,250</td>
+<td>$3,250</td>
+</tr>
+<tr>
+<td>Phone numbers</td>
+<td>$250</td>
+<td>$500</td>
+</tr>
+<tr>
+<td>Add-ons and overages</td>
+<td>$300</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$5,050</strong></td>
+<td><strong>$6,000</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$60,600</strong></td>
+<td><strong>$72,000</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="twilio-flex-the-developer-money-pit">Twilio Flex --- The Developer Money Pit<a class="headerlink" href="#twilio-flex-the-developer-money-pit" title="Permanent link">&para;</a></h3>
+<p>Twilio Flex's $150/seat named-user pricing looks competitive. But Flex is a development platform, not a turnkey dialer. Every queue, every routing rule, every UI element requires developer time to build and maintain.</p>
+<p><strong>The real cost nobody talks about:</strong>
+- Implementation: $10,000-$50,000+ in professional services
+- Developer cost to build and maintain: $100,000-$500,000 initial plus ongoing
+- Minimum 2+ weeks deployment time
+- Every change (new queue, bug fix, feature addition) requires engineering resources</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low</th>
+<th>High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seats (50 x $150)</td>
+<td>$7,500</td>
+<td>$7,500</td>
+</tr>
+<tr>
+<td>Voice minutes (~330K)</td>
+<td>$4,620</td>
+<td>$4,620</td>
+</tr>
+<tr>
+<td>Phone numbers and SMS</td>
+<td>$267</td>
+<td>$318</td>
+</tr>
+<tr>
+<td>Implementation (amortized/3yr)</td>
+<td>$278</td>
+<td>$1,389</td>
+</tr>
+<tr>
+<td>Developer maintenance</td>
+<td>$4,000</td>
+<td>$10,000</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$16,665</strong></td>
+<td><strong>$23,827</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$199,980</strong></td>
+<td><strong>$285,924</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Twilio Flex is the most expensive option here when you honestly account for engineering resources.</p>
+<h3 id="calltools-the-transparent-option">CallTools --- The Transparent Option<a class="headerlink" href="#calltools-the-transparent-option" title="Permanent link">&para;</a></h3>
+<p>CallTools stands out for including unlimited inbound and outbound minutes in their seat price. $101.99/seat on a 12-month contract, $119.99 month-to-month. What you see is close to what you pay.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low (12-mo)</th>
+<th>High (month-to-month)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seats (50)</td>
+<td>$5,100</td>
+<td>$6,000</td>
+</tr>
+<tr>
+<td>SMS (~50K messages)</td>
+<td>$750</td>
+<td>$750</td>
+</tr>
+<tr>
+<td>Setup (amortized)</td>
+<td>$21</td>
+<td>$21</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$5,871</strong></td>
+<td><strong>$6,771</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$70,452</strong></td>
+<td><strong>$81,252</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="readymode-no-contract-unlimited-outbound">ReadyMode --- No-Contract Unlimited Outbound<a class="headerlink" href="#readymode-no-contract-unlimited-outbound" title="Permanent link">&para;</a></h3>
+<p>ReadyMode (formerly XenCall) offers unlimited outbound calling with no contract required. Enterprise pricing for 50+ seats is custom, but Team tier runs $100-120/seat.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Low (Enterprise est.)</th>
+<th>High (Team monthly)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seats (50)</td>
+<td>$4,000</td>
+<td>$6,000</td>
+</tr>
+<tr>
+<td>Inbound minutes (~50K)</td>
+<td>$1,000</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td>Additional DIDs</td>
+<td>$0</td>
+<td>$200</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$5,000</strong></td>
+<td><strong>$7,200</strong></td>
+</tr>
+<tr>
+<td><strong>Annual Total</strong></td>
+<td><strong>$60,000</strong></td>
+<td><strong>$86,400</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="gohighlevel-not-a-call-center">GoHighLevel --- Not a Call Center<a class="headerlink" href="#gohighlevel-not-a-call-center" title="Permanent link">&para;</a></h3>
+<p>GHL comes up in every pricing discussion because $297/month for unlimited users looks absurdly cheap. But it is a CRM and marketing platform, not a call center dialer. No predictive dialer, no ACD, no queue management, no agent monitoring. Not a serious option for 50-seat outbound operations.</p>
+<h2 id="the-master-comparison-50-seats-annual-cost">The Master Comparison: 50 Seats, Annual Cost<a class="headerlink" href="#the-master-comparison-50-seats-annual-cost" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Low Annual</th>
+<th>High Annual</th>
+<th>Contract</th>
+<th>Minutes Included</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ReadyMode</td>
+<td>$60,000</td>
+<td>$86,400</td>
+<td>None</td>
+<td>Outbound unlimited</td>
+</tr>
+<tr>
+<td>RingCentral</td>
+<td>$60,600</td>
+<td>$72,000</td>
+<td>Annual</td>
+<td>Varies</td>
+</tr>
+<tr>
+<td>CallTools</td>
+<td>$70,452</td>
+<td>$81,252</td>
+<td>12-month</td>
+<td>Unlimited</td>
+</tr>
+<tr>
+<td>NICE CXone</td>
+<td>$99,444</td>
+<td>$226,800</td>
+<td>Monthly OK</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Genesys Cloud</td>
+<td>$100,524</td>
+<td>$176,124</td>
+<td>Annual</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Five9</td>
+<td>$112,200</td>
+<td>$141,000</td>
+<td>36 months</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Convoso</td>
+<td>$141,600</td>
+<td>$285,600</td>
+<td>Annual typical</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Twilio Flex</td>
+<td>$199,980</td>
+<td>$285,924</td>
+<td>None</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>The cheapest hosted option (ReadyMode at $60K/year) costs less than half what Twilio Flex runs at the high end ($286K/year). And that $60K floor is still $5,000/month before you add a single non-included feature.</p>
+<h2 id="the-hidden-cost-categories-nobody-puts-on-the-pricing-page">The Hidden Cost Categories Nobody Puts on the Pricing Page<a class="headerlink" href="#the-hidden-cost-categories-nobody-puts-on-the-pricing-page" title="Permanent link">&para;</a></h2>
+<p>Across every hosted platform we researched, these costs show up after you sign the contract:</p>
+<h3 id="per-minute-telecom-fees">Per-Minute Telecom Fees<a class="headerlink" href="#per-minute-telecom-fees" title="Permanent link">&para;</a></h3>
+<p>Most "per-seat" platforms charge voice minutes separately. At 330,000 minutes per month (50 agents, 8-hour shifts, 20 working days), telecom adds $3,300-$33,000/month depending on the platform and rate. Only CallTools and ReadyMode include unlimited outbound minutes in their seat price.</p>
+<h3 id="sms-and-a2p-compliance">SMS and A2P Compliance<a class="headerlink" href="#sms-and-a2p-compliance" title="Permanent link">&para;</a></h3>
+<p>Per-message fees of $0.004-$0.015 per segment, plus carrier pass-through fees from T-Mobile ($0.0025/message) and Verizon ($0.004/message). Most platforms mark up carrier rates 50-200%. A2P 10DLC registration is a one-time $4-12 per brand, but the ongoing per-message costs add up fast at volume.</p>
+<h3 id="workforce-and-quality-management">Workforce and Quality Management<a class="headerlink" href="#workforce-and-quality-management" title="Permanent link">&para;</a></h3>
+<p>WFM and QM are only included in premium tiers on Five9 (Optimum, $200+/seat), Genesys (CX 3, $155/seat), and NICE (Complete Suite, $209/seat). As add-ons, they run $30-$80/seat/month. At 50 seats, that is $1,500-$4,000/month for features that VICIdial handles with a $2-5/agent QueueMetrics license.</p>
+<h3 id="crm-integration-fees">CRM Integration Fees<a class="headerlink" href="#crm-integration-fees" title="Permanent link">&para;</a></h3>
+<p>Most platforms charge $50-$200/month per integration. Five9's Salesforce connector reportedly costs $13,000+. Custom API access is often locked behind premium tiers.</p>
+<h3 id="onboarding-and-implementation">Onboarding and Implementation<a class="headerlink" href="#onboarding-and-implementation" title="Permanent link">&para;</a></h3>
+<p>Ranges wildly by platform: CallTools and ReadyMode charge minimal to nothing. Five9 reportedly charges $5,000+. Genesys runs $5,000-$100,000 depending on complexity. Twilio Flex's implementation costs $10,000-$50,000+ in professional services alone --- and that is before you pay developers to actually build the thing.</p>
+<h3 id="the-auto-renewal-trap">The Auto-Renewal Trap<a class="headerlink" href="#the-auto-renewal-trap" title="Permanent link">&para;</a></h3>
+<p>Five9 auto-renews for the same contract length (potentially another 36 months) unless you email their billing department 30 days before the renewal date. Industry-wide, 10-20% price increases at renewal are common. Early termination fees run 50-75% of remaining contract value.</p>
+<h2 id="self-hosted-vicidial-the-honest-tco">Self-Hosted VICIdial: The Honest TCO<a class="headerlink" href="#self-hosted-vicidial-the-honest-tco" title="Permanent link">&para;</a></h2>
+<p>Now let's build the same kind of honest cost model for VICIdial. No pretending the software is "free" means the platform is free. Every dollar accounted for.</p>
+<h3 id="what-vicidial-actually-costs-at-20-50-100-and-200-seats">What VICIdial Actually Costs at 20, 50, 100, and 200 Seats<a class="headerlink" href="#what-vicidial-actually-costs-at-20-50-100-and-200-seats" title="Permanent link">&para;</a></h3>
+<p><strong>Architecture assumptions:</strong>
+- Dedicated servers at Hetzner or OVH ($57-$100/server/month)
+- SIP trunking via VoIP.ms (Premium route, $0.01/min outbound)
+- Part-time contractor admin at $75/hour for smaller operations
+- Full-time hire at 100+ seats
+- <a href="https://vicistack.com/">ViciStack support</a> at $75/month
+- DNC scrubbing, caller ID reputation management, and DR included</p>
+<p>For reference, here is what the 50-seat architecture looks like in practice --- three dedicated servers with clearly separated roles:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 50-Seat VICIdial Cluster Architecture</span>
+<span class="c1">#</span>
+<span class="c1"># Server 1 (DB):     MariaDB 10.11, Apache/PHP, admin web UI</span>
+<span class="c1">#                     Hetzner AX42: AMD Ryzen 7 7700, 64GB RAM, 2x1TB NVMe</span>
+<span class="c1">#</span>
+<span class="c1"># Server 2 (Dialer): Asterisk 20 LTS, 25 agent sessions + 125 SIP trunks</span>
+<span class="c1">#                     VoIP.ms primary carrier, Flowroute failover</span>
+<span class="c1">#</span>
+<span class="c1"># Server 3 (Dialer): Asterisk 20 LTS, 25 agent sessions + 125 SIP trunks</span>
+<span class="c1">#                     Same carrier config, load balanced via the DB server</span>
+<span class="c1">#</span>
+<span class="c1"># All servers: Rocky Linux 9, VICIbox 11.x install</span>
+<span class="c1"># Monitoring: Grafana + Prometheus node_exporter on each box</span>
+<span class="c1"># Backups: nightly mysqldump to Backblaze B2 via rclone cron</span>
+</code></pre></div>
+
+<p>Every server runs $57/month. That is $171/month for the entire cluster --- less than what Five9 charges for a single seat.</p>
+<h4 id="20-agents-single-all-in-one-server">20 Agents --- Single All-in-One Server<a class="headerlink" href="#20-agents-single-all-in-one-server" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Cost Category</th>
+<th>Monthly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server (1x Hetzner AX42)</td>
+<td>$57</td>
+</tr>
+<tr>
+<td>SIP outbound (~26K connected min)</td>
+<td>$260</td>
+</tr>
+<tr>
+<td>DIDs (30 numbers, VoIP.ms flat)</td>
+<td>$173</td>
+</tr>
+<tr>
+<td>Linux admin (10 hrs x $75/hr)</td>
+<td>$750</td>
+</tr>
+<tr>
+<td>ViciStack support</td>
+<td>$75</td>
+</tr>
+<tr>
+<td>DNC scrubbing</td>
+<td>$250</td>
+</tr>
+<tr>
+<td>Caller ID reputation</td>
+<td>$200</td>
+</tr>
+<tr>
+<td>DR (backup + cloud storage)</td>
+<td>$80</td>
+</tr>
+<tr>
+<td>Software add-ons</td>
+<td>$500</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$2,345</strong></td>
+</tr>
+<tr>
+<td><strong>Per Agent/Month</strong></td>
+<td><strong>$117</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="50-agents-db-server-2-dialers">50 Agents --- DB Server + 2 Dialers<a class="headerlink" href="#50-agents-db-server-2-dialers" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Cost Category</th>
+<th>Monthly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Servers (3x Hetzner AX42)</td>
+<td>$171</td>
+</tr>
+<tr>
+<td>SIP outbound (~66K connected min)</td>
+<td>$660</td>
+</tr>
+<tr>
+<td>DIDs (100 numbers, VoIP.ms flat+reg)</td>
+<td>$575</td>
+</tr>
+<tr>
+<td>Linux admin (20 hrs x $75/hr)</td>
+<td>$1,500</td>
+</tr>
+<tr>
+<td>ViciStack support</td>
+<td>$75</td>
+</tr>
+<tr>
+<td>DNC scrubbing</td>
+<td>$500</td>
+</tr>
+<tr>
+<td>Caller ID reputation</td>
+<td>$300</td>
+</tr>
+<tr>
+<td>DR (replica server + Backblaze B2)</td>
+<td>$72</td>
+</tr>
+<tr>
+<td>Software add-ons</td>
+<td>$250</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$4,103</strong></td>
+</tr>
+<tr>
+<td><strong>Per Agent/Month</strong></td>
+<td><strong>$82</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="100-agents-db-4-dialers-web-server">100 Agents --- DB + 4 Dialers + Web Server<a class="headerlink" href="#100-agents-db-4-dialers-web-server" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Cost Category</th>
+<th>Monthly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Servers (6x Hetzner AX42)</td>
+<td>$342</td>
+</tr>
+<tr>
+<td>SIP outbound (~132K connected min)</td>
+<td>$1,320</td>
+</tr>
+<tr>
+<td>DIDs (200 numbers)</td>
+<td>$1,150</td>
+</tr>
+<tr>
+<td>Linux admin (full-time hire, $100K/yr loaded)</td>
+<td>$8,333</td>
+</tr>
+<tr>
+<td>Support (managed provider)</td>
+<td>$2,000</td>
+</tr>
+<tr>
+<td>DNC scrubbing</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td>Caller ID reputation</td>
+<td>$500</td>
+</tr>
+<tr>
+<td>DR (full mirror cluster)</td>
+<td>$500</td>
+</tr>
+<tr>
+<td>Software add-ons</td>
+<td>$1,500</td>
+</tr>
+<tr>
+<td>Compliance tooling</td>
+<td>$1,500</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$18,145</strong></td>
+</tr>
+<tr>
+<td><strong>Per Agent/Month</strong></td>
+<td><strong>$181</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="200-agents-full-cluster-architecture">200 Agents --- Full Cluster Architecture<a class="headerlink" href="#200-agents-full-cluster-architecture" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Cost Category</th>
+<th>Monthly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Servers (12x Hetzner AX42)</td>
+<td>$684</td>
+</tr>
+<tr>
+<td>SIP outbound (~264K connected min)</td>
+<td>$2,640</td>
+</tr>
+<tr>
+<td>DIDs (400 numbers)</td>
+<td>$2,300</td>
+</tr>
+<tr>
+<td>Linux admin (senior + junior, $170K/yr loaded)</td>
+<td>$14,167</td>
+</tr>
+<tr>
+<td>Support (vendor escalation)</td>
+<td>$3,500</td>
+</tr>
+<tr>
+<td>DNC scrubbing</td>
+<td>$2,500</td>
+</tr>
+<tr>
+<td>Caller ID reputation</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td>DR (active-active across 2 DCs)</td>
+<td>$1,500</td>
+</tr>
+<tr>
+<td>Software add-ons</td>
+<td>$3,000</td>
+</tr>
+<tr>
+<td>Compliance (dedicated function)</td>
+<td>$5,000</td>
+</tr>
+<tr>
+<td><strong>Monthly Total</strong></td>
+<td><strong>$36,291</strong></td>
+</tr>
+<tr>
+<td><strong>Per Agent/Month</strong></td>
+<td><strong>$181</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-per-agent-cost-curve">The Per-Agent Cost Curve<a class="headerlink" href="#the-per-agent-cost-curve" title="Permanent link">&para;</a></h3>
+<p>Something important happens in the VICIdial cost model that does not happen with hosted platforms: the per-agent cost is not linear.</p>
+<table>
+<thead>
+<tr>
+<th>Scale</th>
+<th>Server/Agent</th>
+<th>Telecom/Agent</th>
+<th>Admin/Agent</th>
+<th>Everything Else/Agent</th>
+<th><strong>Total/Agent</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20 agents</td>
+<td>$2.85</td>
+<td>$21.65</td>
+<td>$37.50</td>
+<td>$55.25</td>
+<td><strong>$117</strong></td>
+</tr>
+<tr>
+<td>50 agents</td>
+<td>$3.42</td>
+<td>$24.70</td>
+<td>$30.00</td>
+<td><strong>$23.94</strong></td>
+<td><strong>$82</strong></td>
+</tr>
+<tr>
+<td>100 agents</td>
+<td>$3.42</td>
+<td>$24.70</td>
+<td>$83.33</td>
+<td>$70.00</td>
+<td><strong>$181</strong></td>
+</tr>
+<tr>
+<td>200 agents</td>
+<td>$3.42</td>
+<td>$24.70</td>
+<td>$70.84</td>
+<td>$82.50</td>
+<td><strong>$181</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The 100-agent bump is real and worth understanding. At 50 seats, you are using a part-time contractor for admin work. At 100 seats, you need a full-time hire --- and that full-time salary doesn't get cheaper because you have exactly 100 agents instead of 200. The admin cost per seat temporarily spikes from $30 to $83 before dropping back to $71 at 200 agents as that salary spreads across more seats.</p>
+<p>Telecom, by contrast, stays flat per agent at every scale. Minutes are minutes. You cannot negotiate a lower per-minute rate by having more agents --- you just use more minutes.</p>
+<blockquote>
+<p><strong>Not sure if self-hosting is right for your operation?</strong> <a href="/free-audit/">Get a free ViciStack TCO audit</a> and we will map your current costs against VICIdial at your exact scale --- no obligation.</p>
+</blockquote>
+<h2 id="the-3-year-tco-comparison-where-the-real-money-shows-up">The 3-Year TCO Comparison: Where the Real Money Shows Up<a class="headerlink" href="#the-3-year-tco-comparison-where-the-real-money-shows-up" title="Permanent link">&para;</a></h2>
+<p>Short-term costs are one thing. But call center infrastructure is a multi-year decision. Here is what each platform costs over three years at 50 seats.</p>
+<h3 id="50-agents-3-year-head-to-head">50 Agents --- 3-Year Head-to-Head<a class="headerlink" href="#50-agents-3-year-head-to-head" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Five9</th>
+<th>Convoso</th>
+<th>VICIdial Self-Hosted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seat licensing</td>
+<td>$286,200</td>
+<td>$162,000</td>
+<td>$0 (open source)</td>
+</tr>
+<tr>
+<td>Telecom + DIDs</td>
+<td>$64,800</td>
+<td>$82,800</td>
+<td>$43,860</td>
+</tr>
+<tr>
+<td>Admin/support</td>
+<td>$0 (included)</td>
+<td>$0 (included)</td>
+<td>$56,700</td>
+</tr>
+<tr>
+<td>Add-ons + compliance</td>
+<td>$40,896</td>
+<td>$18,000</td>
+<td>$30,300</td>
+</tr>
+<tr>
+<td>Implementation</td>
+<td>$5,000</td>
+<td>$3,000</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td>DR + storage</td>
+<td>$0 (included)</td>
+<td>$0 (included)</td>
+<td>$2,592</td>
+</tr>
+<tr>
+<td>Infrastructure</td>
+<td>$0 (included)</td>
+<td>$0 (included)</td>
+<td>$6,156</td>
+</tr>
+<tr>
+<td><strong>3-Year Total</strong></td>
+<td><strong>$396,896</strong></td>
+<td><strong>$265,800</strong></td>
+<td><strong>$148,708</strong></td>
+</tr>
+<tr>
+<td><strong>Per Agent/Month</strong></td>
+<td><strong>$221</strong></td>
+<td><strong>$148</strong></td>
+<td><strong>$83</strong></td>
+</tr>
+<tr>
+<td><strong>Savings vs Five9</strong></td>
+<td>---</td>
+<td>$131,096 (33%)</td>
+<td><strong>$248,188 (63%)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Self-hosted VICIdial saves $248,000 over three years compared to Five9 at 50 seats. That is two full-time hires. That is a compliance department. That is a year of marketing budget.</p>
+<p>Even against Convoso --- the cheapest of the enterprise hosted platforms at an estimated $90/seat --- VICIdial saves $117,000 over three years. Enough to fund the sysadmin who runs it with money left over.</p>
+<h3 id="the-same-math-at-other-scales">The Same Math at Other Scales<a class="headerlink" href="#the-same-math-at-other-scales" title="Permanent link">&para;</a></h3>
+<h4 id="20-agents-3-year-tco">20 Agents --- 3-Year TCO<a class="headerlink" href="#20-agents-3-year-tco" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Five9*</th>
+<th>Convoso</th>
+<th>VICIdial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3-Year Total</td>
+<td>$185,040</td>
+<td>$122,400</td>
+<td>$84,420</td>
+</tr>
+<tr>
+<td>Per Agent/Month</td>
+<td>$257</td>
+<td>$170</td>
+<td>$117</td>
+</tr>
+</tbody>
+</table>
+<p>*Five9 requires a 50-seat minimum. A 20-agent shop cannot actually purchase Five9 Core. This comparison assumes you could --- the real-world alternative for small operations is something like ReadyMode ($60K-86K/3yr) or CallTools ($70K-81K/3yr).</p>
+<p>At 20 agents, VICIdial still wins, but the margin is thinner. The admin cost per agent is relatively high ($37.50/agent) because you are still paying a contractor for 10 hours a month whether you have 15 agents or 25. The savings over Convoso drop to about $38,000 over three years --- real money, but not the six-figure gap you see at larger scale.</p>
+<h4 id="100-agents-3-year-tco">100 Agents --- 3-Year TCO<a class="headerlink" href="#100-agents-3-year-tco" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Five9</th>
+<th>Convoso</th>
+<th>VICIdial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monthly</td>
+<td>$20,500</td>
+<td>$13,500</td>
+<td>$18,145</td>
+</tr>
+<tr>
+<td>3-Year Total</td>
+<td>$738,000</td>
+<td>$486,000</td>
+<td>$653,220</td>
+</tr>
+<tr>
+<td>Per Agent/Month</td>
+<td>$205</td>
+<td>$135</td>
+<td>$181</td>
+</tr>
+</tbody>
+</table>
+<p>This is where things get interesting. At 100 agents, VICIdial is <em>still</em> cheaper than Five9, but the gap shrinks significantly. The full-time sysadmin hire ($8,333/month loaded) plus expanded compliance costs bring VICIdial closer to hosted pricing. And Convoso actually undercuts VICIdial at this scale if their $90/seat estimate holds.</p>
+<p>The 100-agent range is the awkward middle ground. You are paying enterprise-grade admin costs but still at mid-market scale. If you are going to self-host at 100 agents, you need that sysadmin to be genuinely good --- someone who can tune MariaDB, manage carrier failover, and keep the cluster running at 99.9%+ uptime. A mediocre admin at this scale costs you more in downtime than the salary savings.</p>
+<h4 id="200-agents-3-year-tco">200 Agents --- 3-Year TCO<a class="headerlink" href="#200-agents-3-year-tco" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Five9</th>
+<th>Convoso</th>
+<th>VICIdial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monthly</td>
+<td>$39,000</td>
+<td>$25,000</td>
+<td>$36,291</td>
+</tr>
+<tr>
+<td>3-Year Total</td>
+<td>$1,404,000</td>
+<td>$900,000</td>
+<td>$1,306,476</td>
+</tr>
+<tr>
+<td>Per Agent/Month</td>
+<td>$195</td>
+<td>$125</td>
+<td>$181</td>
+</tr>
+</tbody>
+</table>
+<p>At 200 agents, the admin cost per seat drops back down as you spread two salaries across more seats. VICIdial costs less than Five9 but more than Convoso on a pure dollar basis.</p>
+<p>But pure dollar cost is not the whole picture at this scale.</p>
+<h2 id="what-the-numbers-dont-capture-control-flexibility-and-lock-in">What the Numbers Don't Capture: Control, Flexibility, and Lock-In<a class="headerlink" href="#what-the-numbers-dont-capture-control-flexibility-and-lock-in" title="Permanent link">&para;</a></h2>
+<p>Here is what does not show up in a TCO spreadsheet but matters enormously in practice:</p>
+<h3 id="carrier-arbitrage">Carrier Arbitrage<a class="headerlink" href="#carrier-arbitrage" title="Permanent link">&para;</a></h3>
+<p>With VICIdial, you buy SIP trunking at wholesale rates. VoIP.ms charges $0.01/minute on premium routes. Flowroute charges $0.00833/minute. Telnyx starts at $0.002/minute for volume accounts.</p>
+<p>Hosted platforms mark those same carrier rates up 2-5x and bundle them into your seat price or charge them as "telecom fees." You cannot shop around. You cannot switch carriers if your answer rates drop. You cannot negotiate volume discounts directly with the carrier.</p>
+<p>With VICIdial, switching carriers or adding a failover route is a 5-minute config change in the admin panel --- set up a new carrier entry, point it at your SIP provider's endpoint, set the dial prefix and codec, and assign it to campaigns. No support tickets, no account rep approval, no contract amendments.</p>
+<p>Over three years at 50 seats, telecom markup alone accounts for $20,000-$40,000 of the cost difference.</p>
+<h3 id="no-contract-lock-in">No Contract Lock-In<a class="headerlink" href="#no-contract-lock-in" title="Permanent link">&para;</a></h3>
+<p>Five9 locks you into 36-month contracts with auto-renewal. Most hosted platforms require annual commitments with early termination fees of 50-75% of remaining contract value.</p>
+<p>VICIdial has no contract. You own the servers. You own the data. You own the recordings. If you want to switch carriers tomorrow, you change a SIP trunk config and restart Asterisk. If you want to add 20 seats next week, you spin up another dialer server. If you want to shut down next month, you cancel the hosting and walk away.</p>
+<p>That flexibility has a dollar value. It just doesn't fit in a spreadsheet.</p>
+<h3 id="dialer-algorithm-control">Dialer Algorithm Control<a class="headerlink" href="#dialer-algorithm-control" title="Permanent link">&para;</a></h3>
+<p>VICIdial gives you direct control over predictive dialer ratios, hopper sizes, call timing, retry intervals, and every parameter that affects contact rate. Hosted platforms give you dropdown menus with preset options.</p>
+<p>A 5% improvement in contact rate across 50 agents generating $200/sale is tens of thousands of dollars per month. Dropdown menus do not give you that.</p>
+<h3 id="database-level-reporting">Database-Level Reporting<a class="headerlink" href="#database-level-reporting" title="Permanent link">&para;</a></h3>
+<p>VICIdial runs on MySQL/MariaDB. You can write any query you want against the live database, pipe data into Grafana or Metabase, and build custom dashboards without asking anyone's permission. Hosted platforms give you their reporting interface and a "custom reports" feature that usually does not do what you need.</p>
+<h2 id="when-hosted-wins-and-when-it-doesnt">When Hosted Wins (And When It Doesn't)<a class="headerlink" href="#when-hosted-wins-and-when-it-doesnt" title="Permanent link">&para;</a></h2>
+<p>We are not going to pretend self-hosted VICIdial is the right answer for everyone. This is a business decision, not a technology religion.</p>
+<p><strong>Choose hosted if:</strong></p>
+<ul>
+<li><strong>Under 30 agents with no Linux expertise.</strong> ReadyMode at $5,000-$7,200/month or CallTools at $5,871-$6,771/month gives you a working dialer without the infrastructure headache. VICIdial at 15-20 agents costs $2,000-$2,800/month but requires ongoing technical management that may not be worth the savings.</li>
+<li><strong>You need to scale unpredictably.</strong> Going from 20 to 200 agents next month is a phone call with a hosted provider. With VICIdial, it is a multi-day infrastructure project.</li>
+<li><strong>Compliance certifications are non-negotiable.</strong> Five9 and NICE already have HIPAA, PCI-DSS, and SOC 2. Building that on self-hosted adds complexity and audit costs.</li>
+<li><strong>You need omnichannel beyond voice and SMS.</strong> VICIdial handles calls, SMS, and email. Webchat, social messaging, and video in a unified agent interface? That is Genesys or NICE territory.</li>
+</ul>
+<p><strong>Choose self-hosted VICIdial if:</strong></p>
+<ul>
+<li><strong>50+ agents with stable or growing volume.</strong> This is VICIdial's sweet spot. At 50 agents, you save $248,000 over three years versus Five9. Three servers, one part-time contractor, done.</li>
+<li><strong>Outbound-heavy operations where contact rate drives revenue.</strong> Direct control over dialer ratios, hopper sizes, call timing, and retry intervals beats any hosted platform's dropdown menus.</li>
+<li><strong>You want cost predictability.</strong> Hosted platforms raise prices 10-20% at renewal. VICIdial's costs are server hosting (predictable), telecom (market-rate), and admin (you set the salary). No surprise invoices, no account rep calling to "discuss your renewal pricing."</li>
+<li><strong>Remote or multi-location agents.</strong> VICIdial's web-based agent interface works from any browser. No per-seat remote access fees. WebRTC softphone options (Zoiper, $42/seat one-time) give you browser-based calling without monthly per-agent charges.</li>
+</ul>
+<p><strong>The awkward middle (30-50 agents):</strong> Run the numbers for your specific operation. VICIdial usually wins on cost but the margin is thin enough that a bad admin hire can erase the savings.</p>
+<h2 id="the-bottom-line">The Bottom Line<a class="headerlink" href="#the-bottom-line" title="Permanent link">&para;</a></h2>
+<p>Hosted dialers are not a scam. Five9, Convoso, NICE, and Genesys are real platforms that serve real call centers. If your operation fits their model, they work.</p>
+<p>But "hosted is easier" is a marketing claim, not a financial analysis. When you add per-minute telecom fees, feature add-ons, CRM integration charges, implementation costs, and the compound effect of 10-20% annual price increases locked behind multi-year contracts, the "simplicity premium" runs $100,000-$250,000 over three years for a 50-seat operation.</p>
+<p>Self-hosted VICIdial transfers that cost into control. You buy servers at market rate. You buy telecom at wholesale. You hire an admin at a salary you set. And you own every piece of your infrastructure --- no lock-in, no auto-renewal, no surprise invoices.</p>
+<p>The math is clear. The decision is yours.</p>
+<blockquote>
+<p><strong>Want to see the math for your specific operation?</strong> <a href="/free-audit/">Get a free ViciStack TCO audit</a>. We will build a custom cost model comparing your current platform against self-hosted VICIdial at your exact agent count, call volume, and compliance requirements. No contracts, no obligation --- just numbers.</p>
+</blockquote>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/hosted-vs-self-hosted-dialer-cost">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

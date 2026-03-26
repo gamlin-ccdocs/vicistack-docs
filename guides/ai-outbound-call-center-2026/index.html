@@ -1,0 +1,4483 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/ai-outbound-call-center-2026/">
+      
+      
+        <link rel="prev" href="../../getting-started/">
+      
+      
+        <link rel="next" href="../asterisk-otel-observability/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>How to Build an AI-Powered Outbound Call Center From Scratch in 2026 - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-build-an-ai-powered-outbound-call-center-from-scratch-in-2026" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-ai-actually-does-well-in-outbound-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What AI Actually Does Well in Outbound Right Now
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What AI Actually Does Well in Outbound Right Now">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-immediately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy immediately
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-still-falls-on-its-face" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What still falls on its face
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-infrastructure-servers-storage-and-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Infrastructure: Servers, Storage, and Network
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Infrastructure: Servers, Storage, and Network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording storage math
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloud-vs-bare-metal-the-real-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud vs. bare metal: the real numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sip-trunks-provider-choice-matters-more-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Trunks: Provider Choice Matters More Than You Think
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-build-zero-to-live-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step Build: Zero to Live Calls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step Build: Zero to Live Calls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-planning-and-procurement-days-1-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Planning and procurement (Days 1-3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-server-setup-days-3-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Server setup (Days 3-5)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-vicidial-install-days-5-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: VICIdial install (Days 5-8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-database-tuning-and-campaign-config-days-8-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Database tuning and campaign config (Days 8-10)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-ai-integration-days-10-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: AI integration (Days 10-14)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-testing-days-14-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Testing (Days 14-18)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-hiring-and-ramp-days-18-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Hiring and ramp (Days 18-25)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-cost-comparison-nobody-else-publishes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Cost Comparison Nobody Else Publishes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Cost Comparison Nobody Else Publishes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-50-seat-outbound-center-8-hoursday-22-daysmonth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario: 50-seat outbound center, 8 hours/day, 22 days/month
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario: 50-seat outbound center, 8 hours/day, 22 days/month">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-fully-human-us-based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Fully human (US-based)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-ai-augmented-humans-plus-ai-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: AI-augmented (humans plus AI tools)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-c-fully-ai-voice-agents-no-human-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option C: Fully AI voice agents (no human agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-honest-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The honest comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-voice-agent-pricing-what-you-actually-pay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Voice Agent Pricing: What You Actually Pay
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcpa-compliance-not-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Compliance: Not Optional
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-to-skip-at-launch-and-when-to-add-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Skip at Launch (And When to Add It)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeline-the-realistic-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timeline: The Realistic Schedule
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Timeline: The Realistic Schedule">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-fastest-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The fastest path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#one-time-vs-monthly-cost-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Time vs. Monthly Cost Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="One-Time vs. Monthly Cost Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-time-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-time costs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monthly-recurring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monthly recurring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-vicidial-already-does-well" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What VICIdial Already Does Well
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-solar-lead-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-ai-actually-does-well-in-outbound-right-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What AI Actually Does Well in Outbound Right Now
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What AI Actually Does Well in Outbound Right Now">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-immediately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy immediately
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-still-falls-on-its-face" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What still falls on its face
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-infrastructure-servers-storage-and-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Infrastructure: Servers, Storage, and Network
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Infrastructure: Servers, Storage, and Network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-storage-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording storage math
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloud-vs-bare-metal-the-real-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud vs. bare metal: the real numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sip-trunks-provider-choice-matters-more-than-you-think" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIP Trunks: Provider Choice Matters More Than You Think
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-build-zero-to-live-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step Build: Zero to Live Calls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step Build: Zero to Live Calls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-planning-and-procurement-days-1-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Planning and procurement (Days 1-3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-server-setup-days-3-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Server setup (Days 3-5)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-vicidial-install-days-5-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: VICIdial install (Days 5-8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-database-tuning-and-campaign-config-days-8-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Database tuning and campaign config (Days 8-10)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-ai-integration-days-10-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: AI integration (Days 10-14)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-testing-days-14-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: Testing (Days 14-18)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-hiring-and-ramp-days-18-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: Hiring and ramp (Days 18-25)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-cost-comparison-nobody-else-publishes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Cost Comparison Nobody Else Publishes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Cost Comparison Nobody Else Publishes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-50-seat-outbound-center-8-hoursday-22-daysmonth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario: 50-seat outbound center, 8 hours/day, 22 days/month
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario: 50-seat outbound center, 8 hours/day, 22 days/month">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-fully-human-us-based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Fully human (US-based)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-ai-augmented-humans-plus-ai-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: AI-augmented (humans plus AI tools)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-c-fully-ai-voice-agents-no-human-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option C: Fully AI voice agents (no human agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-honest-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The honest comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-voice-agent-pricing-what-you-actually-pay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Voice Agent Pricing: What You Actually Pay
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcpa-compliance-not-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Compliance: Not Optional
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-to-skip-at-launch-and-when-to-add-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Skip at Launch (And When to Add It)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeline-the-realistic-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timeline: The Realistic Schedule
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Timeline: The Realistic Schedule">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-fastest-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The fastest path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#one-time-vs-monthly-cost-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Time vs. Monthly Cost Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="One-Time vs. Monthly Cost Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-time-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-time costs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monthly-recurring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monthly recurring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-vicidial-already-does-well" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What VICIdial Already Does Well
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bottom Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="how-to-build-an-ai-powered-outbound-call-center-from-scratch-in-2026">How to Build an AI-Powered Outbound Call Center From Scratch in 2026<a class="headerlink" href="#how-to-build-an-ai-powered-outbound-call-center-from-scratch-in-2026" title="Permanent link">&para;</a></h1>
+<p>Most "AI call center" guides are written by people who have never waited 45 minutes on hold with a SIP trunk provider's support desk or stared at a MariaDB slow query log at 11 PM wondering why the hopper is empty. They skip the unglamorous parts -- server sizing, InnoDB buffer pool tuning, STIR/SHAKEN attestation delays, iptables rules that actually work -- and fast-forward to the fantasy: "AI replaces all your agents!" It does not. Not this year, probably not next year either.</p>
+<p>This is the guide I wish existed when I built my first outbound floor. Actual server specs. Actual pricing that includes the hidden costs every AI platform conveniently forgets. Actual configs you can paste into your Asterisk boxes. And an honest assessment of where AI earns its keep versus where it still costs you money by failing at the wrong moment.</p>
+<p>We are building a 50-seat AI-augmented outbound call center. Not a chatbot demo. Not a "just call our API" pitch deck. A production operation that pushes thousands of calls per day, stays on the right side of TCPA, and uses AI only where it genuinely moves the needle.</p>
+<h2 id="what-ai-actually-does-well-in-outbound-right-now">What AI Actually Does Well in Outbound Right Now<a class="headerlink" href="#what-ai-actually-does-well-in-outbound-right-now" title="Permanent link">&para;</a></h2>
+<p>I will split this into two lists. The first is stuff you should deploy immediately because the ROI is obvious. The second is stuff that sounds great in a vendor demo but will burn you in production.</p>
+<h3 id="deploy-immediately">Deploy immediately<a class="headerlink" href="#deploy-immediately" title="Permanent link">&para;</a></h3>
+<p><strong>Answering machine detection (AMD).</strong> This is the single highest-ROI AI upgrade for any outbound shop. Stock VICIdial AMD uses acoustic heuristics -- silence lengths, energy thresholds, beep detection. It hits 65-75% accuracy with a 15-25% false positive rate. That means up to a quarter of live humans who pick up the phone get dropped because the system classified them as voicemail. On a 50-agent floor dialing 40,000 calls per day, that is thousands of connections you paid for and will never talk to.</p>
+<p>AI-powered AMD using ML-based audio fingerprint analysis (not silence detection) pushes accuracy to 98-99% with under 1% false positives. AMDY.IO claims 99% accuracy with a native one-line install for VICIdial. A DIY approach using a fine-tuned Whisper-small model with TF-IDF classification tested at ~98% end-to-end accuracy. The commercial solutions detect in milliseconds. The DIY path takes 1.5-3.5 seconds but costs nothing beyond server time.</p>
+<p>Every false positive is a lead you already paid for that vanishes. At scale, fixing AMD accuracy pays for itself in weeks. AMDY.IO pitches it as recovering $24K/month in lost connections for a 10-agent center. Even if that number is generous, the directional math is right.</p>
+<p><strong>Post-call transcription and summarization.</strong> After every call, Whisper large-v3 transcribes the recording in about 3 seconds per minute of audio on an RTX 4090. Then a local LLM (Llama 3.2 8B running on Ollama) generates a 2-3 sentence summary and writes it back to the disposition notes. That saves agents 30-45 seconds of wrap-up per call. Across 50 agents making 80-100 calls per day each, that is 33-62 hours of agent time recovered daily.</p>
+<p>Start collecting transcripts from day one even if you do not analyze them yet. The transcript archive becomes the most valuable dataset you build.</p>
+<p><strong>100% automated QA scoring.</strong> Traditional QA: a supervisor listens to 1-2% of calls and fills out a scorecard. AI QA: every call scored against your criteria automatically. Script adherence, compliance disclosures, sentiment shifts, talk-listen ratio, objection handling. Enthu.ai does this at $59/user/month. CloudTalk AI handles it for $28/user/month. Neither requires replacing your dialer -- feed them recordings and they score everything.</p>
+<p>Published numbers from vendors (take with appropriate salt): 50-60% reduction in compliance violations within 90 days, 16% sales lift (Balto, across 250M+ guided calls -- large enough sample to take somewhat seriously), and McKinsey benchmarks showing tripled conversion rates with AI scoring plus coaching.</p>
+<p><strong>Lead scoring and list prioritization.</strong> Feed lead data into a local LLM -- demographics, timezone, past contact history, source -- and get back a 0-100 propensity score. Write it to the VICIdial rank field. The hopper dials high-scored leads first. Llama 3.2 8B scores 500 leads in under two minutes on a single GPU. Run it as a cron job every 15 minutes. Per-lead ML scoring is something VICIdial does not do natively, and it measurably improves contact rates by calling the right people at the right times.</p>
+<h3 id="what-still-falls-on-its-face">What still falls on its face<a class="headerlink" href="#what-still-falls-on-its-face" title="Permanent link">&para;</a></h3>
+<p><strong>Complex sales conversations.</strong> AI voice agents can hold 10-40 minute calls that sound close to human. They handle basic objections, book appointments, qualify leads. For repetitive outbound -- appointment confirmations, payment reminders, surveys -- they work. For anything requiring real judgment, nuance, or empathy, they fumble. A $50,000 deal does not close because your AI nailed all the script bullet points. It closes because a human read the prospect's hesitation and changed course.</p>
+<p><strong>Real-time agent coaching.</strong> The technology exists. Balto is the market leader, and their numbers are real. But integrating real-time coaching with VICIdial is manual and fragile. It needs browser extensions or SIP mirror setups. It works once you get it stable, but expect real engineering time. This is a Phase 2 addition, not a launch feature.</p>
+<p><strong>ML-powered predictive pacing.</strong> VICIdial's ADAPT_TAPERED mode adjusts dial ratios based on current answer rates and agent availability. ML-based pacing that learns from historical patterns and predicts per-lead behavior is better in theory, but there is no off-the-shelf VICIdial plugin. You would need to fork the dialing engine. Not worth it until the basics are running smoothly.</p>
+<h2 id="the-infrastructure-servers-storage-and-network">The Infrastructure: Servers, Storage, and Network<a class="headerlink" href="#the-infrastructure-servers-storage-and-network" title="Permanent link">&para;</a></h2>
+<p>A production 50-agent outbound center needs a proper server cluster. Trying to run everything on one box works for a 10-agent demo and falls apart under real load.</p>
+<h3 id="server-architecture">Server architecture<a class="headerlink" href="#server-architecture" title="Permanent link">&para;</a></h3>
+<p><strong>Server 1: Database.</strong> Always the bottleneck. A 50-agent shop doing 8-hour days generates 40,000-60,000 call records per day. After six months, <code>vicidial_log</code> and <code>vicidial_list</code> hold 5-8 million rows. If the InnoDB buffer pool cannot keep hot indexes in RAM, every dial attempt stutters.</p>
+<ul>
+<li>CPU: 8-16 cores (AMD EPYC 7443P or Xeon E-2388G)</li>
+<li>RAM: 64 GB (InnoDB buffer pool eats most of it)</li>
+<li>Storage: 2x 1TB NVMe in RAID1 for the database, 4x 4TB SATA SSD in RAID10 for recordings</li>
+<li>OS: AlmaLinux 9 or Rocky Linux 9</li>
+</ul>
+<p><strong>Server 2: Dialer/Telephony.</strong> Each concurrent call uses 30-50 MB of RAM when recording is enabled (raw WAV sits in a tmpfs ramdisk before MP3 conversion). At peak, 50 agents with a 2.5:1 dial ratio means 125 concurrent channels -- roughly 5-7 GB for call processing alone.</p>
+<ul>
+<li>CPU: 8 cores minimum</li>
+<li>RAM: 16-32 GB</li>
+<li>Storage: 500 GB NVMe</li>
+<li>Network: 1 Gbps with under 5ms jitter to your SIP trunk provider</li>
+</ul>
+<p><strong>Server 3: Web/Admin.</strong> Handles the agent web interface, real-time reports, admin panel. Apache plus PHP. Not CPU-intensive.</p>
+<ul>
+<li>CPU: 4-8 cores</li>
+<li>RAM: 16 GB</li>
+<li>Storage: 250 GB NVMe</li>
+</ul>
+<p><strong>Server 4: AI/GPU.</strong> This box did not exist in call center builds two years ago.</p>
+<ul>
+<li>CPU: 8-16 cores</li>
+<li>RAM: 64 GB</li>
+<li>GPU: NVIDIA RTX 4090 (24 GB VRAM) or RTX 3090 (24 GB VRAM)</li>
+<li>Storage: 1 TB NVMe</li>
+</ul>
+<p>The RTX 4090 transcribes audio at 19x real-time with Whisper large-v3 -- a 60-second call takes about 3 seconds. The RTX 3090 is within 0.5% of the same speed for this workload. With <code>faster-whisper</code> using CTranslate2 and 8-bit quantization, you get 4x faster inference versus stock Whisper. One GPU handles post-call transcription for 100+ agents. For real-time transcription during live calls, one GPU handles 20-30 simultaneous streams with the medium model.</p>
+<p>Buy the hardware. A used RTX 3090 runs about $700, an RTX 4090 about $1,400. Build the box for $2,500-3,500 total and your inference costs $0/month forever. Cloud GPU instances (AWS g5) run $760-1,210/month. The on-prem hardware pays for itself versus cloud in under two months.</p>
+<h3 id="recording-storage-math">Recording storage math<a class="headerlink" href="#recording-storage-math" title="Permanent link">&para;</a></h3>
+<p>At MP3 (32kbps), 50 agents generate about 3.5 GB/day or ~75 GB/month. Budget 1 TB for a year of recordings with headroom. VICIdial records to WAV in a tmpfs ramdisk first, then a cron job converts to MP3 and moves to permanent storage.</p>
+<h3 id="cloud-vs-bare-metal-the-real-numbers">Cloud vs. bare metal: the real numbers<a class="headerlink" href="#cloud-vs-bare-metal-the-real-numbers" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Bare Metal (Hetzner)</th>
+<th>AWS Reserved</th>
+<th>AWS On-Demand</th>
+<th>DigitalOcean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Servers</td>
+<td>$295/mo</td>
+<td>$1,168/mo</td>
+<td>$1,862/mo</td>
+<td>$342/mo</td>
+</tr>
+<tr>
+<td>GPU/AI</td>
+<td>$0 (on-prem)</td>
+<td>$760/mo</td>
+<td>$1,210/mo</td>
+<td>$0 (on-prem)</td>
+</tr>
+<tr>
+<td>SIP Trunks (est.)</td>
+<td>$400-800/mo</td>
+<td>$400-800/mo</td>
+<td>$400-800/mo</td>
+<td>$400-800/mo</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>$695-1,095/mo</strong></td>
+<td><strong>$2,328-2,728/mo</strong></td>
+<td><strong>$3,472-3,872/mo</strong></td>
+<td><strong>$742-1,142/mo</strong></td>
+</tr>
+</tbody>
+</table>
+<p>AWS is 4-7x more expensive than bare metal for this workload. Hetzner is the price-to-performance winner for VoIP. Note: Hetzner raised prices 30-50% in early 2026 due to AI-driven memory demand and IPv4 costs. The numbers above reflect post-increase pricing.</p>
+<p>Cloud makes sense for burst capacity -- spin up extra dialer nodes during a campaign push. Not as your primary infrastructure.</p>
+<h2 id="sip-trunks-provider-choice-matters-more-than-you-think">SIP Trunks: Provider Choice Matters More Than You Think<a class="headerlink" href="#sip-trunks-provider-choice-matters-more-than-you-think" title="Permanent link">&para;</a></h2>
+<p>Every outbound call in 2026 gets a STIR/SHAKEN attestation level. You need A-level (carrier verified your identity AND confirmed you own the caller ID number). Without it, your calls display as spam and answer rates collapse. This means your provider must complete KYC verification on your business and register your numbers. Some providers take 3-5 business days for KYC -- start on day one.</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Per-Minute Rate</th>
+<th>STIR/SHAKEN</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Skyetel</strong></td>
+<td>$0.005-0.006</td>
+<td>Full A-level</td>
+<td>Cheapest per-minute, popular with VICIdial shops</td>
+</tr>
+<tr>
+<td><strong>Telnyx</strong></td>
+<td>$0.005-0.007</td>
+<td>Full A-level</td>
+<td>Best API, elastic SIP, first 10 channels $12/mo</td>
+</tr>
+<tr>
+<td><strong>VoIP.ms</strong></td>
+<td>$0.009-0.01</td>
+<td>Full A-level</td>
+<td>Community favorite, pay-per-minute only</td>
+</tr>
+<tr>
+<td><strong>TILTX</strong></td>
+<td>$0.005-0.008</td>
+<td>Full A-level</td>
+<td>Markets VICIdial compatibility specifically</td>
+</tr>
+<tr>
+<td><strong>Flowroute</strong></td>
+<td>$0.008-0.012</td>
+<td>Full A-level</td>
+<td>Solid for mid-volume</td>
+</tr>
+<tr>
+<td><strong>Twilio</strong></td>
+<td>$0.013-0.015</td>
+<td>Full A-level</td>
+<td>Most expensive, most reliable</td>
+</tr>
+</tbody>
+</table>
+<p>Provider choice matters enormously at scale. At Skyetel's $0.005/min, 50 agents running 33,750 dialed minutes per day costs about $3,700/month in SIP. At Twilio's $0.014/min, the same volume costs $10,350/month. That is a $6,650/month difference for identical calls.</p>
+<p>Asterisk trunk config for Telnyx:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/sip.conf</span>
+<span class="na">[telnyx](!)</span>
+<span class="na">type</span><span class="o">=</span><span class="s">peer</span>
+<span class="na">host</span><span class="o">=</span><span class="s">sip.telnyx.com</span>
+<span class="na">fromdomain</span><span class="o">=</span><span class="s">sip.telnyx.com</span>
+<span class="na">qualify</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">dtmfmode</span><span class="o">=</span><span class="s">rfc2833</span>
+<span class="na">insecure</span><span class="o">=</span><span class="s">invite,port</span>
+<span class="na">canreinvite</span><span class="o">=</span><span class="s">no</span>
+<span class="na">disallow</span><span class="o">=</span><span class="s">all</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">ulaw</span>
+<span class="na">allow</span><span class="o">=</span><span class="s">g729</span>
+<span class="na">nat</span><span class="o">=</span><span class="s">force_rport,comedia</span>
+
+<span class="na">[telnyx-out](telnyx)</span>
+<span class="na">username</span><span class="o">=</span><span class="s">your_username</span>
+<span class="na">secret</span><span class="o">=</span><span class="s">your_password</span>
+<span class="na">context</span><span class="o">=</span><span class="s">trunkinbound</span>
+</code></pre></div>
+
+<p>Outbound route:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/extensions.conf</span>
+<span class="k">[vicidial-auto]</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _91NXXNXXXXXX,1,AGI(agi://127.0.0.1:4577/call_log)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _91NXXNXXXXXX,n,Dial(SIP/telnyx-out/${EXTEN:1},,tTr)</span>
+<span class="na">exten</span><span class="w"> </span><span class="o">=</span><span class="s">&gt; _91NXXNXXXXXX,n,Hangup()</span>
+</code></pre></div>
+
+<h2 id="step-by-step-build-zero-to-live-calls">Step-by-Step Build: Zero to Live Calls<a class="headerlink" href="#step-by-step-build-zero-to-live-calls" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-planning-and-procurement-days-1-3">Phase 1: Planning and procurement (Days 1-3)<a class="headerlink" href="#phase-1-planning-and-procurement-days-1-3" title="Permanent link">&para;</a></h3>
+<p>Order servers, sign SIP trunk contracts, start KYC verification, order DIDs. Start KYC on day one -- it is the number one delay in every call center build. STIR/SHAKEN attestation cannot happen until KYC clears. Without attestation, your calls get flagged as spam and you are dead before you start.</p>
+<h3 id="phase-2-server-setup-days-3-5">Phase 2: Server setup (Days 3-5)<a class="headerlink" href="#phase-2-server-setup-days-3-5" title="Permanent link">&para;</a></h3>
+<p>AlmaLinux 9 minimal install on all servers. Configure networking, hostnames, private VLAN between servers.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># On all servers</span>
+timedatectl<span class="w"> </span>set-timezone<span class="w"> </span>America/New_York
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39;</span><span class="w"> </span>/etc/selinux/config
+dnf<span class="w"> </span>update<span class="w"> </span>-y
+dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>epel-release<span class="w"> </span>git<span class="w"> </span>wget<span class="w"> </span>curl<span class="w"> </span>vim<span class="w"> </span>htop<span class="w"> </span>net-tools
+
+cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/hosts<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">10.0.1.50  db1.callcenter.local     db1</span>
+<span class="s">10.0.1.10  dialer1.callcenter.local dialer1</span>
+<span class="s">10.0.1.20  web1.callcenter.local    web1</span>
+<span class="s">10.0.2.10  gpu1.callcenter.local    gpu1</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<p>Firewall rules for VoIP -- SIP from trunk providers only:</p>
+<div class="codehilite"><pre><span></span><code>iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>-s<span class="w"> </span>&lt;telnyx_ip_range&gt;<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>-s<span class="w"> </span>&lt;telnyx_ip_range&gt;<span class="w"> </span>--dport<span class="w"> </span><span class="m">10000</span>:20000<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">443</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">8089</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-s<span class="w"> </span><span class="m">10</span>.0.1.0/24<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">5060</span><span class="w"> </span>-j<span class="w"> </span>DROP
+</code></pre></div>
+
+<h3 id="phase-3-vicidial-install-days-5-8">Phase 3: VICIdial install (Days 5-8)<a class="headerlink" href="#phase-3-vicidial-install-days-5-8" title="Permanent link">&para;</a></h3>
+<p>Three options ranked by pain level:</p>
+<p><strong>ViciBox ISO (least pain).</strong> Download the ISO from vicibox.com, boot, follow the installer. Working VICIdial in about an hour.</p>
+<p><strong>Auto-installer scripts (moderate).</strong> Clone the community installer from GitHub, run it. Handles Asterisk, DAHDI, VICIdial, Apache, and MariaDB on one box. After install, reconfigure the database connection to point at your dedicated DB server.</p>
+<p><strong>Scratch install (maximum control).</strong> Install Asterisk 20 LTS from source, check out VICIdial from SVN. Only do this if you need custom modules compiled in -- like <code>app_audiosocket</code> for AI audio streaming.</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/usr/src
+wget<span class="w"> </span>https://downloads.asterisk.org/pub/telephony/asterisk/asterisk-20-current.tar.gz
+tar<span class="w"> </span>xzf<span class="w"> </span>asterisk-20-current.tar.gz
+<span class="nb">cd</span><span class="w"> </span>asterisk-20*/
+contrib/scripts/install_prereq<span class="w"> </span>install
+./configure<span class="w"> </span>--with-jansson-bundled
+make<span class="w"> </span>menuselect<span class="w">  </span><span class="c1"># Enable: res_http_websocket, codec_opus, app_audiosocket</span>
+make<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span>
+make<span class="w"> </span>install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>config
+</code></pre></div>
+
+<p>After install, set up WebRTC. VICIdial ships with VICIphone, a browser-based softphone. No client install needed.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/asterisk/http.conf</span>
+<span class="k">[general]</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">bindaddr</span><span class="o">=</span><span class="s">0.0.0.0</span>
+<span class="na">bindport</span><span class="o">=</span><span class="s">8088</span>
+<span class="na">tlsenable</span><span class="o">=</span><span class="s">yes</span>
+<span class="na">tlsbindaddr</span><span class="o">=</span><span class="s">0.0.0.0:8089</span>
+<span class="na">tlscertfile</span><span class="o">=</span><span class="s">/etc/asterisk/keys/asterisk.pem</span>
+<span class="na">tlsprivatekey</span><span class="o">=</span><span class="s">/etc/asterisk/keys/asterisk.key</span>
+</code></pre></div>
+
+<p>In VICIdial admin, set each phone entry to Webphone: Y, Webphone Auto-Answer: Y, and Web Socket URL at <code>wss://dialer1.yourdomain.com:8089/ws</code>.</p>
+<h3 id="phase-4-database-tuning-and-campaign-config-days-8-10">Phase 4: Database tuning and campaign config (Days 8-10)<a class="headerlink" href="#phase-4-database-tuning-and-campaign-config-days-8-10" title="Permanent link">&para;</a></h3>
+<p>MariaDB tuning is the difference between smooth operation at 50 agents and lockups during peak hours.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; /etc/my.cnf.d/vicidial.cnf</span>
+<span class="k">[mysqld]</span>
+<span class="na">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">48G</span>
+<span class="na">innodb_log_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1G</span>
+<span class="na">innodb_flush_log_at_trx_commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">innodb_flush_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">O_DIRECT</span>
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">500</span>
+<span class="na">query_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+<span class="na">query_cache_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+<span class="na">join_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8M</span>
+<span class="na">sort_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4M</span>
+<span class="na">table_open_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4096</span>
+<span class="na">thread_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">64</span>
+<span class="na">wait_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">300</span>
+</code></pre></div>
+
+<p><code>innodb_buffer_pool_size</code> at 48G (about 75% of total RAM) keeps your hot indexes in memory so <code>vicidial_list</code> and <code>vicidial_log</code> queries stay off disk. <code>innodb_flush_log_at_trx_commit = 2</code> trades at most one second of transactions on crash for better throughput -- acceptable for a call center where the data is not financial.</p>
+<p>Campaign settings go through the VICIdial admin GUI. Key outbound settings:</p>
+<ul>
+<li>Dial Method: ADAPT_TAPERED (predictive with ramping)</li>
+<li>Dial Timeout: 26 seconds</li>
+<li>Drop Rate Limit: 2.5% (under the FTC 3% safe harbor)</li>
+<li>Max Trunk Lines: 150</li>
+<li>Hopper Level: 500</li>
+<li>Local Call Time: 8am-9pm (TCPA compliant)</li>
+</ul>
+<p>Upload lead lists as CSV through the admin GUI. Required fields: phone_number, first_name, last_name, state. Test with 2-3 agents before scaling.</p>
+<h3 id="phase-5-ai-integration-days-10-14">Phase 5: AI integration (Days 10-14)<a class="headerlink" href="#phase-5-ai-integration-days-10-14" title="Permanent link">&para;</a></h3>
+<p>Set up the GPU server:</p>
+<div class="codehilite"><pre><span></span><code>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>kernel-devel<span class="w"> </span>kernel-headers<span class="w"> </span>nvidia-driver<span class="w"> </span>nvidia-driver-cuda
+dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>cuda-toolkit-12-4
+
+python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>/opt/ai-env
+<span class="nb">source</span><span class="w"> </span>/opt/ai-env/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>faster-whisper<span class="w"> </span>torch<span class="w"> </span>torchaudio
+
+curl<span class="w"> </span>-fsSL<span class="w"> </span>https://ollama.com/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+ollama<span class="w"> </span>pull<span class="w"> </span>llama3.2:8b
+</code></pre></div>
+
+<p>Budget a full day for GPU driver installation. NVIDIA plus Linux equals occasional misery. Test on a throwaway instance first.</p>
+<p>Deploy the post-call processor as a systemd service. It watches for new MP3 recordings, transcribes with Whisper, summarizes with Llama, and writes results back:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># post_call_processor.py (simplified)</span>
+<span class="kn">from</span> <span class="nn">faster_whisper</span> <span class="kn">import</span> <span class="n">WhisperModel</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">WhisperModel</span><span class="p">(</span><span class="s2">&quot;large-v3&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">compute_type</span><span class="o">=</span><span class="s2">&quot;int8&quot;</span><span class="p">)</span>
+<span class="n">OLLAMA_URL</span> <span class="o">=</span> <span class="s2">&quot;http://10.0.2.10:11434/api/generate&quot;</span>
+
+<span class="k">def</span> <span class="nf">process_recording</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="n">segments</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">beam_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">])</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">OLLAMA_URL</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;llama3.2:8b&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Summarize this sales call in 2-3 sentences. &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;Note the outcome:</span><span class="se">\n\n</span><span class="si">{</span><span class="n">transcript</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;response&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<p>For AI AMD, AMDY.IO offers a native one-line install. The DIY approach uses a fine-tuned Whisper model via an EAGI script in the Asterisk dialplan. Either way, deploy AMD first -- the ROI is immediate and obvious.</p>
+<h3 id="phase-6-testing-days-14-18">Phase 6: Testing (Days 14-18)<a class="headerlink" href="#phase-6-testing-days-14-18" title="Permanent link">&para;</a></h3>
+<ul>
+<li>10 test calls through the dialer. Verify audio quality both directions.</li>
+<li>Verify recordings save and convert to MP3.</li>
+<li>Check STIR/SHAKEN attestation on test calls (ask your provider for SIP traces).</li>
+<li>WebRTC phones on Chrome, Firefox, Edge.</li>
+<li>Run lead scorer on a test list. Verify scores populate.</li>
+<li>Post-call transcription on test recordings.</li>
+<li>10-agent load test for 2 hours.</li>
+<li>Verify abandon rate stays under 3%.</li>
+</ul>
+<h3 id="phase-7-hiring-and-ramp-days-18-25">Phase 7: Hiring and ramp (Days 18-25)<a class="headerlink" href="#phase-7-hiring-and-ramp-days-18-25" title="Permanent link">&para;</a></h3>
+<p>Agent training on VICIdial takes 2-4 hours. Sales training is campaign-dependent. Start conservative:</p>
+<ul>
+<li>Day 1: 10 agents, 1.5:1 dial ratio</li>
+<li>Day 2: 20 agents, 2.0:1</li>
+<li>Day 3: 30 agents, monitor drop rate</li>
+<li>Day 4: 40 agents, adjust adaptive intensity</li>
+<li>Day 5: 50 agents at full speed, 2.5:1 adaptive</li>
+</ul>
+<p>Watch SIP trunk capacity during ramp. Watch the AI processing backlog -- the post-call queue should clear within 30 minutes of call volume ending.</p>
+<h2 id="the-cost-comparison-nobody-else-publishes">The Cost Comparison Nobody Else Publishes<a class="headerlink" href="#the-cost-comparison-nobody-else-publishes" title="Permanent link">&para;</a></h2>
+<h3 id="scenario-50-seat-outbound-center-8-hoursday-22-daysmonth">Scenario: 50-seat outbound center, 8 hours/day, 22 days/month<a class="headerlink" href="#scenario-50-seat-outbound-center-8-hoursday-22-daysmonth" title="Permanent link">&para;</a></h3>
+<h4 id="option-a-fully-human-us-based">Option A: Fully human (US-based)<a class="headerlink" href="#option-a-fully-human-us-based" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Cost Category</th>
+<th>Monthly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent salaries (50 x $3,200)</td>
+<td>$160,000</td>
+</tr>
+<tr>
+<td>Benefits (30%)</td>
+<td>$48,000</td>
+</tr>
+<tr>
+<td>Supervisors (3)</td>
+<td>$13,500</td>
+</tr>
+<tr>
+<td>QA analysts (2-3)</td>
+<td>$8,000-12,000</td>
+</tr>
+<tr>
+<td>Office space</td>
+<td>$12,500</td>
+</tr>
+<tr>
+<td>VICIdial hosting</td>
+<td>$295-500</td>
+</tr>
+<tr>
+<td>Telephony (SIP)</td>
+<td>$3,700-5,200</td>
+</tr>
+<tr>
+<td>Training and turnover</td>
+<td>$10,000</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~$256,000-261,700/mo</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Per-minute talk cost: ~$0.80-1.00</p>
+<h4 id="option-b-ai-augmented-humans-plus-ai-tools">Option B: AI-augmented (humans plus AI tools)<a class="headerlink" href="#option-b-ai-augmented-humans-plus-ai-tools" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Cost Category</th>
+<th>Monthly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent salaries (50 agents)</td>
+<td>$160,000</td>
+</tr>
+<tr>
+<td>Benefits (30%)</td>
+<td>$48,000</td>
+</tr>
+<tr>
+<td>Supervisors (2 -- AI assists)</td>
+<td>$9,000</td>
+</tr>
+<tr>
+<td>QA analyst (1 -- AI scores 100%)</td>
+<td>$4,500</td>
+</tr>
+<tr>
+<td>Office space</td>
+<td>$12,500</td>
+</tr>
+<tr>
+<td>VICIdial hosting</td>
+<td>$295-500</td>
+</tr>
+<tr>
+<td>Telephony (SIP)</td>
+<td>$3,700-5,200</td>
+</tr>
+<tr>
+<td>AI AMD (AMDY.io)</td>
+<td>$200-500</td>
+</tr>
+<tr>
+<td>AI QA tool (Enthu.ai, 50 seats)</td>
+<td>$2,950</td>
+</tr>
+<tr>
+<td>GPU server (amortized)</td>
+<td>$150</td>
+</tr>
+<tr>
+<td>API costs (coaching)</td>
+<td>$15-50</td>
+</tr>
+<tr>
+<td>Training and turnover</td>
+<td>$8,000</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~$249,310-250,400/mo</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Per-minute talk cost: ~$0.55-0.70</p>
+<p>The raw monthly difference looks modest -- about $8,000-11,000 less. But that misses where the real value lives. AI-augmented operations see 15-30% higher contact rates from better AMD, 5-8% higher conversion from AI coaching, 50% less wrap-up time from auto-summarization, and 100% QA coverage instead of 2%. The revenue-side improvement is where the ROI actually hits.</p>
+<h4 id="option-c-fully-ai-voice-agents-no-human-agents">Option C: Fully AI voice agents (no human agents)<a class="headerlink" href="#option-c-fully-ai-voice-agents-no-human-agents" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Cost Category</th>
+<th>Monthly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI voice platform (250K min on Bland)</td>
+<td>$22,500-37,500</td>
+</tr>
+<tr>
+<td>Telephony</td>
+<td>$300-500</td>
+</tr>
+<tr>
+<td>LLM costs (if separate)</td>
+<td>$500-2,000</td>
+</tr>
+<tr>
+<td>1 human supervisor/escalation handler</td>
+<td>$4,500</td>
+</tr>
+<tr>
+<td>VICIdial hosting (tracking/reporting)</td>
+<td>$200-500</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~$28,000-45,000/mo</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Savings vs. fully human: 80-83%. But fully AI only works for simple, repetitive calls. Appointment confirmations, payment reminders, surveys, basic lead qualification. Not complex sales. Not empathy-heavy conversations. If your average deal size is over $500, fully AI agents are not ready.</p>
+<h3 id="the-honest-comparison">The honest comparison<a class="headerlink" href="#the-honest-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Monthly (50 seats)</th>
+<th>Per-Minute Talk</th>
+<th>Works For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US Human</td>
+<td>$256-262K</td>
+<td>$0.80-1.00</td>
+<td>Complex sales, relationship building</td>
+</tr>
+<tr>
+<td>AI-Augmented</td>
+<td>$249-250K</td>
+<td>$0.55-0.70</td>
+<td>Best ROI -- human judgment plus AI efficiency</td>
+</tr>
+<tr>
+<td>Fully AI</td>
+<td>$28-45K</td>
+<td>$0.09-0.25</td>
+<td>Simple repetitive outbound only</td>
+</tr>
+</tbody>
+</table>
+<p>The AI-augmented model wins for any operation running real sales campaigns. The fully AI model wins for high-volume, low-complexity outbound where conversations follow a tight script with few branches.</p>
+<h2 id="ai-voice-agent-pricing-what-you-actually-pay">AI Voice Agent Pricing: What You Actually Pay<a class="headerlink" href="#ai-voice-agent-pricing-what-you-actually-pay" title="Permanent link">&para;</a></h2>
+<p>Every AI voice platform advertises a rate that does not include half the costs.</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Advertised Rate</th>
+<th>Real All-In Cost/Min</th>
+<th>Latency</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Retell AI</strong></td>
+<td>$0.07/min</td>
+<td>$0.13-0.31/min</td>
+<td>~600ms</td>
+<td>SOC 2 + HIPAA included, lowest latency</td>
+</tr>
+<tr>
+<td><strong>Bland AI</strong></td>
+<td>$0.09/min</td>
+<td>$0.09-0.15/min</td>
+<td>~800ms</td>
+<td>Simplest API, 10 lines to send a call</td>
+</tr>
+<tr>
+<td><strong>Vapi</strong></td>
+<td>$0.05/min</td>
+<td>$0.13-0.31/min</td>
+<td>~700ms</td>
+<td>Max customization, bring your own providers</td>
+</tr>
+<tr>
+<td><strong>Synthflow</strong></td>
+<td>$0.09/min</td>
+<td>$0.13-0.25/min</td>
+<td>Not published</td>
+<td>No-code builder, Zapier integrations</td>
+</tr>
+<tr>
+<td><strong>Air AI</strong></td>
+<td>$0.11/min</td>
+<td>N/A</td>
+<td>N/A</td>
+<td><strong>AVOID -- FTC lawsuit Aug 2025, platform dead</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The gap between advertised and real? Most platforms quote only the orchestration fee. You still pay for speech-to-text ($0.01/min), LLM inference ($0.02-0.20/min), text-to-speech ($0.04/min), and telephony ($0.01/min). Vapi's $0.05/min becomes $0.20-0.40/min once you add Deepgram STT, GPT-4, ElevenLabs TTS, and Twilio.</p>
+<p>For 10,000 minutes per month: Retell runs $700-1,300, Bland $900-1,500, Vapi $1,300-3,100, Synthflow $1,300-2,500. Pick Bland for simple high-volume outbound. Pick Retell for low latency and compliance certifications. Pick Vapi if you have a developer who wants full control over every provider in the stack.</p>
+<p>Do not pick Air AI. They charged $25,000-100,000 upfront licensing, the FTC sued them in August 2025 for deceptive claims about earnings potential, and the platform is currently inactive with no roadmap.</p>
+<h2 id="tcpa-compliance-not-optional">TCPA Compliance: Not Optional<a class="headerlink" href="#tcpa-compliance-not-optional" title="Permanent link">&para;</a></h2>
+<p>The FCC ruled in February 2024 that AI-generated voices on robocalls are "artificial or pre-recorded voices" under TCPA. AI outbound calls require prior express written consent -- same standard as traditional robocalls. Penalties are up to $1,500 per violation per call.</p>
+<p>The FCC proposed stricter rules in July 2024: potentially requiring explicit AI-specific consent and in-call disclosure that AI is being used. The TCPA amendment effective April 2025 expanded opt-out keyword recognition. The FTC is actively enforcing through "Operation AI Comply."</p>
+<p>For your build:</p>
+<ul>
+<li>Obtain prior express written consent before any AI outbound call.</li>
+<li>Keep abandon rates under 3% (set VICIdial drop rate limit to 2.5%).</li>
+<li>Respect local call time restrictions (8am-9pm in the called party's timezone).</li>
+<li>Honor DNC requests immediately (VICIdial has built-in DNC management).</li>
+<li>If using AI voice agents, be prepared to disclose that to the called party. Assume rules requiring proactive disclosure are coming.</li>
+</ul>
+<p>This is not a compliance checkbox. The FCC is looking for examples, and AI call operations are the enforcement priority right now.</p>
+<h2 id="what-to-skip-at-launch-and-when-to-add-it">What to Skip at Launch (And When to Add It)<a class="headerlink" href="#what-to-skip-at-launch-and-when-to-add-it" title="Permanent link">&para;</a></h2>
+<p><strong>Skip for now: Kamailio.</strong> At 50 agents, one Asterisk server handles it. Kamailio in front of multiple Asterisk backends is necessary at 100+ agents or for HA failover. It adds complexity you do not need yet.</p>
+<p><strong>Skip for now: MariaDB Galera clustering.</strong> A single well-tuned MariaDB instance with proper backups handles 50 agents without strain. Add Galera when you scale past 100 agents or when contractual SLAs require it.</p>
+<p><strong>Skip for now: Real-time agent coaching overlays.</strong> Balto and Cresta are real products with real results. But integrating them with VICIdial is custom work that is fragile until stabilized. Get the core AI stack working first. Add coaching in month 2-3.</p>
+<p><strong>Skip for now: ML-powered predictive pacing.</strong> VICIdial's ADAPT_TAPERED works well enough at 50 seats. It is statistical, not ML, but it gets the job done.</p>
+<p><strong>Deploy immediately: AI AMD.</strong> The fastest payback of any AI upgrade. Week 1.</p>
+<p><strong>Deploy immediately: Post-call transcription.</strong> Start collecting transcripts from day one.</p>
+<p><strong>Add in month 1: AI QA scoring.</strong> Connect recordings to Enthu.ai or CloudTalk. Scoring 100% instead of 2% catches problems manual sampling never will.</p>
+<p><strong>Add in month 2-3: Lead scoring and coaching.</strong> Once you have enough call data, lead scoring becomes meaningful. Before that, you are scoring on demographics alone.</p>
+<h2 id="timeline-the-realistic-schedule">Timeline: The Realistic Schedule<a class="headerlink" href="#timeline-the-realistic-schedule" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Phase</th>
+<th>What Happens</th>
+<th>Watch For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Planning</td>
+<td>Order servers, SIP contracts, start KYC, order DIDs</td>
+<td>KYC takes 3-5 business days. Start day one.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Infrastructure</td>
+<td>Provision servers, install AlmaLinux, configure networking</td>
+<td>Bare metal delivery: 1-3 days at Hetzner</td>
+</tr>
+<tr>
+<td>3</td>
+<td>VICIdial Install</td>
+<td>Asterisk, VICIdial, MariaDB. First test call.</td>
+<td>DAHDI driver issues on newer kernels</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Configuration</td>
+<td>Campaigns, accounts, WebRTC, upload test lists</td>
+<td>Campaign tuning is iterative</td>
+</tr>
+<tr>
+<td>5</td>
+<td>AI Setup</td>
+<td>GPU drivers, CUDA, Whisper, Ollama. Post-call processor.</td>
+<td>NVIDIA driver installation on Linux</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Integration</td>
+<td>Connect AI to VICIdial. End-to-end testing, 5-10 agents.</td>
+<td>WebRTC audio quality on different browsers</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Hiring/Training</td>
+<td>Onboard agents. Platform training. Practice calls.</td>
+<td>VICIdial training: 2-4 hours per agent</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Soft Launch</td>
+<td>Go live with 10-20 agents. Conservative dial ratios.</td>
+<td>Abandon rates run high while adaptive learns</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Ramp</td>
+<td>Scale to 50. Tune adaptive dialing. Activate AI scoring.</td>
+<td>SIP trunk capacity</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Optimize</td>
+<td>Full speed. Analyze AI insights. Adjust scripts.</td>
+<td>This phase never ends</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-fastest-path">The fastest path<a class="headerlink" href="#the-fastest-path" title="Permanent link">&para;</a></h3>
+<p>If you skip AI initially and use ViciBox ISO with a single all-in-one server: week 1 install and configure, week 2 load lists and test, week 3 go live. Three weeks from zero to live calls. Add the AI layer once the dialer is running and generating revenue. This is honestly the approach I would recommend for most teams.</p>
+<h2 id="one-time-vs-monthly-cost-summary">One-Time vs. Monthly Cost Summary<a class="headerlink" href="#one-time-vs-monthly-cost-summary" title="Permanent link">&para;</a></h2>
+<h3 id="one-time-costs">One-time costs<a class="headerlink" href="#one-time-costs" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPU (RTX 4090 or used 3090)</td>
+<td>$700-1,400</td>
+</tr>
+<tr>
+<td>GPU server build (case, PSU, mobo, CPU, RAM, NVMe)</td>
+<td>$1,500-2,000</td>
+</tr>
+<tr>
+<td>SSL certificates (Let's Encrypt)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>VICIdial license (AGPLv2 open source)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>Asterisk license (GPLv2 open source)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>$2,200-3,400</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="monthly-recurring">Monthly recurring<a class="headerlink" href="#monthly-recurring" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Low</th>
+<th>High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bare metal servers (3)</td>
+<td>$295</td>
+<td>$450</td>
+</tr>
+<tr>
+<td>SIP trunk minutes (50 agents)</td>
+<td>$3,700</td>
+<td>$5,200</td>
+</tr>
+<tr>
+<td>DIDs (10-20 numbers)</td>
+<td>$10</td>
+<td>$30</td>
+</tr>
+<tr>
+<td>AI QA tool (Enthu.ai)</td>
+<td>$2,950</td>
+<td>$2,950</td>
+</tr>
+<tr>
+<td>AI AMD</td>
+<td>$200</td>
+<td>$500</td>
+</tr>
+<tr>
+<td>API costs (coaching)</td>
+<td>$15</td>
+<td>$50</td>
+</tr>
+<tr>
+<td>Monitoring/backup</td>
+<td>$20</td>
+<td>$150</td>
+</tr>
+<tr>
+<td><strong>Total infrastructure</strong></td>
+<td><strong>$7,190</strong></td>
+<td><strong>$9,330</strong></td>
+</tr>
+</tbody>
+</table>
+<p>SIP trunk minutes dominate recurring cost. Provider choice alone can swing this by $3,000-6,000/month. Everything else combined is under $4,000.</p>
+<h2 id="what-vicidial-already-does-well">What VICIdial Already Does Well<a class="headerlink" href="#what-vicidial-already-does-well" title="Permanent link">&para;</a></h2>
+<p>Before bolting AI onto everything, know that VICIdial's core is battle-tested:</p>
+<ul>
+<li><strong>Predictive dialing</strong>: Adaptive dial-level works for most campaigns</li>
+<li><strong>ACD routing</strong>: Skills-based routing, overflow groups, ring strategies</li>
+<li><strong>IVR</strong>: Multi-level with DTMF, time conditions, call routing</li>
+<li><strong>Call recording</strong>: Built-in, configurable per-campaign or per-agent</li>
+<li><strong>Real-time monitoring</strong>: Live agent status, listen/whisper/barge</li>
+<li><strong>DNC management</strong>: Internal lists plus FTC DNC integration</li>
+<li><strong>Lead management</strong>: List loading, duplicate detection, callbacks</li>
+<li><strong>Reporting</strong>: 50+ built-in reports, all exportable</li>
+</ul>
+<p>VICIdial is open source, free, and handles the core dialer workload without AI. The AI layer bolts on through EAGI scripts (AMD), SIP trunks (voice bots), and recording feeds (QA). You are not replacing VICIdial. You are augmenting it.</p>
+<h2 id="the-bottom-line">The Bottom Line<a class="headerlink" href="#the-bottom-line" title="Permanent link">&para;</a></h2>
+<p>Building an AI-powered outbound call center in 2026 is not about replacing humans with robots. The technology is not there yet for complex sales, and it may never fully get there -- humans read other humans better than machines do. What AI actually gives you: fewer wasted connections from better AMD, less agent wrap-up time from auto-summarization, better coaching from real-time analytics, and total QA coverage instead of the 2% sample that has been industry standard for two decades.</p>
+<p>The build takes 8-10 weeks with AI from the start, or 3 weeks if you launch on VICIdial alone and add AI iteratively. Total infrastructure runs $7,000-9,000/month on bare metal. One-time GPU hardware is under $3,500. The open-source stack (VICIdial, Asterisk, Whisper, Ollama) means your software licensing cost is zero.</p>
+<p>Start with AMD and transcription. Add QA scoring once recordings are flowing. Add lead scoring and coaching after you have data to train on. Skip the vendor hype about fully autonomous AI agents unless your use case is genuinely simple and scriptable.</p>
+<p>The operation that wins in 2026 is not the one with the most AI. It is the one that puts AI where it helps and keeps humans where they still matter.</p>
+<hr />
+<p><em>Need help building this? <a href="https://vicistack.com">ViciStack</a> deploys AI-augmented VICIdial call centers -- server architecture, AI integration, campaign optimization. We have done this enough times to know which shortcuts save money and which ones cost it. <a href="https://vicistack.com/contact">Get in touch</a> and we will scope your build in a 30-minute call.</em></p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/ai-outbound-call-center-2026">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

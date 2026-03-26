@@ -1,0 +1,4529 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-tested VICIdial and Asterisk guides, configurations, and best practices from ViciStack.">
+      
+      
+        <meta name="author" content="ViciStack Team">
+      
+      
+        <link rel="canonical" href="https://gamlin-ccdocs.github.io/vicistack-docs/guides/vicidial-solar-lead-generation/">
+      
+      
+        <link rel="prev" href="../vicidial-sip-trunk-failover/">
+      
+      
+        <link rel="next" href="../vicidial-support/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VICIdial for Solar Lead Generation: The Complete Guide - ViciStack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vicidial-for-solar-lead-generation-the-complete-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ViciStack Documentation" class="md-header__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ViciStack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VICIdial for Solar Lead Generation: The Complete Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ViciStack Documentation" class="md-nav__button md-logo" aria-label="ViciStack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ViciStack Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gamlin-ccdocs/vicistack-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-outbound-call-center-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build an AI-Powered Outbound Call Center From Scratch in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-otel-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk Observability with OpenTelemetry and Grafana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asterisk-pjsip-tls-openssl3-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-predictive-dialer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Predictive Dialer 2026: The Definitive Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-abandonment-rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Abandonment Rate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-after-hours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-agent-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Agent Onboarding Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-compliance-checklist-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Compliance Checklist: FTC, TCPA, TSR, and State Laws in 2026
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-cost-per-lead-benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-roi-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center ROI Formula: How to Calculate and Improve
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-software-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Call Center Software Comparison: Buyer's Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../call-center-staffing-formula/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Center Staffing Formula: Erlang C vs Real-World Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contact-center-kpis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Center KPIs: The Complete Guide to Metrics That Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../goautodial-to-vicidial-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Goautodial To Vicidial Migration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-vs-self-hosted-dialer-cost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-we-built-ai-voice-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How We Built an AI Voice Agent from 500 Real Cold Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../open-source-call-center-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open Source Call Center Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../predictive-vs-progressive-dialing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive vs Progressive vs Preview Dialing: When to Use Each
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stir-shaken-vicidial-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-34-new-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial New Features: Everything You Need to Know
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-coaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Coaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-efficiency-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Agent Efficiency Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-agent-screen-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Agent Screen Customization Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-false-positive-reduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Reduce VICIdial AMD False Positives from 20% to Under 5%
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Amd Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-amd-vs-ai-amd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Answering Machine Detection vs AI-Based AMD: Which Is Better?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-api-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial API Integration: Custom Workflows & Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-cdr-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Asterisk CDR Analysis for Connect Rate Optimization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-asterisk-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Asterisk Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-auto-dial-level-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Auto Dial Level Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-call-recording/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Call Recording
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-callback-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Callback Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-caller-id-reputation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Caller ID Reputation Monitoring and Recovery Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-carrier-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Carrier Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cloud-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cloud Deployment: AWS, GCP & DigitalOcean
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cluster-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cnam-lookup-inbound/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Cnam Lookup Inbound
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-cost-2026/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The True Cost of Running VICIdial in 2026: A Realistic Breakdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-crm-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-custom-mysql-reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Custom Mysql Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-database-partitioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Database Partitioning for High-Volume Call Centers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-did-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Did Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-disaster-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Disaster Recovery & High Availability Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-dnc-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial DNC List Management: Federal, State & Internal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running VICIdial in Docker: The Container Setup Nobody Talks About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-golang-api-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a VICIdial API Client in Go: Real Code, Real Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building VICIdial Dashboards with Grafana & Metabase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-grafana-realtime-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-hosted-migration-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Hosted Migration Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-inbound-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Inbound Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-ivr-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Ivr Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-kamailio-load-balancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Kamailio Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-lead-recycling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Lead Recycling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-list-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial List Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-multi-tenant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Multi Tenant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-mysql-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial MySQL Optimization: Queries, Indexes & Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-outbound-sales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Outbound Sales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-pause-codes-accountability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Pause Codes Accountability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-performance-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Performance Tuning: Server Optimization for 500+ Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-political-campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Political Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-predictive-dialer-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-qa-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Qa Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-realtime-agent-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Realtime Agent Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-remote-agent-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-reporting-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Reporting & Real-Time Monitoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-roi-case-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial ROI Case Study: How One Center Doubled Connects in 14 Days
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-security-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Security Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Setup Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial SIP Troubleshooting: Fix One-Way Audio, 503s, and Registration Failures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-sip-trunk-failover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Sip Trunk Failover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial for Solar Lead Generation: The Complete Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-solar-lead-gen-is-different-from-other-verticals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Solar Lead Gen Is Different From Other Verticals
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-campaign-configuration-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Campaign Configuration for Solar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial Campaign Configuration for Solar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campaign-type-and-dial-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Type and Dial Method
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dial-level-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dial Level Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amd-configuration-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD Configuration for Solar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-time-and-time-zone-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Time and Time Zone Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-management-for-solar-local-presence-is-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Management for Solar: Local Presence Is Everything
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID Management for Solar: Local Presence Is Everything">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#did-rotation-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Rotation Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcpa-compliance-for-solar-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Compliance for Solar Campaigns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TCPA Compliance for Solar Campaigns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-fcc-one-to-one-consent-rule-january-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The FCC One-to-One Consent Rule (January 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-specific-rules-that-affect-solar-dialing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Specific Rules That Affect Solar Dialing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-management-and-recycling-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Management and Recycling for Solar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Management and Recycling for Solar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lead-source-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Source Hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#speed-to-lead-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speed-to-Lead Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recycling-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recycling Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solar-crm-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solar CRM Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solar CRM Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-solar-crm-integrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Solar CRM Integrations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-api-integration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial API Integration Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-settings-recommendations-the-complete-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Settings Recommendations: The Complete Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Settings Recommendations: The Complete Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primary-solar-campaign-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primary Solar Campaign Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-interface-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Interface Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-per-appointment-benchmarks-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost-Per-Appointment Benchmarks for Solar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seasonal-campaign-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seasonal Campaign Adjustments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Seasonal Campaign Adjustments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peak-season-march-june" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Peak Season (March - June)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summer-july-august" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summer (July - August)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fall-transition-september-october" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fall Transition (September - October)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#winter-november-february" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Winter (November - February)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integrating-vicidial-with-solar-specific-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integrating VICIdial With Solar-Specific Tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integrating VICIdial With Solar-Specific Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proposal-and-design-software" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposal and Design Software
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility-bill-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility Bill Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appointment-confirmation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appointment Confirmation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes-in-solar-lead-gen-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Mistakes in Solar Lead Gen Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-good-cost-per-appointment-for-solar-lead-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a good cost per appointment for solar lead generation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-dids-do-i-need-for-a-solar-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many DIDs do I need for a solar campaign?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-amd-worth-using-for-solar-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is AMD worth using for solar campaigns?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-the-fcc-one-to-one-consent-rule-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle the FCC one-to-one consent rule for solar?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-vicidial-for-solar-appointment-setting-and-sales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use VICIdial for solar appointment setting and sales?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-best-time-to-call-solar-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the best time to call solar leads?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-vicidial-compare-to-dedicated-solar-dialers-like-phoneburner-or-mojo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does VICIdial compare to dedicated solar dialers like PhoneBurner or Mojo?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-vicidial-version-should-i-use-for-solar-lead-gen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What VICIdial version should I use for solar lead gen?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-tcpa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial TCPA Compliance Checklist [2026]
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-timezone-dialing-tcpa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-training-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Training Guide: From Beginner to Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-voicemail-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial Voicemail Drop Configuration and Compliance Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-calltools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vicidial Vs Calltools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-convoso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-five9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Five9: When to Stay, When to Switch, and When to Optimize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-genesys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs. Genesys: Complete Platform Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-gohighlevel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs GoHighLevel: Why Your 50-Seat Floor Can't Run on a Marketing Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-vs-xencall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vicidial-webrtc-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VICIdial WebRTC Setup Guide for Remote Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-solar-lead-gen-is-different-from-other-verticals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Solar Lead Gen Is Different From Other Verticals
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vicidial-campaign-configuration-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial Campaign Configuration for Solar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VICIdial Campaign Configuration for Solar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campaign-type-and-dial-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Type and Dial Method
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dial-level-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dial Level Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amd-configuration-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD Configuration for Solar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#call-time-and-time-zone-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call Time and Time Zone Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#did-management-for-solar-local-presence-is-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Management for Solar: Local Presence Is Everything
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DID Management for Solar: Local Presence Is Everything">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#did-rotation-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Rotation Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcpa-compliance-for-solar-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCPA Compliance for Solar Campaigns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TCPA Compliance for Solar Campaigns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-fcc-one-to-one-consent-rule-january-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The FCC One-to-One Consent Rule (January 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-specific-rules-that-affect-solar-dialing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State-Specific Rules That Affect Solar Dialing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lead-management-and-recycling-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Management and Recycling for Solar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lead Management and Recycling for Solar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lead-source-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lead Source Hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#speed-to-lead-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speed-to-Lead Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recycling-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recycling Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solar-crm-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solar CRM Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solar CRM Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-solar-crm-integrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Solar CRM Integrations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vicidial-api-integration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VICIdial API Integration Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-settings-recommendations-the-complete-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Settings Recommendations: The Complete Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Settings Recommendations: The Complete Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primary-solar-campaign-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primary Solar Campaign Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-interface-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Interface Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-per-appointment-benchmarks-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost-Per-Appointment Benchmarks for Solar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seasonal-campaign-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seasonal Campaign Adjustments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Seasonal Campaign Adjustments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peak-season-march-june" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Peak Season (March - June)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summer-july-august" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summer (July - August)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fall-transition-september-october" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fall Transition (September - October)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#winter-november-february" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Winter (November - February)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integrating-vicidial-with-solar-specific-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integrating VICIdial With Solar-Specific Tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integrating VICIdial With Solar-Specific Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proposal-and-design-software" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposal and Design Software
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility-bill-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility Bill Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appointment-confirmation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appointment Confirmation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes-in-solar-lead-gen-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Mistakes in Solar Lead Gen Campaigns
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frequently Asked Questions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frequently Asked Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-good-cost-per-appointment-for-solar-lead-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a good cost per appointment for solar lead generation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-dids-do-i-need-for-a-solar-campaign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How many DIDs do I need for a solar campaign?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-amd-worth-using-for-solar-campaigns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is AMD worth using for solar campaigns?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-handle-the-fcc-one-to-one-consent-rule-for-solar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How do I handle the FCC one-to-one consent rule for solar?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-use-vicidial-for-solar-appointment-setting-and-sales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I use VICIdial for solar appointment setting and sales?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-the-best-time-to-call-solar-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's the best time to call solar leads?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-does-vicidial-compare-to-dedicated-solar-dialers-like-phoneburner-or-mojo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How does VICIdial compare to dedicated solar dialers like PhoneBurner or Mojo?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-vicidial-version-should-i-use-for-solar-lead-gen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What VICIdial version should I use for solar lead gen?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About This Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vicidial-for-solar-lead-generation-the-complete-guide">VICIdial for Solar Lead Generation: The Complete Guide<a class="headerlink" href="#vicidial-for-solar-lead-generation-the-complete-guide" title="Permanent link">&para;</a></h1>
+<p><strong>Everything you need to configure VICIdial for solar lead generation — from campaign settings and dialing patterns to TCPA landmines and cost-per-appointment benchmarks. Built from real solar campaign data.</strong></p>
+<hr />
+<p>Solar lead generation is one of the most competitive outbound calling verticals in the United States. The math is simple: the average residential solar installation generates $15,000-$40,000 in revenue, which means a qualified appointment is worth $200-$800 to the installer. That margin supports aggressive dialing operations — and it's why solar call centers are some of the highest-volume VICIdial deployments we manage.</p>
+<p>It's also one of the most regulated. Solar calling intersects with the <a href="/glossary/tcpa/">TCPA</a>, state mini-TCPAs, the FTC's Telemarketing Sales Rule, state-specific solar regulations, and a patchwork of do-not-call requirements that change faster than most compliance teams can track. Get it wrong, and the penalties aren't hypothetical — TCPA lawsuits in the solar industry hit record numbers in 2024-2025, with per-violation damages of $500-$1,500 stacking up across thousands of calls.</p>
+<p>This guide covers everything: VICIdial campaign configuration optimized for solar, <a href="/blog/vicidial-did-management/">DID management</a> strategies for local presence dialing, compliance frameworks, lead recycling, CRM integration, and the actual cost-per-appointment numbers you should be benchmarking against. For the solar industry overview, see our <a href="/industries/solar/">solar industry page</a>.</p>
+<hr />
+<h2 id="why-solar-lead-gen-is-different-from-other-verticals">Why Solar Lead Gen Is Different From Other Verticals<a class="headerlink" href="#why-solar-lead-gen-is-different-from-other-verticals" title="Permanent link">&para;</a></h2>
+<p>Before diving into VICIdial settings, you need to understand what makes solar fundamentally different from debt settlement, insurance, home services, or other outbound verticals:</p>
+<p><strong>1. The decision maker is a homeowner.</strong> Not a business. Not a renter. A homeowner with a roof that faces the right direction, lives in a service area, and has a utility bill high enough to make solar economics work. This means your lead data quality requirements are higher than most verticals — you're filtering for property ownership, roof type, utility provider, and credit profile before anyone picks up the phone.</p>
+<p><strong>2. The sale is consultative and local.</strong> Solar isn't a "close on the first call" product for most markets. The typical solar sales cycle involves an initial qualification call, a virtual or in-person consultation, a site survey, a proposal, and then a close. Your VICIdial campaign is generating the appointment — not closing the deal. This changes how you measure success: cost per appointment (CPA) and appointment-to-close rate are your primary KPIs, not cost per sale.</p>
+<p><strong>3. Seasonality is real.</strong> Solar calling volumes follow predictable seasonal patterns. Spring and early summer (March-June) are peak seasons — homeowners are getting higher utility bills, longer days make solar feel tangible, and installers have capacity. Winter months (November-February) see lower contact rates and higher CPA because homeowners aren't thinking about their electric bill. Your VICIdial campaign configurations should shift with the seasons.</p>
+<p><strong>4. Local trust matters enormously.</strong> Solar is a home improvement product. Homeowners are inherently suspicious of out-of-area calls about their roof. Local presence dialing — where your outbound caller ID shows a local area code — isn't a nice-to-have in solar. It's the difference between a 4% contact rate and an 8% contact rate. We'll cover the DID strategy in detail below.</p>
+<p><strong>5. The regulatory environment is a minefield.</strong> Solar calling is under more scrutiny than almost any other outbound vertical. The <a href="/blog/vicidial-tcpa-compliance/">FCC's one-to-one consent rule</a> (effective January 2025) specifically targeted lead generators in home improvement verticals — including solar. State attorneys general in California, Florida, Texas, and New York have all increased enforcement against solar telemarketing in 2025-2026.</p>
+<hr />
+<h2 id="vicidial-campaign-configuration-for-solar">VICIdial Campaign Configuration for Solar<a class="headerlink" href="#vicidial-campaign-configuration-for-solar" title="Permanent link">&para;</a></h2>
+<h3 id="campaign-type-and-dial-method">Campaign Type and Dial Method<a class="headerlink" href="#campaign-type-and-dial-method" title="Permanent link">&para;</a></h3>
+<p>For solar lead generation, your primary campaign should be configured as:</p>
+<ul>
+<li><strong>Campaign Type:</strong> Outbound</li>
+<li><strong>Dial Method:</strong> RATIO or ADAPT_TAPERED</li>
+<li><strong>Auto Dial Level:</strong> Start at 1.5-2.0, adjust based on contact rate</li>
+</ul>
+<p><strong>Why RATIO or ADAPT_TAPERED instead of pure predictive?</strong> Solar lead lists tend to have lower contact rates than B2B lists (you're calling residential numbers during the day when many homeowners are at work). Pure predictive mode can over-dial when contact rates are low, leading to excessive abandoned calls. RATIO mode gives you direct control over the dial ratio. ADAPT_TAPERED starts at a lower dial level and gradually increases as the system learns the list's contact rate, reducing early-campaign abandons.</p>
+<p>For experienced operations with well-scrubbed lists and stable contact rates (typically the second or third pass through a list), switching to full <a href="/settings/power-dial-mode/">ADAPT_AVERAGE_BALANCE</a> predictive dialing is appropriate. First passes through new lists should use RATIO at 1.5-2.5 until you have baseline data.</p>
+<h3 id="dial-level-settings">Dial Level Settings<a class="headerlink" href="#dial-level-settings" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>Adaptive Maximum Dial Level: 3.0
+Adaptive Dropped Percentage: 2.5
+Adaptive Maximum Abandoned: 2.5
+Dial Timeout: 26 seconds
+</code></pre></div>
+
+<p><strong>Adaptive Maximum Dial Level at 3.0</strong> keeps the dialer from getting overly aggressive. Solar residential lists have variable answer patterns — you might hit a stretch of numbers where nobody answers (homeowners at work), then suddenly get a cluster of pickups. Capping at 3.0 prevents the dialer from spinning up to 5x or 6x during low-contact stretches and then slamming agents with simultaneous connects when the list warms up.</p>
+<p><strong>Adaptive Dropped Percentage at 2.5%</strong> gives you margin below the TCPA-mandated <a href="/glossary/abandon-rate/">3% abandon rate maximum</a>. The TCPA measures abandon rate over a 30-day rolling period per campaign. Running at 2.5% gives you buffer for statistical variance. Some operations run at 2.0% for extra safety. Never run above 2.8% — one bad hour can push your 30-day average over the line.</p>
+<p><strong>Dial Timeout at 26 seconds</strong> is optimized for residential numbers. Residential voicemail systems typically pick up at 25-30 seconds. Setting timeout at 26 catches most live answers while avoiding voicemail greetings, which waste AMD processing time and can generate false positive dispositions.</p>
+<h3 id="amd-configuration-for-solar">AMD Configuration for Solar<a class="headerlink" href="#amd-configuration-for-solar" title="Permanent link">&para;</a></h3>
+<p>AMD in solar campaigns requires careful calibration because residential answering patterns differ from business lines. See our <a href="/blog/vicidial-amd-guide/">complete AMD guide</a> for the full technical breakdown, but here are the solar-specific recommendations:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">AMD</span><span class="w"> </span><span class="nv">Type</span>:<span class="w"> </span><span class="nv">AMD</span>
+<span class="nv">AMD</span><span class="w"> </span><span class="k">Send</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">Agent</span>:<span class="w"> </span><span class="nv">Y</span><span class="w"> </span><span class="ss">(</span><span class="k">for</span><span class="w"> </span><span class="nv">HUMAN</span><span class="w"> </span><span class="nv">results</span><span class="ss">)</span>
+<span class="nv">AMD</span><span class="w"> </span><span class="nv">Inbound</span>:<span class="w"> </span><span class="nv">N</span>
+</code></pre></div>
+
+<p><strong>For the AMD parameters</strong> (configured in the Asterisk dialplan or via Settings Container):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">initialSilence</span><span class="o">:</span><span class="w"> </span><span class="mi">2500</span>
+<span class="n">greeting</span><span class="o">:</span><span class="w"> </span><span class="mi">2000</span>
+<span class="n">afterGreetingSilence</span><span class="o">:</span><span class="w"> </span><span class="mi">1200</span>
+<span class="n">totalAnalysisTime</span><span class="o">:</span><span class="w"> </span><span class="mi">5000</span>
+<span class="n">minimumWordLength</span><span class="o">:</span><span class="w"> </span><span class="mi">120</span>
+<span class="n">betweenWordsSilence</span><span class="o">:</span><span class="w"> </span><span class="mi">50</span>
+<span class="n">maximumNumberOfWords</span><span class="o">:</span><span class="w"> </span><span class="mi">5</span>
+<span class="n">silenceThreshold</span><span class="o">:</span><span class="w"> </span><span class="mi">256</span>
+</code></pre></div>
+
+<p>Key adjustments from default:</p>
+<ul>
+<li><strong>afterGreetingSilence increased to 1200ms</strong> (from the typical 1000ms). Residential callers often have a longer pause after saying "Hello?" before they speak again. The extra 200ms reduces false MACHINE classifications on legitimate homeowner answers.</li>
+<li><strong>maximumNumberOfWords increased to 5</strong> (from 4). Some homeowners answer with longer greetings: "Hello, this is the Johnson residence" is 6 words. Setting this to 5 catches most of those without losing too many actual voicemail greetings to false HUMAN classifications.</li>
+</ul>
+<p><strong>Important:</strong> If you're running campaigns in markets with high cell phone penetration (essentially all markets in 2026), expect AMD accuracy to be lower. Cell phone audio characteristics (variable latency, background noise, hands-free audio) confuse the silence-based algorithm. Monitor your AMD HUMAN → agent disconnect rate. If agents are getting more than 15% machine/dead connects on AMD-classified HUMAN calls, your AMD settings need adjustment.</p>
+<h3 id="call-time-and-time-zone-configuration">Call Time and Time Zone Configuration<a class="headerlink" href="#call-time-and-time-zone-configuration" title="Permanent link">&para;</a></h3>
+<p>Solar calling hours should be configured precisely in VICIdial's <a href="/settings/call-timeout/">call time settings</a>:</p>
+<p><strong>Optimal solar calling windows:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Hours (Local Time)</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monday-Thursday</td>
+<td>10:00 AM - 1:00 PM</td>
+<td>Catch homeowners on lunch, retired homeowners at home</td>
+</tr>
+<tr>
+<td>Monday-Thursday</td>
+<td>4:30 PM - 7:30 PM</td>
+<td>After-work window, highest contact rates</td>
+</tr>
+<tr>
+<td>Friday</td>
+<td>10:00 AM - 5:00 PM</td>
+<td>Shorter evening window (people go out)</td>
+</tr>
+<tr>
+<td>Saturday</td>
+<td>10:00 AM - 4:00 PM</td>
+<td>Weekend homeowners (strong contact rates)</td>
+</tr>
+<tr>
+<td>Sunday</td>
+<td>Noon - 5:00 PM</td>
+<td>Limited calling, some states restrict</td>
+</tr>
+</tbody>
+</table>
+<p><strong>VICIdial call time configuration:</strong></p>
+<p>Create a custom Call Time in Admin → Call Times with the appropriate start/stop hours for each day. Assign this call time to your solar campaigns.</p>
+<p><strong>Time zone enforcement</strong> is critical for solar. VICIdial uses the <a href="/glossary/hopper/">Hopper</a> to manage time-zone-aware dialing. Ensure these settings are correct:</p>
+<ul>
+<li><strong>Local Call Time:</strong> Set to the call time you created above</li>
+<li><strong>Hopper level:</strong> 200-500 (enough to keep the dialer fed without loading numbers that won't be callable for hours)</li>
+<li><strong>Time Zone Checking:</strong> ENABLED — this cross-references lead phone numbers against the <a href="/settings/timezone-filtering/">phone_code and gmt_offset fields</a> to ensure you're only dialing numbers within legal calling hours for their time zone</li>
+</ul>
+<p><strong>Seasonal adjustments:</strong> During peak solar season (March-June), extend your evening window to 8:00 PM local time where legally permitted. Homeowners are more receptive when it's light outside and they can look at their roof. During winter months (November-February), tighten to core hours only — contact rates drop and cost-per-dial increases, so you want to concentrate agent time in the highest-probability windows.</p>
+<hr />
+<h2 id="did-management-for-solar-local-presence-is-everything">DID Management for Solar: Local Presence Is Everything<a class="headerlink" href="#did-management-for-solar-local-presence-is-everything" title="Permanent link">&para;</a></h2>
+<p>If there's one single factor that separates profitable solar campaigns from money-losing ones, it's local presence dialing. The data is unambiguous:</p>
+<ul>
+<li><strong>Calls from local area codes:</strong> 7-12% answer rate</li>
+<li><strong>Calls from toll-free numbers:</strong> 3-5% answer rate</li>
+<li><strong>Calls from out-of-area numbers:</strong> 2-4% answer rate</li>
+</ul>
+<p>That's a 2-3x difference in contact rate from the same list, same agents, same script. In a business where cost per appointment runs $15-$80, doubling your contact rate can cut your CPA in half.</p>
+<h3 id="did-rotation-strategy">DID Rotation Strategy<a class="headerlink" href="#did-rotation-strategy" title="Permanent link">&para;</a></h3>
+<p>VICIdial's <a href="/blog/vicidial-did-management/">DID management system</a> supports caller ID rotation at the campaign level. Here's the optimal setup for solar:</p>
+<p><strong>1. Acquire DIDs for every target market.</strong> For each metro area you're calling, purchase 5-10 local DIDs from your SIP provider. If you're calling the Phoenix metro area, you need 480, 602, and 623 area code numbers. If you're calling the Dallas-Fort Worth market, you need 214, 469, 817, 682, and 972 numbers.</p>
+<p><strong>2. Configure CID Group Rotation.</strong> In VICIdial Admin → Caller ID Groups, create a CID group for each target market. Add your local DIDs to each group. Set the rotation method to:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">CID</span><span class="w"> </span><span class="nv">Group</span><span class="w"> </span><span class="nv">Type</span>:<span class="w"> </span><span class="nv">AREACODE</span>
+<span class="nv">Rotation</span>:<span class="w"> </span><span class="nv">SEQUENTIAL</span><span class="w"> </span><span class="ss">(</span><span class="nv">not</span><span class="w"> </span><span class="k">RANDOM</span><span class="ss">)</span>
+</code></pre></div>
+
+<p>AREACODE-based CID groups automatically match the outbound caller ID to the area code of the number being dialed. This is the simplest and most effective local presence implementation.</p>
+<p><strong>3. Manage DID reputation aggressively.</strong> Solar DIDs get flagged as spam faster than almost any other vertical because of the high dial volume and consumer complaint rates. Implement:</p>
+<ul>
+<li><strong>Per-DID daily limits:</strong> Cap each DID at 75-100 outbound calls per day. High-volume DIDs trigger carrier analytics flags.</li>
+<li><strong>DID health monitoring:</strong> Use a spam reputation checking service (CallerID Reputation, Numeracle, Free Caller Registry) to monitor flag status weekly.</li>
+<li><strong>Rotation on flag detection:</strong> The moment a DID shows up as "Spam Likely" or "Scam Likely" on any major carrier analytics database, pull it from rotation. Let it rest for 30-60 days or replace it.</li>
+<li><strong>Inbound functionality:</strong> Every outbound DID should route to a voicemail or IVR that identifies your company. Homeowners call back solar numbers — if they reach a dead line, they'll report it as spam. Configure VICIdial inbound routes for all outbound DIDs.</li>
+</ul>
+<p><strong>4. STIR/SHAKEN attestation.</strong> Ensure your SIP provider delivers A-level <a href="/blog/stir-shaken-vicidial-guide/">STIR/SHAKEN</a> attestation on your solar DIDs. B or C attestation will result in "Spam Likely" labeling on major carriers within days of high-volume dialing. This is non-negotiable for solar.</p>
+<hr />
+<h2 id="tcpa-compliance-for-solar-campaigns">TCPA Compliance for Solar Campaigns<a class="headerlink" href="#tcpa-compliance-for-solar-campaigns" title="Permanent link">&para;</a></h2>
+<p>Solar lead generation is ground zero for TCPA enforcement. The FCC and plaintiff attorneys have specifically targeted solar telemarketing in recent enforcement actions. Here's what you must configure in VICIdial to stay compliant.</p>
+<h3 id="the-fcc-one-to-one-consent-rule-january-2025">The FCC One-to-One Consent Rule (January 2025)<a class="headerlink" href="#the-fcc-one-to-one-consent-rule-january-2025" title="Permanent link">&para;</a></h3>
+<p>This rule changed everything for solar lead generators. Previously, a consumer could fill out a web form and their consent could be shared with multiple solar companies (the "comparison shopping" model). Under the new rule, consent must be:</p>
+<ul>
+<li><strong>One-to-one:</strong> Each consent authorizes calls from only one specific seller</li>
+<li><strong>Topically related:</strong> The consent must relate to the specific product/service being marketed</li>
+<li><strong>Clear and conspicuous:</strong> The consent language must be clear to the consumer</li>
+<li><strong>Logged and retrievable:</strong> You must be able to produce the specific consent record for any called number</li>
+</ul>
+<p><strong>VICIdial implementation:</strong> Your lead intake system must capture and store the consent record (timestamp, IP address, specific consent language, the specific seller authorized). This data should be loaded into VICIdial as custom fields on the lead record. Configure your VICIdial lead loading process to reject any lead that doesn't include a valid consent record.</p>
+<h3 id="state-specific-rules-that-affect-solar-dialing">State-Specific Rules That Affect Solar Dialing<a class="headerlink" href="#state-specific-rules-that-affect-solar-dialing" title="Permanent link">&para;</a></h3>
+<p><strong>Florida FTSA (Florida Telephone Solicitation Act):</strong>
+- Maximum 3 calls per 24-hour period to the same residential number
+- Calling hours: 8:00 AM - 8:00 PM local time (stricter than federal)
+- Requires registration with the Florida Do Not Call list
+- VICIdial config: Set <a href="/settings/auto-alt-dial/">Auto Alt Dial Limit</a> to 3 and use the daily call limit feature in your filter settings for Florida area codes</p>
+<p><strong>California (CCPA + state telemarketing laws):</strong>
+- Opt-out must be processed within 15 business days
+- Written consent required for automated calls to cell phones
+- California's CCPA applies to the personal data you collect during solar calls
+- VICIdial config: Maintain a California-specific internal DNC list; process removals within the required timeframe</p>
+<p><strong>Texas SB 140:</strong>
+- Requires registration with the Texas Secretary of State before telemarketing in Texas
+- $10,000 per violation penalties
+- VICIdial config: Ensure your company is registered before loading any Texas leads; maintain proof of registration</p>
+<p><strong>Virginia (10-year opt-out requirement):</strong>
+- Once a Virginia consumer opts out, you must maintain that opt-out for 10 years
+- VICIdial config: Your <a href="/glossary/dnc/">internal DNC list</a> must be persistent and maintained across system migrations. Do not purge DNC entries for Virginia numbers.</p>
+<p><strong>Oklahoma OTSA (Oklahoma Telephone Solicitation Act):</strong>
+- Registration required; strict calling hour restrictions
+- VICIdial config: Similar to Florida, configure separate call times for Oklahoma area codes</p>
+<p>Configure VICIdial's campaign settings to enforce these state-specific rules:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Drop</span><span class="w"> </span><span class="nv">Percentage</span><span class="w"> </span><span class="nv">Maximum</span>:<span class="w"> </span><span class="mi">2</span>.<span class="mi">5</span><span class="w"> </span><span class="ss">(</span><span class="nv">federal</span><span class="w"> </span><span class="mi">3</span><span class="o">%</span><span class="w"> </span><span class="nv">with</span><span class="w"> </span><span class="nv">safety</span><span class="w"> </span><span class="nv">margin</span><span class="ss">)</span>
+<span class="nv">Safe</span><span class="w"> </span><span class="nv">Harbor</span><span class="w"> </span><span class="nv">Message</span>:<span class="w"> </span><span class="nv">Y</span><span class="w"> </span><span class="ss">(</span><span class="nv">plays</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">recorded</span><span class="w"> </span><span class="nv">message</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">abandoned</span><span class="w"> </span><span class="nv">calls</span><span class="ss">)</span>
+<span class="nv">Safe</span><span class="w"> </span><span class="nv">Harbor</span><span class="w"> </span><span class="nv">Audio</span><span class="w"> </span><span class="nv">File</span>:<span class="w"> </span>[<span class="nv">your</span><span class="w"> </span><span class="nv">compliance</span><span class="w"> </span><span class="nv">recording</span>]
+<span class="nv">DNC</span><span class="w"> </span><span class="nv">List</span>:<span class="w"> </span>[<span class="nv">your</span><span class="w"> </span><span class="nv">internal</span><span class="w"> </span><span class="nv">DNC</span><span class="w"> </span><span class="nv">list</span><span class="w"> </span><span class="nv">IDs</span>]
+</code></pre></div>
+
+<p>For detailed compliance configuration across all VICIdial settings, see our <a href="/blog/vicidial-tcpa-compliance/">TCPA compliance checklist</a>.</p>
+<hr />
+<h2 id="lead-management-and-recycling-for-solar">Lead Management and Recycling for Solar<a class="headerlink" href="#lead-management-and-recycling-for-solar" title="Permanent link">&para;</a></h2>
+<p>Solar leads have a longer lifecycle than most outbound verticals. A homeowner who doesn't answer today might be a qualified appointment next week. Your lead recycling strategy directly impacts CPA.</p>
+<h3 id="lead-source-hierarchy">Lead Source Hierarchy<a class="headerlink" href="#lead-source-hierarchy" title="Permanent link">&para;</a></h3>
+<p>Not all solar leads are created equal. Structure your VICIdial campaigns to prioritize by lead quality:</p>
+<table>
+<thead>
+<tr>
+<th>Lead Source</th>
+<th>Typical CPA</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inbound web form (exclusive)</td>
+<td>$15-$30</td>
+<td>Highest — dial within 5 minutes</td>
+</tr>
+<tr>
+<td>Shared web form (aged 0-24 hrs)</td>
+<td>$25-$50</td>
+<td>High — dial same day</td>
+</tr>
+<tr>
+<td>Purchased list (qualified homeowner)</td>
+<td>$40-$80</td>
+<td>Medium — standard campaign</td>
+</tr>
+<tr>
+<td>Aged leads (7-30 days)</td>
+<td>$20-$45</td>
+<td>Medium — second/third pass</td>
+</tr>
+<tr>
+<td>Aged leads (30-90 days)</td>
+<td>$30-$60</td>
+<td>Lower — recycled campaign</td>
+</tr>
+<tr>
+<td>Cold list (homeowner filter only)</td>
+<td>$60-$120</td>
+<td>Lowest — prospecting campaign</td>
+</tr>
+</tbody>
+</table>
+<p><strong>VICIdial implementation:</strong> Create separate campaigns or list groups for each lead tier. Use VICIdial's <a href="/settings/list-order/">list mix</a> or <a href="/settings/hopper-level/">hopper priority</a> settings to weight higher-quality leads. Fresh exclusive web leads should be in a speed-to-lead campaign with agents dedicated to immediate response.</p>
+<h3 id="speed-to-lead-configuration">Speed-to-Lead Configuration<a class="headerlink" href="#speed-to-lead-configuration" title="Permanent link">&para;</a></h3>
+<p>For inbound web form leads, speed is everything. The probability of qualifying a solar lead drops by 80% after the first 5 minutes. Configure a dedicated VICIdial speed-to-lead campaign:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Dial</span><span class="w"> </span><span class="k">Method</span><span class="err">:</span><span class="w"> </span><span class="n">RATIO</span>
+<span class="n">Auto</span><span class="w"> </span><span class="n">Dial</span><span class="w"> </span><span class="k">Level</span><span class="err">:</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="n">Lead</span><span class="w"> </span><span class="k">Filter</span><span class="err">:</span><span class="w"> </span><span class="o">[</span><span class="n">web_form_leads_last_30_minutes</span><span class="o">]</span>
+<span class="n">Hopper</span><span class="w"> </span><span class="k">Level</span><span class="err">:</span><span class="w"> </span><span class="mi">50</span>
+<span class="k">Drop</span><span class="w"> </span><span class="nl">Percentage</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">(</span><span class="k">no</span><span class="w"> </span><span class="n">drops</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="k">every</span><span class="w"> </span><span class="k">call</span><span class="w"> </span><span class="n">gets</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">agent</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Use VICIdial's API to load leads in real-time as web forms are submitted. The Non-Agent API <code>add_lead</code> function with <code>duplicate_check=DUPLIST</code> and <code>hopper_priority=99</code> ensures the lead enters the hopper immediately at highest priority.</p>
+<h3 id="recycling-rules">Recycling Rules<a class="headerlink" href="#recycling-rules" title="Permanent link">&para;</a></h3>
+<p>Configure disposition-based recycling to maximize lead utilization without over-calling:</p>
+<table>
+<thead>
+<tr>
+<th>Disposition</th>
+<th>Recycle After</th>
+<th>Max Attempts</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NA (No Answer)</td>
+<td>2 hours</td>
+<td>6 attempts</td>
+<td>Vary time of day</td>
+</tr>
+<tr>
+<td>B (Busy)</td>
+<td>30 minutes</td>
+<td>4 attempts</td>
+<td>Likely screening</td>
+</tr>
+<tr>
+<td>AM (Answering Machine)</td>
+<td>4 hours</td>
+<td>3 attempts</td>
+<td>Leave VM on 2nd attempt</td>
+</tr>
+<tr>
+<td>NI (Not Interested)</td>
+<td>14 days</td>
+<td>2 attempts</td>
+<td>Different agent, different pitch</td>
+</tr>
+<tr>
+<td>CB (Callback)</td>
+<td>Scheduled time</td>
+<td>3 attempts</td>
+<td>Agent-specific callback</td>
+</tr>
+<tr>
+<td>DNC (Do Not Call)</td>
+<td>Never</td>
+<td>N/A</td>
+<td>Add to internal DNC</td>
+</tr>
+<tr>
+<td>NQ (Not Qualified)</td>
+<td>Never</td>
+<td>N/A</td>
+<td>Wrong homeowner type, renter, etc.</td>
+</tr>
+</tbody>
+</table>
+<p>Configure these in VICIdial under Campaign → Disposition Recycle settings. The key is varying the time of day across attempts — if someone didn't answer at 11 AM on Tuesday, try 5:30 PM on Wednesday.</p>
+<hr />
+<h2 id="solar-crm-integration">Solar CRM Integration<a class="headerlink" href="#solar-crm-integration" title="Permanent link">&para;</a></h2>
+<p>VICIdial doesn't replace your solar CRM — it feeds it. The integration between VICIdial and your solar-specific CRM is where appointments become proposals become installations.</p>
+<h3 id="common-solar-crm-integrations">Common Solar CRM Integrations<a class="headerlink" href="#common-solar-crm-integrations" title="Permanent link">&para;</a></h3>
+<p><strong>Salesforce:</strong> The most common integration for mid-to-large solar operations. Use VICIdial's API to push qualified appointments into Salesforce as Leads or Opportunities. Key fields to sync: homeowner name, address, phone, utility provider, average bill, roof type (if captured), appointment date/time, agent notes.</p>
+<p>VICIdial's custom fields can be mapped to Salesforce fields via a middleware script (PHP, Python, or a tool like Zapier/Make). The typical flow:</p>
+<ol>
+<li>Agent qualifies the homeowner in VICIdial</li>
+<li>Agent dispositions the call as SET (appointment set)</li>
+<li>VICIdial webhook or API trigger sends lead data to Salesforce</li>
+<li>Salesforce creates an Opportunity and assigns to the solar sales team</li>
+<li>Sales team confirms the appointment and runs the consultation</li>
+</ol>
+<p><strong>Aurora Solar / EnergySage:</strong> These platforms handle proposal generation and solar design. Integration is typically one-directional — VICIdial feeds qualified leads into the proposal pipeline. Use their APIs to push appointment data after disposition.</p>
+<p><strong>GoHighLevel (GHL):</strong> Increasingly popular with smaller solar operations. VICIdial can push leads via GHL's API, and GHL handles nurture sequences (SMS follow-up, email drips) for leads that didn't convert on the first call.</p>
+<h3 id="vicidial-api-integration-example">VICIdial API Integration Example<a class="headerlink" href="#vicidial-api-integration-example" title="Permanent link">&para;</a></h3>
+<p>Here's the typical API flow for pushing a set appointment to your CRM:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># VICIdial Non-Agent API call to retrieve lead data after SET disposition</span>
+curl<span class="w"> </span><span class="s2">&quot;https://your-vicidial-server/vicidial/non_agent_api.php?\</span>
+<span class="s2">source=crm_sync&amp;\</span>
+<span class="s2">function=lead_field_info&amp;\</span>
+<span class="s2">user=api_user&amp;\</span>
+<span class="s2">pass=api_pass&amp;\</span>
+<span class="s2">lead_id=12345678&amp;\</span>
+<span class="s2">custom_fields=Y&quot;</span>
+</code></pre></div>
+
+<p>Your middleware parses the response and pushes to your CRM. For real-time integration, configure a VICIdial URL that fires on specific dispositions — under Campaign → Dispo Call URL, set a URL that triggers when agents disposition as SET or CALLBACK.</p>
+<div class="codehilite"><pre><span></span><code>Dispo Call URL: https://your-middleware.com/vicidial-webhook?lead_id=--A--lead_id--B--&amp;status=--A--dispo--B--&amp;phone=--A--phone_number--B--&amp;agent=--A--user--B--
+</code></pre></div>
+
+<p>The <code>--A--</code> and <code>--B--</code> tags are VICIdial's variable substitution markers — they get replaced with actual values when the URL fires.</p>
+<hr />
+<h2 id="campaign-settings-recommendations-the-complete-configuration">Campaign Settings Recommendations: The Complete Configuration<a class="headerlink" href="#campaign-settings-recommendations-the-complete-configuration" title="Permanent link">&para;</a></h2>
+<p>Here's a consolidated VICIdial campaign configuration for a solar lead generation operation. These are starting points — adjust based on your specific list quality, market, and agent skill level.</p>
+<h3 id="primary-solar-campaign-settings">Primary Solar Campaign Settings<a class="headerlink" href="#primary-solar-campaign-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dial Method</td>
+<td>ADAPT_TAPERED</td>
+<td>Safe ramp-up, adjusts to list quality</td>
+</tr>
+<tr>
+<td>Auto Dial Level</td>
+<td>1.5 (starting)</td>
+<td>Conservative start for new lists</td>
+</tr>
+<tr>
+<td>Adaptive Max Level</td>
+<td>3.0</td>
+<td>Prevents over-dialing</td>
+</tr>
+<tr>
+<td>Adaptive Drop %</td>
+<td>2.5</td>
+<td>Below 3% TCPA threshold</td>
+</tr>
+<tr>
+<td>Dial Timeout</td>
+<td>26 sec</td>
+<td>Catches answers, avoids most VMs</td>
+</tr>
+<tr>
+<td>AMD</td>
+<td>ON (with tuned parameters)</td>
+<td>Filters machines for agent efficiency</td>
+</tr>
+<tr>
+<td>Drop Percentage Max</td>
+<td>3.0</td>
+<td>Hard ceiling</td>
+</tr>
+<tr>
+<td>Safe Harbor</td>
+<td>ENABLED</td>
+<td>Required for compliance</td>
+</tr>
+<tr>
+<td>Local Caller ID</td>
+<td>AREACODE CID Group</td>
+<td>Critical for solar contact rates</td>
+</tr>
+<tr>
+<td>Call Time</td>
+<td>Custom solar hours</td>
+<td>Market-optimized windows</td>
+</tr>
+<tr>
+<td>Answering Machine Message</td>
+<td>Y</td>
+<td>Drop VM on machine detection</td>
+</tr>
+<tr>
+<td>DNC Checking</td>
+<td>CAMPAIGN AND SYSTEM</td>
+<td>Checks both internal lists</td>
+</tr>
+<tr>
+<td>Hopper Level</td>
+<td>300</td>
+<td>Keeps dialer fed</td>
+</tr>
+<tr>
+<td>Lead Filter</td>
+<td>Homeowner qualification filter</td>
+<td>Filters unqualified leads pre-dial</td>
+</tr>
+<tr>
+<td>Lead Recycling</td>
+<td>Disposition-based (see table above)</td>
+<td>Maximizes list utilization</td>
+</tr>
+<tr>
+<td>Auto Alt Dial</td>
+<td>ALT_AND_ADDR3</td>
+<td>Tries alt phone numbers</td>
+</tr>
+<tr>
+<td>Auto Alt Dial Limit</td>
+<td>3 per number per day</td>
+<td>Florida FTSA compliance</td>
+</tr>
+</tbody>
+</table>
+<h3 id="agent-interface-configuration">Agent Interface Configuration<a class="headerlink" href="#agent-interface-configuration" title="Permanent link">&para;</a></h3>
+<p>Configure the VICIdial agent screen for solar-specific workflow:</p>
+<ul>
+<li><strong>Custom fields visible on agent screen:</strong> Homeowner name, property address, utility provider, average monthly bill, roof type, credit range</li>
+<li><strong>Script:</strong> Solar qualification script with branching logic (homeowner Y/N → utility provider → bill amount → roof condition → appointment pitch)</li>
+<li><strong>Disposition options:</strong> SET, CB (Callback), NI (Not Interested), NQ (Not Qualified - Renter), NQ2 (Not Qualified - Low Bill), NQ3 (Not Qualified - Bad Roof), DNC, NAS (Not Available - Schedule callback)</li>
+<li><strong>Transfer options:</strong> Configure warm transfer to senior closer or appointment confirmation team</li>
+</ul>
+<hr />
+<h2 id="cost-per-appointment-benchmarks-for-solar">Cost-Per-Appointment Benchmarks for Solar<a class="headerlink" href="#cost-per-appointment-benchmarks-for-solar" title="Permanent link">&para;</a></h2>
+<p>Based on aggregated data from solar lead generation operations running VICIdial, here are the CPA benchmarks you should be measuring against. These assume a VICIdial deployment with proper local presence, AMD configuration, and TCPA-compliant dialing practices.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Bottom Quartile</th>
+<th>Median</th>
+<th>Top Quartile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cost per appointment (exclusive web leads)</td>
+<td>$35-$50</td>
+<td>$20-$35</td>
+<td>$12-$20</td>
+</tr>
+<tr>
+<td>Cost per appointment (aged/shared leads)</td>
+<td>$65-$90</td>
+<td>$40-$65</td>
+<td>$25-$40</td>
+</tr>
+<tr>
+<td>Cost per appointment (cold list)</td>
+<td>$100-$150</td>
+<td>$70-$100</td>
+<td>$45-$70</td>
+</tr>
+<tr>
+<td>Contact rate (local presence)</td>
+<td>5-7%</td>
+<td>7-9%</td>
+<td>9-14%</td>
+</tr>
+<tr>
+<td>Contact rate (no local presence)</td>
+<td>2-4%</td>
+<td>4-6%</td>
+<td>6-8%</td>
+</tr>
+<tr>
+<td>Qualification rate (contacts to appointments)</td>
+<td>5-10%</td>
+<td>10-18%</td>
+<td>18-28%</td>
+</tr>
+<tr>
+<td>Appointment show rate</td>
+<td>50-65%</td>
+<td>65-78%</td>
+<td>78-90%</td>
+</tr>
+<tr>
+<td>Agent appointments per hour</td>
+<td>0.3-0.6</td>
+<td>0.6-1.2</td>
+<td>1.2-2.0</td>
+</tr>
+</tbody>
+</table>
+<p>For a deeper dive into cost benchmarks across all outbound verticals, see our <a href="/blog/call-center-cost-per-lead-benchmarks/">cost per lead benchmarks analysis</a>.</p>
+<p><strong>What separates top-quartile operations from the rest:</strong></p>
+<ol>
+<li><strong>Speed-to-lead under 5 minutes</strong> for web form leads</li>
+<li><strong>Local presence dialing</strong> with clean DID reputation</li>
+<li><strong>Properly tuned AMD</strong> reducing wasted agent time on machines by 35-50%</li>
+<li><strong>Aggressive lead recycling</strong> with time-of-day variance</li>
+<li><strong>Quality lead data</strong> — pre-filtered for homeownership, property type, utility provider</li>
+<li><strong>Strong scripts</strong> with branching qualification logic</li>
+<li><strong>Agent compensation tied to appointment quality</strong> (not just quantity)</li>
+</ol>
+<hr />
+<h2 id="seasonal-campaign-adjustments">Seasonal Campaign Adjustments<a class="headerlink" href="#seasonal-campaign-adjustments" title="Permanent link">&para;</a></h2>
+<p>Solar calling is seasonal. Your VICIdial configuration should adapt:</p>
+<h3 id="peak-season-march-june">Peak Season (March - June)<a class="headerlink" href="#peak-season-march-june" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Increase agent staffing 25-40%</li>
+<li>Extend evening calling hours to 8:00 PM where legally permitted</li>
+<li>Increase dial levels (lists are more responsive)</li>
+<li>Focus on new/exclusive leads (highest conversion rates in peak)</li>
+<li>Increase DID pool size (more volume = faster DID burnout)</li>
+<li>Tighten appointment windows (installers have capacity, close the loop fast)</li>
+</ul>
+<h3 id="summer-july-august">Summer (July - August)<a class="headerlink" href="#summer-july-august" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Maintain steady volume (still good season but homeowners travel)</li>
+<li>Emphasize "beat the rate hike" messaging (utility rates typically increase in summer)</li>
+<li>Saturday calling is productive (homeowners doing yard work, thinking about their home)</li>
+<li>Watch for utility company incentive deadlines — these create urgency</li>
+</ul>
+<h3 id="fall-transition-september-october">Fall Transition (September - October)<a class="headerlink" href="#fall-transition-september-october" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Begin reducing agent count 10-20%</li>
+<li>Focus on lead recycling and aged leads (lower cost, longer nurture)</li>
+<li>Shift messaging to "lock in before year-end tax credits"</li>
+<li>Federal tax credit (30% ITC) deadlines create Q4 urgency</li>
+</ul>
+<h3 id="winter-november-february">Winter (November - February)<a class="headerlink" href="#winter-november-february" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Minimum viable staffing for calling operations</li>
+<li>Heavy focus on aged lead recycling (low cost per dial)</li>
+<li>Use this period for data cleanup, DNC scrubbing, list preparation for spring</li>
+<li>Train new agents during slow months so they're ready for March ramp-up</li>
+<li>Negotiate better SIP rates during low-volume months (carriers are more flexible)</li>
+</ul>
+<hr />
+<h2 id="integrating-vicidial-with-solar-specific-tools">Integrating VICIdial With Solar-Specific Tools<a class="headerlink" href="#integrating-vicidial-with-solar-specific-tools" title="Permanent link">&para;</a></h2>
+<h3 id="proposal-and-design-software">Proposal and Design Software<a class="headerlink" href="#proposal-and-design-software" title="Permanent link">&para;</a></h3>
+<p>After VICIdial generates the appointment, the solar sales workflow moves to proposal tools:</p>
+<ul>
+<li><strong>Aurora Solar:</strong> Cloud-based solar design platform. Push lead address data from VICIdial to Aurora's API to pre-generate roof models before the consultation.</li>
+<li><strong>Helioscope:</strong> Alternative design tool popular with commercial solar. Less relevant for residential lead gen but worth noting for operations that do both.</li>
+<li><strong>OpenSolar:</strong> Free design tool that some smaller installers use. Manual data entry from VICIdial dispositions.</li>
+</ul>
+<h3 id="utility-bill-analysis">Utility Bill Analysis<a class="headerlink" href="#utility-bill-analysis" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>UtilityAPI:</strong> Automated utility bill retrieval. If you capture the homeowner's utility provider and account number during the VICIdial qualification call, you can push this to UtilityAPI to automatically pull 12 months of usage data for accurate proposal generation.</li>
+<li><strong>Manual upload:</strong> Many operations have homeowners text or email a photo of their utility bill after the qualification call. Configure a VICIdial email or SMS follow-up (via Dispo Call URL to your SMS platform) to request the bill immediately after appointment set.</li>
+</ul>
+<h3 id="appointment-confirmation">Appointment Confirmation<a class="headerlink" href="#appointment-confirmation" title="Permanent link">&para;</a></h3>
+<p>Automate appointment confirmation to improve show rates:</p>
+<ol>
+<li>VICIdial agent sets appointment → Dispo Call URL fires</li>
+<li>Middleware sends SMS confirmation: "Your solar consultation is confirmed for [date/time]. Reply YES to confirm."</li>
+<li>24 hours before appointment: automated reminder SMS</li>
+<li>1 hour before appointment: final reminder</li>
+<li>No-shows: automatically reload into VICIdial reschedule campaign</li>
+</ol>
+<p>This workflow significantly improves the 65-78% median show rate toward the 78-90% top-quartile range.</p>
+<hr />
+<h2 id="common-mistakes-in-solar-lead-gen-campaigns">Common Mistakes in Solar Lead Gen Campaigns<a class="headerlink" href="#common-mistakes-in-solar-lead-gen-campaigns" title="Permanent link">&para;</a></h2>
+<p>After managing solar calling operations across dozens of VICIdial deployments, here are the mistakes we see most often:</p>
+<p><strong>1. Not using local presence.</strong> This is the single biggest CPA killer. Operations that dial from a single toll-free number or a fixed out-of-area caller ID are leaving 30-50% of their potential contacts on the table. Set up AREACODE-based CID groups. Period.</p>
+<p><strong>2. Over-dialing Florida.</strong> Florida is the largest residential solar market in the US. It's also the most heavily regulated for telemarketing (FTSA). The 3-calls-per-24-hours rule is strictly enforced. We've seen operations get hit with six-figure FTSA penalties because their VICIdial recycling settings allowed 5-6 attempts per day to Florida numbers. Configure daily attempt limits at the list or lead filter level.</p>
+<p><strong>3. Ignoring AMD accuracy.</strong> Operations that turn on AMD with default settings and never tune it are either routing 20%+ machine calls to agents (wasting time) or misclassifying 15%+ of humans as machines (losing leads). Monitor your AMD performance weekly. Check the ratio of AMD-classified HUMAN calls that agents immediately disposition as machine. If it's above 10%, your settings need adjustment.</p>
+<p><strong>4. No speed-to-lead for web leads.</strong> Fresh web form leads that sit in a queue for 30 minutes are worth half what they were at minute one. If you're buying exclusive web leads, you need a dedicated VICIdial campaign that dials them within 5 minutes of form submission. The API integration to make this work takes a day to build and pays for itself in the first week.</p>
+<p><strong>5. Flat calling schedules.</strong> Calling residential solar leads at the same hours every day of the week ignores the data on when homeowners actually answer. The 4:30-7:30 PM weekday window and 10 AM-4 PM Saturday window consistently outperform midday weekday calling by 40-60% on contact rate. Structure your agent shifts around peak contact hours.</p>
+<p><strong>6. Neglecting DID health.</strong> Solar DIDs burn out fast. If you're not monitoring spam reputation and rotating flagged numbers out of service, your contact rates will degrade week over week. Build DID health checks into your weekly operations routine. Budget for DID replacement — expect to rotate 20-30% of your DID pool every quarter in high-volume solar campaigns.</p>
+<hr />
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h2>
+<h3 id="whats-a-good-cost-per-appointment-for-solar-lead-generation">What's a good cost per appointment for solar lead generation?<a class="headerlink" href="#whats-a-good-cost-per-appointment-for-solar-lead-generation" title="Permanent link">&para;</a></h3>
+<p>For exclusive web form leads run through a well-configured VICIdial operation with local presence dialing, the median CPA is $20-$35. For aged or shared leads, expect $40-$65. For cold list prospecting, $70-$100 is typical. Top-performing operations push CPAs 30-40% below these medians through optimized dialing settings, strong scripts, and aggressive lead recycling. See our <a href="/blog/call-center-cost-per-lead-benchmarks/">cost per lead benchmarks</a> for cross-vertical comparison.</p>
+<h3 id="how-many-dids-do-i-need-for-a-solar-campaign">How many DIDs do I need for a solar campaign?<a class="headerlink" href="#how-many-dids-do-i-need-for-a-solar-campaign" title="Permanent link">&para;</a></h3>
+<p>Plan for 5-10 DIDs per target area code, with each DID capped at 75-100 outbound calls per day. If you're calling the Phoenix metro area (480, 602, 623 area codes) with 20 agents, you'd want approximately 15-30 DIDs across those area codes. This gives you enough rotation to keep reputation clean while maintaining local presence for every call.</p>
+<h3 id="is-amd-worth-using-for-solar-campaigns">Is AMD worth using for solar campaigns?<a class="headerlink" href="#is-amd-worth-using-for-solar-campaigns" title="Permanent link">&para;</a></h3>
+<p>Yes, with proper tuning. Solar campaigns calling residential numbers during the day hit voicemail on 40-60% of connected calls. Without AMD, agents spend nearly half their time listening to voicemail greetings. With properly tuned AMD, you recover 30-45% of that wasted agent time. The key is tuning — default AMD settings have 15-20% false classification rates on residential numbers. Use the adjusted parameters in this guide and monitor weekly.</p>
+<h3 id="how-do-i-handle-the-fcc-one-to-one-consent-rule-for-solar">How do I handle the FCC one-to-one consent rule for solar?<a class="headerlink" href="#how-do-i-handle-the-fcc-one-to-one-consent-rule-for-solar" title="Permanent link">&para;</a></h3>
+<p>Every lead you dial must have a consent record showing the consumer specifically authorized your company (not a lead aggregator, not "partner companies") to call them about solar. Your lead intake must capture: the specific consent language shown to the consumer, the consumer's affirmative action (checkbox, signature), the timestamp, and a clear identification of your company as the authorized caller. Store this data with the lead record in VICIdial and be prepared to produce it if challenged.</p>
+<h3 id="can-i-use-vicidial-for-solar-appointment-setting-and-sales">Can I use VICIdial for solar appointment setting and sales?<a class="headerlink" href="#can-i-use-vicidial-for-solar-appointment-setting-and-sales" title="Permanent link">&para;</a></h3>
+<p>VICIdial is ideal for the appointment-setting phase. For the sales/consultation phase, most operations use a separate CRM (Salesforce, GoHighLevel, etc.) that handles proposal generation, contract management, and project tracking. VICIdial feeds qualified appointments into the sales CRM via API integration. Some smaller operations handle the entire cycle in VICIdial using custom fields and dispositions, but this becomes unwieldy as you scale.</p>
+<h3 id="whats-the-best-time-to-call-solar-leads">What's the best time to call solar leads?<a class="headerlink" href="#whats-the-best-time-to-call-solar-leads" title="Permanent link">&para;</a></h3>
+<p>The highest contact rates for residential solar leads are weekday evenings (4:30-7:30 PM local time) and Saturday mornings (10:00 AM-2:00 PM). Weekday midday (10 AM-1 PM) catches retirees and work-from-home homeowners. The worst times are weekday mornings (8-10 AM, homeowners are commuting) and Sunday (lower contact rates, some state restrictions). Structure your agent shifts to maximize staffing during the 4:30-7:30 PM window — that's your highest-ROI calling time.</p>
+<h3 id="how-does-vicidial-compare-to-dedicated-solar-dialers-like-phoneburner-or-mojo">How does VICIdial compare to dedicated solar dialers like PhoneBurner or Mojo?<a class="headerlink" href="#how-does-vicidial-compare-to-dedicated-solar-dialers-like-phoneburner-or-mojo" title="Permanent link">&para;</a></h3>
+<p>VICIdial offers significantly more configuration control and lower per-agent costs than SaaS solar dialers. PhoneBurner and Mojo charge $100-$165/agent/month and provide limited customization. VICIdial's all-in cost is $25-$80/agent/month depending on scale, with full control over dialing algorithms, AMD settings, CID rotation, and campaign logic. The trade-off is that VICIdial requires more technical setup — you need someone who understands the system. For operations with 10+ agents, the cost savings justify the setup effort.</p>
+<h3 id="what-vicidial-version-should-i-use-for-solar-lead-gen">What VICIdial version should I use for solar lead gen?<a class="headerlink" href="#what-vicidial-version-should-i-use-for-solar-lead-gen" title="Permanent link">&para;</a></h3>
+<p>Use the latest SVN build on ViciBox 12.x or a clean AlmaLinux 9 installation. Recent SVN revisions include improvements to AMD handling, WebRTC agent support (<a href="/blog/vicidial-webrtc-setup/">ViciPhone</a> is critical for remote agents), and API enhancements that improve CRM integration. Avoid running on outdated installations — the security and compliance features in recent builds are important for solar operations where regulatory scrutiny is high.</p>
+<hr />
+<h2 id="about-this-guide">About This Guide<a class="headerlink" href="#about-this-guide" title="Permanent link">&para;</a></h2>
+<p>This guide was originally published at <a href="https://vicistack.com/blog/vicidial-solar-lead-generation">ViciStack.com</a>.</p>
+<p>For more VICIdial and Asterisk guides, visit <a href="https://vicistack.com">vicistack.com</a>.</p>
+<p><strong>Related Resources:</strong></p>
+<ul>
+<li><a href="https://vicistack.com/free-audit/">Free VICIdial Audit</a> — We review your configuration</li>
+<li><a href="https://vicistack.com/pricing/">ViciStack Pricing</a> — Managed VICIdial services</li>
+<li><a href="https://vicistack.com/blog/">All ViciStack Guides</a> — 70+ production-tested articles</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 ViciStack. All guides available at <a href='https://vicistack.com'>vicistack.com</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com" target="_blank" rel="noopener" title="ViciStack Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://vicistack.com/free-audit/" target="_blank" rel="noopener" title="Free VICIdial Audit" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M160.2 25c-7.9-18.9-28.5-28.9-48.1-23.6l-5.5 1.5C42 20.5-13.2 83.1 2.9 159.3 40 334.3 177.7 472 352.7 509.1 429 525.3 491.5 470 509.1 405.4l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2c-70.3-34.9-126.9-93.3-159.4-165l44.2-36c13.9-11.3 18.6-30.4 11.8-47z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
