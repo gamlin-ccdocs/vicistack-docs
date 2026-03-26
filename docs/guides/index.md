@@ -17,6 +17,7 @@ experience managing VICIdial systems.
 - [Call Center Cost Per Lead Benchmarks: How Does Your Operation Stack Up?](call-center-cost-per-lead-benchmarks.md)
 - [Call Center ROI Formula: How to Calculate and Improve](call-center-roi-formula.md)
 - [Call Center Software Comparison: Buyer's Guide [2026]](call-center-software-comparison.md)
+- [The Call Center Staffing Formula: Erlang C vs Real-World Math](call-center-staffing-formula.md)
 - [Contact Center KPIs: The Complete Guide to Metrics That Matter](contact-center-kpis.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
