@@ -26,6 +26,7 @@ experience managing VICIdial systems.
 - [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
 - [Speed to Lead: Why Response Time Is the #1 Factor in Call Center Conversions](speed-to-lead-response-time.md)
 - [STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide](stir-shaken-vicidial-guide.md)
+- [TCPA 2026 Changes: What Call Centers Need to Know Before They Get Sued](tcpa-compliance-2026.md)
 - [VICIdial New Features: Everything You Need to Know](vicidial-34-new-features.md)
 - [Vicidial Agent Coaching](vicidial-agent-coaching.md)
 - [Vicidial Agent Efficiency Metrics](vicidial-agent-efficiency-metrics.md)
