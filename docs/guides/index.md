@@ -90,6 +90,7 @@ experience managing VICIdial systems.
 - [VICIdial vs ReadyMode: Which Predictive Dialer Wins at Scale?](vicidial-vs-readymode.md)
 - [VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?](vicidial-vs-xencall.md)
 - [VICIdial WebRTC Setup Guide for Remote Agents](vicidial-webrtc-setup.md)
+- [VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works](vicidial-whisper-coaching.md)
 
 ## More Resources
 
