@@ -46,6 +46,7 @@ experience managing VICIdial systems.
 - [VICIdial Disaster Recovery & High Availability Guide](vicidial-disaster-recovery.md)
 - [VICIdial DNC List Management: Federal, State & Internal](vicidial-dnc-management.md)
 - [Building VICIdial Dashboards with Grafana & Metabase](vicidial-grafana-dashboards.md)
+- [VICIdial WebSocket Real-Time Dashboard with Grafana + Node.js](vicidial-grafana-realtime-dashboard.md)
 - [Vicidial Hosted Migration Checklist](vicidial-hosted-migration-checklist.md)
 - [Vicidial Inbound Setup](vicidial-inbound-setup.md)
 - [Vicidial Ivr Setup](vicidial-ivr-setup.md)
