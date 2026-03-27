@@ -45,6 +45,7 @@ experience managing VICIdial systems.
 - [VICIdial Asterisk CDR Analysis for Connect Rate Optimization](vicidial-asterisk-cdr-analysis.md)
 - [Vicidial Asterisk Configuration](vicidial-asterisk-configuration.md)
 - [Vicidial Auto Dial Level Tuning](vicidial-auto-dial-level-tuning.md)
+- [VICIdial call recording storage optimization](vicidial-call-recording-storage-optimization.md)
 - [Vicidial Call Recording](vicidial-call-recording.md)
 - [Vicidial Callback Automation](vicidial-callback-automation.md)
 - [VICIdial Caller ID Reputation Monitoring and Recovery Guide](vicidial-caller-id-reputation.md)
