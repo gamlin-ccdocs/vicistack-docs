@@ -731,7 +731,7 @@ echo -e "Action: Login\r\nUsername: user\r\nSecret: pass\r\n\r\nAction: Command\
 
 ## AMI for Real-Time Dashboards
 
-The killer use case for AMI in a call center is real-time monitoring. Here's the event flow for building a dashboard:
+The killer use case for AMI in a call center is [real-time monitoring](/blog/vicidial-realtime-agent-dashboard/). Here's the event flow for building a dashboard:
 
 1. Connect to AMI, authenticate, subscribe to `call` and `agent` events
 2. On **Newchannel**: New call starting, add to active calls list

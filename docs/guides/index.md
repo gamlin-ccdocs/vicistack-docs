@@ -8,7 +8,7 @@ experience managing VICIdial systems.
 - [How AI Is Changing Call Center Quality Control (And Why Most Centers Are Still Stuck in 2015)](ai-call-center-quality-control.md)
 - [How to Build an AI-Powered Outbound Call Center From Scratch in 2026](ai-outbound-call-center-2026.md)
 - [Asterisk AMI Commands Guide](asterisk-ami-commands-guide.md)
-- [Asterisk Manager Interface Guide](asterisk-manager-interface-guide.md)
+- [Asterisk Manager Interface (AMI): The Complete Developer Guide](asterisk-manager-interface-guide.md)
 - [Asterisk Observability with OpenTelemetry and Grafana](asterisk-otel-observability.md)
 - [Asterisk PJSIP TLS Broken After OpenSSL 3 Upgrade? Here's the Fix for 'Wrong Curve' and Every Other Handshake Failure](asterisk-pjsip-tls-openssl3-guide.md)
 - [Best Predictive Dialer 2026: The Definitive Comparison](best-predictive-dialer.md)
