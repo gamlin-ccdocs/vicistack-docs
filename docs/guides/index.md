@@ -103,6 +103,7 @@ experience managing VICIdial systems.
 - [VICIdial vs XenCall: Which Dialer Is Right for Your Call Center?](vicidial-vs-xencall.md)
 - [VICIdial WebRTC Setup Guide for Remote Agents](vicidial-webrtc-setup.md)
 - [VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works](vicidial-whisper-coaching.md)
+- [VoIP MOS Score: What It Means and How to Fix Bad Call Quality](voip-mos-score-guide.md)
 
 ## More Resources
 
