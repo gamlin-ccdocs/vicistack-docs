@@ -52,6 +52,7 @@ experience managing VICIdial systems.
 - [VICIdial Cloud Deployment: AWS, GCP & DigitalOcean](vicidial-cloud-deployment.md)
 - [VICIdial Cluster Configuration: The Complete Multi-Server Setup Guide [2026]](vicidial-cluster-guide.md)
 - [Vicidial Cnam Lookup Inbound](vicidial-cnam-lookup-inbound.md)
+- [VICIdial: The Complete Guide to Open-Source Call Center Software](vicidial-complete-guide.md)
 - [The True Cost of Running VICIdial in 2026: A Realistic Breakdown](vicidial-cost-2026.md)
 - [VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom](vicidial-crm-integration.md)
 - [Vicidial Custom Mysql Reports](vicidial-custom-mysql-reports.md)
