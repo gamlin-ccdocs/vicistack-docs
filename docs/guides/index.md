@@ -114,6 +114,7 @@ experience managing VICIdial systems.
 - [VICIdial WebRTC Setup Guide for Remote Agents](vicidial-webrtc-setup.md)
 - [VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works](vicidial-whisper-coaching.md)
 - [Voip Mos Score Guide](voip-mos-score-guide.md)
+- [Workforce Management for Call Centers: Erlang C, Schedule Adherence, and the Forecasting Math That Keeps You Staffed](workforce-management-call-center.md)
 
 ## More Resources
 
