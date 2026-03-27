@@ -57,6 +57,7 @@ experience managing VICIdial systems.
 - [VICIdial CRM Integration Guide: Salesforce, HubSpot & Custom](vicidial-crm-integration.md)
 - [Vicidial Custom Mysql Reports](vicidial-custom-mysql-reports.md)
 - [VICIdial Database Partitioning for High-Volume Call Centers](vicidial-database-partitioning.md)
+- [VICIdial Dial Hopper: How It Works and Why Yours Is Empty](vicidial-dial-hopper-guide.md)
 - [Vicidial Did Management](vicidial-did-management.md)
 - [VICIdial Disaster Recovery & High Availability Guide](vicidial-disaster-recovery.md)
 - [VICIdial DNC List Management: Federal, State & Internal](vicidial-dnc-management.md)
