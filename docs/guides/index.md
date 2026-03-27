@@ -29,6 +29,7 @@ experience managing VICIdial systems.
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
 - [Open Source Call Center Software](open-source-call-center-software.md)
 - [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
+- [SIP Registration Failed: Every Error Code Explained With Fixes](sip-registration-failed-fix.md)
 - [SMS Campaigns for Call Centers: Compliance, Cadence, and What Actually Converts](sms-campaign-call-center.md)
 - [Speed to Lead: Why Response Time Is the #1 Factor in Call Center Conversions](speed-to-lead-response-time.md)
 - [STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide](stir-shaken-vicidial-guide.md)
