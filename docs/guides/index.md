@@ -25,6 +25,7 @@ experience managing VICIdial systems.
 - [The Call Center Staffing Formula: Erlang C vs Real-World Math](call-center-staffing-formula.md)
 - [Cold Calling Scripts Templates](cold-calling-scripts-templates.md)
 - [Contact Center KPIs: The Complete Guide to Metrics That Matter](contact-center-kpis.md)
+- [Contact Rate Optimization Guide: DNC Scrubbing, Best Dial Windows, and the Numbers That Actually Move Revenue](contact-rate-optimization-guide.md)
 - [Contact Rate Optimization](contact-rate-optimization.md)
 - [Dynamic Scripting for Call Centers](dynamic-scripting-for-call-centers.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
