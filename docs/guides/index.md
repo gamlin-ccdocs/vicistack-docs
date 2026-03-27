@@ -5,7 +5,7 @@ experience managing VICIdial systems.
 
 ## Available Guides
 
-- [Ai Call Center Quality Control](ai-call-center-quality-control.md)
+- [How AI Is Changing Call Center Quality Control (And Why Most Centers Are Still Stuck in 2015)](ai-call-center-quality-control.md)
 - [How to Build an AI-Powered Outbound Call Center From Scratch in 2026](ai-outbound-call-center-2026.md)
 - [Asterisk Manager Interface Guide](asterisk-manager-interface-guide.md)
 - [Asterisk Observability with OpenTelemetry and Grafana](asterisk-otel-observability.md)

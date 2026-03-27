@@ -78,7 +78,7 @@ The bottom line: speech-to-text accuracy in 2026 is good enough for AI quality c
 
 Here is where AI quality control genuinely outperforms manual QA, and it is not even close.
 
-**Consistency across evaluators.** Inter-rater reliability in manual QA programs typically falls between 65 and 75 percent. That means if two QA analysts score the same call independently, they will disagree on roughly a quarter to a third of the scorecard items. The disagreement is especially pronounced on subjective criteria -- did the agent show empathy? Was the tone professional? Was the objection handling effective? Different evaluators interpret these questions differently, and the same evaluator might score the same call differently on Monday versus Friday.
+**Consistency across evaluators.** Inter-rater reliability in manual QA programs typically falls between 65 and 75 percent. That means if two QA analysts score the same call independently, they will disagree on roughly a quarter to a third of the scorecard items. The disagreement is especially pronounced on subjective criteria -- did the agent show empathy? Was the tone professional? Was the [objection handling](/blog/cold-calling-scripts-templates/) effective? Different evaluators interpret these questions differently, and the same evaluator might score the same call differently on Monday versus Friday.
 
 AI does not have this problem. Given the same transcript and the same scoring criteria, the AI will produce the same score every time. This consistency alone is a massive win for a QA program because it eliminates one of the biggest sources of agent frustration: the perception (often accurate) that quality scores depend on which evaluator reviewed the call rather than how the call was actually handled.
 
@@ -136,7 +136,7 @@ Here is the trade-off matrix:
 
 **Real-time advantages:**
 - Agents receive guidance during the call when they can still act on it
-- Compliance violations can be caught and corrected before they become liability
+- Compliance violations can be caught and corrected [before they](/blog/tcpa-compliance-2026/) become liability
 - New agents get on-the-fly support that reduces ramp time
 - Supervisors can receive instant alerts when a call needs live intervention
 
