@@ -21,6 +21,7 @@ experience managing VICIdial systems.
 - [The Call Center Staffing Formula: Erlang C vs Real-World Math](call-center-staffing-formula.md)
 - [Cold Calling Scripts That Actually Work: Templates, Frameworks, and Real Data](cold-calling-scripts-templates.md)
 - [Contact Center KPIs: The Complete Guide to Metrics That Matter](contact-center-kpis.md)
+- [Contact Rate Optimization: The Math Behind Getting More Humans on the Phone](contact-rate-optimization.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
