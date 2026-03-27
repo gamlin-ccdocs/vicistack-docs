@@ -14,6 +14,7 @@ experience managing VICIdial systems.
 - [Best Predictive Dialer 2026: The Definitive Comparison](best-predictive-dialer.md)
 - [Call Center Abandonment Rate](call-center-abandonment-rate.md)
 - [After-Hours Call Center Strategy: IVR, Voicemail, or AI — Which Pays Off?](call-center-after-hours.md)
+- [Call Center Agent Burnout Prevention: Scheduling Fixes, Retention Tactics, and the Occupancy Math Nobody Talks About](call-center-agent-burnout-prevention.md)
 - [Call Center Agent Burnout: The Real Cost and How to Fix It Before Your Best Reps Quit](call-center-agent-burnout.md)
 - [Call Center Agent Onboarding Checklist [2026]](call-center-agent-onboarding.md)
 - [How AI Voice Agents Are Replacing 30% of Live Agents (And Why You Shouldn't Panic)](call-center-ai-voice-agents.md)
