@@ -30,6 +30,7 @@ experience managing VICIdial systems.
 - [Dynamic Scripting for Call Centers](dynamic-scripting-for-call-centers.md)
 - [Mejor Marcador Predictivo 2026: La Comparacion Definitiva](es-best-predictive-dialer.md)
 - [Formula ROI de Call Center: Como Calcular y Mejorar](es-call-center-roi-formula.md)
+- [La Guia Completa de Instalacion de VICIdial (2026): De Servidor Nuevo a Primera Llamada en Menos de 2 Horas](es-vicidial-setup-guide.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
