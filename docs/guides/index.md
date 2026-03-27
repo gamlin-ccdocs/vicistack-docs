@@ -39,6 +39,7 @@ experience managing VICIdial systems.
 - [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
 - [Sip Registration Failed Fix](sip-registration-failed-fix.md)
 - [Sms Campaign Call Center](sms-campaign-call-center.md)
+- [Speech Analytics for Call Centers: From Call Recordings to Automated QA Without a Six-Figure Platform](speech-analytics-call-center.md)
 - [Speed To Lead Response Time](speed-to-lead-response-time.md)
 - [STIR/SHAKEN for VICIdial: The Complete 2026 Implementation Guide](stir-shaken-vicidial-guide.md)
 - [Tcpa Compliance 2026](tcpa-compliance-2026.md)
