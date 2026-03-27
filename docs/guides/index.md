@@ -28,6 +28,7 @@ experience managing VICIdial systems.
 - [Contact Rate Optimization Guide: DNC Scrubbing, Best Dial Windows, and the Numbers That Actually Move Revenue](contact-rate-optimization-guide.md)
 - [Contact Rate Optimization](contact-rate-optimization.md)
 - [Dynamic Scripting for Call Centers](dynamic-scripting-for-call-centers.md)
+- [Mejor Marcador Predictivo 2026: La Comparacion Definitiva](es-best-predictive-dialer.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
