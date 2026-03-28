@@ -30,6 +30,7 @@ experience managing VICIdial systems.
 - [Dynamic Scripting for Call Centers](dynamic-scripting-for-call-centers.md)
 - [Mejor Marcador Predictivo 2026: La Comparacion Definitiva](es-best-predictive-dialer.md)
 - [Formula ROI de Call Center: Como Calcular y Mejorar](es-call-center-roi-formula.md)
+- [Software Open Source para Call Center: La Guia Completa](es-open-source-call-center-software.md)
 - [Configuracion de AMD en VICIdial: La Unica Guia Que No Te Hace Perder el Tiempo](es-vicidial-amd-guide.md)
 - [La Guia Completa de Instalacion de VICIdial (2026): De Servidor Nuevo a Primera Llamada en Menos de 2 Horas](es-vicidial-setup-guide.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
