@@ -36,6 +36,7 @@ experience managing VICIdial systems.
 - [Despliegue de VICIdial en la Nube: AWS, GCP y DigitalOcean](es-vicidial-cloud-deployment.md)
 - [Hardening de Seguridad de VICIdial: CVEs, Firewalls y Control de Acceso](es-vicidial-security-hardening.md)
 - [La Guia Completa de Instalacion de VICIdial (2026): De Servidor Nuevo a Primera Llamada en Menos de 2 Horas](es-vicidial-setup-guide.md)
+- [VICIdial vs. Five9: Cuando Quedarse, Cuando Cambiar, y Cuando Optimizar](es-vicidial-vs-five9.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
