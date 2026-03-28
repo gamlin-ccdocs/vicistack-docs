@@ -40,6 +40,7 @@ experience managing VICIdial systems.
 - [VICIdial vs GoHighLevel: Por Que Tu Piso de 50 Puestos No Puede Correr en Una Herramienta de Marketing](es-vicidial-vs-gohighlevel.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
+- [Hosted vs Self-Hosted Predictive Dialer in 2026: The Real Cost Breakdown at Every Scale](hosted-vs-self-hosted-predictive-dialer-2026.md)
 - [How We Built an AI Voice Agent from 500 Real Cold Calls](how-we-built-ai-voice-agents.md)
 - [Open Source Call Center Software](open-source-call-center-software.md)
 - [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
