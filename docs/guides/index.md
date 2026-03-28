@@ -113,6 +113,7 @@ experience managing VICIdial systems.
 - [VICIdial TCPA Compliance Checklist [2026]](vicidial-tcpa-compliance.md)
 - [VICIdial Timezone-Aware Dialing and TCPA Safe Hours Compliance](vicidial-timezone-dialing-tcpa.md)
 - [VICIdial Training Guide: From Beginner to Expert](vicidial-training-guide.md)
+- [VICIdial Troubleshooting Guide: Every Error Message Explained With Fixes](vicidial-troubleshooting-guide.md)
 - [VICIdial Voicemail Drop Configuration and Compliance Guide](vicidial-voicemail-drop.md)
 - [Vicidial Vs Calltools](vicidial-vs-calltools.md)
 - [VICIdial vs Convoso: The Honest Comparison Convoso Doesn't Want You to Read](vicidial-vs-convoso.md)
