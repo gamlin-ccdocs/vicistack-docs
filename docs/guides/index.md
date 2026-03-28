@@ -33,6 +33,7 @@ experience managing VICIdial systems.
 - [Software Open Source para Call Center: La Guia Completa](es-open-source-call-center-software.md)
 - [STIR/SHAKEN para VICIdial: La Guia Completa de Implementacion 2026](es-stir-shaken-vicidial-guide.md)
 - [Configuracion de AMD en VICIdial: La Unica Guia Que No Te Hace Perder el Tiempo](es-vicidial-amd-guide.md)
+- [Despliegue de VICIdial en la Nube: AWS, GCP y DigitalOcean](es-vicidial-cloud-deployment.md)
 - [La Guia Completa de Instalacion de VICIdial (2026): De Servidor Nuevo a Primera Llamada en Menos de 2 Horas](es-vicidial-setup-guide.md)
 - [Goautodial To Vicidial Migration](goautodial-to-vicidial-migration.md)
 - [The True Cost of Hosted Dialers vs Self-Hosted VICIdial (With Real Numbers)](hosted-vs-self-hosted-dialer-cost.md)
