@@ -26,7 +26,7 @@ experience managing VICIdial systems.
 - [Cold Calling Scripts for Call Centers](cold-calling-scripts-templates.md)
 - [Contact Center KPIs: The Complete Guide to Metrics That Matter](contact-center-kpis.md)
 - [Contact Rate Optimization Guide: DNC Scrubbing, Best Dial Windows, and the Numbers That Actually Move Revenue](contact-rate-optimization-guide.md)
-- [Contact Rate Optimization](contact-rate-optimization.md)
+- [Contact Rate Optimization: The Math Behind Getting More Humans on the Phone](contact-rate-optimization.md)
 - [Dynamic Scripting for Call Centers](dynamic-scripting-for-call-centers.md)
 - [Mejor Marcador Predictivo 2026: La Comparacion Definitiva](es-best-predictive-dialer.md)
 - [Formula ROI de Call Center: Como Calcular y Mejorar](es-call-center-roi-formula.md)

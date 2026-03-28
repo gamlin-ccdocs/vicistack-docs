@@ -4,11 +4,11 @@
 
 Here is the ugly truth about outbound dialing in 2026: most of your calls are not reaching humans.
 
-The average outbound connect rate across industries hovers around 16-20%. That means for every 100 calls your dialer places, 80+ hit voicemail, dead air, disconnected numbers, or the back button on a "Spam Likely" screen. Your agents sit in READY status, burning payroll, while your dialer churns through a list that is mostly ghosts.
+The average outbound [connect rate](/blog/vicidial-asterisk-cdr-analysis/) across industries hovers around 16-20%. That means for every 100 calls your dialer places, 80+ hit voicemail, dead air, disconnected numbers, or the back button on a "Spam Likely" screen. Your agents sit in READY status, burning payroll, while your dialer churns through a list that is mostly ghosts.
 
 But here is the thing that drives me crazy about how most operations approach this: they treat contact rate like weather. Something that happens to them. They look at the daily report, see 14% contact rate, shrug, and ask for more leads.
 
-Contact rate is not weather. It is engineering. Every component -- your caller ID reputation, your dial timing, your attempt cadence, your STIR/SHAKEN attestation level, your DID rotation strategy, your multi-channel layering -- is a variable you can measure and tune. And the math is not complicated. It just requires actually doing the work.
+Contact rate is not weather. It is engineering. Every component -- your [caller ID reputation](/blog/vicidial-caller-id-reputation/), your dial timing, your attempt cadence, your STIR/SHAKEN attestation level, your DID rotation strategy, your multi-channel layering -- is a variable you can measure and tune. And the math is not complicated. It just requires actually doing the work.
 
 This post walks through each variable, the data behind it, and the specific configuration changes in VICIdial that move the numbers.
 
@@ -46,7 +46,7 @@ Now push the answer rate from 15% to 22% (which is entirely achievable with the 
 
 That is 46% more conversions from the same number of agents, the same list, the same script. The only thing that changed was getting more humans on the phone. At $200 revenue per conversion, that is $1,600 more per hour, $12,800 per 8-hour shift. From the same payroll.
 
-This is why contact rate optimization is the highest-leverage thing you can do in an outbound operation. Nothing else comes close.
+This is why [contact rate optimization](/blog/contact-rate-optimization-guide/) is the highest-leverage thing you can do in an outbound operation. Nothing else comes close.
 
 ---
 
@@ -71,7 +71,7 @@ A few things jump out from this data.
 
 Final expense consistently has the highest contact rates because the target demographic -- seniors 50-85 -- still answers unknown calls at much higher rates than younger demographics. If you are running final expense at below 20% raw answer rate, something is wrong with your caller ID or your list.
 
-Political campaigns sit at the bottom because the lists are massive, untargeted voter files. You are calling millions of people who did not opt in to anything. The math works because the volume is so high and the per-contact cost tolerance is different.
+[Political campaigns](/blog/vicidial-political-campaigns/) sit at the bottom because the lists are massive, untargeted voter files. You are calling millions of people who did not opt in to anything. The math works because the volume is so high and the per-contact cost tolerance is different.
 
 Solar is the most volatile vertical. A list of aged internet leads might connect at 8%. A fresh inbound web form lead dialed within 60 seconds might connect at 65%+. Same vertical, wildly different outcomes based on lead freshness and source.
 
@@ -127,7 +127,7 @@ If you are making 10,000 dials per day and want to keep each DID under 80 calls/
 10,000 / 80 = 125 DIDs
 ```
 
-That is a lot of phone numbers. But the alternative is burning through fewer numbers at high volume, getting them flagged, and watching your answer rate crater.
+That is a lot of phone numbers. But the alternative is burning through fewer numbers at [high volume](/blog/vicidial-performance-tuning/), getting them flagged, and watching your answer rate crater.
 
 In VICIdial, you configure DID rotation through the campaign's **CID Group** settings:
 
@@ -224,7 +224,7 @@ Based on industry data and what we see working across ViciStack deployments:
 | 4 | 2 days later | Afternoon window (4-6 PM local) |
 | 5 | 4 days later | Morning, different day of week |
 | 6 | 7 days later | Vary the window |
-| 7 | 14 days later | Last morning attempt |
+| 7 | [14 days](/blog/vicidial-roi-case-study/) later | Last morning attempt |
 | 8 | 21 days later | Final attempt, evening window |
 
 The key insight: **vary the time of day and day of week across attempts.** If someone does not answer at 10 AM on Tuesday, they might answer at 5 PM on Thursday. You are not just retrying -- you are sampling different windows in their availability pattern.
@@ -249,7 +249,7 @@ The biggest mistake we see is operations setting a blanket "retry after 24 hours
 
 People are roughly 4x more likely to answer a call from a local area code than a toll-free or out-of-area number. The data is fairly consistent on this: around 27.5% answer rates for local numbers versus about 7% for toll-free.
 
-That said, there is nuance here. Some studies show a smaller effect, and one analysis actually found slightly higher connect rates for non-local numbers (5.5% vs 4.6%). The difference probably comes down to execution quality -- if your "local" DID is flagged as spam, it does not matter that it is a local area code.
+That said, there is nuance here. Some studies show a smaller effect, and one analysis actually found slightly higher connect rates for non-local numbers (5.5% vs 4.6%). The difference probably comes down to execution quality -- if your "local" DID is [flagged as spam](/blog/vicidial-did-management/), it does not matter that it is a local area code.
 
 ### Setting Up Local Presence in VICIdial
 
@@ -498,7 +498,7 @@ After implementing these optimizations, here is how to track whether they are wo
 - Cost per conversion (should be trending down as contact rate rises)
 - List penetration rate (percentage of total list reached after full cadence)
 
-In VICIdial, most of these can be pulled from the **Outbound Calling Report**, **Campaign Stats**, and **Agent Performance Summary** screens in the admin interface. For per-DID tracking, you will need custom reports or export the log data for analysis.
+In VICIdial, most of these can be pulled from the **[Outbound Calling](/blog/vicidial-vs-gohighlevel/) Report**, **Campaign Stats**, and **Agent Performance Summary** screens in the admin interface. For per-DID tracking, you will need [custom reports](/blog/vicidial-custom-mysql-reports/) or export the log data for analysis.
 
 ---
 
@@ -508,7 +508,7 @@ Contact rate optimization is not glamorous work. There is no single magic settin
 
 The operations that treat this as engineering -- measuring every variable, testing changes systematically, monitoring daily -- consistently outperform the ones that treat it as luck.
 
-The math does not lie. Getting more humans on the phone is the single highest-leverage activity in outbound call center operations. Everything else -- scripts, objection handling, close techniques -- only matters after someone picks up.
+The math does not lie. Getting more humans on the phone is the single highest-leverage activity in [outbound call center](/blog/ai-outbound-call-center-2026/) operations. Everything else -- scripts, [objection handling](/blog/cold-calling-scripts-templates/), close techniques -- only matters after someone picks up.
 
 ---
 
