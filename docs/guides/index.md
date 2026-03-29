@@ -23,6 +23,7 @@ experience managing VICIdial systems.
 - [Call Center ROI Formula: How to Calculate and Improve](call-center-roi-formula.md)
 - [Call Center Software Comparison: Buyer's Guide [2026]](call-center-software-comparison.md)
 - [The Call Center Staffing Formula: Erlang C vs Real-World Math](call-center-staffing-formula.md)
+- [75+ Call Center Statistics for 2026: Industry Data, Benchmarks, and Trends](call-center-statistics-2026.md)
 - [Cold Calling Scripts for Call Centers](cold-calling-scripts-templates.md)
 - [Contact Center KPIs: The Complete Guide to Metrics That Matter](contact-center-kpis.md)
 - [Contact Rate Optimization Guide: DNC Scrubbing, Best Dial Windows, and the Numbers That Actually Move Revenue](contact-rate-optimization-guide.md)
