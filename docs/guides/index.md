@@ -109,6 +109,7 @@ experience managing VICIdial systems.
 - [VICIdial Performance Tuning: Server Optimization for 500+ Agents](vicidial-performance-tuning.md)
 - [Vicidial Political Campaigns](vicidial-political-campaigns.md)
 - [VICIdial Predictive Dialer Settings: The 15 Configuration Changes That Actually Matter](vicidial-predictive-dialer-settings.md)
+- [VICIdial Pricing Guide](vicidial-pricing-guide.md)
 - [Vicidial Qa Scoring](vicidial-qa-scoring.md)
 - [Vicidial Realtime Agent Dashboard](vicidial-realtime-agent-dashboard.md)
 - [VICIdial Remote Agent Setup: NAT Traversal, WebRTC, and SIP Configuration](vicidial-remote-agent-setup.md)
@@ -135,7 +136,7 @@ experience managing VICIdial systems.
 - [VICIdial WebRTC Setup Guide for Remote Agents](vicidial-webrtc-setup.md)
 - [VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works](vicidial-whisper-coaching.md)
 - [Voip Mos Score Guide](voip-mos-score-guide.md)
-- [VoIP Mos Score Testing Tools](voip-mos-score-testing-tools.md)
+- [Voip Mos Score Testing Tools](voip-mos-score-testing-tools.md)
 - [Workforce Management for Call Centers: Erlang C, Schedule Adherence, and the Forecasting Math That Keeps You Staffed](workforce-management-call-center.md)
 
 ## More Resources
