@@ -53,7 +53,7 @@ experience managing VICIdial systems.
 - [Podcast Ep 6 Voip Mos Score Guide](podcast-ep-6-voip-mos-score-guide.md)
 - [Podcast Ep 7 Vicidial Dial Hopper Guide](podcast-ep-7-vicidial-dial-hopper-guide.md)
 - [Podcast Ep 8 Asterisk Manager Interface Guide](podcast-ep-8-asterisk-manager-interface-guide.md)
-- [Podcast Ep. 9: SIP Registration Failed: Every Error Code Explained With Fixes](podcast-ep-9-sip-registration-failed-fix.md)
+- [Podcast Ep 9 Sip Registration Failed Fix](podcast-ep-9-sip-registration-failed-fix.md)
 - [Predictive vs Progressive vs Preview Dialing: When to Use Each](predictive-vs-progressive-dialing.md)
 - [Sip Registration Failed Fix](sip-registration-failed-fix.md)
 - [SMS Campaign Integration for Call Centers: 10DLC Registration, Dialer Workflows, and Cadences That Convert](sms-campaign-call-center-workflows.md)
@@ -140,7 +140,7 @@ experience managing VICIdial systems.
 - [VICIdial WebRTC Setup Guide for Remote Agents](vicidial-webrtc-setup.md)
 - [VICIdial Whisper and Barge: Real-Time Agent Coaching That Actually Works](vicidial-whisper-coaching.md)
 - [Voip Mos Score Guide](voip-mos-score-guide.md)
-- [Voip Mos Score Testing Tools](voip-mos-score-testing-tools.md)
+- [VoIP Mos Score Testing Tools](voip-mos-score-testing-tools.md)
 - [Workforce Management for Call Centers: Erlang C, Schedule Adherence, and the Forecasting Math That Keeps You Staffed](workforce-management-call-center.md)
 
 ## More Resources
